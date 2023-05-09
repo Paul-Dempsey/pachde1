@@ -6,7 +6,6 @@ void init(Plugin* p) {
 	pluginInstance = p;
 
 	// Add modules here
-	p->addModel(modelMyModule1);
 	p->addModel(modelInfo);
 
 	// Any other plugin initialization may go here.
