@@ -5,6 +5,7 @@ FLAGS +=
 SOURCES += src/plugin.cpp
 SOURCES += src/colors.cpp
 SOURCES += src/Info.cpp
+SOURCES += src/Blank.cpp
 
 DISTRIBUTABLES += res/ScrewCap.svg
 DISTRIBUTABLES += res/ScrewCapMed.svg

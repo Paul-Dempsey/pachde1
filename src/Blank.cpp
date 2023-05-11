@@ -6,24 +6,21 @@
 
 enum HpSizes {
     Default = 5,
-    Least = 3,
+    Least = 1,
 };
 
 
-struct InfoModule : Module {
-    std::string text;
+struct BlankModule : Module {
     bool dirty = false;
     Theme theme = Theme::Unset;
     int hp_wide = HpSizes::Default;
 
 	void onReset() override {
-        text = "#d";
         dirty = true;
 	}
 
     json_t* dataToJson() override {
         json_t* rootJ = json_object();
-        json_object_set_new(rootJ, "text", json_stringn(text.c_str(), text.size()));
 
         std::string value = ToString(theme);
         json_object_set_new(rootJ, "theme", json_stringn(value.c_str(), value.size()));
@@ -34,11 +31,6 @@ struct InfoModule : Module {
     }
 
     void dataFromJson(json_t* rootJ) override {
-        json_t* textJ = json_object_get(rootJ, "text");
-        if (textJ) {
-            text = json_string_value(textJ);
-        }
-
         theme = ThemeFromJson(rootJ);
 
 		json_t* widthJ = json_object_get(rootJ, "width");
@@ -50,10 +42,10 @@ struct InfoModule : Module {
     }
 };
 
-struct InfoPanel : Widget {
+struct BlankPanel : Widget {
     Theme theme;
 
-	InfoPanel(Theme t, Vec size) {
+	BlankPanel(Theme t, Vec size) {
         theme = ConcreteTheme(t);
         box.size = size;
 	}
@@ -82,22 +74,17 @@ struct InfoPanel : Widget {
 		nvgFillColor(args.vg, outer);
 		nvgFill(args.vg);
 
-		nvgBeginPath(args.vg);
-		nvgRect(args.vg, 5.0, RACK_GRID_WIDTH, box.size.x - 10.0, box.size.y - RACK_GRID_WIDTH * 2);
-		nvgFillColor(args.vg, inner);
-		nvgFill(args.vg);
-
 		Widget::draw(args);
 	}
 };
 
-struct ModuleResizeHandle : OpaqueWidget {
+struct BlankModuleResizeHandle : OpaqueWidget {
 	bool right = false;
 	Vec dragPos;
 	Rect originalBox;
-	InfoModule* module;
+	BlankModule* module;
 
-	ModuleResizeHandle() {
+	BlankModuleResizeHandle() {
 		box.size = Vec(RACK_GRID_WIDTH * 1, RACK_GRID_HEIGHT);
 	}
 
@@ -150,15 +137,15 @@ struct ModuleResizeHandle : OpaqueWidget {
 	// }
 };
 
-struct InfoModuleWidget : ModuleWidget {
+struct BlankModuleWidget : ModuleWidget {
 	Widget* rightHandle = NULL;
 	Widget* topRightScrew = NULL;
     Widget* title = NULL;
     Widget* logo = NULL;
 	Widget* bottomRightScrew = NULL;
-    InfoPanel * panel = NULL;
+    BlankPanel * panel = NULL;
 
-    InfoModuleWidget(InfoModule* module) {
+    BlankModuleWidget(BlankModule* module) {
         setModule(module);
         onChangeTheme();
 	}
@@ -172,12 +159,12 @@ struct InfoModuleWidget : ModuleWidget {
 	    bottomRightScrew = NULL;
         clearChildren();
     }
-    void addResizeHandles(InfoModule* module) {
-        ModuleResizeHandle* leftHandle = new ModuleResizeHandle;
+    void addResizeHandles(BlankModule* module) {
+        BlankModuleResizeHandle* leftHandle = new BlankModuleResizeHandle;
         leftHandle->module = module;
         addChild(leftHandle);
 
-        ModuleResizeHandle* rightHandle = new ModuleResizeHandle;
+        BlankModuleResizeHandle* rightHandle = new BlankModuleResizeHandle;
         rightHandle->right = true;
         this->rightHandle = rightHandle;
         rightHandle->module = module;
@@ -185,12 +172,12 @@ struct InfoModuleWidget : ModuleWidget {
     }
 
     void onChangeTheme() {
-        auto module = dynamic_cast<InfoModule*>(this->module);
+        auto module = dynamic_cast<BlankModule*>(this->module);
         auto theme = module ? ConcreteTheme(module->theme) : Theme::Light;
         // set default size for browser
         box.size = Vec(RACK_GRID_WIDTH * HpSizes::Default, RACK_GRID_HEIGHT);
         clear();
-        panel = new InfoPanel(theme, box.size);
+        panel = new BlankPanel(theme, box.size);
         setPanel(panel);
         switch (theme) {
             case Theme::Dark:
@@ -199,7 +186,7 @@ struct InfoModuleWidget : ModuleWidget {
 
                 addChild(createWidget<ScrewCapDark>(Vec(0, 0)));
 
-                title = createWidgetCentered<InfoWidgetDark>(Vec(box.size.x / 2, 7.5f));
+                title = createWidgetCentered<NullWidgetDark>(Vec(box.size.x / 2, 7.5f));
                 addChild(title);
 
                 topRightScrew = createWidget<ScrewCapDark>(Vec(box.size.x - RACK_GRID_WIDTH, 0));
@@ -219,7 +206,7 @@ struct InfoModuleWidget : ModuleWidget {
                 if (module) addResizeHandles(module);
                 addChild(createWidget<ScrewCapMed>(Vec(0, 0)));
 
-                title = createWidgetCentered<InfoWidgetBright>(Vec(box.size.x / 2, 7.5f));
+                title = createWidgetCentered<NullWidgetBright>(Vec(box.size.x / 2, 7.5f));
                 addChild(title);
 
                 topRightScrew = createWidget<ScrewCapMed>(Vec(box.size.x - RACK_GRID_WIDTH, 0));
@@ -241,14 +228,21 @@ struct InfoModuleWidget : ModuleWidget {
     }
 
 	void step() override {
-        InfoModule* module = dynamic_cast<InfoModule*>(this->module);
+        BlankModule* module = dynamic_cast<BlankModule*>(this->module);
 		if (module) {
 			box.size.x = module->hp_wide * RACK_GRID_WIDTH;
 		}
         panel->box.size = box.size;
+        if (3 * RACK_GRID_WIDTH > box.size.x) {
+            title->box.pos.y = RACK_GRID_WIDTH;
+            logo->box.pos.y = RACK_GRID_HEIGHT - 2 * RACK_GRID_WIDTH;
+        } else {
+            title->box.pos.y = 0;
+            logo->box.pos.y = RACK_GRID_HEIGHT - RACK_GRID_WIDTH;
+        }
 		topRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
-		bottomRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
         title->box.pos.x = box.size.x / 2 - title->box.size.x / 2;
+		bottomRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
         logo->box.pos.x = box.size.x / 2- logo->box.size.x / 2;
 		if (rightHandle) {
             rightHandle->box.pos.x = box.size.x - rightHandle->box.size.x;
@@ -258,7 +252,7 @@ struct InfoModuleWidget : ModuleWidget {
 
     void appendContextMenu(Menu* menu) override {
         if (!this->module) return;
-        InfoModule* module = dynamic_cast<InfoModule*>(this->module);
+        BlankModule* module = dynamic_cast<BlankModule*>(this->module);
         menu->addChild(new MenuSeparator);
         menu->addChild(createSubmenuItem("Theme", "", 
             [=](Menu* menu) {
@@ -282,4 +276,4 @@ struct InfoModuleWidget : ModuleWidget {
     }
 };
 
-Model* modelInfo = createModel<InfoModule, InfoModuleWidget>("pachde-info");
+Model* modelBlank = createModel<BlankModule, BlankModuleWidget>("pachde-blank");

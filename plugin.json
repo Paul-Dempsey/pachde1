@@ -14,9 +14,15 @@
   "changelogUrl": "",
   "modules": [
     {
-      "slug": "pachde-Info",
+      "slug": "pachde-info",
       "name": "Info",
       "description": "Resizable notes",
+      "tags": [ "Visual", "Blank" ]
+    },
+    {
+      "slug": "pachde-blank",
+      "name": "Plain",
+      "description": "A discreet resizable blank panel",
       "tags": [ "Visual", "Blank" ]
     }
   ]

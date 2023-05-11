@@ -46,3 +46,15 @@ struct InfoWidgetBright : rack::SvgWidget {
         setSvg(Svg::load(asset::plugin(pluginInstance, "res/InfoBright.svg")));
 	}
 };
+
+struct NullWidgetDark : rack::SvgWidget {
+    NullWidgetDark() {
+        setSvg(Svg::load(asset::plugin(pluginInstance, "res/NullDark.svg")));
+	}
+};
+
+struct NullWidgetBright : rack::SvgWidget {
+    NullWidgetBright() {
+        setSvg(Svg::load(asset::plugin(pluginInstance, "res/NullBright.svg")));
+	}
+};
