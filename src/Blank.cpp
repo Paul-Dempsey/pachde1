@@ -50,7 +50,7 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
         auto module = dynamic_cast<ResizableModule *>(this->module);
         auto theme = ModuleTheme(module);
         // set default size for module browser
-        box.size = Vec(RACK_GRID_WIDTH * 3, RACK_GRID_HEIGHT);
+        box.size = Vec(RACK_GRID_WIDTH * 4, RACK_GRID_HEIGHT);
         clear();
         panel = new ThemePanel();
         panel->theme = theme;
@@ -84,20 +84,21 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
         default:
             if (module)
                 addResizeHandles(module);
-            addChild(createWidget<ScrewCapMed>(Vec(0, 0)));
+
+            addChild(createWidget<ScrewCap>(Vec(0, 0)));
 
             title = createWidgetCentered<NullWidgetBright>(Vec(box.size.x / 2, 7.5f));
             addChild(title);
 
-            topRightScrew = createWidget<ScrewCapMed>(Vec(box.size.x - RACK_GRID_WIDTH, 0));
+            topRightScrew = createWidget<ScrewCap>(Vec(box.size.x - RACK_GRID_WIDTH, 0));
             addChild(topRightScrew);
 
-            addChild(createWidget<ScrewCapMed>(Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+            addChild(createWidget<ScrewCap>(Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
             logo = createWidgetCentered<LogoOverlayWidget>(Vec(box.size.x / 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f));
             addChild(logo);
 
-            bottomRightScrew = createWidget<ScrewCapMed>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH));
+            bottomRightScrew = createWidget<ScrewCap>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH));
             addChild(bottomRightScrew);
             break;
         }
@@ -145,4 +146,4 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
     }
 };
 
-Model *modelBlank = createModel<ResizableModule, BlankModuleWidget>("pachde-blank");
+Model *modelBlank = createModel<ResizableModule, BlankModuleWidget>("pachde-null");

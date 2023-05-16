@@ -11,24 +11,24 @@
         x1="221" y1="6477"
         x2="232" y2="6477"
         gradientTransform="matrix(0,1,1,0,-6477,-221)">
-        <stop offset="0" style="stop-color:#f2f2f2" />
-        <stop offset="1" style="stop-color:#e5e5e5" />
+        <stop offset="0" style="stop-color:#e0e0e0" />
+        <stop offset="1" style="stop-color:#d0d0d0" />
     </linearGradient>
     <linearGradient id="SVGID_2"
         gradientUnits="userSpaceOnUse"
         x1="221" y1="6477"
         x2="232" y2="6477"
         gradientTransform="matrix(0,1,1,0,-6477,-221)">
-        <stop offset="0" style="stop-color:#f5f5f5" />
-        <stop offset="1" style="stop-color:#d9d9d9" />
+        <stop offset="0" style="stop-color:#e5e5e5" />
+        <stop offset="1" style="stop-color:#c8c8c8" />
     </linearGradient>
     <linearGradient id="SVGID_3"
         gradientUnits="userSpaceOnUse"
         x1="221" y1="6477"
         x2="232" y2="6477"
         gradientTransform="matrix(0,1,1,0,-6477,-221)">
-        <stop offset="0" style="stop-color:#ebebeb" />
-        <stop offset="1" style="stop-color:#ffffff" />
+        <stop offset="0" style="stop-color:#e6e6e6" />
+        <stop offset="1" style="stop-color:#e0e0e0" />
     </linearGradient>
 </defs>
 <g id="cap">

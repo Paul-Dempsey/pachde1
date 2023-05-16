@@ -38,7 +38,7 @@ inline NVGcolor PanelBackground(Theme t)
     switch (t) {
         default:
         case Theme::Unset:
-        case Theme::Light: return GRAY80;
+        case Theme::Light: return GRAY90;
         case Theme::Dark: return GRAY20;
         case Theme::HighContrast: return GRAY05;
     }

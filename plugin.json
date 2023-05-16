@@ -15,14 +15,14 @@
   "modules": [
     {
       "slug": "pachde-info",
-      "name": "Info",
-      "description": "Resizable notes",
+      "name": "info",
+      "description": "Resizable text notes with light and dark themes",
       "tags": [ "Visual", "Blank" ]
     },
     {
-      "slug": "pachde-blank",
-      "name": "Plain",
-      "description": "A discreet resizable blank panel",
+      "slug": "pachde-null",
+      "name": "null",
+      "description": "A discreet resizable blank panel with light and dark themes",
       "tags": [ "Visual", "Blank" ]
     }
   ]

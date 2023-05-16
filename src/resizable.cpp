@@ -30,6 +30,17 @@ void ResizableModule::setWidth(int newWidth) {
 }
 
 
+NVGcolor HandleOverlayForTheme(Theme theme) {
+    switch (theme) {
+        default:
+        case Theme::Unset:
+        case Theme::Light:
+            return Overlay(COLOR_BRAND);
+        case Theme::Dark:
+        case Theme::HighContrast:
+            return Overlay(COLOR_BRAND_HI);
+    }
+}
 
 ModuleResizeHandle::ModuleResizeHandle()
 {
@@ -97,8 +108,9 @@ void ModuleResizeHandle::draw(const DrawArgs &args)
 {
     if (!hovered)
         return;
+    assert(module);
 
-    auto color = Overlay(COLOR_BRAND);
+    auto color = HandleOverlayForTheme(module->theme);
 
     nvgBeginPath(args.vg);
     nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
