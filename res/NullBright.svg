@@ -8,12 +8,12 @@
    xmlns:svg="http://www.w3.org/2000/svg">
 <g aria-label="null" 1>
    <g
-      style="fill:none;stroke:#282828;stroke-width:1">
+      style="fill:none;stroke:#323232;stroke-width:1">
       <path 
       d="M 5.5 13.5 L 9 1.5 Z"/>
    </g>
    <circle
-      style="fill:none;stroke:#323232;stroke-width:1"
+      style="fill:none;stroke:#404040;stroke-width:1"
       cx="7.5" cy="7.5" r="4.5" />
 </g>
 </svg>

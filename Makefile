@@ -3,13 +3,13 @@ RACK_DIR ?= ../..
 FLAGS +=
 
 SOURCES += src/plugin.cpp
+SOURCES += src/components.cpp
+SOURCES += src/resizable.cpp
 SOURCES += src/colors.cpp
 SOURCES += src/Info.cpp
 SOURCES += src/Blank.cpp
 
-DISTRIBUTABLES += res/ScrewCap.svg
-DISTRIBUTABLES += res/ScrewCapMed.svg
-DISTRIBUTABLES += res/ScrewCapDark.svg
+DISTRIBUTABLES += res
 
 # DISTRIBUTABLES += presets
 # DISTRIBUTABLES += selections
