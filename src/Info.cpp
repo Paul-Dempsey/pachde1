@@ -14,7 +14,7 @@ struct InfoModule : ResizableModule {
     std::string text;
 
     InfoModule() {
-        minWidth = 3;
+        minWidth = 4;
     }
 
     json_t* dataToJson() override {
@@ -109,7 +109,7 @@ struct InfoModuleWidget : ModuleWidget, IChangeTheme {
         auto module = dynamic_cast<InfoModule*>(this->module);
         auto theme = ModuleTheme(module);
         // set default size for browser
-        box.size = Vec(RACK_GRID_WIDTH * 5, RACK_GRID_HEIGHT);
+        box.size = Vec(RACK_GRID_WIDTH * 8, RACK_GRID_HEIGHT);
         clear();
         panel = new InfoPanel(theme, box.size);
         setPanel(panel);
