@@ -32,14 +32,14 @@ void ThemeModule::addThemeMenu(Menu *menu, IChangeTheme* change) {
                 [=]() { return getTheme() == Theme::Light; },
                 [=]() {
                     setTheme(Theme::Light);
-                    if (change) { change->onChangeTheme(); }
+                    if (change) { change->setTheme(Theme::Light); }
                 }));
             menu->addChild(createCheckMenuItem(
                 "Dark", "",
                 [=]() { return getTheme() == Theme::Dark; },
                 [=]() {
                     setTheme(Theme::Dark);
-                    if (change) { change->onChangeTheme(); }
+                    if (change) { change->setTheme(Theme::Dark); }
                 }));
         }));
 }
@@ -52,4 +52,42 @@ void ThemePanel::draw(const DrawArgs &args)
     nvgFill(args.vg);
 
     Widget::draw(args);
+}
+
+void SetThemeChildren(Widget * widget, Theme theme, bool top)
+{
+    for (Widget* child : widget->children) {
+        auto change = dynamic_cast<IChangeTheme*>(child);
+        if (change) {
+            change->setTheme(theme);
+        }
+        if (!child->children.empty()) {
+            SetThemeChildren(child, theme, false);
+        }
+    }
+    if (top) {
+        widget::EventContext cDirty;
+        widget::Widget::DirtyEvent eDirty;
+        eDirty.context = &cDirty;
+        widget->onDirty(eDirty);
+    }
+}
+
+void CreateScrews(ModuleWidget *me, Theme theme, ScrewCap::Brightness bright)
+{
+    auto screw = new ScrewCap(theme, bright);
+    screw->box.pos = Vec(RACK_GRID_WIDTH, 0);
+    me->addChild(screw);
+
+    screw = new ScrewCap(theme, bright);
+    screw->box.pos = Vec(me->box.size.x - RACK_GRID_WIDTH * 2, 0);
+    me->addChild(screw);
+
+    screw = new ScrewCap(theme, bright);
+    screw->box.pos = Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
+    me->addChild(screw);
+
+    screw = new ScrewCap(theme, bright);
+    screw->box.pos = Vec(me->box.size.x - RACK_GRID_WIDTH * 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
+    me->addChild(screw);
 }

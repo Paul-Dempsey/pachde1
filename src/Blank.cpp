@@ -3,6 +3,7 @@
 #include "colors.hpp"
 #include "components.hpp"
 #include "resizable.hpp"
+#include "themehelpers.hpp"
 
 struct BlankModuleWidget : ModuleWidget, IChangeTheme
 {
@@ -16,19 +17,7 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
     BlankModuleWidget(ResizableModule *module)
     {
         setModule(module);
-        onChangeTheme();
-    }
-
-    void clear()
-    {
-        panel = NULL;
-        setPanel(NULL);
-        rightHandle = NULL;
-        topRightScrew = NULL;
-        title = NULL;
-        logo = NULL;
-        bottomRightScrew = NULL;
-        clearChildren();
+        setTheme(ModuleTheme(module));
     }
 
     void addResizeHandles(ResizableModule *module)
@@ -45,63 +34,47 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
         addChild(rightHandle);
     }
 
-    void onChangeTheme() override
+    void setTheme(Theme theme) override
     {
         auto module = dynamic_cast<ResizableModule *>(this->module);
-        auto theme = ModuleTheme(module);
         // set default size for module browser
         box.size = Vec(RACK_GRID_WIDTH * 4, RACK_GRID_HEIGHT);
-        clear();
-        panel = new ThemePanel();
-        panel->theme = theme;
-        panel->box.size = box.size;
-        setPanel(panel);
-        switch (theme)
-        {
-        case Theme::Dark:
-        case Theme::HighContrast:
+        if (children.empty()) {
+            panel = new ThemePanel();
+            panel->theme = theme;
+            panel->box.size = box.size;
+            setPanel(panel);
+
             if (module)
                 addResizeHandles(module);
 
-            addChild(createWidget<ScrewCapDark>(Vec(0, 0)));
+            auto screw = new ScrewCap(theme, ScrewCap::Brightness::More);
+            screw->box.pos = Vec(0, 0);
+            addChild(screw);
 
-            title = createWidgetCentered<NullWidgetDark>(Vec(box.size.x / 2, 7.5f));
+            title = createThemeWidgetCentered<NullWidget>(theme, Vec(box.size.x / 2, 7.5f));
             addChild(title);
 
-            topRightScrew = createWidget<ScrewCapDark>(Vec(box.size.x - RACK_GRID_WIDTH, 0));
+            topRightScrew = new ScrewCap(theme, ScrewCap::Brightness::More);
+            topRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, 0);
             addChild(topRightScrew);
 
-            addChild(createWidget<ScrewCapDark>(Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+            screw = new ScrewCap(theme, ScrewCap::Brightness::More);
+            screw->box.pos = Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
+            addChild(screw);
 
-            logo = createWidgetCentered<LogoWidgetBrightOverlay>(Vec(box.size.x / 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f));
+            logo = createThemeWidgetCentered<LogoOverlayWidget>(theme, Vec(box.size.x / 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f));
             addChild(logo);
 
-            bottomRightScrew = createWidget<ScrewCapDark>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH));
+            bottomRightScrew = new ScrewCap(theme, ScrewCap::Brightness::More);
+            bottomRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
             addChild(bottomRightScrew);
-            break;
 
-        case Theme::Light:
-        default:
-            if (module)
-                addResizeHandles(module);
-
-            addChild(createWidget<ScrewCap>(Vec(0, 0)));
-
-            title = createWidgetCentered<NullWidgetBright>(Vec(box.size.x / 2, 7.5f));
-            addChild(title);
-
-            topRightScrew = createWidget<ScrewCap>(Vec(box.size.x - RACK_GRID_WIDTH, 0));
-            addChild(topRightScrew);
-
-            addChild(createWidget<ScrewCap>(Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-
-            logo = createWidgetCentered<LogoOverlayWidget>(Vec(box.size.x / 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f));
-            addChild(logo);
-
-            bottomRightScrew = createWidget<ScrewCap>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH));
-            addChild(bottomRightScrew);
-            break;
+        } else {
+            panel->theme = theme;
+            SetThemeChildren(this, theme);
         }
+
         if (module)
         {
             box.size.x = module->width * RACK_GRID_WIDTH;

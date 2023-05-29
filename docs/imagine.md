@@ -19,7 +19,6 @@ Parameters:
 | size      | radius of reading head, in pixels               |
 | hs        | head shape: circle, square, bar                 |
 | step      | (speed) Distance of a step                      |
-| radius    | radius of circular head                         |
 | vc        | Voltage criteria: Luminance, Saturation, Hue    |
 | gc        | Gate criteria: Luminance, Saturation, Hue       |
 | gt        | Gate threshold                                  |

@@ -7,12 +7,11 @@ This is a work in progress.
 The first VCV Rack plugin for pachde (#d).
 
 All pachde-One modules have light/dark themes. Right click to choose a theme.
-
-All pachde-One modules come with caps on the screws for an elegant look.
+They also come with caps on the screws for an elegant look.
 
 ## null
 
-Status: Complete
+_Status_: Complete
 
 A Minimalist resizable blank panel with light and dark themes.
 
@@ -20,7 +19,7 @@ A Minimalist resizable blank panel with light and dark themes.
 
 ## info
 
-Status: Text editing,and options NYI.
+_Status_: Text editing,and options NYI.
 
 Resizable panel with editable text and light and dark themes.
 
@@ -28,7 +27,7 @@ Resizable panel with editable text and light and dark themes.
 
 ## imagine
 
-Status: Planned
+_Status_: Just started
 
 An eccentric source of v/oct, gates, and triggers using an image. You can think of it as a sequencer or image sampler.
 

@@ -6,8 +6,11 @@ SOURCES += src/plugin.cpp
 SOURCES += src/components.cpp
 SOURCES += src/resizable.cpp
 SOURCES += src/colors.cpp
-SOURCES += src/Info.cpp
+SOURCES += src/text.cpp
+SOURCES += src/dsp.cpp
 SOURCES += src/Blank.cpp
+SOURCES += src/Info.cpp
+SOURCES += src/Imagine.cpp
 
 DISTRIBUTABLES += res
 
