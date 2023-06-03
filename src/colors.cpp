@@ -1,6 +1,8 @@
 #include <rack.hpp>
 #include "colors.hpp"
 
+namespace pachde {
+
 Theme ParseTheme(std::string text) {
     if (text.empty()) return Theme::Unset;
     switch (text[0]) {
@@ -67,4 +69,6 @@ void Line(NVGcontext * vg, float x1, float y1, float x2, float y2, NVGcolor colo
     nvgStrokeColor(vg, color);
     nvgStrokeWidth(vg, strokeWidth);
     nvgStroke(vg);
+}
+
 }

@@ -5,6 +5,8 @@
 #include "colors.hpp"
 #include "themehelpers.hpp"
 
+using namespace pachde;
+
 enum HpSizes
 {
     Default = 5,

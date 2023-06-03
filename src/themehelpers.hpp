@@ -1,6 +1,7 @@
 #pragma once
 #include "components.hpp"
 
+namespace pachde {
 
 template <class TParamWidget>
 TParamWidget* createThemeParam(Theme theme, math::Vec pos, engine::Module* module, int paramId) {
@@ -71,4 +72,4 @@ TWidget* createThemeWidgetCentered(Theme theme, math::Vec pos) {
 	return o;
 }
 
-
+}

@@ -8,6 +8,8 @@ SOURCES += src/resizable.cpp
 SOURCES += src/colors.cpp
 SOURCES += src/text.cpp
 SOURCES += src/dsp.cpp
+SOURCES += src/pic.cpp
+
 SOURCES += src/Blank.cpp
 SOURCES += src/Info.cpp
 SOURCES += src/Imagine.cpp

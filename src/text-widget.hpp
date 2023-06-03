@@ -2,6 +2,7 @@
 #include "plugin.hpp"
 
 // G:\repos\Rack\dep\nanovg\src\nanovg.h
+namespace pachde {
 
 const char * const defaultText = "Add your info here";
 
@@ -17,3 +18,5 @@ struct TextBox: OpaqueWidget {
     void draw(const DrawArgs& args);
 
 };
+
+}

@@ -1,5 +1,7 @@
 #include "text.hpp"
 
+namespace pachde {
+
 std::string format_string(const char *fmt, ...)
 {
     const int len = 256;
@@ -39,4 +41,6 @@ void RightAlignText(NVGcontext *vg, float x, float y, const char * text, const c
     auto width = nvgTextBounds(vg, x, y, text, end, bounds);
     auto descent = correction == BaselineCorrection::Baseline ? bounds[3] - y : 0.;
     nvgText(vg, x - width, y - descent, text, end);
+}
+
 }

@@ -1,5 +1,7 @@
 #include "components.hpp"
 
+namespace pachde {
+
 void ThemeModule::onReset() {
     dirty = true;
 }
@@ -91,3 +93,5 @@ void CreateScrews(ModuleWidget *me, Theme theme, ScrewCap::Brightness bright)
     screw->box.pos = Vec(me->box.size.x - RACK_GRID_WIDTH * 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
     me->addChild(screw);
 }
+
+} // namespace pachde

@@ -1,6 +1,8 @@
 #include "components.hpp"
 #include "resizable.hpp"
 
+namespace pachde {
+
 json_t *ResizableModule::dataToJson() 
 {
     json_t *rootJ = ThemeModule::dataToJson();
@@ -116,4 +118,6 @@ void ModuleResizeHandle::draw(const DrawArgs &args)
     nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
     nvgFillColor(args.vg, color);
     nvgFill(args.vg);
+}
+
 }

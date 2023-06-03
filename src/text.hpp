@@ -1,6 +1,8 @@
 #pragma once
 #include "plugin.hpp"
 
+namespace pachde {
+
 std::string format_string(const char *fmt, ...);
 
 inline std::shared_ptr<window::Font> GetPluginFont(const char * path = NULL)
@@ -27,3 +29,5 @@ enum class BaselineCorrection {
 // or the bottom of text box (BaselineCorrection::Baseline).
 // Text style must have been previously set.
 void RightAlignText(NVGcontext *vg, float x, float y, const char * text, const char * end, BaselineCorrection correction = BaselineCorrection::None);
+
+} // namespace pachde

@@ -1,6 +1,8 @@
 #pragma once
 #include <rack.hpp>
 
+namespace pachde {
+
 #define BLACK  nvgRGB(0,0,0)
 #define GRAY05 nvgRGB(0x0d,0x0d,0x0d)  // #0d0d0d
 #define GRAY10 nvgRGB(0x1a,0x1a,0x1a)  // #1a1a1a
@@ -28,10 +30,10 @@
 inline NVGcolor Overlay(NVGcolor color) { return nvgTransRGBAf(color, 0.2f); }
 
 enum class Theme {
-    Unset,
-    Light,
-    Dark,
-    HighContrast
+    Unset = 0,
+    Light = 1,
+    Dark = 2,
+    HighContrast = 3
 };
 inline bool IsDarker(Theme theme) { return theme > Theme::Light; }
 inline bool IsLighter(Theme theme) { return theme <= Theme::Light; }
@@ -77,6 +79,25 @@ inline NVGcolor OutputBackground(Theme theme) {
     }
 }
 
+//https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
+
+// inline float sRGBToLinear(float c) {
+//     //rack::simd::pow
+//     return c <= 0.04045 ? c / 12.92 : std::pow(((c + 0.055f)/1.055f), 2.4f);
+// }
+
+// inline float Luminance (NVGcolor color) {
+//     return 0.2126f * sRGBToLinear(color.r) + 0.7152f * sRGBToLinear(color.g) + 0.0722f * sRGBToLinear(color.b);
+// }
+
+// stb linearizes on load so we don';'t have to gamma/correct
+inline float LuminanceLinear(NVGcolor color) {
+    return 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
+}
+inline float Saturation(NVGcolor color) {
+    return std::max(std::max(color.r, color.g), color.b) - std::min(std::min(color.r, color.g), color.b);
+}
+
 std::string ToString(Theme theme);
 Theme ParseTheme(std::string text);
 Theme ThemeFromJson(json_t * root);
@@ -86,3 +107,5 @@ void RoundRect(NVGcontext *vg, float x, float y, float width, float height, NVGc
 void BoxRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float strokeWidth = 1.0);
 void RoundBoxRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float radius, float strokeWidth = 1.0);
 void Line(NVGcontext * vg, float x1, float y1, float x2, float y2, NVGcolor color, float strokeWidth = 1.0);
+
+}

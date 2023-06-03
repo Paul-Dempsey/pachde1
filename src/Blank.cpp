@@ -5,6 +5,8 @@
 #include "resizable.hpp"
 #include "themehelpers.hpp"
 
+using namespace pachde;
+
 struct BlankModuleWidget : ModuleWidget, IChangeTheme
 {
     Widget *rightHandle = NULL;
@@ -12,7 +14,7 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
     Widget *title = NULL;
     Widget *logo = NULL;
     Widget *bottomRightScrew = NULL;
-    ThemePanel *panel = NULL;
+    pachde::ThemePanel *panel = NULL;
 
     BlankModuleWidget(ResizableModule *module)
     {

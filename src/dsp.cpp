@@ -1,6 +1,8 @@
 #include <rack.hpp>
 #include "dsp.hpp"
 
+namespace pachde {
+
 void SlewLimiter::configure(float sampleRate, float milliseconds, float range) {
 	assert(sampleRate > 0.0f);
 	assert(milliseconds >= 0.0f);
@@ -12,4 +14,6 @@ float SlewLimiter::next(float sample, float last) {
 	return sample > last
         ? std::min(last + _delta, sample)
         : std::max(last - _delta, sample);
+}
+
 }

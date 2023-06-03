@@ -1,4 +1,5 @@
 #pragma once
+namespace pachde {
 
 struct SlewLimiter {
 	float _delta;
@@ -15,3 +16,6 @@ struct SlewLimiter {
 	}
 	float next(float sample, float last);
 };
+
+
+}

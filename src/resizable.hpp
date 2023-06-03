@@ -1,6 +1,8 @@
 #pragma once
 #include <common.hpp>
 
+namespace pachde {
+
 inline float NearestHp(float x, float minHp = 3) {
     return std::round(std::fmax(x, minHp) / RACK_GRID_WIDTH) * RACK_GRID_WIDTH;
 }
@@ -34,3 +36,5 @@ struct ModuleResizeHandle : OpaqueWidget
 
     void draw(const DrawArgs &args) override;
 };
+
+} // namespace pachde
