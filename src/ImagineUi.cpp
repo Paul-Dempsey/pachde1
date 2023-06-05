@@ -1,5 +1,6 @@
 #include "Imagine.hpp"
 #include "pic_widget.hpp"
+#include "themehelpers.hpp"
 
 ImagineUi::ImagineUi(Imagine *module)
 {
