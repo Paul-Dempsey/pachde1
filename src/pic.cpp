@@ -15,15 +15,14 @@ bool Pic::open(std::string filename) {
     }
 }
 
-unsigned char * Pic::pixel_offset(int x, int y) {
+unsigned char * Pic::pixel_address(int x, int y) const {
     if (nullptr == _data || x >= _width || y >= _height) return nullptr;
-    auto stride = _width * 4; //_components;
-    auto row = _data + stride * y;
+    auto row = _data + stride() * y;
     return row + x * 4; //_components;
 }
 
-NVGcolor Pic::pixel(int x, int y) {
-    auto pixel = pixel_offset(x, y);
+NVGcolor Pic::pixel(int x, int y) const {
+    auto pixel = pixel_address(x, y);
     if (pixel) {
         auto value = *pixel;
         return nvgRGBA(value, pixel[1], pixel[2], pixel[3]);

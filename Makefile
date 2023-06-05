@@ -9,10 +9,19 @@ SOURCES += src/colors.cpp
 SOURCES += src/text.cpp
 SOURCES += src/dsp.cpp
 SOURCES += src/pic.cpp
+SOURCES += src/pic_widget.cpp
+SOURCES += src/traversal.cpp
 
+# Blank module
 SOURCES += src/Blank.cpp
+
+# Info module
 SOURCES += src/Info.cpp
+
+# Imagine module
 SOURCES += src/Imagine.cpp
+SOURCES += src/ImaginePanel.cpp
+SOURCES += src/ImagineUi.cpp
 
 DISTRIBUTABLES += res
 

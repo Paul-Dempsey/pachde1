@@ -251,6 +251,34 @@ struct PicButton: PushButtonBase, IChangeTheme {
     }
 };
 
+struct PLayPauseButton: PushButtonBase, IChangeTheme {
+    Theme theme = Theme::Unset;
+
+    PLayPauseButton(Theme t) {
+        noShadow();
+        setTheme(t);
+    }
+
+    void setTheme(Theme t) override {
+        assert(Theme::Unset != t);
+        if (t != theme || frames.empty()) {
+            theme = t;
+            bool light = IsLighter(t);
+            frames.clear();
+            addFrame(Svg::load(asset::plugin(pluginInstance, light
+                ? "res/PLayPauseButton_Up.svg"
+                : "res/PLayPauseButtonDark_Up.svg")));
+            addFrame(Svg::load(asset::plugin(pluginInstance, light
+                ? "res/PLayPauseButton_Down.svg"
+                : "res/PLayPauseButtonDark_Down.svg")));
+            if (fb) {
+                fb->setDirty(true);
+            }
+        }
+    }
+};
+
+
 void SetThemeChildren(Widget * widget, Theme theme, bool top = true);
 
 struct ThemeModule : Module
@@ -292,14 +320,19 @@ struct ControlRateTrigger
 {
     float rate_ms;
     int steps;
-    int trigger;
+    int trigger = -1;
 
-    ControlRateTrigger(float rate = 2.5f) : rate_ms(rate)
+    ControlRateTrigger(float rate = 2.5f)
     {
-        assert(rate > 0.0);
-        onSampleRateChanged();
-        reset();
+        configure(rate);
         assert(trigger >= 1);
+        reset();
+    }
+
+    void configure(float rate) {
+        assert(rate >= 0.0);
+        rate_ms = rate;
+        onSampleRateChanged();
     }
 
     // after reset, fires on next step
@@ -307,12 +340,14 @@ struct ControlRateTrigger
 
     void onSampleRateChanged()
     {
-        // modulate every ~2.5ms regardless of engine sample rate.
         trigger = APP->engine->getSampleRate() * (rate_ms / 1000.0f);
     }
 
     bool process()
     {
+        // rate of 0 means sample rate
+        if (rate_ms <= 0.0) return true;
+
         ++steps;
         if (steps >= trigger)
         {
@@ -322,5 +357,6 @@ struct ControlRateTrigger
         return false;
     }
 };
+
 
 } // namespace pachde

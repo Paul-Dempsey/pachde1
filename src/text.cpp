@@ -31,8 +31,10 @@ void CenterText(NVGcontext *vg, float x, float y, const char * text, const char 
     // nvgText(vg, x - width / 2, y - descent + box_height/2, text, end);
 
     // nvg offers a variety of text alignment options
+    nvgSave(vg);
     nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
     nvgText(vg, x, y, text, end);
+    nvgRestore(vg);
 }
 
 void RightAlignText(NVGcontext *vg, float x, float y, const char * text, const char * end, BaselineCorrection correction)
