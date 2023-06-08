@@ -5,9 +5,14 @@ namespace pachde {
 
 std::string format_string(const char *fmt, ...);
 
-inline std::shared_ptr<window::Font> GetPluginFont(const char * path = NULL)
+inline std::shared_ptr<window::Font> GetPluginFontSemiBold(const char * path = NULL)
 {
     return APP->window->loadFont(asset::plugin(pluginInstance, path ? path : "res/fonts/HankenGrotesk-SemiBold.ttf"));
+}
+
+inline std::shared_ptr<window::Font> GetPluginFontRegular(const char * path = NULL)
+{
+    return APP->window->loadFont(asset::plugin(pluginInstance, path ? path : "res/fonts/HankenGrotesk-Regular.ttf"));
 }
 
 inline bool FontOk(std::shared_ptr<window::Font> font) {

@@ -28,23 +28,15 @@ enum VRange {
     BIPOLAR
 };
 
-struct PixelSample {
-    int x;
-    int y;
-    NVGcolor color;
-
-    PixelSample() : x(-1), y(-1), color(nvgRGBA(0,0,0, 0)) {}
-    PixelSample(int a, int b, NVGcolor col) : x(a), y(b), color(col) {}
-};
-
 struct Imagine : ThemeModule
 {
     enum ParamIds {
         SLEW_PARAM,
-        VOCT_RANGE_PARAM,
+        VOLTAGE_RANGE_PARAM,
         RUN_PARAM,
         PATH_PARAM,
-        //SPEED_PARAM,
+        SPEED_PARAM,
+        SPEED_MULT_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
@@ -54,24 +46,19 @@ struct Imagine : ThemeModule
     enum OutputIds {
         X_OUT,
         Y_OUT,
-        VOCT_OUT,
+        VOLTAGE_OUT,
         NUM_OUTPUTS
     };
 
     Imagine();
 
-    bool running = false;
-    int scan_x;
-    int scan_y;
-    Traversal traversal_id = Traversal::SCANLINE;
+    std::atomic<bool> running;
     ITraversal * traversal = nullptr;
-    ControlRateTrigger pix_rate;
+    Traversal traversal_id = Traversal::SCANLINE;
 
     VRange voct_range = VRange::BIPOLAR;
     SlewLimiter x_slew, y_slew, voct_slew;
     ControlRateTrigger control_rate;
-
-
 
     bool bright_image = false;
     Pic image;
@@ -87,11 +74,19 @@ struct Imagine : ThemeModule
     }
     bool isPlaying() { return running; }
 
+    float getSpeed() {
+        return getParam(SPEED_PARAM).getValue() * getParam(SPEED_MULT_PARAM).getValue();
+    }
+    Traversal getTraversalId() {
+        auto pp = getParamQuantity(PATH_PARAM);
+        return static_cast<Traversal>(static_cast<int>(std::floor(pp->getValue() - pp->getMinValue())));
+    }
     bool loadImageDialog();
 
     json_t *dataToJson() override;
     void updateParams();
     void dataFromJson(json_t *root) override;
+    void processBypass(const ProcessArgs& args) override;
 	void process(const ProcessArgs& args) override;
     void onSampleRateChange() override;
 };

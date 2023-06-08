@@ -53,17 +53,17 @@ inline NVGcolor PanelBackground(Theme theme)
 inline NVGcolor ThemeTextColor(Theme theme) {
         switch (theme)
         {
+        default:
+        case Theme::Unset:
+        case Theme::Light:
+            return GRAY20;
+            break;
+
         case Theme::Dark:
             return GRAY85;
 
         case Theme::HighContrast:
             return GRAY95;
-            break;
-
-        default:
-        case Theme::Light:
-        case Theme::Unset:
-            return GRAY25;
             break;
         };
 }

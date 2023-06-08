@@ -41,8 +41,7 @@ void PicWidget::updateClient()
     float px = (mousepos.x - left)/scale;
     float py = (mousepos.y - top)/scale;
     if (px >= 0.0f && px < pwidth && py >= 0.0f && py < pheight) {
-        module->scan_x = px;
-        module->scan_y = py;
+        module->traversal->set_position(Vec(px, py));
     }
 }
 
@@ -53,8 +52,29 @@ void PicWidget::drawPic(const DrawArgs &args)
     if (pic && pic->ok()) {
         auto width = pic->width();
         auto height = pic->height();
-        int handle = nvgCreateImageRGBA(vg, width, height, 0, pic->data());
-        if (handle) {
+        auto icookie = reinterpret_cast<intptr_t>(pic->data());
+        auto vcookie = reinterpret_cast<intptr_t>(args.vg);
+        if (!image_cookie && !image_handle && !vg_cookie) {
+            image_handle = nvgCreateImageRGBA(vg, width, height, 0, pic->data());
+            image_cookie = icookie;
+            vg_cookie = vcookie;
+        } else {
+            if (icookie != image_cookie || vcookie != vg_cookie) {
+                if (image_handle) {
+                    nvgDeleteImage(vg, image_handle);
+                    image_handle = 0;
+                    image_handle = nvgCreateImageRGBA(vg, width, height, 0, pic->data());
+                }
+                if (image_handle) {
+                    image_cookie = icookie;
+                    vg_cookie = vcookie;
+                } else {
+                    image_cookie = 0;
+                    vg_cookie = 0;
+                }
+            }
+        }
+        if (image_handle) {
             float scale = std::min(box.size.x / width, box.size.y / height);
             float x = (box.size.x/scale - width)/2.0f;
             float y = (box.size.y/scale - height)/2.0f;
@@ -62,7 +82,7 @@ void PicWidget::drawPic(const DrawArgs &args)
             nvgSave(vg);
             nvgBeginPath(vg);
             nvgScale(vg, scale, scale);
-            NVGpaint imgPaint = nvgImagePattern(vg, x, y, width, height, 0, handle, 1.0f);
+            NVGpaint imgPaint = nvgImagePattern(vg, x, y, width, height, 0, image_handle, 1.0f);
             nvgRect(vg, x, y, width, height);
             nvgFillPaint(vg, imgPaint);
             nvgFill(vg);
@@ -71,7 +91,7 @@ void PicWidget::drawPic(const DrawArgs &args)
             return;
         }
         FillRect(vg, 0, 0, box.size.x, box.size.y, COLOR_BRAND);
-        auto font = GetPluginFont();
+        auto font = GetPluginFontSemiBold();
         if (FontOk(font))
         {
             auto text = !pic || (pic && pic->reason().empty()) ? "[no image]" : pic->reason().c_str();
@@ -83,6 +103,7 @@ void PicWidget::drawPic(const DrawArgs &args)
 
 void PicWidget::drawSample(const DrawArgs &args) {
     if (!module) return;
+    if (module->isBypassed()) return;
     auto pic = module->getImage();
     if (!pic || !pic->ok()) return;
 
@@ -93,11 +114,10 @@ void PicWidget::drawSample(const DrawArgs &args) {
     float scale = std::min(box.size.x / width, box.size.y / height);
     float x = (box.size.x/scale - width)/2.0f;
     float y = (box.size.y/scale - height)/2.0f;
-    int sx = module->scan_x;
-    int sy = module->scan_y;
-    auto color = module->image.pixel(sx, sy);
-    float cx = x*scale + sx*scale;
-    float cy = y*scale + sy*scale;
+    auto pos = module->traversal->get_position();
+    auto color = module->image.pixel(pos.x, pos.y);
+    float cx = x*scale + pos.x*scale;
+    float cy = y*scale + pos.y*scale;
 
     // halo
     if (rack::settings::rackBrightness < 0.98f && rack::settings::haloBrightness > 0.0f) {

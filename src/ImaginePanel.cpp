@@ -27,26 +27,39 @@ void ImaginePanel::draw(const DrawArgs &args)
     RoundRect(vg, 5.0f, 299.0f, 290.0f, 65.0f, OutputBackground(theme), 6.0f);
 
     // grid
-    auto gridline = IsLighter(theme) ? GRAY25 : nvgTransRGBAf(COLOR_GREEN_HI, 0.65);
-    for (float y = ONE_HP; y < box.size.y; y += ONE_HP) {
-        Line(vg, 5.0f, y, box.size.x - 5.0f, y, gridline, 0.35f);
-    }
+    // auto gridline = IsLighter(theme) ? GRAY25 : nvgTransRGBAf(COLOR_GREEN_HI, 0.65);
+    // for (float y = ONE_HP; y < box.size.y; y += ONE_HP) {
+    //     Line(vg, 5.0f, y, box.size.x - 5.0f, y, gridline, 0.35f);
+    // }
 
-    auto font = GetPluginFont();
+    auto font = GetPluginFontSemiBold();
     if (FontOk(font))
     {
         // title
         SetTextStyle(vg, font, textColor);
         CenterText(vg, PANEL_CENTER, ONE_HP / 2.0f, "imagine", nullptr);
 
-        nvgTextAlign(vg, NVG_ALIGN_MIDDLE);
-        nvgText(vg, ONE_HP, 188.0f, TraversalName(module->traversal_id).c_str(), nullptr);
+        CenterText(vg, 20.0f, 235.0f, "speed", nullptr);
+        if (module) {
+            auto p = module->getParamQuantity(Imagine::SPEED_MULT_PARAM);
+            CenterText(vg, 50.0f, 235.0f, p->getDisplayValueString().c_str(), nullptr);
+        } else {
+            CenterText(vg, 50.0f, 235.0f, "1x", nullptr);
+        }
 
         // outputs
         SetTextStyle(vg, font, GRAY85, 16);
-        CenterText(vg, 24.5f, 336.0f, "x", NULL);
-        CenterText(vg, 52.5f, 336.0f, "y", NULL);
-        CenterText(vg, 82.5f, 336.0f, "slew", NULL);
+        CenterText(vg, 24.5f, 336.0f, "x", nullptr);
+        CenterText(vg, 52.5f, 336.0f, "y", nullptr);
+        CenterText(vg, 82.5f, 336.0f, "slew", nullptr);
+        CenterText(vg, 110.0f, 336.0f, "V", nullptr);
+    }
+    font = GetPluginFontRegular();
+    if (FontOk(font))
+    {
+        SetTextStyle(vg, font, textColor, 14.0f);
+        nvgTextAlign(vg, NVG_ALIGN_MIDDLE);
+        nvgText(vg, 100.0f, 215.0f, TraversalName(module  ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
     }
     Widget::draw(args);
     // nvgResetScissor(args.vg);

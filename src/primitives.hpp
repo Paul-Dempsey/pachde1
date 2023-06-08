@@ -48,6 +48,11 @@ struct Point {
 	int area() const {
 		return x * y;
 	}
+	float distance(Point b) {
+		float dx = std::abs(b.x - x);
+		float dy = std::abs(b.y - y);
+		return ::rack::simd::sqrt(dx * dx + dy * dy);
+	}
 
 	/** Swaps the coordinates.
 	Equivalent to a reflection across the `y = x` line.

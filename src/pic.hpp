@@ -21,27 +21,14 @@ class Pic {
     int components() const { return _components; }
     bool ok() const { return nullptr != _data; }
     unsigned char * data() const { return _data; }
-    unsigned char * end() const { 
-        assert(_data);
-        return _data + 4 * _height * _width;
-    }
-    Point position(unsigned char * location) const {
-        assert(_data);
-        assert(location);
-        assert(location < end());
-        intptr_t offset = location - _data;
-        assert(offset >= 0);
-        int y = offset / stride();
-        int x = offset % stride();
-
-        assert(pixel_address(x,y) == location);
-        return Point(x,y);
-    }
+    unsigned char * end() const;
+    Point position(unsigned char * location) const;
     unsigned char * pixel_address(int x, int y) const;
-    NVGcolor pixel(int x, int y) const;
-
     unsigned char * pixel_address(const Point& point) const { return pixel_address(point.x, point.y); }
+    NVGcolor pixel(int x, int y) const;
     NVGcolor pixel(const Point& point) const { return pixel(point.x, point.y); }
+    NVGcolor pixel(float x, float y) const;
+    NVGcolor pixel(rack::Vec pos) const { return pixel(pos.x, pos.y); }
 
     std::string name() const { return _name; }
     std::string reason() const { return _reason; }

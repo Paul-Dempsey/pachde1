@@ -6,32 +6,28 @@
 #include "Imagine.hpp"
 
 Imagine::Imagine() {
-    pix_rate.configure(10.0f);
-    scan_x = 0;
-    scan_y = 0;
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, 0);
     configParam(SLEW_PARAM, 0.0f, 1.0f, 0.5f, "Slew", "%", 0.0f, 100.0f);
-    configSwitch(VOCT_RANGE_PARAM, 0.0f, 1.0f, 0.0f, "V/Oct Polarity", { "Bipolar -5v — +5v", "Unipolar 0v — +10v" });
+    configSwitch(VOLTAGE_RANGE_PARAM, 0.0f, 1.0f, 0.0f, "Voltage Polarity", { "Bipolar -5v — +5v", "Unipolar 0v — +10v" });
     configSwitch(RUN_PARAM, 0.0f, 1.0f, 0.0f, "Play", { "Paused", "Playing" });
-    //configParam(SPEED_PARAM, 0.0f, 100.0f, 15.0f, "Speed", "%");
+    configParam(SPEED_PARAM, 0.0f, 100.0f, 10.0f, "Speed");
+    configSwitch(SPEED_MULT_PARAM, 1.0f, 10.0f, 1.0f, "Speed Multiplier", {
+        "1x", "2x", "3x", "4x", "5x", "6x", "7x", "8x", "9x", "10x"
+    });
     //configInput(SPEED_INPUT, "Speed");
     configSwitch(PATH_PARAM, 0.0f, static_cast<int>(Traversal::LAST_TRAVERSAL), 0.0f, "Path", 
     {
         "Scanline",
-        "TBLR",
-        "Diagonal",
     });
     configOutput(X_OUT, "x");
     configOutput(Y_OUT, "y");
-    configOutput(VOCT_OUT, "V/Oct");
+    configOutput(VOLTAGE_OUT, "Voltage");
 
     updateParams();
 }
 
 bool Imagine::loadImageDialog()
 {
-    scan_x = 0;
-    scan_y = 0;
     osdialog_filters* filters = osdialog_filters_parse("Images (.png .jpg .gif):png,jpg,jpeg,gif;Any (*):*");
     DEFER({osdialog_filters_free(filters);});
 
@@ -42,12 +38,13 @@ bool Imagine::loadImageDialog()
         image.close();
         return false;
     }
+    auto run = setPlaying(false);
     std::string path = pathC;
     std::free(pathC);
     DEBUG("Selected image (%s)", path.c_str());
     pic_folder = system::getDirectory(path);
-    auto run = setPlaying(false);
     if (image.open(path)) {
+        traversal->configure_image(Vec(image.width(), image.height()));
         setPlaying(run);
         return true;
     } else {
@@ -59,7 +56,7 @@ bool Imagine::loadImageDialog()
 
 void Imagine::onSampleRateChange() {
     control_rate.onSampleRateChanged();
-    pix_rate.onSampleRateChanged();
+    traversal->configure_rate(getSpeed(), APP->engine->getSampleRate());
     updateParams();
 }
 
@@ -90,7 +87,7 @@ void Imagine::dataFromJson(json_t *root)
     if (j) {
         std::string path = json_string_value(j);
         if (image.open(path)) {
-
+            traversal->configure_image(Vec(image.width(), image.height()));
         } else {
             DEBUG("Image load failed: %s", image.reason().c_str());
         }
@@ -114,34 +111,46 @@ void Imagine::updateParams()
     running = getParam(RUN_PARAM).getValue() > 0.5f;
 
     float slew = getParam(SLEW_PARAM).getValue();
-    float sampleRate = APP->engine->getSampleRate();
-    x_slew.configure(sampleRate, slew, .01f);
-    y_slew.configure(sampleRate, slew, .01f);
-    voct_slew.configure(sampleRate, slew, .01f);
+    float sample_rate = APP->engine->getSampleRate();
+    x_slew.configure(sample_rate, slew, .01f);
+    y_slew.configure(sample_rate, slew, .01f);
+    voct_slew.configure(sample_rate, slew, .01f);
 
-    voct_range = (getParam(VOCT_RANGE_PARAM).getValue() < 0.5)
+    voct_range = (getParam(VOLTAGE_RANGE_PARAM).getValue() < 0.5)
         ? VRange::BIPOLAR
         : VRange::UNIPOLAR;
 
-    Traversal path = static_cast<Traversal>(std::floor(getParam(PATH_PARAM).getValue()));
-    if (path != traversal_id || !traversal) {
-        traversal = MakeTraversal(path);
-        traversal_id = path;
+    Traversal id = getTraversalId();
+    if (id != traversal_id || !traversal) {
+        if (traversal) {
+            delete traversal;
+            traversal = nullptr;
+        }
+        traversal = MakeTraversal(id);
+        traversal_id = id;
+        traversal->configure_image(Vec(image.width(), image.height()));
     }
+    traversal->configure_rate(getSpeed(), sample_rate);
+}
 
-    // auto pmax = getParamQuantity(SPEED_PARAM)->getMaxValue();
-    // if (getInput(SPEED_INPUT).isConnected()) {
-    //     pix_rate.configure(std::max(0.0f, pmax - getInput(SPEED_INPUT).getVoltage() * pmax/10.0f));
-    // } else {
-    //     pix_rate.configure(std::max(0.0f, pmax - getParam(SPEED_PARAM).getValue()));
-    // }
+void Imagine::processBypass(const ProcessArgs& args)
+{
+    outputs[VOLTAGE_OUT].setVoltage(0.0f);
+    outputs[X_OUT].setVoltage(0.0f);
+    outputs[Y_OUT].setVoltage(0.0f);
 }
 
 void Imagine::process(const ProcessArgs& args)
 {
+    assert(!isBypassed());
+    
     if (control_rate.process()) {
         updateParams();
     }
+    if (running) {
+        traversal->process();
+    }
+    Vec pos = traversal->get_position();
 
     int width, height;
     if (image.ok()) {
@@ -152,33 +161,27 @@ void Imagine::process(const ProcessArgs& args)
         height = PANEL_IMAGE_HEIGHT;
     }
 
-    auto x = scan_x;
-    auto y = scan_y;
     if (outputs[X_OUT].isConnected()) {
-        auto v = (float)x / width * 10.0f;
+        auto v = pos.x / width * 10.0f;
         outputs[X_OUT].setVoltage(x_slew.next(v));
     }
 
     if (outputs[Y_OUT].isConnected()) {
-        auto v = (float)y / height * 10.0f;
+        auto v = pos.y / height * 10.0f;
         outputs[Y_OUT].setVoltage(y_slew.next(v));
     }
 
-    if (outputs[VOCT_OUT].isConnected()) {
-        auto pix = image.pixel(x, y);
-        auto lum = LuminanceLinear(pix) * 10.0f;
-        if (voct_range == VRange::BIPOLAR) {
-            lum -= 5.0f;
-        } 
-        outputs[VOCT_OUT].setVoltage(voct_slew.next(lum));
-    }
-
-    // TODO: triggers and gates
-    // TODO: progress at scaled param rate, rather than sample rate and interpolate
-    if (running && pix_rate.process()) {
-        auto next = traversal->next(image, scan_x, scan_y, 1);
-        scan_x = next.x;
-        scan_y = next.y;
+    if (outputs[VOLTAGE_OUT].isConnected()) {
+        if (image.ok()) {
+            auto pix = image.pixel(pos.x, pos.y);
+            auto lum = LuminanceLinear(pix) * 10.0f;
+            if (voct_range == VRange::BIPOLAR) {
+                lum -= 5.0f;
+            }
+            outputs[VOLTAGE_OUT].setVoltage(voct_slew.next(lum));
+        } else {
+            outputs[VOLTAGE_OUT].setVoltage(0.0f);
+        }
     }
 }
 

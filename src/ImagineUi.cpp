@@ -22,14 +22,15 @@ void ImagineUi::makeUi(Imagine *module, Theme theme)
     addOutput(createThemeOutput<BluePort>(theme, Vec(40.0f, 305.0f), module, Imagine::Y_OUT));
 
     addParam(createThemeParamCentered<SmallKnob>(theme, Vec(82.5f, 315.0f), module, Imagine::SLEW_PARAM));
-    addOutput(createThemeOutput<BluePort>(theme, Vec(100.0f, 305.0f), module, Imagine::VOCT_OUT));
+    addOutput(createThemeOutput<BluePort>(theme, Vec(100.0f, 305.0f), module, Imagine::VOLTAGE_OUT));
 
-    addParam(createParam<CKSS>(Vec(125.0f, 305.0f), module, Imagine::VOCT_RANGE_PARAM));
+    addParam(createParam<CKSS>(Vec(125.0f, 305.0f), module, Imagine::VOLTAGE_RANGE_PARAM));
 
     auto image = new PicWidget(module);
     image->box.pos = Vec(6, 17);
     image->box.size = Vec(288, 162);
     addChild(image);
+
 
     auto run = createThemeParamCentered<PLayPauseButton>(theme, Vec (150.0f, 190.0f), module, Imagine::RUN_PARAM);
     run->momentary = false;
@@ -39,8 +40,18 @@ void ImagineUi::makeUi(Imagine *module, Theme theme)
         });
     }
     addParam(run);
-    // addInput(createThemeInputCentered<BluePort>(theme, Vec(ONE_HP, 205.0f), module, Imagine::SPEED_INPUT));
-    // addParam(createThemeParamCentered<SmallKnob>(theme, Vec(40.0f, 205.0f), module, Imagine::SPEED_PARAM));
+
+    addParam(createThemeParamCentered<SmallKnob>(theme, Vec(20.0f, 215.0f), module, Imagine::SPEED_PARAM));
+    auto p =createThemeParamCentered<SmallKnob>(theme, Vec(50.0f, 215.0f), module, Imagine::SPEED_MULT_PARAM);
+    p->snap = true;
+    addParam(p);
+
+    auto pathKnob = createThemeParamCentered<SmallKnob>(theme, Vec(80.0f, 215.0f), module, Imagine::PATH_PARAM);
+    pathKnob->minAngle = -1;
+    pathKnob->maxAngle = 1;
+    pathKnob->snap = true;
+   //pathKnob->forceLinear = true;
+    addParam(pathKnob);
 
     auto picButton = new PicButton(theme);
     picButton->center(Vec (285.0f, 188.0f));
