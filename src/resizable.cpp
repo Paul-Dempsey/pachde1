@@ -5,21 +5,21 @@ namespace pachde {
 
 json_t *ResizableModule::dataToJson() 
 {
-    json_t *rootJ = ThemeModule::dataToJson();
+    auto root = ThemeModule::dataToJson();
 
-    json_object_set_new(rootJ, "width", json_integer(width));
+    json_object_set_new(root, "width", json_integer(width));
 
-    return rootJ;
+    return root;
 }
 
-void ResizableModule::dataFromJson(json_t *rootJ)
+void ResizableModule::dataFromJson(json_t *root)
 {
-    ThemeModule::dataFromJson(rootJ);
+    ThemeModule::dataFromJson(root);
 
-    json_t *widthJ = json_object_get(rootJ, "width");
-    if (widthJ)
+    auto j = json_object_get(root, "width");
+    if (j)
     {
-        width = json_integer_value(widthJ);
+        width = json_integer_value(j);
     }
 
 }

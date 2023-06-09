@@ -7,16 +7,32 @@
 
 using namespace pachde;
 
+struct BlankModule : ResizableModule {
+    bool show_screws = true;
+
+    json_t * dataToJson() override {
+        json_t *root = ResizableModule::dataToJson();
+        json_object_set_new(root, "screws", json_boolean(show_screws));
+        return root;
+    }
+    void dataFromJson(json_t *root) override {
+        ResizableModule::dataFromJson(root);
+
+        auto j = json_object_get(root, "screws");
+        show_screws = j ? json_is_true(j) : true;
+    }
+};
+
 struct BlankModuleWidget : ModuleWidget, IChangeTheme
 {
-    Widget *rightHandle = NULL;
-    Widget *topRightScrew = NULL;
-    Widget *title = NULL;
-    Widget *logo = NULL;
-    Widget *bottomRightScrew = NULL;
-    pachde::ThemePanel *panel = NULL;
+    Widget *rightHandle = nullptr;
+    Widget *title = nullptr;
+    Widget *logo = nullptr;
+    Widget *topRightScrew = nullptr;
+    Widget *bottomRightScrew = nullptr;
+    ThemePanel *panel = nullptr;
 
-    BlankModuleWidget(ResizableModule *module)
+    BlankModuleWidget(BlankModule *module)
     {
         setModule(module);
         setTheme(ModuleTheme(module));
@@ -36,9 +52,46 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
         addChild(rightHandle);
     }
 
+    void remove_screws() {
+        if (children.empty()) return;
+
+        std::vector<Widget*> remove;
+        for (Widget * child: children) {
+            auto screw = dynamic_cast<ScrewCap*>(child);
+            if (screw) {
+                remove.push_back(child);
+            }
+        }
+        for (Widget * child: remove) {
+            removeChild(child);
+            delete child;
+        }
+    }
+
+    void add_screws() {
+        auto theme = ModuleTheme(dynamic_cast<ThemeModule*>(module));
+
+        auto screw = new ScrewCap(theme, ScrewCap::Brightness::More);
+        screw->box.pos = Vec(0, 0);
+        addChild(screw);
+
+        topRightScrew = new ScrewCap(theme, ScrewCap::Brightness::More);
+        topRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, 0);
+        addChild(topRightScrew);
+
+        screw = new ScrewCap(theme, ScrewCap::Brightness::More);
+        screw->box.pos = Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
+        addChild(screw);
+
+        bottomRightScrew = new ScrewCap(theme, ScrewCap::Brightness::More);
+        bottomRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
+        addChild(bottomRightScrew);
+
+    }
+
     void setTheme(Theme theme) override
     {
-        auto module = dynamic_cast<ResizableModule *>(this->module);
+        auto module = dynamic_cast<BlankModule *>(this->module);
         // set default size for module browser
         box.size = Vec(RACK_GRID_WIDTH * 4, RACK_GRID_HEIGHT);
         if (children.empty()) {
@@ -47,31 +100,22 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
             panel->box.size = box.size;
             setPanel(panel);
 
-            if (module)
-                addResizeHandles(module);
+            bool screws = true;
 
-            auto screw = new ScrewCap(theme, ScrewCap::Brightness::More);
-            screw->box.pos = Vec(0, 0);
-            addChild(screw);
+            if (module) {
+                addResizeHandles(module);
+                screws = module->show_screws;
+            }
+
+            if (screws) {
+                 add_screws();
+            }
 
             title = createThemeWidgetCentered<NullWidget>(theme, Vec(box.size.x / 2, 7.5f));
             addChild(title);
 
-            topRightScrew = new ScrewCap(theme, ScrewCap::Brightness::More);
-            topRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, 0);
-            addChild(topRightScrew);
-
-            screw = new ScrewCap(theme, ScrewCap::Brightness::More);
-            screw->box.pos = Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
-            addChild(screw);
-
             logo = createThemeWidgetCentered<LogoOverlayWidget>(theme, Vec(box.size.x / 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f));
             addChild(logo);
-
-            bottomRightScrew = new ScrewCap(theme, ScrewCap::Brightness::More);
-            bottomRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
-            addChild(bottomRightScrew);
-
         } else {
             panel->theme = theme;
             SetThemeChildren(this, theme);
@@ -85,7 +129,7 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
 
     void step() override
     {
-        ResizableModule *module = dynamic_cast<ResizableModule *>(this->module);
+        BlankModule *module = dynamic_cast<BlankModule *>(this->module);
         if (module)
         {
             box.size.x = module->width * RACK_GRID_WIDTH;
@@ -101,9 +145,13 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
             title->box.pos.y = 0;
             logo->box.pos.y = RACK_GRID_HEIGHT - RACK_GRID_WIDTH;
         }
-        topRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
+        if (topRightScrew) {
+            topRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
+        }
         title->box.pos.x = box.size.x / 2 - title->box.size.x / 2;
-        bottomRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
+        if (bottomRightScrew) {
+            bottomRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
+        }
         logo->box.pos.x = box.size.x / 2 - logo->box.size.x / 2;
         if (rightHandle)
         {
@@ -118,7 +166,18 @@ struct BlankModuleWidget : ModuleWidget, IChangeTheme
             return;
         ThemeModule *themeModule = dynamic_cast<ThemeModule *>(this->module);
         themeModule->addThemeMenu(menu, dynamic_cast<IChangeTheme*>(this));
+        auto blankModule = dynamic_cast<BlankModule*>(this->module);
+        menu->addChild(createCheckMenuItem("Screws", "",
+            [=]() { return blankModule->show_screws; }, 
+            [=]() {
+                blankModule->show_screws = !blankModule->show_screws;
+                if (blankModule->show_screws) {
+                    add_screws();
+                } else {
+                    remove_screws();
+                }
+            }));
     }
 };
 
-Model *modelBlank = createModel<ResizableModule, BlankModuleWidget>("pachde-null");
+Model *modelBlank = createModel<BlankModule, BlankModuleWidget>("pachde-null");

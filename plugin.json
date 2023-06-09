@@ -28,7 +28,7 @@
     {
       "slug": "pachde-imagine",
       "name": "imagine",
-      "description": "An eccentric source of v/oct, gates, and triggers using an image",
+      "description": "An eccentric source of voltage, gates, and triggers using an image",
       "tags": [ "Visual", "Sequencer", "Controller" ]
     }
   ]

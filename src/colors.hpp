@@ -72,10 +72,11 @@ inline NVGcolor OutputBackground(Theme theme) {
         default:
         case Theme::Unset:
         case Theme::Light:
+            return GRAY50;
         case Theme::Dark:
-            return GRAY25;
-        case Theme::HighContrast:
             return GRAY10;
+        case Theme::HighContrast:
+            return BLACK;
     }
 }
 
