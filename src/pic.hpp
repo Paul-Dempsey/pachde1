@@ -3,6 +3,7 @@
 #include "primitives.hpp"
 
 namespace pachde {
+constexpr const float PIC_EPSILON = 0.00001f;
 
 class Pic {
     int _width = 0;

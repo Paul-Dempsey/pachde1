@@ -42,16 +42,20 @@ void ImagineUi::makeUi(Imagine *module, Theme theme)
     addParam(run);
 
     addParam(createThemeParamCentered<SmallKnob>(theme, Vec(20.0f, 215.0f), module, Imagine::SPEED_PARAM));
-    auto p =createThemeParamCentered<SmallKnob>(theme, Vec(50.0f, 215.0f), module, Imagine::SPEED_MULT_PARAM);
-    p->snap = true;
-    addParam(p);
+    auto knob =createThemeParamCentered<SmallKnob>(theme, Vec(50.0f, 215.0f), module, Imagine::SPEED_MULT_PARAM);
+    knob->snap = true;
+    addParam(knob);
 
-    auto pathKnob = createThemeParamCentered<SmallKnob>(theme, Vec(80.0f, 215.0f), module, Imagine::PATH_PARAM);
-    pathKnob->minAngle = -1;
-    pathKnob->maxAngle = 1;
-    pathKnob->snap = true;
-   //pathKnob->forceLinear = true;
-    addParam(pathKnob);
+    knob = createThemeParamCentered<SmallKnob>(theme, Vec(80.0f, 215.0f), module, Imagine::COMP_PARAM);
+    knob->snap = true;
+    addParam(knob);
+
+    knob = createThemeParamCentered<SmallKnob>(theme, Vec(110.0f, 215.0f), module, Imagine::PATH_PARAM);
+    knob->minAngle = -1.5;
+    knob->maxAngle = 1.5;
+    knob->snap = true;
+    knob->forceLinear = true;
+    addParam(knob);
 
     auto picButton = new PicButton(theme);
     picButton->center(Vec (285.0f, 188.0f));

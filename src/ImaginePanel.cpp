@@ -46,20 +46,22 @@ void ImaginePanel::draw(const DrawArgs &args)
         } else {
             CenterText(vg, 50.0f, 235.0f, "1x", nullptr);
         }
+        CenterText(vg, 80.0f, 235.0f, ComponentInitial(module? module->color_component : ColorComponent::LUMINANCE) , nullptr);
+        CenterText(vg, 110.0f, 235.0f, "path", nullptr);
 
         // outputs
         SetTextStyle(vg, font, GRAY85, 16);
         CenterText(vg, 24.5f, 336.0f, "x", nullptr);
         CenterText(vg, 52.5f, 336.0f, "y", nullptr);
         CenterText(vg, 82.5f, 336.0f, "slew", nullptr);
-        CenterText(vg, 110.0f, 336.0f, "V", nullptr);
+        CenterText(vg, 112.5f, 336.0f, "v", nullptr);
     }
     font = GetPluginFontRegular();
     if (FontOk(font))
     {
-        SetTextStyle(vg, font, textColor, 14.0f);
+        SetTextStyle(vg, font, IsLighter(theme) ? COLOR_BRAND : COLOR_BRAND_HI, 14.0f);
         nvgTextAlign(vg, NVG_ALIGN_MIDDLE);
-        nvgText(vg, 100.0f, 215.0f, TraversalName(module  ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
+        nvgText(vg, 128.0f, 215.0f, TraversalName(module  ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
     }
     Widget::draw(args);
     // nvgResetScissor(args.vg);

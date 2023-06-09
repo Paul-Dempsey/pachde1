@@ -73,7 +73,6 @@ NVGcolor Pic::pixel(int x, int y) const
     }
 }
 
-constexpr const float EPS = 0.00001f;
 // Interpolated floating point coordinates
 // for same-pixel-dimension image.
 NVGcolor Pic::pixel(float x, float y) const
@@ -86,7 +85,7 @@ NVGcolor Pic::pixel(float x, float y) const
     int ix1 = static_cast<int>(fx);
     int iy1 = static_cast<int>(fy);
 
-    if (x - fx < EPS && y - fy < EPS) {
+    if (x - fx < PIC_EPSILON && y - fy < PIC_EPSILON) {
         return pixel(ix1, iy1);
     }
     if (x < 0.0f

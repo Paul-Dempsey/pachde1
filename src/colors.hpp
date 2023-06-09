@@ -90,12 +90,22 @@ inline NVGcolor OutputBackground(Theme theme) {
 //     return 0.2126f * sRGBToLinear(color.r) + 0.7152f * sRGBToLinear(color.g) + 0.0722f * sRGBToLinear(color.b);
 // }
 
+constexpr const float PI = 3.14159265358979323846;
+constexpr const float TWO_PI = 2.0f * PI;
+constexpr const float SQRT3 = 1.732050807568877f; 
+
 // stb linearizes on load so we don';'t have to gamma/correct
 inline float LuminanceLinear(NVGcolor color) {
     return 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
 }
+
 inline float Saturation(NVGcolor color) {
     return std::max(std::max(color.r, color.g), color.b) - std::min(std::min(color.r, color.g), color.b);
+}
+
+inline float Hue(NVGcolor color) {
+    return (rack::simd::atan2(SQRT3*(color.g - color.b), 2*color.r -color.g - color.b)
+        + PI) / TWO_PI;
 }
 
 std::string ToString(Theme theme);

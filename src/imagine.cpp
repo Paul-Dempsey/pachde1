@@ -15,9 +15,20 @@ Imagine::Imagine() {
         "1x", "2x", "3x", "4x", "5x", "6x", "7x", "8x", "9x", "10x"
     });
     //configInput(SPEED_INPUT, "Speed");
-    configSwitch(PATH_PARAM, 0.0f, static_cast<int>(Traversal::LAST_TRAVERSAL), 0.0f, "Path", 
-    {
+    configSwitch(PATH_PARAM, 0.0f, static_cast<int>(Traversal::NUM_TRAVERSAL)-1, 0.0f, "Path", {
         "Scanline",
+        "Bounce",
+        "Vinyl",
+        "Wander",
+    });
+    configSwitch(COMP_PARAM, 0.0f, static_cast<int>(ColorComponent::NUM_COMPONENTS)-1, 0.0f, "Component", {
+        "Luminance",
+        "Saturation",
+        "Hue",
+        "R",
+        "G",
+        "B",
+        "Alpha"
     });
     configOutput(X_OUT, "x");
     configOutput(Y_OUT, "y");
@@ -45,6 +56,7 @@ bool Imagine::loadImageDialog()
     pic_folder = system::getDirectory(path);
     if (image.open(path)) {
         traversal->configure_image(Vec(image.width(), image.height()));
+        traversal->reset();
         setPlaying(run);
         return true;
     } else {
@@ -124,13 +136,13 @@ void Imagine::updateParams()
     if (id != traversal_id || !traversal) {
         if (traversal) {
             delete traversal;
-            traversal = nullptr;
         }
         traversal = MakeTraversal(id);
         traversal_id = id;
         traversal->configure_image(Vec(image.width(), image.height()));
     }
     traversal->configure_rate(getSpeed(), sample_rate);
+    color_component = getColorComponent();
 }
 
 void Imagine::processBypass(const ProcessArgs& args)
@@ -174,11 +186,11 @@ void Imagine::process(const ProcessArgs& args)
     if (outputs[VOLTAGE_OUT].isConnected()) {
         if (image.ok()) {
             auto pix = image.pixel(pos.x, pos.y);
-            auto lum = LuminanceLinear(pix) * 10.0f;
+            auto v = ComponentValue(pix) * 10.0f;
             if (voct_range == VRange::BIPOLAR) {
-                lum -= 5.0f;
+                v -= 5.0f;
             }
-            outputs[VOLTAGE_OUT].setVoltage(voct_slew.next(lum));
+            outputs[VOLTAGE_OUT].setVoltage(voct_slew.next(v));
         } else {
             outputs[VOLTAGE_OUT].setVoltage(0.0f);
         }

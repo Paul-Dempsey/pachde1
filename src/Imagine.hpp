@@ -27,6 +27,29 @@ enum VRange {
     UNIPOLAR,
     BIPOLAR
 };
+enum ColorComponent {
+    LUMINANCE,
+    SATURATION,
+    HUE,
+    R,
+    G,
+    B,
+    ALPHA,
+    NUM_COMPONENTS
+};
+
+inline const char * ComponentInitial(ColorComponent co) {
+    switch (co) {
+        default:
+        case ColorComponent::LUMINANCE: return "l";
+        case ColorComponent::SATURATION: return "s";
+        case ColorComponent::HUE: return "h";
+        case ColorComponent::R: return "r";
+        case ColorComponent::G: return "g";
+        case ColorComponent::B: return "b";
+        case ColorComponent::ALPHA: return "a";
+    }
+}
 
 struct Imagine : ThemeModule
 {
@@ -37,6 +60,7 @@ struct Imagine : ThemeModule
         PATH_PARAM,
         SPEED_PARAM,
         SPEED_MULT_PARAM,
+        COMP_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
@@ -55,7 +79,7 @@ struct Imagine : ThemeModule
     std::atomic<bool> running;
     ITraversal * traversal = nullptr;
     Traversal traversal_id = Traversal::SCANLINE;
-
+    ColorComponent color_component = ColorComponent::LUMINANCE;
     VRange voct_range = VRange::BIPOLAR;
     SlewLimiter x_slew, y_slew, voct_slew;
     ControlRateTrigger control_rate;
@@ -80,6 +104,22 @@ struct Imagine : ThemeModule
     Traversal getTraversalId() {
         auto pp = getParamQuantity(PATH_PARAM);
         return static_cast<Traversal>(static_cast<int>(std::floor(pp->getValue() - pp->getMinValue())));
+    }
+    ColorComponent getColorComponent() {
+        auto pp = getParamQuantity(COMP_PARAM);
+        return static_cast<ColorComponent>(static_cast<int>(std::floor(pp->getValue() - pp->getMinValue())));
+    }
+    float ComponentValue(NVGcolor color) {
+        switch (color_component) {
+            default:
+            case ColorComponent::LUMINANCE: return LuminanceLinear(color);
+            case ColorComponent::SATURATION: return Saturation(color);
+            case ColorComponent::HUE: return Hue(color);
+            case ColorComponent::R: return color.r;
+            case ColorComponent::G: return color.g;
+            case ColorComponent::B: return color.b;
+            case ColorComponent::ALPHA: return color.a;
+        }
     }
     bool loadImageDialog();
 
