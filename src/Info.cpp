@@ -40,33 +40,41 @@ struct InfoModule : ResizableModule
     }
 };
 
-struct InfoPanel : Widget
+struct InfoPanel : Widget, IChangeTheme
 {
-    Theme theme;
+    ThemeModule* module;
+    bool preview = false;
 
-    InfoPanel(Theme t, Vec size)
+    InfoPanel(ThemeModule* module, Vec size)
     {
-        theme = ConcreteTheme(t);
+        this->module = module;
+        if (!module) preview = true;
         box.size = size;
     }
 
     void draw(const DrawArgs &args) override
     {
-        NVGcolor outer = GRAY80, inner = GRAY90;
-        switch (theme)
+        NVGcolor outer, inner;
+        switch (ModuleTheme(module))
         {
-        case Theme::Dark:
-        case Theme::HighContrast:
-            outer = GRAY20;
-            inner = GRAY25;
-            break;
-        case Theme::Light:
+        default:
         case Theme::Unset:
-            outer = GRAY80;
-            inner = GRAY90;
+        case Theme::Light:
+            outer = RampGray(G_80);
+            inner = RampGray(G_90);
+            break;
+        case Theme::Dark:
+            outer = RampGray(G_20);
+            inner = RampGray(G_25);
+            break;
+        case Theme::HighContrast:
+            outer = RampGray(G_BLACK);
+            inner = RampGray(G_10);
             break;
         };
-
+        if (module && module->isColorOverride()) {
+            outer = module->getColor();
+        }
         nvgBeginPath(args.vg);
         nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
         nvgFillColor(args.vg, outer);
@@ -77,17 +85,20 @@ struct InfoPanel : Widget
         nvgFillColor(args.vg, inner);
         nvgFill(args.vg);
 
+        if (preview) {
+            DrawLogo(args.vg, box.size.x / 2.0f - 30.0f, box.size.y / 2.0f - 40, Overlay(COLOR_BRAND), 4.0);
+        }
         Widget::draw(args);
     }
 };
 
 struct InfoModuleWidget : ModuleWidget, IChangeTheme
 {
-    Widget *rightHandle = NULL;
-    Widget *topRightScrew = NULL;
+    ModuleResizeHandle *rightHandle = NULL;
+    ScrewCap *topRightScrew = NULL;
+    ScrewCap *bottomRightScrew = NULL;
     Widget *title = NULL;
     Widget *logo = NULL;
-    Widget *bottomRightScrew = NULL;
     InfoPanel *panel = NULL;
 
     InfoModuleWidget(InfoModule *module)
@@ -96,55 +107,90 @@ struct InfoModuleWidget : ModuleWidget, IChangeTheme
         setTheme(ModuleTheme(module));
     }
 
-    void addResizeHandles(InfoModule *module)
+    void addResizeHandles()
     {
+        auto rmodule = dynamic_cast<ResizableModule *>(module);
+        if (!rmodule) return;
+
         ModuleResizeHandle *leftHandle = new ModuleResizeHandle;
-        leftHandle->module = module;
+        leftHandle->module = rmodule;
         addChild(leftHandle);
 
         ModuleResizeHandle *rightHandle = new ModuleResizeHandle;
         rightHandle->right = true;
         this->rightHandle = rightHandle;
-        rightHandle->module = module;
+        rightHandle->module = rmodule;
         addChild(rightHandle);
+    }
+
+    void setScrews(bool showScrews) override {
+        auto themeModule = dynamic_cast<ThemeModule*>(this->module);
+        if (themeModule) {
+            themeModule->setScrews(showScrews);
+        }
+        if (themeModule->hasScrews()) {
+            addScrews(themeModule);
+        } else {
+            RemoveScrewCaps(this);
+        }
+    }
+
+    void addScrews(ThemeModule* module) {
+        bool have_screws = children.end() != std::find_if(children.begin(), children.end(),
+            [](Widget* child) { return nullptr != dynamic_cast<ScrewCap*>(child); } );
+        if (have_screws) return;
+
+        bool colored = ModuleColorOverride(module);
+        auto theme = ModuleTheme(module);
+        
+        auto screw = new ScrewCap(theme);
+        screw->box.pos = Vec(0, 0);
+        if (colored) screw->setColor(module->getColor());
+        addChild(screw);
+
+        topRightScrew = new ScrewCap(theme);
+        topRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, 0);
+        if (colored) screw->setColor(module->getColor());
+        addChild(topRightScrew);
+
+        screw = new ScrewCap(theme);
+        screw->box.pos = Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
+        if (colored) screw->setColor(module->getColor());
+        addChild(screw);
+
+        bottomRightScrew = new ScrewCap(theme);
+        bottomRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
+        if (colored) screw->setColor(module->getColor());
+        addChild(bottomRightScrew);
     }
 
     void setTheme(Theme theme) override
     {
+        auto change = dynamic_cast<IChangeTheme*>(this->module);
+        if (change) {
+            change->setTheme(theme);
+        }
         auto module = dynamic_cast<InfoModule *>(this->module);
         // set default size for browser
         box.size = Vec(RACK_GRID_WIDTH * 8, RACK_GRID_HEIGHT);
         if (children.empty()) {
-            panel = new InfoPanel(theme, box.size);
+            auto themeModule = dynamic_cast<ThemeModule*>(this->module);
+            panel = new InfoPanel(themeModule, box.size);
             setPanel(panel);
-            if (module)
-                addResizeHandles(module);
-
-            auto screw = new ScrewCap(theme, ScrewCap::Brightness::Less);
-            screw->box.pos = Vec(0, 0);
-            addChild(screw);
+            addResizeHandles();
+            addScrews(themeModule);
 
             title = createThemeWidgetCentered<InfoWidget>(theme, Vec(box.size.x / 2, 7.5f));
             addChild(title);
 
-            topRightScrew = new ScrewCap(theme, ScrewCap::Brightness::Less);
-            topRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, 0);
-            addChild(topRightScrew);
-
-            screw = new ScrewCap(theme, ScrewCap::Brightness::Less);
-            screw->box.pos = Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
-            addChild(screw);
-
             logo = createThemeWidgetCentered<LogoOverlayWidget>(theme, Vec(box.size.x / 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f));
             addChild(logo);
 
-            bottomRightScrew = new ScrewCap(theme, ScrewCap::Brightness::Less);
-            bottomRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
-            addChild(bottomRightScrew);
-
         } else {
-            panel->theme = theme;
-            SetThemeChildren(this, theme);
+            SetChildrenTheme(this, theme);
+            if (ModuleColorOverride(module)) {
+                SetChildrenThemeColor(this, module->getColor());
+            }
         }
         // Set box width from loaded Module before adding to the RackWidget, so modules aren't unnecessarily shoved around.
         if (module)
@@ -177,7 +223,7 @@ struct InfoModuleWidget : ModuleWidget, IChangeTheme
         if (!this->module)
             return;
         ThemeModule *themeModule = dynamic_cast<ThemeModule *>(this->module);
-        themeModule->addThemeMenu(menu, static_cast<IChangeTheme *>(this));
+        themeModule->addThemeMenu(menu, static_cast<IChangeTheme *>(this), true, true);
     }
 };
 

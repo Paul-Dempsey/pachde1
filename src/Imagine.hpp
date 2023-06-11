@@ -10,7 +10,6 @@ namespace pachde {
 using namespace rack;
 using namespace traversal;
 
-const float ONE_HP = 15.0f;
 const float PANEL_WIDTH = 300.0f; // 20hp
 const float PANEL_CENTER = PANEL_WIDTH / 2.0f;
 const float PANEL_MARGIN = 5.0f;
@@ -71,6 +70,8 @@ struct Imagine : ThemeModule
         X_OUT,
         Y_OUT,
         VOLTAGE_OUT,
+        GATE_OUT,
+        TRIGGER_OUT,
         NUM_OUTPUTS
     };
 

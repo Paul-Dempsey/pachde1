@@ -35,7 +35,7 @@ unsigned char * Pic::pixel_address(int x, int y) const
 
 Point Pic::position(unsigned char * location) const
 {
-    if (!_data || !location || location >= end()) {
+    if (!_data || !location || location < _data || location >= end()) {
         return Point(0,0);
     }
 
@@ -53,8 +53,7 @@ NVGcolor Pic::pixel(int x, int y) const
 {
     auto pixel = pixel_address(x, y);
     if (pixel) {
-        auto value = *pixel;
-        return nvgRGBA(value, pixel[1], pixel[2], pixel[3]);
+        return nvgRGBA(pixel[0], pixel[1], pixel[2], pixel[3]);
         // switch (_components) {
         //     case 1:
         //         return nvgRGB(value, value, value);
@@ -73,6 +72,7 @@ NVGcolor Pic::pixel(int x, int y) const
     }
 }
 
+
 // Interpolated floating point coordinates
 // for same-pixel-dimension image.
 NVGcolor Pic::pixel(float x, float y) const
@@ -84,15 +84,13 @@ NVGcolor Pic::pixel(float x, float y) const
     // p3 p4
     int ix1 = static_cast<int>(fx);
     int iy1 = static_cast<int>(fy);
+    auto pixels = pixel_address(ix1, iy1);
+    if (!pixels) {
+        return nvgRGBA(0,0,0,0);
+    }
 
     if (x - fx < PIC_EPSILON && y - fy < PIC_EPSILON) {
         return pixel(ix1, iy1);
-    }
-    if (x < 0.0f
-        || y < 0.0f 
-        || x >= static_cast<float>(_width)
-        || y >= static_cast<float>(_height)) {
-        return nvgRGBA(0,0,0,0);
     }
 
     float a = x - fx;
@@ -105,44 +103,55 @@ NVGcolor Pic::pixel(float x, float y) const
         a*a + d*d,
         b*b + d*d
     };
+
     // exclude points farther than 1 unit
     std::for_each(weight.begin(), weight.end(), [](float &f){ if (f > 1.0f) f = 0.0f; });
 
-    // compute weights
+    // exclude points outside the image
+    if (ix1 + 1 >= _width) {
+        weight[1] = weight[3] = 0.0f;
+    }
+    if (iy1 + 1 >= _height) {
+        weight [2] = weight[3] = 0.0f;
+    }
+
+
+    // compute weights from squares
     float sum = std::accumulate(weight.begin(), weight.end(), 0.0f);
+    // shortuct if only corner pixel is valid
+    if (sum == weight[0]) {
+        return nvgRGBA(*pixels, *(pixels+1), *(pixels+2), *(pixels+3));
+    }
     std::for_each(weight.begin(), weight.end(), [sum](float &f){ f = f/sum; });
 
-    // edge pixels same as adjacent, rather than wrapping or something
-    int ix2 = std::min(_width - 1, ix1 + 1);
-    int iy2 = std::min(_height - 1, iy1 + 1);
-    
     NVGcolor p = nvgRGBA(0,0,0,0);
     auto w = weight[0];
     if (w > 0.0f) {
-        p = pixel(ix1, iy1);
+        p = nvgRGBA(*pixels, *(pixels+1), *(pixels+2), *(pixels+3));
         for (auto n = 0; n < 4; ++n) {
             p.rgba[n] *= w;
         }
     }
     w = weight[1];
     if (w > 0.0f) {
-        auto color = pixel(ix2, iy1);
+        auto px = pixels + 4;
         for (auto n = 0; n < 4; ++n) {
-            p.rgba[n] += color.rgba[n] * w;
+            p.rgba[n] += px[n]/255.0f * w;
         }
     }
+    int rowskip = stride();
     w = weight[2];
     if (w > 0.0f) {
-        auto color = pixel(ix1, iy2);
+        auto px = pixels + rowskip;
         for (auto n = 0; n < 4; ++n) {
-            p.rgba[n] += color.rgba[n] * w;
+            p.rgba[n] += px[n]/255.0f * w;
         }
     }
     w = weight[3];
     if (w > 0.0f) {
-        auto color = pixel(ix2, iy2);
+        auto px = pixels + rowskip + 4;
         for (auto n = 0; n < 4; ++n) {
-            p.rgba[n] += color.rgba[n] * w;
+            p.rgba[n] += px[n]/255.0f * w;
         }
     }
     return p;

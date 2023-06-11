@@ -21,11 +21,15 @@ void ImaginePanel::draw(const DrawArgs &args)
     FillRect(vg, 0.0, 0.0, box.size.x, box.size.y, panel);
 
     // image placeholder
-    //BoxRect(vg, PANEL_CENTER - PANEL_IMAGE_WIDTH / 2.0f, PANEL_IMAGE_TOP, PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT, COLOR_BRAND);
+    if (!module || !module->image.ok()) {
+        FillRect(vg, PANEL_CENTER - PANEL_IMAGE_WIDTH / 2.0f, PANEL_IMAGE_TOP, PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT, COLOR_BRAND);
+    }
 
     // outputs 1
-    RoundRect(vg, 5.0f, 299.0f, 290.0f, 65.0f, OutputBackground(theme), 6.0f);
-
+    RoundRect(vg, 5.0f, 314.0f, 290.0f, 50.0f, OutputBackground(theme), 6.0f);
+    if (Theme::HighContrast == theme) {
+        RoundBoxRect(vg, 5.0f, 314.0f, 290.0f, 50.0f, RampGray(Ramp::G_WHITE), 6.0f);
+    }
     // grid
     // auto gridline = IsLighter(theme) ? GRAY25 : nvgTransRGBAf(COLOR_GREEN_HI, 0.65);
     // for (float y = ONE_HP; y < box.size.y; y += ONE_HP) {
@@ -51,10 +55,16 @@ void ImaginePanel::draw(const DrawArgs &args)
 
         // outputs
         SetTextStyle(vg, font, GRAY85, 16);
-        CenterText(vg, 24.5f, 336.0f, "x", nullptr);
-        CenterText(vg, 52.5f, 336.0f, "y", nullptr);
-        CenterText(vg, 82.5f, 336.0f, "slew", nullptr);
-        CenterText(vg, 112.5f, 336.0f, "v", nullptr);
+        CenterText(vg, 24.5f, 350.0f, "x", nullptr);
+        CenterText(vg, 52.5f, 350.0f, "y", nullptr);
+        CenterText(vg, 82.5f, 350.0f, "slew", nullptr);
+        CenterText(vg, 112.5f, 350.0f, "v", nullptr);
+        CenterText(vg, 136.25f, 350.0f, "p", nullptr);
+        CenterText(vg, 162.5f, 350.0f, "g", nullptr);
+        CenterText(vg, 187.5f, 350.0f, "t", nullptr);
+        if (!module || !module->image.ok()) {
+            CenterText(vg, PANEL_CENTER, PANEL_IMAGE_TOP + PANEL_IMAGE_HEIGHT - TWO_HP, "[ no image ]", nullptr);
+        }
     }
     font = GetPluginFontRegular();
     if (FontOk(font))

@@ -27,6 +27,73 @@ Theme ThemeFromJson(json_t * root) {
     return themeJ ? ParseTheme(json_string_value(themeJ)) : Theme::Unset;
 }
 
+NVGcolor PanelBackground(Theme theme)
+{
+    switch (theme) {
+        default:
+        case Theme::Unset:
+        case Theme::Light: return GrayRamp[G_90];
+        case Theme::Dark: return GrayRamp[G_20];
+        case Theme::HighContrast: return GrayRamp[G_05];
+    }
+}
+
+NVGcolor ThemeTextColor(Theme theme)
+{
+    switch (theme)
+    {
+    default:
+    case Theme::Unset:
+    case Theme::Light:
+        return GrayRamp[G_20];
+        break;
+
+    case Theme::Dark:
+        return GrayRamp[G_85];
+
+    case Theme::HighContrast:
+        return GrayRamp[G_95];
+        break;
+    };
+}
+
+NVGcolor OutputBackground(Theme theme)
+{
+    switch (theme) {
+        default:
+        case Theme::Unset:
+        case Theme::Light:
+            return GrayRamp[G_50];
+        case Theme::Dark:
+            return GrayRamp[G_10];
+        case Theme::HighContrast:
+            return GrayRamp[G_BLACK];
+    }
+}
+
+NVGcolor LogoColor(Theme theme)
+{
+    switch (theme) {
+        default: 
+        case Theme::Unset:
+        case Theme::Light:
+            return GrayRamp[G_BLACK];
+        case Theme::Dark:
+            return GrayRamp[G_75];
+        case Theme::HighContrast:
+            return GrayRamp[G_95];
+    }
+}
+
+const NVGcolor GrayRamp[] = {
+    BLACK,
+    GRAY05,GRAY10,GRAY15,GRAY20,
+    GRAY25,GRAY30,GRAY35,GRAY40,
+    GRAY45,GRAY50,GRAY55,GRAY60,
+    GRAY65,GRAY70,GRAY75,GRAY80,
+    GRAY85,GRAY90,GRAY95,WHITE
+};
+
 void FillRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color)
 {
     nvgBeginPath(vg);

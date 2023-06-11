@@ -10,6 +10,9 @@ SOURCES += src/text.cpp
 SOURCES += src/dsp.cpp
 SOURCES += src/pic.cpp
 SOURCES += src/pic_widget.cpp
+SOURCES += src/pic_button.cpp
+SOURCES += src/switch.cpp
+SOURCES += src/theme_module.cpp
 SOURCES += src/traversal.cpp
 
 # Blank module

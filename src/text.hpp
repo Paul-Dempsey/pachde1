@@ -1,5 +1,7 @@
 #pragma once
 #include "plugin.hpp"
+#include "colors.hpp"
+using namespace ::rack;
 
 namespace pachde {
 
@@ -19,7 +21,7 @@ inline bool FontOk(std::shared_ptr<window::Font> font) {
     return font && font->handle >= 0;
 }
 
-void SetTextStyle(NVGcontext *vg, std::shared_ptr<window::Font> font, NVGcolor color = GRAY20, float height = 16);
+void SetTextStyle(NVGcontext *vg, std::shared_ptr<window::Font> font, NVGcolor color = RampGray(G_20), float height = 16);
 
 // Center text vertically and horizontally on the given point
 // Text style must have been previously set

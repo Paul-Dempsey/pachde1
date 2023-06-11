@@ -23,11 +23,12 @@ struct ModuleResizeHandle : OpaqueWidget
     bool hovered = false;
     Vec dragPos;
     Rect originalBox;
-    ResizableModule *module;
-
-    float HandleWidth() { return 5.0f; }
+    ResizableModule* module;
 
     ModuleResizeHandle();
+
+    float HandleWidth() { return 10.f; }
+    NVGcolor HandleOverlay();
 
     void onEnter(const EnterEvent &e) override;
     void onLeave(const LeaveEvent &e) override;

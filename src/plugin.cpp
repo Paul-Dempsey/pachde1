@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+using namespace ::rack;
 
 Plugin* pluginInstance;
 

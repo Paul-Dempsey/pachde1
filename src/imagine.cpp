@@ -12,9 +12,8 @@ Imagine::Imagine() {
     configSwitch(RUN_PARAM, 0.0f, 1.0f, 0.0f, "Play", { "Paused", "Playing" });
     configParam(SPEED_PARAM, 0.0f, 100.0f, 10.0f, "Speed");
     configSwitch(SPEED_MULT_PARAM, 1.0f, 10.0f, 1.0f, "Speed Multiplier", {
-        "1x", "2x", "3x", "4x", "5x", "6x", "7x", "8x", "9x", "10x"
+        "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10"
     });
-    //configInput(SPEED_INPUT, "Speed");
     configSwitch(PATH_PARAM, 0.0f, static_cast<int>(Traversal::NUM_TRAVERSAL)-1, 0.0f, "Path", {
         "Scanline",
         "Bounce",
@@ -33,6 +32,8 @@ Imagine::Imagine() {
     configOutput(X_OUT, "x");
     configOutput(Y_OUT, "y");
     configOutput(VOLTAGE_OUT, "Voltage");
+    configOutput(GATE_OUT, "Gate");
+    configOutput(TRIGGER_OUT, "Trigger");
 
     updateParams();
 }

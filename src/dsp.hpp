@@ -1,6 +1,7 @@
 #pragma once
 namespace pachde {
 
+// TODO: try replacing with one of the VCV slew limiters
 struct SlewLimiter {
 	float _delta;
 	float _last = 0.0f;
@@ -16,6 +17,5 @@ struct SlewLimiter {
 	}
 	float next(float sample, float last);
 };
-
 
 }

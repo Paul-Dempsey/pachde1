@@ -1,77 +1,84 @@
 #pragma once
 #include "plugin.hpp"
+#include "colors.hpp"
+using namespace ::rack;
 
 namespace pachde {
+constexpr const float ONE_HP = 15.0f;
+constexpr const float TWO_HP = 30.0f;
+constexpr const float HALF_HP = 7.5f;
+
+void DrawLogo(NVGcontext * vg, float x, float y, NVGcolor fill, float scale = 1.0f);
+void DrawScrewCap(NVGcontext * vg, float x, float y, Theme theme, NVGcolor color = COLOR_NONE);
 
 inline float HpToPix(float hp) { return hp * 15.0; }
 inline float PixToHp(float pix) { return pix / 15.0; }
-inline float ClampBipolar(float v) { return clamp(v, -5.0f, 5.0f); }
-inline float ClampUnipolar(float v) { return clamp(v, 0.0f, 10.0f); }
+inline float ClampBipolar(float v) { return rack::math::clamp(v, -5.0f, 5.0f); }
+inline float ClampUnipolar(float v) { return rack::math::clamp(v, 0.0f, 10.0f); }
 
 struct IChangeTheme
 {
     virtual void setTheme(Theme theme) {};
+    virtual void setColor(NVGcolor color) {};
+    virtual void setScrews(bool showScrews) {};
 };
 
-struct ScrewCap : app::SvgScrew, public IChangeTheme {
-    enum Brightness { More, Less };
+struct ScrewCap : rack::TransparentWidget, public IChangeTheme {
     Theme theme = Theme::Unset;
-    Brightness bright;
+    NVGcolor color = COLOR_NONE;
 
-    ScrewCap(Theme theme, Brightness lightness) 
-        : bright(lightness) {
+    ScrewCap(Theme theme) {
         setTheme(theme);
+    }
+    void draw(const DrawArgs &args) override {
+        rack::TransparentWidget::draw(args);
+        DrawScrewCap(args.vg, 0, 0, theme, color);
     }
 
     void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
-        if (t == theme && sw && sw->svg) return;
         theme = t;
-        setSvg(Svg::load(asset::plugin(pluginInstance, 
-            IsLighter(t)
-                ? (bright == Brightness::More 
-                    ? "res/ScrewCap.svg"
-                    : "res/ScrewCapMed.svg")
-                : "res/ScrewCapDark.svg")));
-        if (fb) {
-            fb->setDirty(true);
-        }
+    }
+    void setColor(NVGcolor color) override {
+        this->color = color;
     }
 };
 
-struct LogoWidget : rack::SvgWidget, public IChangeTheme {
+struct LogoWidget : rack::OpaqueWidget, public IChangeTheme {
     Theme theme = Theme::Unset;
 
     LogoWidget(Theme theme) {
         setTheme(theme);
+        box.size.x = 15.0f;
+        box.size.y = 15.0f;
     }
-
+    void draw(const DrawArgs &args) override {
+        rack::OpaqueWidget::draw(args);
+        DrawLogo(args.vg, 0, 0, LogoColor(theme));
+    }
     void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
-        if (t == theme && svg) return;
         theme = t;
-        setSvg(Svg::load(asset::plugin(pluginInstance, 
-            IsLighter(t)
-                ? "res/Logo.svg"
-                : "res/LogoBright.svg")));
     }
 };
 
-struct LogoOverlayWidget : rack::SvgWidget, public IChangeTheme {
+struct LogoOverlayWidget : rack::OpaqueWidget, public IChangeTheme {
     Theme theme = Theme::Unset;
 
     LogoOverlayWidget(Theme theme) {
         setTheme(theme);
+        box.size.x = 15.0f;
+        box.size.y = 15.0f;
+    }
+    void draw(const DrawArgs &args) override {
+        rack::OpaqueWidget::draw(args);
+        auto color = LogoColor(theme);
+        if (theme != Theme::HighContrast) {
+            color.a = 0.75f;
+        }
+        DrawLogo(args.vg, 0, 0, color);
     }
 
     void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
-        if (t == theme && svg) return;
         theme = t;
-        setSvg(Svg::load(asset::plugin(pluginInstance, 
-            IsLighter(t) 
-                ? "res/LogoOverlay.svg"
-                : "res/LogoBrightOverlay.svg")));
     }
 };
 
@@ -83,31 +90,11 @@ struct InfoWidget : rack::SvgWidget, IChangeTheme {
     }
 
     void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
         if (t == theme && svg) return;
         theme = t;
         setSvg(Svg::load(asset::plugin(pluginInstance, IsLighter(t)
                 ? "res/InfoBright.svg"
                 : "res/InfoDark.svg")));
-    }
-};
-
-struct NullWidget : rack::SvgWidget, public IChangeTheme
-{
-    Theme theme = Theme::Unset;
-
-    NullWidget(Theme t) {
-        setTheme(t);
-    }
-
-    void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
-        if (t == theme && svg) return;
-        theme = t;
-        setSvg(Svg::load(asset::plugin(pluginInstance,
-            IsLighter(t)
-                ? "res/NullBright.svg"
-                : "res/NullDark.svg")));
     }
 };
 
@@ -119,7 +106,6 @@ struct BluePort: rack::SvgPort, public IChangeTheme {
     }
 
     void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
         if (t == theme && sw) return;
         theme = t;
         setSvg(Svg::load(asset::plugin(pluginInstance,
@@ -132,7 +118,6 @@ struct BluePort: rack::SvgPort, public IChangeTheme {
     }
 };
 
-
 struct SmallKnob: rack::RoundKnob, public IChangeTheme {
     Theme theme = Theme::Unset;
 
@@ -141,7 +126,6 @@ struct SmallKnob: rack::RoundKnob, public IChangeTheme {
     }
 
     void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
         if (t == theme && bg && bg->svg) return;
         theme = t;
         bool light = IsLighter(t);
@@ -186,6 +170,7 @@ struct PushButtonBase: rack::SvgSwitch {
     {
         clickHandler = callback;
     }
+
     void onDragEnd(const DragEndEvent & e) override {
         rack::SvgSwitch::onDragEnd(e);
         if (e.button != GLFW_MOUSE_BUTTON_LEFT)
@@ -196,59 +181,47 @@ struct PushButtonBase: rack::SvgSwitch {
     }
 };
 
-struct PushButton: PushButtonBase, IChangeTheme {
-    Theme theme = Theme::Unset;
+// struct PushButton: PushButtonBase, IChangeTheme {
+//     Theme theme = Theme::Unset;
 
-    PushButton(Theme t) {
-        noShadow();
-        setTheme(t);
-    }
+//     PushButton(Theme t) {
+//         noShadow();
+//         setTheme(t);
+//     }
 
-    void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
-        if (t != theme || frames.empty()) {
-            theme = t;
-            frames.clear();
-            if (IsLighter(t)) {
-                addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButton_Up.svg")));
-                addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButton_Down.svg")));
-            } else {
-                addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButtonDark_Up.svg")));
-                addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButtonDark_Down.svg")));
-            }
-            if (fb) {
-                fb->setDirty(true);
-            }
-        }
-    }
-};
+//     void setTheme(Theme t) override {
+//         if (t != theme || frames.empty()) {
+//             theme = t;
+//             frames.clear();
+//             if (IsLighter(t)) {
+//                 addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButton_Up.svg")));
+//                 addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButton_Down.svg")));
+//             } else {
+//                 addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButtonDark_Up.svg")));
+//                 addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButtonDark_Down.svg")));
+//             }
+//             if (fb) {
+//                 fb->setDirty(true);
+//             }
+//         }
+//     }
+// };
 
 
-struct PicButton: PushButtonBase, IChangeTheme {
-    Theme theme = Theme::Unset;
+struct PicButton: OpaqueWidget, IChangeTheme {
+    NVGcolor line, face;
+    bool pressed = false;
+    std::function<void(void)> clickHandler;
 
-    PicButton(Theme t) {
-        noShadow();
-        setTheme(t);
-    }
+    PicButton(Theme t);
 
-    void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
-        if (t != theme || frames.empty()) {
-            theme = t;
-            bool light = IsLighter(t);
-            frames.clear();
-            addFrame(Svg::load(asset::plugin(pluginInstance, light
-                ? "res/PicButton.svg"
-                : "res/PicButtonDark.svg")));
-            addFrame(Svg::load(asset::plugin(pluginInstance, light
-                ? "res/PicButtonDark.svg"
-                : "res/PicButton.svg")));
-            if (fb) {
-                fb->setDirty(true);
-            }
-        }
-    }
+    void setTheme(Theme t) override;
+    void draw(const DrawArgs &args) override;
+    void onButton(const event::Button& e) override;
+    void onDragEnd(const DragEndEvent & e) override;
+
+    void center(Vec pos);
+    void onClick(std::function<void(void)> callback);
 };
 
 struct PLayPauseButton: PushButtonBase, IChangeTheme {
@@ -260,7 +233,6 @@ struct PLayPauseButton: PushButtonBase, IChangeTheme {
     }
 
     void setTheme(Theme t) override {
-        assert(Theme::Unset != t);
         if (t != theme || frames.empty()) {
             theme = t;
             bool light = IsLighter(t);
@@ -278,43 +250,99 @@ struct PLayPauseButton: PushButtonBase, IChangeTheme {
     }
 };
 
+struct Switch : rack::Switch, IChangeTheme {
+    Theme theme = Theme::Unset;
+    int value = 0;
+    int units = 2;
+    NVGcolor background, frame, thumb, thumb_top, thumb_bottom;
 
-void SetThemeChildren(Widget * widget, Theme theme, bool top = true);
+    Switch(Theme theme);
 
-struct ThemeModule : Module
+	void initParamQuantity() override;
+    void draw(const DrawArgs &args) override;
+    void onChange(const ChangeEvent& e) override;
+    void setTheme(Theme t) override;
+};
+
+void SetChildrenTheme(Widget * widget, Theme theme, bool top = true);
+void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top = true);
+
+struct ThemeModule : Module, IChangeTheme
 {
     bool dirty = false;
+    bool show_screws = true;
     Theme theme = Theme::Unset;
+    // a non-transparent panel color overrides the theme
+    NVGcolor panel_color = COLOR_NONE;
 
-    void setTheme(Theme t)
+    Theme getTheme() { return ConcreteTheme(theme); }
+    NVGcolor getColor() { return panel_color; }
+    bool isColorOverride() { return isColorVisible(panel_color); }
+    void setTheme(Theme t) override
     {
         theme = t;
         dirty = true;
     }
-
-    // get valid theme
-    Theme getTheme() { return ConcreteTheme(theme); }
+    void setColor(NVGcolor color) override
+    {
+        panel_color = color;
+        dirty = true;
+    }
+    void setScrews(bool showScrews) override {
+        show_screws = showScrews;
+    }
+    bool hasScrews() { return show_screws; }
 
     void onReset() override;
     json_t *dataToJson() override;
     void dataFromJson(json_t *rootJ) override;
-    void addThemeMenu(Menu *menu, IChangeTheme *change);
+    void addThemeMenu(Menu *menu, IChangeTheme *change, bool isChangeColor = false, bool isChangeScrews = false);
 };
 
 
-inline Theme ModuleTheme(ThemeModule *module)
+inline Theme ModuleTheme(ThemeModule* module)
 {
     return module ? module->getTheme() : DefaultTheme;
 }
 
+inline NVGcolor ModuleColor(ThemeModule* module)
+{
+    return module ? module->panel_color : COLOR_NONE;
+}
+inline bool ModuleColorOverride(ThemeModule* module)
+{
+    return module && module->isColorOverride();
+}
+inline bool ModuleHasScrews(ThemeModule* module)
+{
+    return module ? module->hasScrews() : true;
+}
+
 struct ThemePanel : Widget
 {
-    Theme theme;
-
+    ThemeModule* module;
+    ThemePanel(ThemeModule* module)
+    {
+        this->module = module;
+    }
+    Theme getTheme() { return ModuleTheme(module); }
+    NVGcolor getColor() { return ModuleColor(module); }
+    void setTheme(Theme theme) {
+        if (module) {
+            module->setTheme(theme);
+        }
+    }
+    void setColor(NVGcolor color) {
+        if (module) {
+            module->setColor(color);
+        }
+    }
     void draw(const DrawArgs &args) override;
 };
 
-void CreateScrews(ModuleWidget *me, Theme theme, ScrewCap::Brightness bright);
+void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color);
+void RemoveScrewCaps(Widget* widget);
+void SetScrewColors(Widget* widget, NVGcolor color);
 
 struct ControlRateTrigger
 {

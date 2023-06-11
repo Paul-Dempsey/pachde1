@@ -1,13 +1,11 @@
 #pragma once
 #include <rack.hpp>
-#include "colors.hpp"
-using namespace ::rack;
 
 // Declare the Plugin, defined in plugin.cpp
-extern Plugin* pluginInstance;
+extern rack::Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
 
-extern Model* modelBlank;
-extern Model* modelInfo;
-extern Model* modelImagine;
+extern rack::Model* modelBlank;
+extern rack::Model* modelInfo;
+extern rack::Model* modelImagine;
