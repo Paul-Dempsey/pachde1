@@ -10,6 +10,7 @@ SOURCES += src/text.cpp
 SOURCES += src/dsp.cpp
 SOURCES += src/pic_button.cpp
 SOURCES += src/play_pause.cpp
+SOURCES += src/port.cpp
 SOURCES += src/switch.cpp
 SOURCES += src/theme.cpp
 

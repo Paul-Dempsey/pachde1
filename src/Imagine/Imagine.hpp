@@ -14,10 +14,12 @@ const float PANEL_WIDTH = 300.0f; // 20hp
 const float PANEL_CENTER = PANEL_WIDTH / 2.0f;
 const float PANEL_MARGIN = 5.0f;
 
-const float IMAGE_UNIT = 18.0f; // 18px image unit for 16x9 landscape
-const float PANEL_IMAGE_WIDTH = 16.0f * IMAGE_UNIT;
-const float PANEL_IMAGE_HEIGHT = 9.0f * IMAGE_UNIT;
-const float PANEL_IMAGE_TOP = 17.0f;
+// const float IMAGE_UNIT = 18.0f; // 18px image unit for 16x9 landscape
+// const float PANEL_IMAGE_WIDTH = 16.0f * IMAGE_UNIT;
+// const float PANEL_IMAGE_HEIGHT = 9.0f * IMAGE_UNIT;
+const float PANEL_IMAGE_WIDTH = PANEL_WIDTH - 2.f;
+const float PANEL_IMAGE_HEIGHT = 250.f;
+const float PANEL_IMAGE_TOP = 17.f;
 const float SECTION_WIDTH = PANEL_WIDTH - PANEL_MARGIN * 2.0f;
 const float ORIGIN_X = PANEL_CENTER;
 const float ORIGIN_Y = PANEL_IMAGE_TOP + PANEL_IMAGE_HEIGHT;
@@ -134,20 +136,30 @@ struct Imagine : ThemeModule
 
 struct ImaginePanel : Widget
 {
-    Theme theme;
-    Imagine *module = nullptr;
+    Imagine* module = nullptr;
 
-    ImaginePanel(Imagine *mod, Theme t, Vec size);
+    ImaginePanel(Imagine* mod, Vec size);
     void draw(const DrawArgs &args) override;
 };
 
 struct ImagineUi : ModuleWidget, ThemeBase
 {
     ImaginePanel *panel = nullptr;
+    Imagine* imagine = nullptr;
 
     ImagineUi(Imagine *module);
+
     void makeUi(Imagine* module, Theme theme);
     void setTheme(Theme theme) override;
+    void setScrews(bool screws) override;
+    Theme getTheme() override {
+        if (imagine) return imagine->getTheme();
+        return ThemeBase::getTheme();
+    }
+    bool hasScrews() override {
+        if (imagine) return imagine->hasScrews();
+        return ThemeBase::hasScrews();
+    }
     void appendContextMenu(rack::ui::Menu* menu) override;
 };
 

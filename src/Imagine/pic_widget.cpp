@@ -143,7 +143,7 @@ void PicWidget::drawSample(const DrawArgs &args) {
     nvgBeginPath(vg);
     nvgCircle(vg, cx, cy, 3.0);
     nvgStrokeColor(vg, outline);
-    nvgStrokeWidth(vg, 0.25f);
+    nvgStrokeWidth(vg, 0.4f);
     nvgStroke(vg);
 }
 

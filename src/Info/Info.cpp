@@ -262,10 +262,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
     }
 
     void addScrews() {
-        bool have_screws = children.end() != 
-            std::find_if(children.begin(), children.end(),
-                [](Widget* child) { return nullptr != dynamic_cast<ScrewCap*>(child); } );
-        if (have_screws) return;
+        if (HaveScrewChildren(this)) return;
 
         bool colored = isColorVisible(info_theme->panel_color);
         auto theme = info_theme->theme;

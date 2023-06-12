@@ -23,15 +23,8 @@ void SetTextStyle(NVGcontext *vg, std::shared_ptr<window::Font> font, NVGcolor c
 
 void CenterText(NVGcontext *vg, float x, float y, const char * text, const char * end)
 {
-    // default baseline-oriented coordinates
-    // float bounds[4] = { 0, 0, 0, 0 };
-    // auto width = nvgTextBounds(vg, x, y, text, end, bounds);
-    // auto descent = bounds[3] - y;
-    // auto box_height = bounds[3] - bounds[1];
-    // nvgText(vg, x - width / 2, y - descent + box_height/2, text, end);
-
     // nvg offers a variety of text alignment options
-    nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+    nvgTextAlign(vg, NVG_ALIGN_CENTER);
     nvgText(vg, x, y, text, end);
 }
 

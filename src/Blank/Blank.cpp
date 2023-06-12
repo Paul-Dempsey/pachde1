@@ -63,10 +63,8 @@ void BlankModuleWidget::setScrews(bool screws)
 }
 
 void BlankModuleWidget::add_screws() {
-    bool have_screws = children.end() !=
-        std::find_if(children.begin(), children.end(),
-            [](Widget* child) { return nullptr != dynamic_cast<ScrewCap*>(child); } );
-    if (have_screws) return;
+
+    if (HaveScrewChildren(this)) return;
 
     auto itheme = getITheme();
     auto theme = itheme->getTheme();

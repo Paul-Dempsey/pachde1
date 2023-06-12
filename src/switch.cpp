@@ -18,7 +18,7 @@ void Switch::setTheme(Theme theme)
         case Theme::Light:
             frame = RampGray(G_50);
             thumb = COLOR_BRAND;
-            thumb_top = nvgRGB(0x9f, 0xc3, 0xdf);
+            thumb_top = nvgRGB(0xcb, 0xdc, 0xe9);
             thumb_bottom = nvgRGB(0x2e, 0x51, 0x6b);
             break;
         case Theme::Dark:
@@ -28,10 +28,10 @@ void Switch::setTheme(Theme theme)
             thumb_bottom = RampGray(G_10);
             break;
         case Theme::HighContrast:
-            frame = RampGray(G_WHITE);
-            thumb = RampGray(G_80);
+            frame = RampGray(G_50);
+            thumb = RampGray(G_75);
             thumb_top = RampGray(G_WHITE);
-            thumb_bottom = RampGray(G_25);
+            thumb_bottom = RampGray(G_35);
             break;
     }
 }
@@ -66,8 +66,8 @@ void Switch::draw(const DrawArgs &args)
     auto x = horizontal ? w * value : 0.f;
     auto y = horizontal ? 0.f : (box.size.y - h) - (h * value);
     FillRect(vg, x, y, w, h, thumb);
-    Line(vg, x, y, x + w, y, thumb_top);
-    Line(vg, x, y + h, x + w, y + h, thumb_bottom);
+    Line(vg, x, y, x + w, y, thumb_top, 1.3f);
+    Line(vg, x, y + h, x + w, y + h, thumb_bottom, 1.3f);
 }
 
 }

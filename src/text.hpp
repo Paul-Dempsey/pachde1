@@ -23,7 +23,7 @@ inline bool FontOk(std::shared_ptr<window::Font> font) {
 
 void SetTextStyle(NVGcontext *vg, std::shared_ptr<window::Font> font, NVGcolor color = RampGray(G_20), float height = 16);
 
-// Center text vertically and horizontally on the given point
+// Center text horizontally on the given point
 // Text style must have been previously set
 void CenterText(NVGcontext *vg, float x, float y, const char * text, const char * end);
 

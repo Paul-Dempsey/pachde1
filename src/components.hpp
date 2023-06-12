@@ -74,24 +74,6 @@ struct InfoWidget : rack::SvgWidget, ThemeLite {
     }
 };
 
-struct BluePort: rack::SvgPort, ThemeLite {
-    BluePort(Theme theme) {
-        setTheme(theme);
-    }
-
-    void setTheme(Theme theme) override {
-        if (theme == getTheme() && sw) return;
-        ThemeLite::setTheme(theme);
-        setSvg(Svg::load(asset::plugin(pluginInstance,
-            IsLighter(theme)
-                ? "res/Port.svg"
-                : "res/PortDark.svg")));
-        if (fb) {
-            fb->setDirty(true);
-        }
-    }
-};
-
 struct SmallKnob: rack::RoundKnob, ThemeLite {
     SmallKnob(Theme theme) {
         setTheme(theme);
@@ -189,6 +171,13 @@ struct Switch : rack::Switch, ThemeLite {
 void SetChildrenTheme(Widget * widget, Theme theme, bool top = true);
 void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top = true);
 void AddThemeMenu(rack::ui::Menu* menu, ITheme* change, bool isChangeColor = false, bool isChangeScrews = false);
+
+inline bool HaveScrewChildren(Widget* widget)
+{
+    return widget->children.end() !=
+        std::find_if(widget->children.begin(), widget->children.end(),
+            [](Widget* child) { return nullptr != dynamic_cast<ScrewCap*>(child); } );
+}
 
 struct ThemeModule : Module, ThemeBase
 {

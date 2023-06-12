@@ -63,7 +63,7 @@ NVGcolor OutputBackground(Theme theme)
         default:
         case Theme::Unset:
         case Theme::Light:
-            return GrayRamp[G_50];
+            return GrayRamp[G_40];
         case Theme::Dark:
             return GrayRamp[G_10];
         case Theme::HighContrast:

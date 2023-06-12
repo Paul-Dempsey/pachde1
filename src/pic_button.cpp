@@ -28,7 +28,7 @@ void PicButton::setTheme(Theme theme)
             break;
         case Theme::HighContrast:
             line = RampGray(G_WHITE);
-            face = COLOR_NONE;
+            face = RampGray(G_BLACK);
             break;
     }
 }

@@ -6,19 +6,30 @@
 
 Imagine::Imagine() {
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, 0);
-    configParam(SLEW_PARAM, 0.0f, 1.0f, 0.5f, "Slew", "%", 0.0f, 100.0f);
-    configSwitch(VOLTAGE_RANGE_PARAM, 0.0f, 1.0f, 0.0f, "Voltage Polarity", { "Bipolar -5v — +5v", "Unipolar 0v — +10v" });
-    configSwitch(RUN_PARAM, 0.0f, 1.0f, 0.0f, "Play", { "Paused", "Playing" });
-    configParam(SPEED_PARAM, 0.0f, 100.0f, 10.0f, "Speed");
-    configSwitch(SPEED_MULT_PARAM, 1.0f, 10.0f, 1.0f, "Speed Multiplier", {
-        "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10"
-    });
+
+    configParam(SLEW_PARAM, 0.f, 1.f, 0.f,
+        "Slew", "%", 0.f, 100.f);
+
+    configSwitch(VOLTAGE_RANGE_PARAM, 0.f, 1.0f, 0.0f,
+        "Voltage Polarity", { "Bipolar -5v — +5v", "Unipolar 0v — +10v" });
+
+    configSwitch(RUN_PARAM, 0.f, 1.f, 0.f,
+        "Play", { "Paused", "Playing" });
+
+    configParam(SPEED_PARAM, 0.f, 100.f, 10.f,
+        "Speed");
+
+    configSwitch(SPEED_MULT_PARAM, 1.f, 10.f, 1.f,
+        "Multiplier", 
+        { "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10" });
+
     configSwitch(PATH_PARAM, 0.0f, static_cast<int>(Traversal::NUM_TRAVERSAL)-1, 0.0f, "Path", {
         "Scanline",
         "Bounce",
         "Vinyl",
         "Wander",
     });
+
     configSwitch(COMP_PARAM, 0.0f, static_cast<int>(ColorComponent::NUM_COMPONENTS)-1, 0.0f, "Component", {
         "Luminance",
         "Saturation",
@@ -53,6 +64,7 @@ bool Imagine::loadImageDialog()
     std::string path = pathC;
     std::free(pathC);
     DEBUG("Selected image (%s)", path.c_str());
+    DEBUG("Image size %d x %d", image.width(), image.height());
     pic_folder = system::getDirectory(path);
     if (image.open(path)) {
         traversal->configure_image(Vec(image.width(), image.height()));
@@ -99,6 +111,8 @@ void Imagine::dataFromJson(json_t *root)
     if (j) {
         std::string path = json_string_value(j);
         if (image.open(path)) {
+            DEBUG("Opened image (%s)", path.c_str());
+            DEBUG("Image size %d x %d", image.width(), image.height());
             traversal->configure_image(Vec(image.width(), image.height()));
         } else {
             DEBUG("Image load failed: %s", image.reason().c_str());

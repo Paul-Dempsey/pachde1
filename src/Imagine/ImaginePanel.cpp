@@ -3,15 +3,15 @@
 
 namespace pachde {
 
-ImaginePanel::ImaginePanel(Imagine *mod, Theme t, Vec size)
+ImaginePanel::ImaginePanel(Imagine *mod, Vec size)
 {
     module = mod;
-    theme = ConcreteTheme(t);
     box.size = size;
 }
 
 void ImaginePanel::draw(const DrawArgs &args)
 {
+    Theme theme = module ? module->getTheme() : DefaultTheme;
     NVGcolor panel = PanelBackground(theme), textColor = ThemeTextColor(theme);
     auto vg = args.vg;
 
@@ -26,9 +26,9 @@ void ImaginePanel::draw(const DrawArgs &args)
     }
 
     // outputs 1
-    RoundRect(vg, 5.0f, 314.0f, 290.0f, 50.0f, OutputBackground(theme), 6.0f);
+    RoundRect(vg, 5.f, 314.f, 290.f, 50.f, OutputBackground(theme), 6.f);
     if (Theme::HighContrast == theme) {
-        RoundBoxRect(vg, 5.0f, 314.0f, 290.0f, 50.0f, RampGray(Ramp::G_WHITE), 6.0f);
+        RoundBoxRect(vg, 5.f, 314.f, 290.f, 50.f, RampGray(Ramp::G_WHITE), 6.0f);
     }
     // grid
     // auto gridline = IsLighter(theme) ? GRAY25 : nvgTransRGBAf(COLOR_GREEN_HI, 0.65);
@@ -41,27 +41,29 @@ void ImaginePanel::draw(const DrawArgs &args)
     {
         // title
         SetTextStyle(vg, font, textColor);
-        CenterText(vg, PANEL_CENTER, ONE_HP / 2.0f, "imagine", nullptr);
+        CenterText(vg, PANEL_CENTER, ONE_HP - 3.f, "imagine", nullptr);
 
-        CenterText(vg, 20.0f, 235.0f, "speed", nullptr);
+        auto control_row_text = 304.f;
+        CenterText(vg, 25.0f, control_row_text, "speed", nullptr);
         if (module) {
             auto p = module->getParamQuantity(Imagine::SPEED_MULT_PARAM);
-            CenterText(vg, 50.0f, 235.0f, p->getDisplayValueString().c_str(), nullptr);
+            CenterText(vg, 55.0f, control_row_text, p->getDisplayValueString().c_str(), nullptr);
         } else {
-            CenterText(vg, 50.0f, 235.0f, "1x", nullptr);
+            CenterText(vg, 55.0f, control_row_text, "1x", nullptr);
         }
-        CenterText(vg, 80.0f, 235.0f, ComponentInitial(module? module->color_component : ColorComponent::LUMINANCE) , nullptr);
-        CenterText(vg, 110.0f, 235.0f, "path", nullptr);
+        CenterText(vg, 85.0f, control_row_text, ComponentInitial(module? module->color_component : ColorComponent::LUMINANCE) , nullptr);
+        CenterText(vg, 115.0f, control_row_text, "path", nullptr);
 
         // outputs
-        SetTextStyle(vg, font, GRAY85, 16);
-        CenterText(vg, 24.5f, 350.0f, "x", nullptr);
-        CenterText(vg, 52.5f, 350.0f, "y", nullptr);
-        CenterText(vg, 82.5f, 350.0f, "slew", nullptr);
-        CenterText(vg, 112.5f, 350.0f, "v", nullptr);
-        CenterText(vg, 136.25f, 350.0f, "p", nullptr);
-        CenterText(vg, 162.5f, 350.0f, "g", nullptr);
-        CenterText(vg, 187.5f, 350.0f, "t", nullptr);
+        auto output_row_text = 355.f;
+        SetTextStyle(vg, font, GRAY85, 16.f);
+        CenterText(vg, 25.f, output_row_text, "x", nullptr);
+        CenterText(vg, 52.5f, output_row_text, "y", nullptr);
+        CenterText(vg, 82.5f, output_row_text, "slew", nullptr);
+        CenterText(vg, 112.5f, output_row_text, "v", nullptr);
+        CenterText(vg, 136.25f, output_row_text, "p", nullptr);
+        CenterText(vg, 162.5f, output_row_text, "g", nullptr);
+        CenterText(vg, 187.5f, output_row_text, "t", nullptr);
         if (!module || !module->image.ok()) {
             CenterText(vg, PANEL_CENTER, PANEL_IMAGE_TOP + PANEL_IMAGE_HEIGHT - TWO_HP, "[ no image ]", nullptr);
         }
@@ -71,7 +73,7 @@ void ImaginePanel::draw(const DrawArgs &args)
     {
         SetTextStyle(vg, font, IsLighter(theme) ? COLOR_BRAND : COLOR_BRAND_HI, 14.0f);
         nvgTextAlign(vg, NVG_ALIGN_MIDDLE);
-        nvgText(vg, 128.0f, 215.0f, TraversalName(module  ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
+        nvgText(vg, 134.f, 280.f, TraversalName(module  ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
     }
     Widget::draw(args);
     // nvgResetScissor(args.vg);
