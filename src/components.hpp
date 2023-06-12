@@ -3,7 +3,7 @@
 #include "colors.hpp"
 #include "theme.hpp"
 #include "themehelpers.hpp"
-
+#include "play_pause.hpp"
 using namespace ::rack;
 
 namespace pachde {
@@ -170,31 +170,6 @@ struct PicButton: OpaqueWidget, ThemeLite {
     }
     void onClick(std::function<void(void)> callback) {
         clickHandler = callback;
-    }
-};
-
-struct PLayPauseButton: PushButtonBase, ThemeLite {
-
-    PLayPauseButton(Theme theme) {
-        noShadow();
-        setTheme(theme);
-    }
-
-    void setTheme(Theme theme) override {
-        if (theme != getTheme() || frames.empty()) {
-            ThemeLite::setTheme(theme);
-            bool light = IsLighter(theme);
-            frames.clear();
-            addFrame(Svg::load(asset::plugin(pluginInstance, light
-                ? "res/PLayPauseButton_Up.svg"
-                : "res/PLayPauseButtonDark_Up.svg")));
-            addFrame(Svg::load(asset::plugin(pluginInstance, light
-                ? "res/PLayPauseButton_Down.svg"
-                : "res/PLayPauseButtonDark_Down.svg")));
-            if (fb) {
-                fb->setDirty(true);
-            }
-        }
     }
 };
 

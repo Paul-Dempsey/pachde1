@@ -118,5 +118,7 @@ void RoundRect(NVGcontext *vg, float x, float y, float width, float height, NVGc
 void BoxRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float strokeWidth = 1.0);
 void RoundBoxRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float radius, float strokeWidth = 1.0);
 void Line(NVGcontext * vg, float x1, float y1, float x2, float y2, NVGcolor color, float strokeWidth = 1.0);
+void CircleGradient(NVGcontext * vg, float cx, float cy, float r, NVGcolor top, NVGcolor bottom);
+void Circle(NVGcontext * vg, float cx, float cy, float r, NVGcolor fill);
 
 }

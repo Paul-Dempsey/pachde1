@@ -138,4 +138,22 @@ void Line(NVGcontext * vg, float x1, float y1, float x2, float y2, NVGcolor colo
     nvgStroke(vg);
 }
 
+// for light/dark overlay use something like
+// nvgRGBAf(0.9f,0.9f,0.9f,0.2f), nvgRGBAf(0.,0.,0.,0.3f)
+void CircleGradient(NVGcontext * vg, float cx, float cy, float r, NVGcolor top, NVGcolor bottom)
+{
+    nvgBeginPath(vg);
+    auto gradient = nvgLinearGradient(vg, cx, 0.f, cx, 2.f * r, top, bottom);
+    nvgFillPaint(vg, gradient);
+    nvgCircle(vg, cx, cy, r);
+    nvgFill(vg);
+}
+void Circle(NVGcontext * vg, float cx, float cy, float r, NVGcolor fill)
+{
+    nvgBeginPath(vg);
+    nvgFillColor(vg, fill);
+    nvgCircle(vg, cx, cy, r);
+    nvgFill(vg);
+}
+
 }

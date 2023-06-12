@@ -34,8 +34,8 @@ void ImagineUi::makeUi(Imagine *module, Theme theme)
     image->box.size = Vec(288.f, 162.f);
     addChild(image);
 
-    auto run = createThemeParamCentered<PLayPauseButton>(theme, Vec (150.f, 190.f), module, Imagine::RUN_PARAM);
-    run->momentary = false;
+    auto run = createThemeParamCentered<PlayPauseButton>(theme, Vec (150.f, 190.f), module, Imagine::RUN_PARAM);
+    //run->momentary = false;
     if (module) {
         run->onClick([module]() {
             module->setPlaying(!module->isPlaying());
