@@ -1,10 +1,9 @@
 #include <rack.hpp>
 #include "plugin.hpp"
-#include "components.hpp"
-#include "resizable.hpp"
-#include "colors.hpp"
-#include "themehelpers.hpp"
-#include "text.hpp"
+#include "../colors.hpp"
+#include "../components.hpp"
+#include "../resizable.hpp"
+#include "../text.hpp"
 
 using namespace pachde;
 

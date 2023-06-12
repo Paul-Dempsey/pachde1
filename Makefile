@@ -8,23 +8,23 @@ SOURCES += src/resizable.cpp
 SOURCES += src/colors.cpp
 SOURCES += src/text.cpp
 SOURCES += src/dsp.cpp
-SOURCES += src/pic.cpp
-SOURCES += src/pic_widget.cpp
 SOURCES += src/pic_button.cpp
 SOURCES += src/switch.cpp
 SOURCES += src/theme.cpp
-SOURCES += src/traversal.cpp
 
 # Blank module
-SOURCES += src/Blank.cpp
+SOURCES += src/Blank/Blank.cpp
 
 # Info module
-SOURCES += src/Info.cpp
+SOURCES += src/Info/Info.cpp
 
 # Imagine module
-SOURCES += src/Imagine.cpp
-SOURCES += src/ImaginePanel.cpp
-SOURCES += src/ImagineUi.cpp
+SOURCES += src/Imagine/Imagine.cpp
+SOURCES += src/Imagine/ImaginePanel.cpp
+SOURCES += src/Imagine/ImagineUi.cpp
+SOURCES += src/Imagine/pic.cpp
+SOURCES += src/Imagine/pic_widget.cpp
+SOURCES += src/Imagine/traversal.cpp
 
 DISTRIBUTABLES += res
 

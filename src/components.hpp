@@ -2,6 +2,8 @@
 #include "plugin.hpp"
 #include "colors.hpp"
 #include "theme.hpp"
+#include "themehelpers.hpp"
+
 using namespace ::rack;
 
 namespace pachde {

@@ -1,8 +1,8 @@
 #pragma once
 #include <rack.hpp>
-#include "plugin.hpp"
-#include "components.hpp"
-#include "dsp.hpp"
+#include "../plugin.hpp"
+#include "../components.hpp"
+#include "../dsp.hpp"
 #include "pic.hpp"
 #include "traversal.hpp"
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <rack.hpp>
-#include "primitives.hpp"
+#include "../point.hpp"
 
 namespace pachde {
 constexpr const float PIC_EPSILON = 0.00001f;

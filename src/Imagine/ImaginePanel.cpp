@@ -1,5 +1,5 @@
 #include "Imagine.hpp"
-#include "text.hpp"
+#include "../text.hpp"
 
 namespace pachde {
 

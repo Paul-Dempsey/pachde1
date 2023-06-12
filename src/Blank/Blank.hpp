@@ -1,8 +1,8 @@
 #pragma once
 #include <rack.hpp>
-#include "colors.hpp"
-#include "components.hpp"
-#include "resizable.hpp"
+#include "../colors.hpp"
+#include "../components.hpp"
+#include "../resizable.hpp"
 
 namespace pachde {
 

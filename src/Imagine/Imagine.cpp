@@ -1,9 +1,8 @@
 #include <osdialog.h>
-#include "themehelpers.hpp"
-#include "components.hpp"
-#include "text.hpp"
-#include "dsp.hpp"
 #include "Imagine.hpp"
+#include "../components.hpp"
+#include "../text.hpp"
+#include "../dsp.hpp"
 
 Imagine::Imagine() {
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, 0);

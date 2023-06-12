@@ -1,8 +1,7 @@
 #pragma once
 #include <rack.hpp>
+#include "../colors.hpp"
 #include "pic.hpp"
-#include "primitives.hpp"
-#include "colors.hpp"
 using namespace rack;
 using namespace pachde;
 

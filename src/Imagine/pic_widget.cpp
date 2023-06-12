@@ -1,5 +1,5 @@
 #include "pic_widget.hpp"
-#include "text.hpp"
+#include "../text.hpp"
 
 namespace pachde {
 
