@@ -272,7 +272,7 @@ struct ThemePanel : Widget
     void draw(const DrawArgs &args) override;
 };
 
-// textfield as menu item, adapted from SubmarineFree
+// textfield as menu item, originally adapted from SubmarineFree
 struct EventParamField : ui::TextField {
     std::function<void(std::string)> changeHandler;
     std::function<void(std::string)> commitHandler;
@@ -304,31 +304,6 @@ struct EventParamField : ui::TextField {
         }
         if (!e.getTarget())
             TextField::onSelectKey(e);
-    }
-};
-
-struct ThemeColorField : ui::TextField {
-    ITheme* theme_holder = nullptr;
-
-    ThemeColorField(ITheme* ict) {
-        assert(ict);
-        theme_holder = ict;
-        auto color = theme_holder->getPanelColor();
-        if (isColorVisible(color)) {
-            setText(rack::color::toHexString(color));
-        }
-    }
-
-    void onChange(const ChangeEvent& e) override {
-        ui::TextField::onChange(e);
-        if (theme_holder) { 
-            auto color = COLOR_NONE;
-            auto text = getText();
-            if (!text.empty() && text[0] == '#') {
-                color = rack::color::fromHexString(text);
-            }
-            theme_holder->setPanelColor(color);
-        }
     }
 };
 

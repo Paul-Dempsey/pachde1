@@ -151,9 +151,6 @@ void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isC
         menu->addChild(createSubmenuItem("Panel color", "",
             [=](Menu *menu)
             {
-                // auto tw = new ThemeColorField(change);
-                // tw->box.size.x = 100;
-                // menu->addChild(tw);
                 EventParamField *editField = new EventParamField();
                 editField->box.size.x = 100;
                 auto color = it->getPanelColor();
