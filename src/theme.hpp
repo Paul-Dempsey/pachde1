@@ -16,6 +16,16 @@ struct ITheme {
     virtual bool hasScrews() = 0;
 };
 
+// just a theme -- no screws, no panel override
+struct ThemeLite: ITheme
+{
+    Theme theme = DefaultTheme;
+    void setTheme(Theme theme) override { this->theme = theme; };
+    Theme getTheme() override { return theme; }
+    NVGcolor getPanelColor() override { return COLOR_NONE; }
+    bool hasScrews() override { return false; }
+};
+
 struct ThemeBase: ITheme
 {
     Theme theme = DefaultTheme;

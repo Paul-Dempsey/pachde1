@@ -21,7 +21,7 @@ void ThemePanel::draw(const DrawArgs &args)
 void SetChildrenTheme(Widget * widget, Theme theme, bool top)
 {
     for (Widget* child : widget->children) {
-        auto change = dynamic_cast<ThemeBase*>(child);
+        auto change = dynamic_cast<ITheme*>(child);
         if (change) {
             change->setTheme(theme);
         }
@@ -40,7 +40,7 @@ void SetChildrenTheme(Widget * widget, Theme theme, bool top)
 void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top)
 {
     for (Widget* child : widget->children) {
-        auto change = dynamic_cast<ThemeBase*>(child);
+        auto change = dynamic_cast<ITheme*>(child);
         if (change) {
             change->setPanelColor(color);
         }
@@ -212,7 +212,10 @@ void DrawScrewCap(NVGcontext * vg, float x, float y, Theme theme, NVGcolor color
     nvgFill(vg);
     
     nvgBeginPath(vg);
-    auto gradient = nvgLinearGradient(vg, 7.5, 2.3, 7.5, 12.7, nvgRGBAf(0.9f,0.9f,0.9f,0.2f), nvgRGBAf(0.0,0.0,0.0,0.3f));
+    // light screen to darkened
+    auto gradient = nvgLinearGradient(vg, 7.5, 2.3, 7.5, 12.7, 
+        nvgRGBAf(0.9f,0.9f,0.9f,0.2f),
+        nvgRGBAf(0.0,0.0,0.0,0.3f));
     nvgFillPaint(vg, gradient);
     nvgCircle(vg, 7.5,7.5, 5.2);
     nvgFill(vg);

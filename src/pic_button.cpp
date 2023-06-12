@@ -2,16 +2,20 @@
 
 namespace pachde {
 
-PicButton::PicButton(Theme t)
+PicButton::PicButton(Theme theme)
 {
     box.size.x = box.size.y = 15.f;
-    setTheme(t);
+    line.a = 0.f; // force theme init
+    setTheme(theme);
 }
 
-void PicButton::setTheme(Theme t)
+void PicButton::setTheme(Theme theme)
 {
-    assert(Theme::Unset != t);
-    switch (t) {
+    if (isColorVisible(line) && theme == getTheme()) {
+        return;
+    }
+    ThemeLite::setTheme(theme);
+    switch (theme) {
         default:
         case Theme::Unset:
         case Theme::Light:
@@ -36,39 +40,25 @@ void PicButton::draw(const DrawArgs &args) {
     auto stroke = pressed ? face : line;
     auto vg = args.vg;
 
-    if (isColorVisible(fill)) {
-        RoundRect(vg, 0.75f, 0.75f, 13.5f, 13.5f, fill, 2.25f);
-    }
+    RoundRect(vg, 0.75f, 0.75f, 13.5f, 13.5f, fill, 2.25f);
 
-    if (isColorVisible(stroke)) {
-        RoundBoxRect(vg, 0.75f, 0.75f, 13.5f, 13.5f, stroke, 2.25f);
+    RoundBoxRect(vg, 0.75f, 0.75f, 13.5f, 13.5f, stroke, 2.25f);
 
-        nvgBeginPath(vg);
-        nvgMoveTo(vg, 1.f, 14.f);
-        nvgLineTo(vg, 6.f, 8.f);
-        nvgLineTo(vg, 14.f, 14.f);
-        nvgStrokeColor(vg, stroke);
-        nvgLineCap(vg, NVG_ROUND);
-        nvgStroke(vg);
+    nvgBeginPath(vg);
+    nvgMoveTo(vg, 1.f, 14.f);
+    nvgLineTo(vg, 6.f, 8.f);
+    nvgLineTo(vg, 14.f, 14.f);
+    nvgStrokeColor(vg, stroke);
+    nvgLineCap(vg, NVG_ROUND);
+    nvgStroke(vg);
 
-        nvgBeginPath(vg);
-        nvgCircle(vg, 10.2f, 5.2f, 1.5f);
-        nvgFillColor(vg, stroke);
-        nvgFill(vg);
-    }
+    nvgBeginPath(vg);
+    nvgCircle(vg, 10.2f, 5.2f, 1.5f);
+    nvgFillColor(vg, stroke);
+    nvgFill(vg);
 
 }
 
-void PicButton::center(Vec pos)
-{
-    box.pos = pos.minus(box.size.div(2));
-}
-
-void PicButton::onClick(std::function<void(void)> callback)
-{
-    clickHandler = callback;
-}
- 
 void PicButton::onButton(const event::Button& e)
 {
     rack::OpaqueWidget::onButton(e);

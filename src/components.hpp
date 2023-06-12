@@ -30,11 +30,11 @@ struct ScrewCap : rack::TransparentWidget, ThemeBase
 
     void draw(const DrawArgs &args) override {
         rack::TransparentWidget::draw(args);
-        DrawScrewCap(args.vg, 0, 0, theme, color);
+        DrawScrewCap(args.vg, 0, 0, getTheme(), color);
     }
 };
 
-struct LogoWidget : rack::OpaqueWidget, public ThemeBase {
+struct LogoWidget : rack::OpaqueWidget, ThemeLite {
     LogoWidget(Theme theme) {
         setTheme(theme);
         box.size.x = box.size.y = 15.0f;
@@ -45,7 +45,7 @@ struct LogoWidget : rack::OpaqueWidget, public ThemeBase {
     }
 };
 
-struct LogoOverlayWidget : rack::OpaqueWidget, public ThemeBase {
+struct LogoOverlayWidget : rack::OpaqueWidget, ThemeLite {
     LogoOverlayWidget(Theme theme) {
         setTheme(theme);
         box.size.x = box.size.y = 15.0f;
@@ -60,7 +60,7 @@ struct LogoOverlayWidget : rack::OpaqueWidget, public ThemeBase {
     }
 };
 
-struct InfoWidget : rack::SvgWidget, ThemeBase {
+struct InfoWidget : rack::SvgWidget, ThemeLite {
     InfoWidget(Theme theme) {
         setTheme(theme);
     }
@@ -74,16 +74,16 @@ struct InfoWidget : rack::SvgWidget, ThemeBase {
     }
 };
 
-struct BluePort: rack::SvgPort, public ThemeBase {
-    BluePort(Theme t) {
-        setTheme(t);
+struct BluePort: rack::SvgPort, ThemeLite {
+    BluePort(Theme theme) {
+        setTheme(theme);
     }
 
-    void setTheme(Theme t) override {
-        if (t == theme && sw) return;
-        theme = t;
+    void setTheme(Theme theme) override {
+        if (theme == getTheme() && sw) return;
+        ThemeLite::setTheme(theme);
         setSvg(Svg::load(asset::plugin(pluginInstance,
-            IsLighter(t)
+            IsLighter(theme)
                 ? "res/Port.svg"
                 : "res/PortDark.svg")));
         if (fb) {
@@ -92,15 +92,15 @@ struct BluePort: rack::SvgPort, public ThemeBase {
     }
 };
 
-struct SmallKnob: rack::RoundKnob, public ThemeBase {
-    SmallKnob(Theme t) {
-        setTheme(t);
+struct SmallKnob: rack::RoundKnob, ThemeLite {
+    SmallKnob(Theme theme) {
+        setTheme(theme);
     }
 
-    void setTheme(Theme t) override {
-        if (t == theme && bg && bg->svg) return;
-        theme = t;
-        bool light = IsLighter(t);
+    void setTheme(Theme theme) override {
+        if (theme == getTheme() && bg && bg->svg) return;
+        ThemeLite::setTheme(theme);
+        bool light = IsLighter(theme);
         setSvg(Svg::load(asset::plugin(pluginInstance,
             light ? "res/SmallKnob.svg" : "res/SmallKnobDark.svg")));
         bg->setSvg(Svg::load(asset::plugin(pluginInstance,
@@ -153,60 +153,37 @@ struct PushButtonBase: rack::SvgSwitch {
     }
 };
 
-// struct PushButton: PushButtonBase, IChangeTheme {
-//     Theme theme = Theme::Unset;
-
-//     PushButton(Theme t) {
-//         noShadow();
-//         setTheme(t);
-//     }
-
-//     void setTheme(Theme t) override {
-//         if (t != theme || frames.empty()) {
-//             theme = t;
-//             frames.clear();
-//             if (IsLighter(t)) {
-//                 addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButton_Up.svg")));
-//                 addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButton_Down.svg")));
-//             } else {
-//                 addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButtonDark_Up.svg")));
-//                 addFrame(Svg::load(asset::plugin(pluginInstance,"res/SmallPushButtonDark_Down.svg")));
-//             }
-//             if (fb) {
-//                 fb->setDirty(true);
-//             }
-//         }
-//     }
-// };
-
-
-struct PicButton: OpaqueWidget, ThemeBase {
+struct PicButton: OpaqueWidget, ThemeLite {
     NVGcolor line, face;
     bool pressed = false;
     std::function<void(void)> clickHandler;
 
-    PicButton(Theme t);
+    PicButton(Theme theme);
 
-    void setTheme(Theme t) override;
+    void setTheme(Theme theme) override;
     void draw(const DrawArgs &args) override;
     void onButton(const event::Button& e) override;
     void onDragEnd(const DragEndEvent & e) override;
 
-    void center(Vec pos);
-    void onClick(std::function<void(void)> callback);
+    void center(Vec pos) {
+        box.pos = pos.minus(box.size.div(2));
+    }
+    void onClick(std::function<void(void)> callback) {
+        clickHandler = callback;
+    }
 };
 
-struct PLayPauseButton: PushButtonBase, ThemeBase {
+struct PLayPauseButton: PushButtonBase, ThemeLite {
 
-    PLayPauseButton(Theme t) {
+    PLayPauseButton(Theme theme) {
         noShadow();
-        setTheme(t);
+        setTheme(theme);
     }
 
-    void setTheme(Theme t) override {
-        if (t != theme || frames.empty()) {
-            theme = t;
-            bool light = IsLighter(t);
+    void setTheme(Theme theme) override {
+        if (theme != getTheme() || frames.empty()) {
+            ThemeLite::setTheme(theme);
+            bool light = IsLighter(theme);
             frames.clear();
             addFrame(Svg::load(asset::plugin(pluginInstance, light
                 ? "res/PLayPauseButton_Up.svg"
@@ -221,7 +198,7 @@ struct PLayPauseButton: PushButtonBase, ThemeBase {
     }
 };
 
-struct Switch : rack::Switch, ThemeBase {
+struct Switch : rack::Switch, ThemeLite {
     int value = 0;
     int units = 2;
     NVGcolor background, frame, thumb, thumb_top, thumb_bottom;
@@ -231,7 +208,7 @@ struct Switch : rack::Switch, ThemeBase {
 	void initParamQuantity() override;
     void draw(const DrawArgs &args) override;
     void onChange(const ChangeEvent& e) override;
-    void setTheme(Theme t) override;
+    void setTheme(Theme theme) override;
 };
 
 void SetChildrenTheme(Widget * widget, Theme theme, bool top = true);

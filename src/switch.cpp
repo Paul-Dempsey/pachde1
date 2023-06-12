@@ -10,6 +10,7 @@ Switch::Switch(Theme theme)
 
 void Switch::setTheme(Theme theme)
 {
+    ThemeLite::setTheme(theme);
     background = PanelBackground(theme);
     switch (theme) {
         default:
