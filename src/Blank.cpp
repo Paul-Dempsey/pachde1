@@ -30,7 +30,7 @@ void DrawNull(NVGcontext*vg, float x, float y, NVGcolor ring_color, NVGcolor sla
 
 // ----------------------------------------------------------------------------
 
-BlankModuleWidget::BlankModuleWidget(BlankModule *module)
+BlankModuleWidget::BlankModuleWidget(ResizableModule *module)
 {
     setModule(module);
     setTheme(ModuleTheme(module));
@@ -52,11 +52,11 @@ void BlankModuleWidget::addResizeHandles()
     this->rightHandle = rightHandle;
     addChild(rightHandle);
 }
-void BlankModuleWidget::setScrews(bool showScrews)
+
+void BlankModuleWidget::setScrews(bool screws)
 {
-    auto change = dynamic_cast<IChangeTheme*>(module);
-    if (change) change->setScrews(showScrews);
-    if (showScrews) {
+    getITheme()->setScrews(screws);
+    if (screws) {
         add_screws();
     } else {
         RemoveScrewCaps(this);
@@ -64,10 +64,16 @@ void BlankModuleWidget::setScrews(bool showScrews)
 }
 
 void BlankModuleWidget::add_screws() {
-    auto tm = dynamic_cast<ThemeModule*>(module);
-    auto theme = ModuleTheme(tm);
-    auto color = ModuleColor(tm);
-    bool set_color = color.a > 0.f;
+    bool have_screws = children.end() !=
+        std::find_if(children.begin(), children.end(),
+            [](Widget* child) { return nullptr != dynamic_cast<ScrewCap*>(child); } );
+    if (have_screws) return;
+
+    auto itheme = getITheme();
+    auto theme = itheme->getTheme();
+    auto color = itheme->getPanelColor();
+    bool set_color = isColorVisible(color);
+
     auto screw = new ScrewCap(theme);
     if (set_color) { screw->color = color; }
     screw->box.pos = Vec(0, 0);
@@ -89,18 +95,11 @@ void BlankModuleWidget::add_screws() {
     addChild(bottomRightScrew);
 }
 
-void BlankModuleWidget::setScrewColors(NVGcolor color) {
+void BlankModuleWidget::setPanelColor(NVGcolor color) {
+    auto itheme = getITheme();
+    itheme->setPanelColor(color);
     SetScrewColors(this, color);
-}
-
-void BlankModuleWidget::setColor(NVGcolor color) {
-    auto change = dynamic_cast<IChangeTheme*>(this->module);
-    if (change) {
-        change->setColor(color);
-    }
     if (panel) {
-        panel->setColor(color);
-        setScrewColors(color);
         widget::EventContext cDirty;
         widget::Widget::DirtyEvent eDirty;
         eDirty.context = &cDirty;
@@ -110,7 +109,7 @@ void BlankModuleWidget::setColor(NVGcolor color) {
 
 void BlankModuleWidget::draw(const DrawArgs &args) {
     ModuleWidget::draw(args);
-    auto theme = panel->getTheme();
+    auto theme = getITheme()->getTheme();
     NVGcolor logo = LogoColor(theme);
     NVGcolor ring, slash;
     switch (theme) {
@@ -146,9 +145,7 @@ void BlankModuleWidget::draw(const DrawArgs &args) {
         }
     }
 
-    BlankModule *module = dynamic_cast<BlankModule *>(this->module);
-    bool skinny = (module ? module->show_screws : true) 
-        && (3 * RACK_GRID_WIDTH > box.size.x);
+    bool skinny = hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);
 
     auto y = skinny ? RACK_GRID_WIDTH : 0.0f;
     DrawNull(args.vg, (box.size.x/2.0f) - 7.5f, y, ring, slash);
@@ -163,28 +160,28 @@ void BlankModuleWidget::draw(const DrawArgs &args) {
 
 void BlankModuleWidget::setTheme(Theme theme)
 {
-    auto change = dynamic_cast<IChangeTheme*>(this->module);
-    if (change) {
-        change->setTheme(theme);
-    }
-    auto themeModule = dynamic_cast<ThemeModule*>(this->module);
+    auto itheme = getITheme();
+    itheme->setTheme(theme);
+
     // set default size for module browser
     box.size = Vec(RACK_GRID_WIDTH * 4, RACK_GRID_HEIGHT);
+
     if (children.empty()) {
-        panel = new ThemePanel(themeModule);
+        panel = new ThemePanel(itheme);
         panel->box.size = box.size;
         setPanel(panel);
         addResizeHandles();
-        bool screws = ModuleHasScrews(themeModule);
-        if (screws) {
+        if (hasScrews()) {
             add_screws();
         }
     } else {
         SetChildrenTheme(this, theme);
+        auto themeModule = dynamic_cast<ThemeModule*>(this->module);
         if (ModuleColorOverride(themeModule)) {
-            SetChildrenThemeColor(this, themeModule->getColor());
+            SetChildrenThemeColor(this, itheme->getPanelColor());
         }
     }
+
     auto resize = dynamic_cast<ResizableModule*>(this->module);
     if (resize)
     {
@@ -194,7 +191,7 @@ void BlankModuleWidget::setTheme(Theme theme)
 
 void BlankModuleWidget::step()
 {
-    BlankModule *module = dynamic_cast<BlankModule *>(this->module);
+    auto module = dynamic_cast<ResizableModule *>(this->module);
     if (module)
     {
         box.size.x = module->width * RACK_GRID_WIDTH;
@@ -215,11 +212,9 @@ void BlankModuleWidget::step()
 
 void BlankModuleWidget::appendContextMenu(Menu *menu)
 {
-    if (!this->module)
-        return;
-    ThemeModule *themeModule = dynamic_cast<ThemeModule *>(this->module);
-    themeModule->addThemeMenu(menu, dynamic_cast<IChangeTheme*>(this), true, true);
+    AddThemeMenu(menu, this, true, true);
 }
 
 }
-Model *modelBlank = createModel<pachde::BlankModule, pachde::BlankModuleWidget>("pachde-null");
+
+Model *modelBlank = createModel<pachde::ResizableModule, pachde::BlankModuleWidget>("pachde-null");

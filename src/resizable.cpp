@@ -23,7 +23,6 @@ void ResizableModule::dataFromJson(json_t *root)
 void ResizableModule::setWidth(int newWidth) {
     if (newWidth != width) {
         width = std::max(minWidth, newWidth);
-        dirty = true;
     }
 }
 
@@ -34,8 +33,8 @@ ModuleResizeHandle::ModuleResizeHandle()
     box.size = Vec(HandleWidth(), RACK_GRID_HEIGHT - 2 * ONE_HP);
 }
 
-NVGcolor ModuleResizeHandle::HandleOverlay() {
-
+NVGcolor ModuleResizeHandle::HandleOverlay()
+{
     if (isColorVisible(module->panel_color)) {
         bool hi_contrast = Theme::HighContrast == module->theme;
         NVGcolor overlay;

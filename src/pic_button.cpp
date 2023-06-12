@@ -4,7 +4,7 @@ namespace pachde {
 
 PicButton::PicButton(Theme t)
 {
-    box.size.x = box.size.y = 15.0f;
+    box.size.x = box.size.y = 15.f;
     setTheme(t);
 }
 
@@ -36,17 +36,17 @@ void PicButton::draw(const DrawArgs &args) {
     auto stroke = pressed ? face : line;
     auto vg = args.vg;
 
-    if (fill.a > 0.0f) {
-        RoundRect(vg, 0.75, 0.75, 13.5, 13.5, fill, 2.25);
+    if (isColorVisible(fill)) {
+        RoundRect(vg, 0.75f, 0.75f, 13.5f, 13.5f, fill, 2.25f);
     }
 
-    if (stroke.a > 0.0f) {
-        RoundBoxRect(vg, 0.75, 0.75, 13.5, 13.5, stroke, 2.25);
+    if (isColorVisible(stroke)) {
+        RoundBoxRect(vg, 0.75f, 0.75f, 13.5f, 13.5f, stroke, 2.25f);
 
         nvgBeginPath(vg);
-        nvgMoveTo(vg, 1.0f, 14.0f);
-        nvgLineTo(vg, 6.0f, 8.0f);
-        nvgLineTo(vg, 14.0f, 14.0f);
+        nvgMoveTo(vg, 1.f, 14.f);
+        nvgLineTo(vg, 6.f, 8.f);
+        nvgLineTo(vg, 14.f, 14.f);
         nvgStrokeColor(vg, stroke);
         nvgLineCap(vg, NVG_ROUND);
         nvgStroke(vg);
@@ -72,7 +72,9 @@ void PicButton::onClick(std::function<void(void)> callback)
 void PicButton::onButton(const event::Button& e)
 {
     rack::OpaqueWidget::onButton(e);
-    if (!(e.action == GLFW_PRESS && e.button == GLFW_MOUSE_BUTTON_LEFT && (e.mods & RACK_MOD_MASK) == 0)) {
+    if (!(e.action == GLFW_PRESS
+        && e.button == GLFW_MOUSE_BUTTON_LEFT
+        && (e.mods & RACK_MOD_MASK) == 0)) {
         return;
     }
     pressed = true;

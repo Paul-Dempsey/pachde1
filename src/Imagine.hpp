@@ -141,14 +141,14 @@ struct ImaginePanel : Widget
     void draw(const DrawArgs &args) override;
 };
 
-struct ImagineUi : ModuleWidget, IChangeTheme
+struct ImagineUi : ModuleWidget, ThemeBase
 {
     ImaginePanel *panel = nullptr;
 
     ImagineUi(Imagine *module);
-    void makeUi(Imagine *module, Theme theme);
+    void makeUi(Imagine* module, Theme theme);
     void setTheme(Theme theme) override;
-    void appendContextMenu(Menu *menu) override;
+    void appendContextMenu(rack::ui::Menu* menu) override;
 };
 
 }

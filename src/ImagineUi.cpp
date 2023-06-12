@@ -95,6 +95,5 @@ void ImagineUi::appendContextMenu(Menu *menu)
             module->bright_image = !module->bright_image;
         }));
 
-    auto themeModule = dynamic_cast<ThemeModule *>(this->module);
-    themeModule->addThemeMenu(menu, dynamic_cast<IChangeTheme *>(this));
+    AddThemeMenu(menu, this, false, true);
 }

@@ -4,9 +4,11 @@ namespace pachde {
 
 void ThemePanel::draw(const DrawArgs &args)
 {
-    auto color = module && isColorVisible(module->panel_color)
-        ? module->panel_color
-        : PanelBackground(ModuleTheme(module));
+    auto color = theme_holder->getPanelColor();
+    if (isColorTransparent(color))
+    {
+        color = PanelBackground(theme_holder->getTheme());
+    }
 
     nvgBeginPath(args.vg);
     nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
@@ -19,7 +21,7 @@ void ThemePanel::draw(const DrawArgs &args)
 void SetChildrenTheme(Widget * widget, Theme theme, bool top)
 {
     for (Widget* child : widget->children) {
-        auto change = dynamic_cast<IChangeTheme*>(child);
+        auto change = dynamic_cast<ThemeBase*>(child);
         if (change) {
             change->setTheme(theme);
         }
@@ -38,9 +40,9 @@ void SetChildrenTheme(Widget * widget, Theme theme, bool top)
 void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top)
 {
     for (Widget* child : widget->children) {
-        auto change = dynamic_cast<IChangeTheme*>(child);
+        auto change = dynamic_cast<ThemeBase*>(child);
         if (change) {
-            change->setColor(color);
+            change->setPanelColor(color);
         }
         if (!child->children.empty()) {
             SetChildrenThemeColor(child, color, false);
@@ -59,7 +61,7 @@ void SetScrewColors(Widget* widget, NVGcolor color) {
     for (Widget * child: widget->children) {
         auto screw = dynamic_cast<ScrewCap*>(child);
         if (screw) {
-            screw->setColor(color);
+            screw->setPanelColor(color);
         }
     }    
 }
@@ -70,28 +72,28 @@ void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color)
     auto screw = new ScrewCap(theme);
     screw->box.pos = Vec(RACK_GRID_WIDTH, 0);
     if (set_color) {
-        screw->setColor(color);
+        screw->setPanelColor(color);
     }
     widget->addChild(screw);
 
     screw = new ScrewCap(theme);
     screw->box.pos = Vec(widget->box.size.x - RACK_GRID_WIDTH * 2, 0);
     if (set_color) {
-        screw->setColor(color);
+        screw->setPanelColor(color);
     }
     widget->addChild(screw);
 
     screw = new ScrewCap(theme);
     screw->box.pos = Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
     if (set_color) {
-        screw->setColor(color);
+        screw->setPanelColor(color);
     }
     widget->addChild(screw);
 
     screw = new ScrewCap(theme);
     screw->box.pos = Vec(widget->box.size.x - RACK_GRID_WIDTH * 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
     if (set_color) {
-        screw->setColor(color);
+        screw->setPanelColor(color);
     }
     widget->addChild(screw);
 }
@@ -110,6 +112,65 @@ void RemoveScrewCaps(Widget* widget)
     for (Widget * child: remove) {
         widget->removeChild(child);
         delete child;
+    }
+}
+
+void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isChangeScrews) {
+    assert(it);
+    menu->addChild(new MenuSeparator);
+    if (isChangeScrews) {
+        menu->addChild(createCheckMenuItem("Screws", "",
+            [=]() { return it->hasScrews(); }, 
+            [=]() {
+                    bool screws = it->hasScrews();
+                    it->setScrews(!screws);
+                }
+            ));
+    }
+    menu->addChild(createSubmenuItem("Theme", "",
+        [=](Menu *menu)
+        {
+            menu->addChild(createCheckMenuItem(
+                "Light", "",
+                [=]() { return it->getTheme() == Theme::Light; },
+                [=]() { it->setTheme(Theme::Light); }
+                ));
+            menu->addChild(createCheckMenuItem(
+                "Dark", "",
+                [=]() { return it->getTheme() == Theme::Dark; },
+                [=]() { it->setTheme(Theme::Dark); }
+                ));
+            menu->addChild(createCheckMenuItem(
+                "High contrast", "",
+                [=]() { return it->getTheme() == Theme::HighContrast; },
+                [=]() { it->setTheme(Theme::HighContrast); }
+                ));
+        }));
+
+    if (isChangeColor) {
+        menu->addChild(createSubmenuItem("Panel color", "",
+            [=](Menu *menu)
+            {
+                // auto tw = new ThemeColorField(change);
+                // tw->box.size.x = 100;
+                // menu->addChild(tw);
+                EventParamField *editField = new EventParamField();
+                editField->box.size.x = 100;
+                auto color = it->getPanelColor();
+                if (isColorVisible(color)) {
+                    editField->setText(rack::color::toHexString(color));
+                } else {
+                    editField->setText("[#<hex>]");
+                }
+                editField->changeHandler = [=](std::string text) {
+                    auto color = COLOR_NONE;
+                    if (!text.empty() && text[0] == '#') {
+                        color = rack::color::fromHexString(text);
+                    }
+                    it->setPanelColor(color);
+                };
+                menu->addChild(editField);
+            }));
     }
 }
 

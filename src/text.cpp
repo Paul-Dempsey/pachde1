@@ -17,7 +17,7 @@ void SetTextStyle(NVGcontext *vg, std::shared_ptr<window::Font> font, NVGcolor c
     assert(FontOk(font));
     nvgFillColor(vg, color);
     nvgFontFaceId(vg, font->handle);
-    nvgTextLetterSpacing(vg, 0.0);
+    nvgTextLetterSpacing(vg, 0.f);
     nvgFontSize(vg, height);
 }
 

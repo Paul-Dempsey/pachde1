@@ -1,6 +1,7 @@
 #pragma once
 #include "plugin.hpp"
 #include "colors.hpp"
+#include "theme.hpp"
 using namespace ::rack;
 
 namespace pachde {
@@ -16,57 +17,36 @@ inline float PixToHp(float pix) { return pix / 15.0; }
 inline float ClampBipolar(float v) { return rack::math::clamp(v, -5.0f, 5.0f); }
 inline float ClampUnipolar(float v) { return rack::math::clamp(v, 0.0f, 10.0f); }
 
-struct IChangeTheme
+struct ScrewCap : rack::TransparentWidget, ThemeBase
 {
-    virtual void setTheme(Theme theme) {};
-    virtual void setColor(NVGcolor color) {};
-    virtual void setScrews(bool showScrews) {};
-};
-
-struct ScrewCap : rack::TransparentWidget, public IChangeTheme {
-    Theme theme = Theme::Unset;
     NVGcolor color = COLOR_NONE;
 
     ScrewCap(Theme theme) {
+        box.size.x = box.size.y = 15.f;
         setTheme(theme);
     }
+
     void draw(const DrawArgs &args) override {
         rack::TransparentWidget::draw(args);
         DrawScrewCap(args.vg, 0, 0, theme, color);
     }
-
-    void setTheme(Theme t) override {
-        theme = t;
-    }
-    void setColor(NVGcolor color) override {
-        this->color = color;
-    }
 };
 
-struct LogoWidget : rack::OpaqueWidget, public IChangeTheme {
-    Theme theme = Theme::Unset;
-
+struct LogoWidget : rack::OpaqueWidget, public ThemeBase {
     LogoWidget(Theme theme) {
         setTheme(theme);
-        box.size.x = 15.0f;
-        box.size.y = 15.0f;
+        box.size.x = box.size.y = 15.0f;
     }
     void draw(const DrawArgs &args) override {
         rack::OpaqueWidget::draw(args);
         DrawLogo(args.vg, 0, 0, LogoColor(theme));
     }
-    void setTheme(Theme t) override {
-        theme = t;
-    }
 };
 
-struct LogoOverlayWidget : rack::OpaqueWidget, public IChangeTheme {
-    Theme theme = Theme::Unset;
-
+struct LogoOverlayWidget : rack::OpaqueWidget, public ThemeBase {
     LogoOverlayWidget(Theme theme) {
         setTheme(theme);
-        box.size.x = 15.0f;
-        box.size.y = 15.0f;
+        box.size.x = box.size.y = 15.0f;
     }
     void draw(const DrawArgs &args) override {
         rack::OpaqueWidget::draw(args);
@@ -76,15 +56,9 @@ struct LogoOverlayWidget : rack::OpaqueWidget, public IChangeTheme {
         }
         DrawLogo(args.vg, 0, 0, color);
     }
-
-    void setTheme(Theme t) override {
-        theme = t;
-    }
 };
 
-struct InfoWidget : rack::SvgWidget, IChangeTheme {
-    Theme theme = Theme::Unset;
-
+struct InfoWidget : rack::SvgWidget, ThemeBase {
     InfoWidget(Theme theme) {
         setTheme(theme);
     }
@@ -98,9 +72,7 @@ struct InfoWidget : rack::SvgWidget, IChangeTheme {
     }
 };
 
-struct BluePort: rack::SvgPort, public IChangeTheme {
-    Theme theme = Theme::Unset;
-
+struct BluePort: rack::SvgPort, public ThemeBase {
     BluePort(Theme t) {
         setTheme(t);
     }
@@ -118,9 +90,7 @@ struct BluePort: rack::SvgPort, public IChangeTheme {
     }
 };
 
-struct SmallKnob: rack::RoundKnob, public IChangeTheme {
-    Theme theme = Theme::Unset;
-
+struct SmallKnob: rack::RoundKnob, public ThemeBase {
     SmallKnob(Theme t) {
         setTheme(t);
     }
@@ -208,7 +178,7 @@ struct PushButtonBase: rack::SvgSwitch {
 // };
 
 
-struct PicButton: OpaqueWidget, IChangeTheme {
+struct PicButton: OpaqueWidget, ThemeBase {
     NVGcolor line, face;
     bool pressed = false;
     std::function<void(void)> clickHandler;
@@ -224,8 +194,7 @@ struct PicButton: OpaqueWidget, IChangeTheme {
     void onClick(std::function<void(void)> callback);
 };
 
-struct PLayPauseButton: PushButtonBase, IChangeTheme {
-    Theme theme = Theme::Unset;
+struct PLayPauseButton: PushButtonBase, ThemeBase {
 
     PLayPauseButton(Theme t) {
         noShadow();
@@ -250,8 +219,7 @@ struct PLayPauseButton: PushButtonBase, IChangeTheme {
     }
 };
 
-struct Switch : rack::Switch, IChangeTheme {
-    Theme theme = Theme::Unset;
+struct Switch : rack::Switch, ThemeBase {
     int value = 0;
     int units = 2;
     NVGcolor background, frame, thumb, thumb_top, thumb_bottom;
@@ -266,45 +234,21 @@ struct Switch : rack::Switch, IChangeTheme {
 
 void SetChildrenTheme(Widget * widget, Theme theme, bool top = true);
 void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top = true);
+void AddThemeMenu(rack::ui::Menu* menu, ITheme* change, bool isChangeColor = false, bool isChangeScrews = false);
 
-struct ThemeModule : Module, IChangeTheme
+struct ThemeModule : Module, ThemeBase
 {
-    bool dirty = false;
-    bool show_screws = true;
-    Theme theme = Theme::Unset;
-    // a non-transparent panel color overrides the theme
-    NVGcolor panel_color = COLOR_NONE;
-
-    Theme getTheme() { return ConcreteTheme(theme); }
-    NVGcolor getColor() { return panel_color; }
-    bool isColorOverride() { return isColorVisible(panel_color); }
-    void setTheme(Theme t) override
-    {
-        theme = t;
-        dirty = true;
+    ThemeModule() {
+        setScrews(true);
     }
-    void setColor(NVGcolor color) override
-    {
-        panel_color = color;
-        dirty = true;
-    }
-    void setScrews(bool showScrews) override {
-        show_screws = showScrews;
-    }
-    bool hasScrews() { return show_screws; }
-
-    void onReset() override;
-    json_t *dataToJson() override;
-    void dataFromJson(json_t *rootJ) override;
-    void addThemeMenu(Menu *menu, IChangeTheme *change, bool isChangeColor = false, bool isChangeScrews = false);
+    json_t* dataToJson() override { return save(json_object()); }
+    void dataFromJson(json_t* root) override { load(root); }
 };
-
 
 inline Theme ModuleTheme(ThemeModule* module)
 {
     return module ? module->getTheme() : DefaultTheme;
 }
-
 inline NVGcolor ModuleColor(ThemeModule* module)
 {
     return module ? module->panel_color : COLOR_NONE;
@@ -320,71 +264,76 @@ inline bool ModuleHasScrews(ThemeModule* module)
 
 struct ThemePanel : Widget
 {
-    ThemeModule* module;
-    ThemePanel(ThemeModule* module)
-    {
-        this->module = module;
-    }
-    Theme getTheme() { return ModuleTheme(module); }
-    NVGcolor getColor() { return ModuleColor(module); }
-    void setTheme(Theme theme) {
-        if (module) {
-            module->setTheme(theme);
-        }
-    }
-    void setColor(NVGcolor color) {
-        if (module) {
-            module->setColor(color);
-        }
-    }
+    ITheme* theme_holder;
+    ThemePanel(ITheme* it) : theme_holder(it) {}
+
+    Theme getTheme() { return theme_holder->getTheme(); }
+    NVGcolor getColor() { return theme_holder->getPanelColor(); }
     void draw(const DrawArgs &args) override;
+};
+
+// textfield as menu item, adapted from SubmarineFree
+struct EventParamField : ui::TextField {
+    std::function<void(std::string)> changeHandler;
+    std::function<void(std::string)> commitHandler;
+    void step() override {
+        // Keep selected
+        APP->event->setSelectedWidget(this);
+        TextField::step();
+    }
+    void setText(std::string text) {
+        this->text = text;
+        selectAll();
+    }
+
+    void onChange(const ChangeEvent& e) override {
+        ui::TextField::onChange(e);
+        if (changeHandler) { 
+            changeHandler(text);
+        }
+    }
+
+    void onSelectKey(const event::SelectKey &e) override {
+        if (e.action == GLFW_PRESS && (e.key == GLFW_KEY_ENTER || e.key == GLFW_KEY_KP_ENTER)) {
+            if (commitHandler) {
+                commitHandler(text);
+            }
+            ui::MenuOverlay *overlay = getAncestorOfType<ui::MenuOverlay>();
+            overlay->requestDelete();
+            e.consume(this);
+        }
+        if (!e.getTarget())
+            TextField::onSelectKey(e);
+    }
+};
+
+struct ThemeColorField : ui::TextField {
+    ITheme* theme_holder = nullptr;
+
+    ThemeColorField(ITheme* ict) {
+        assert(ict);
+        theme_holder = ict;
+        auto color = theme_holder->getPanelColor();
+        if (isColorVisible(color)) {
+            setText(rack::color::toHexString(color));
+        }
+    }
+
+    void onChange(const ChangeEvent& e) override {
+        ui::TextField::onChange(e);
+        if (theme_holder) { 
+            auto color = COLOR_NONE;
+            auto text = getText();
+            if (!text.empty() && text[0] == '#') {
+                color = rack::color::fromHexString(text);
+            }
+            theme_holder->setPanelColor(color);
+        }
+    }
 };
 
 void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color);
 void RemoveScrewCaps(Widget* widget);
 void SetScrewColors(Widget* widget, NVGcolor color);
-
-struct ControlRateTrigger
-{
-    float rate_ms;
-    int steps;
-    int trigger = -1;
-
-    ControlRateTrigger(float rate = 2.5f)
-    {
-        configure(rate);
-        assert(trigger >= 1);
-        reset();
-    }
-
-    void configure(float rate) {
-        assert(rate >= 0.0);
-        rate_ms = rate;
-        onSampleRateChanged();
-    }
-
-    // after reset, fires on next step
-    void reset() { steps = trigger; }
-
-    void onSampleRateChanged()
-    {
-        trigger = APP->engine->getSampleRate() * (rate_ms / 1000.0f);
-    }
-
-    bool process()
-    {
-        // rate of 0 means sample rate
-        if (rate_ms <= 0.0) return true;
-
-        ++steps;
-        if (steps >= trigger)
-        {
-            steps = 0;
-            return true;
-        }
-        return false;
-    }
-};
-
 
 } // namespace pachde
