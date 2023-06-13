@@ -1,9 +1,11 @@
 #include <rack.hpp>
+#include <osdialog.h>
 #include "plugin.hpp"
 #include "../colors.hpp"
 #include "../components.hpp"
 #include "../resizable.hpp"
 #include "../text.hpp"
+#include "info_symbol.hpp"
 
 using namespace pachde;
 
@@ -12,6 +14,10 @@ enum HpSizes
     Default = 5,
     Least = 3,
 };
+
+constexpr const float DEFAULT_FONT_SIZE = 16.f;
+constexpr const float MIN_FONT_SIZE = 5.f;
+constexpr const float MAX_FONT_SIZE = 60.f;
 
 struct InfoTheme : ThemeBase {
     ITheme * module_theme = nullptr;
@@ -24,6 +30,10 @@ struct InfoTheme : ThemeBase {
     NVGcolor user_text_background = COLOR_NONE;
     NVGcolor user_text_color = COLOR_NONE;;
 
+    float font_size = DEFAULT_FONT_SIZE;
+    std::string font_file = asset::plugin(pluginInstance, "res/fonts/HankenGrotesk-SemiBold.ttf");
+    std::string font_folder = "";
+
     virtual ~InfoTheme() {}
 
     InfoTheme(ITheme *module_theme) : module_theme(module_theme) {
@@ -31,6 +41,8 @@ struct InfoTheme : ThemeBase {
             ThemeBase::setScrews(true);
         }
     }
+    float getFontSize() { return font_size; }
+    void setFontSize(float size) { font_size = clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE); }
 
     NVGcolor getDisplayPanelColor() {
         return isColorTransparent(panel_color) ? theme_panel_color : panel_color;
@@ -52,6 +64,11 @@ struct InfoTheme : ThemeBase {
             auto color_string = rack::color::toHexString(user_text_color);
             json_object_set_new(root, "text-color", json_stringn(color_string.c_str(), color_string.size()));
         }
+        if (DEFAULT_FONT_SIZE != font_size) {
+            json_object_set_new(root, "text-size", json_real(font_size));
+        }
+        json_object_set_new(root, "font", json_string(font_file.c_str()));
+        json_object_set_new(root, "font-folder", json_string(font_folder.c_str()));
         return root;
     }
 
@@ -66,6 +83,21 @@ struct InfoTheme : ThemeBase {
         if (j) {
             auto color_string = json_string_value(j);
             user_text_color = rack::color::fromHexString(color_string);
+        }
+        j = json_object_get(root, "text-size");
+        if (j) {
+            font_size = clamp(static_cast<float>(json_real_value(j)), MIN_FONT_SIZE, MAX_FONT_SIZE);
+            if (isnanf(font_size)) {
+                font_size = DEFAULT_FONT_SIZE;
+            }
+        }
+        j = json_object_get(root, "font");
+        if (j) {
+            font_file =  json_string_value(j);
+        }
+        j = json_object_get(root, "font-folder");
+        if (j) {
+            font_folder =  json_string_value(j);
         }
     }
 
@@ -114,6 +146,30 @@ struct InfoTheme : ThemeBase {
                 theme_text_color = RampGray(G_WHITE);
                 break;
         };
+    }
+
+    void resetFont() {
+        font_file = asset::plugin(pluginInstance, "res/fonts/HankenGrotesk-SemiBold.ttf");
+    }
+
+    bool fontDialog()
+    {
+        osdialog_filters* filters = osdialog_filters_parse("Fonts (.ttf):ttf;Any (*):*");
+        DEFER({osdialog_filters_free(filters);});
+
+        std::string dir = font_folder.empty() ? asset::user("") : font_folder;
+        DEBUG("Font Open: %s %s", dir.c_str(), font_file.c_str());
+
+        char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), nullptr, filters);
+        if (!pathC) {
+            return false;
+        }
+        std::string path = pathC;
+        std::free(pathC);
+        DEBUG("Selected font (%s)", path.c_str());
+        font_file = path;
+        font_folder = system::getDirectory(path);
+        return true;
     }
 };
 
@@ -170,6 +226,10 @@ struct InfoPanel : Widget
         box.size = size;
     }
 
+    void showText(NVGcontext* vg, std::shared_ptr<rack::window::Font> font, std::string text) {
+        SetTextStyle(vg, font, info_theme->getDisplayTextColor(), info_theme->getFontSize());
+        nvgTextBox(vg, box.pos.x + 10.f, box.pos.y + ONE_HP + 20.f, box.size.x - 10.f, text.c_str(), nullptr);
+    }
     void draw(const DrawArgs &args) override
     {
         assert(info_theme);
@@ -189,12 +249,25 @@ struct InfoPanel : Widget
 
         std::string text = module ? module->text : "";
         if (!text.empty()) {
-            auto font = GetPluginFontRegular();
+            auto font = APP->window->loadFont(info_theme->font_file);
             if (FontOk(font)) {
-                SetTextStyle(args.vg, font, info_theme->getDisplayTextColor(), 16.f);
-                nvgTextBox(args.vg, box.pos.x + 10.f, box.pos.y + ONE_HP + 20.f, box.size.x - 10.f, text.c_str(), nullptr);
+                showText(args.vg, font, text);
             } else {
-
+                info_theme->resetFont();
+                font = APP->window->loadFont(info_theme->font_file);
+                if (FontOk(font)) {
+                    showText(args.vg, font, text);
+                } else {
+                    auto r = box.size.x /3.;
+                    auto color = nvgRGB(250,0,0);
+                    nvgBeginPath(args.vg);
+                    nvgCircle(args.vg, box.size.x/2., box.size.y/2., r);
+                    nvgMoveTo(args.vg, box.size.x/2.-r, box.size.y/2 + r);
+                    nvgLineTo(args.vg, box.size.x/2 + r, box.size.y/2 - r);
+                    nvgStrokeColor(args.vg, color);
+                    nvgStrokeWidth(args.vg, 6.);
+                    nvgStroke(args.vg);
+                }
             }
         }
         if (preview) {
@@ -204,6 +277,29 @@ struct InfoPanel : Widget
     }
 };
 
+struct FontSizeQuantity : Quantity {
+    InfoTheme* info_theme;
+    FontSizeQuantity(InfoTheme* it) {
+        info_theme = it;
+    }
+	void setValue(float value) override { info_theme->setFontSize(value); }
+	float getValue() override { return info_theme->getFontSize(); }
+	float getMinValue() override { return MIN_FONT_SIZE; }
+	float getMaxValue() override { return MAX_FONT_SIZE; }
+	float getDefaultValue() override { return DEFAULT_FONT_SIZE; }
+    int getDisplayPrecision() override { return 3; }
+	std::string getLabel() override { return "Font size"; }
+	std::string getUnit() override { return "px"; }
+};
+
+struct FontSizeSlider : ui::Slider {
+	FontSizeSlider(InfoTheme* info_theme) {
+		quantity = new FontSizeQuantity(info_theme);
+	}
+	~FontSizeSlider() {
+		delete quantity;
+	}
+};
 
 struct InfoModuleWidget : ModuleWidget, ITheme
 {
@@ -309,7 +405,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
                 addScrews();
             }
 
-            title = createThemeWidgetCentered<InfoWidget>(theme, Vec(box.size.x / 2, 7.5f));
+            title = createThemeWidgetCentered<InfoSymbol>(theme, Vec(box.size.x / 2, 7.5f));
             addChild(title);
 
             logo = createThemeWidgetCentered<LogoOverlayWidget>(theme, Vec(box.size.x / 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f));
@@ -342,11 +438,25 @@ struct InfoModuleWidget : ModuleWidget, ITheme
         ModuleWidget::step();
     }
 
+
+    const char * HEXPLACEHOLDER = "#<hexcolor>";
+
     void appendContextMenu(Menu *menu) override
     {
         if (!this->module)
             return;
         AddThemeMenu(menu, this, true, true);
+
+        menu->addChild(new MenuSeparator);
+        auto name = system::getStem(info_theme->font_file);
+        menu->addChild(construct<MenuLabel>(&MenuLabel::text, name));
+        menu->addChild(createMenuItem("Font...", "", [=]() {
+            info_theme->fontDialog();
+        }));
+
+		FontSizeSlider* slider = new FontSizeSlider(info_theme);
+		slider->box.size.x = 250.0;
+		menu->addChild(slider);
 
         menu->addChild(createSubmenuItem("Text color", "",
             [=](Menu *menu)
@@ -356,7 +466,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
                 if (isColorVisible(info_theme->user_text_color)) {
                     editField->setText(rack::color::toHexString(info_theme->user_text_color));
                 } else {
-                    editField->setText("[#<hex>]");
+                    editField->setText(HEXPLACEHOLDER);
                 }
                 editField->changeHandler = [=](std::string text) {
                     auto color = COLOR_NONE;
@@ -376,7 +486,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
                 if (isColorVisible(info_theme->user_text_background)) {
                     editField->setText(rack::color::toHexString(info_theme->user_text_background));
                 } else {
-                    editField->setText("[#<hex>]");
+                    editField->setText(HEXPLACEHOLDER);
                 }
                 editField->changeHandler = [=](std::string text) {
                     auto color = COLOR_NONE;
@@ -404,4 +514,4 @@ struct InfoModuleWidget : ModuleWidget, ITheme
     }
 };
 
-Model *modelInfo = createModel<InfoModule, InfoModuleWidget>("pachde-info");
+Model* modelInfo = createModel<InfoModule, InfoModuleWidget>("pachde-info");

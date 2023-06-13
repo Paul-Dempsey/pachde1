@@ -34,10 +34,10 @@ Imagine::Imagine() {
         "Luminance",
         "Saturation",
         "Hue",
-        "R",
-        "G",
-        "B",
-        "Alpha"
+        "Red",
+        "Green",
+        "Blue",
+        "Alpha (transparency)"
     });
     configOutput(X_OUT, "x");
     configOutput(Y_OUT, "y");

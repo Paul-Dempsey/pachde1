@@ -10,19 +10,25 @@ void ColorPort::setTheme(Theme theme) {
         default:
         case Theme::Unset:
         case Theme::Light:
-            collar = RampGray(G_35);
-            edge   = RampGray(G_70);
-            bevel  = RampGray(G_85);
+            collar1 = RampGray(G_50);
+            collar2 = RampGray(G_35);
+            edge    = RampGray(G_75);
+            bevel1  = RampGray(G_65);
+            bevel2  = RampGray(G_90);
             break;
         case Theme::Dark:
-            collar = RampGray(G_25);
-            edge   = RampGray(G_50);
-            bevel  = RampGray(G_65);
+            collar1 = RampGray(G_50);
+            collar2 = RampGray(G_35);
+            edge    = RampGray(G_25);
+            bevel1  = RampGray(G_18);
+            bevel2  = RampGray(G_40);
             break;
         case Theme::HighContrast:
-            collar = RampGray(G_25);
-            edge   = RampGray(G_90);
-            bevel  = RampGray(G_WHITE);
+            collar1 = RampGray(G_50);
+            collar2 = RampGray(G_35);
+            edge    = RampGray(G_50);
+            bevel1  = RampGray(G_65);
+            bevel2  = RampGray(G_90);
             break;
     }
 
@@ -30,16 +36,10 @@ void ColorPort::setTheme(Theme theme) {
 
 void ColorPort::draw(const DrawArgs& args) {
     auto vg = args.vg;
-    Circle(vg, 12.f, 12.f, 11.75f, collar);
-    CircleGradient(vg, 12.f, 12.f, 11.75f, screen, shade);
-
-    Circle(vg, 12.f, 12.f, 10.75f, edge);
-    CircleGradient(vg, 12.f, 12.f, 10.75f, screen, shade);
-
-    Circle(vg, 12.f, 12.f, 9.25f, bevel);
-    CircleGradient(vg, 12.f, 12.f, 9.25f, shade, nvgRGBAf(1.,1.,1.,.4));
-
-    Circle(vg, 12.f, 12.f, 8.5f, ring);
+    CircleGradient(vg, 12.f, 12.f, 11.75f, collar1, collar2);
+    Circle(vg, 12.f, 12.f, 10.5f, edge);
+    CircleGradient(vg, 12.f, 12.f, 9.f, bevel1, bevel2);
+    Circle(vg, 12.f, 12.f, 8.f, ring);
     Circle(vg, 12.f, 12.f, 5.25f, sleeve);
     Circle(vg, 12.f, 12.f, 4.f, RampGray(G_BLACK));
 }

@@ -16,9 +16,7 @@ namespace pachde {
 struct ColorPort : PortWidget, ThemeLite {
 
     NVGcolor ring = PORT_BLUE;
-    NVGcolor screen = nvgRGBAf(0.9f,0.9f,0.9f,0.2f);
-    NVGcolor shade = nvgRGBAf(0.,0.,0.,0.2f);
-    NVGcolor collar, edge, bevel, sleeve;
+    NVGcolor collar1, collar2, edge, bevel1, bevel2, sleeve;
 
     ColorPort(Theme theme) { 
         box.size.x = box.size.y = 24.f;

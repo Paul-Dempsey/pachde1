@@ -60,20 +60,6 @@ struct LogoOverlayWidget : rack::OpaqueWidget, ThemeLite {
     }
 };
 
-struct InfoWidget : rack::SvgWidget, ThemeLite {
-    InfoWidget(Theme theme) {
-        setTheme(theme);
-    }
-
-    void setTheme(Theme t) override {
-        if (t == theme && svg) return;
-        theme = t;
-        setSvg(Svg::load(asset::plugin(pluginInstance, IsLighter(t)
-                ? "res/InfoBright.svg"
-                : "res/InfoDark.svg")));
-    }
-};
-
 struct SmallKnob: rack::RoundKnob, ThemeLite {
     SmallKnob(Theme theme) {
         setTheme(theme);

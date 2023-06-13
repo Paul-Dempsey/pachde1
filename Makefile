@@ -19,6 +19,7 @@ SOURCES += src/Blank/Blank.cpp
 
 # Info module
 SOURCES += src/Info/Info.cpp
+SOURCES += src/Info/info_symbol.cpp
 
 # Imagine module
 SOURCES += src/Imagine/Imagine.cpp
