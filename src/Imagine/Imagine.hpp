@@ -1,53 +1,38 @@
 #pragma once
-#include <rack.hpp>
-#include "../plugin.hpp"
 #include "../components.hpp"
+#include "../plugin.hpp"
 #include "../dsp.hpp"
 #include "pic.hpp"
 #include "traversal.hpp"
 
+// feature flags
+// Slew XY: apply slew to X/Y outputs
+#undef XYSLEW // XY are raw outputs
+
 namespace pachde {
+
 using namespace rack;
 using namespace traversal;
 
-const float PANEL_WIDTH = 300.0f; // 20hp
-const float PANEL_CENTER = PANEL_WIDTH / 2.0f;
-const float PANEL_MARGIN = 5.0f;
-
-// const float IMAGE_UNIT = 18.0f; // 18px image unit for 16x9 landscape
-// const float PANEL_IMAGE_WIDTH = 16.0f * IMAGE_UNIT;
-// const float PANEL_IMAGE_HEIGHT = 9.0f * IMAGE_UNIT;
-const float PANEL_IMAGE_WIDTH = PANEL_WIDTH - 2.f;
-const float PANEL_IMAGE_HEIGHT = 250.f;
-const float PANEL_IMAGE_TOP = 17.f;
-const float SECTION_WIDTH = PANEL_WIDTH - PANEL_MARGIN * 2.0f;
-const float ORIGIN_X = PANEL_CENTER;
-const float ORIGIN_Y = PANEL_IMAGE_TOP + PANEL_IMAGE_HEIGHT;
 
 enum VRange {
-    UNIPOLAR,
-    BIPOLAR
+    UNIPOLAR = 0,
+    BIPOLAR = 1
 };
 enum ColorComponent {
-    LUMINANCE,
-    SATURATION,
-    HUE,
-    R,
-    G,
-    B,
-    ALPHA,
+    LUMINANCE, SATURATION, HUE, R, G, B, ALPHA,
     NUM_COMPONENTS
 };
 
 inline const char * ComponentInitial(ColorComponent co) {
     switch (co) {
         default:
-        case ColorComponent::LUMINANCE: return "l";
-        case ColorComponent::SATURATION: return "s";
-        case ColorComponent::HUE: return "h";
-        case ColorComponent::R: return "r";
-        case ColorComponent::G: return "g";
-        case ColorComponent::B: return "b";
+        case ColorComponent::LUMINANCE: return "L";
+        case ColorComponent::SATURATION: return "S";
+        case ColorComponent::HUE: return "H";
+        case ColorComponent::R: return "R";
+        case ColorComponent::G: return "G";
+        case ColorComponent::B: return "B";
         case ColorComponent::ALPHA: return "a";
     }
 }
@@ -74,6 +59,9 @@ struct Imagine : ThemeModule
         VOLTAGE_OUT,
         GATE_OUT,
         TRIGGER_OUT,
+        RED_OUT,
+        GREEN_OUT,
+        BLUE_OUT,
         NUM_OUTPUTS
     };
 
@@ -83,8 +71,11 @@ struct Imagine : ThemeModule
     ITraversal * traversal = nullptr;
     Traversal traversal_id = Traversal::SCANLINE;
     ColorComponent color_component = ColorComponent::LUMINANCE;
-    VRange voct_range = VRange::BIPOLAR;
-    SlewLimiter x_slew, y_slew, voct_slew;
+    VRange voltage_range = VRange::BIPOLAR;
+    SlewLimiter voltage_slew;
+#ifdef XYSLEW
+    SlewLimiter x_slew, y_slew;
+#endif
     ControlRateTrigger control_rate;
 
     bool bright_image = false;
@@ -124,11 +115,20 @@ struct Imagine : ThemeModule
             case ColorComponent::ALPHA: return color.a;
         }
     }
+    bool isPixelOutput() {
+        if (outputs[VOLTAGE_OUT].isConnected()) return true;
+        if (outputs[GATE_OUT].isConnected()) return true;
+        if (outputs[TRIGGER_OUT].isConnected()) return true;
+        if (outputs[RED_OUT].isConnected()) return true;
+        if (outputs[GREEN_OUT].isConnected()) return true;
+        if (outputs[BLUE_OUT].isConnected()) return true;
+        return false;
+    }
     bool loadImageDialog();
 
-    json_t *dataToJson() override;
+    json_t* dataToJson() override;
+    void dataFromJson(json_t* root) override;
     void updateParams();
-    void dataFromJson(json_t *root) override;
     void processBypass(const ProcessArgs& args) override;
 	void process(const ProcessArgs& args) override;
     void onSampleRateChange() override;

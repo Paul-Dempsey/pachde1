@@ -1,8 +1,8 @@
 #pragma once
-#include "plugin.hpp"
-#include "colors.hpp"
+#include <rack.hpp>
 #include "theme.hpp"
 
+using namespace rack;
 namespace pachde {
 
 struct PlayPauseButton: Switch, ThemeLite
@@ -15,7 +15,6 @@ struct PlayPauseButton: Switch, ThemeLite
 
     PlayPauseButton(Theme theme);
 
-    void setTheme(Theme theme) override;
     void draw(const DrawArgs &args) override;
     //void onButton(const event::Button& e) override;
     void onDragEnd(const DragEndEvent & e) override;
@@ -26,6 +25,8 @@ struct PlayPauseButton: Switch, ThemeLite
             pressed = (pq->getValue() > 0.f);
         }
     }
+
+    void setTheme(Theme theme) override;
 
     void center(Vec pos) {
         box.pos = pos.minus(box.size.div(2));

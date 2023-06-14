@@ -2,8 +2,9 @@
 #include "plugin.hpp"
 #include "colors.hpp"
 #include "theme.hpp"
-#include "themehelpers.hpp"
+#include "theme_helpers.hpp"
 #include "play_pause.hpp"
+
 using namespace ::rack;
 
 namespace pachde {
@@ -121,26 +122,6 @@ struct PushButtonBase: rack::SvgSwitch {
     }
 };
 
-struct PicButton: OpaqueWidget, ThemeLite {
-    NVGcolor line, face;
-    bool pressed = false;
-    std::function<void(void)> clickHandler;
-
-    PicButton(Theme theme);
-
-    void setTheme(Theme theme) override;
-    void draw(const DrawArgs &args) override;
-    void onButton(const event::Button& e) override;
-    void onDragEnd(const DragEndEvent & e) override;
-
-    void center(Vec pos) {
-        box.pos = pos.minus(box.size.div(2));
-    }
-    void onClick(std::function<void(void)> callback) {
-        clickHandler = callback;
-    }
-};
-
 struct Switch : rack::Switch, ThemeLite {
     int value = 0;
     int units = 2;
@@ -235,8 +216,23 @@ struct EventParamField : ui::TextField {
             TextField::onSelectKey(e);
     }
 };
+enum ScrewPos {
+    TL_INSET = 0x01,
+    TR_INSET = 0x02,
+    BL_INSET = 0x04,
+    BR_INSET = 0x08,
+    SCREWS_OUTSIDE = 0,
+    SCREWS_INSET = TL_INSET|TR_INSET|BL_INSET|BR_INSET,
+    TOP_SCREWS_INSET = TL_INSET|TR_INSET,
+    BOTTOM_SCREWS_INSET = BL_INSET|BR_INSET,
+};
 
-void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color);
+inline float tl_screw_inset(ScrewPos pos) { return ONE_HP * static_cast<bool>(pos & ScrewPos::TL_INSET); }
+inline float tr_screw_inset(ScrewPos pos) { return ONE_HP * static_cast<bool>(pos & ScrewPos::TR_INSET); }
+inline float bl_screw_inset(ScrewPos pos) { return ONE_HP * static_cast<bool>(pos & ScrewPos::BL_INSET); }
+inline float br_screw_inset(ScrewPos pos) { return ONE_HP * static_cast<bool>(pos & ScrewPos::BR_INSET); }
+
+void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewPos positions = SCREWS_INSET);
 void RemoveScrewCaps(Widget* widget);
 void SetScrewColors(Widget* widget, NVGcolor color);
 

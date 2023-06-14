@@ -19,6 +19,7 @@ struct ITheme {
 // just a theme -- no screws, no panel override
 struct ThemeLite: ITheme
 {
+    virtual ~ThemeLite() {}
     Theme theme = DefaultTheme;
     void setTheme(Theme theme) override { this->theme = theme; };
     Theme getTheme() override { return theme; }
@@ -31,6 +32,9 @@ struct ThemeBase: ITheme
     Theme theme = DefaultTheme;
     NVGcolor panel_color = COLOR_NONE;
     bool screws = false;
+
+    virtual ~ThemeBase() {}
+
     bool isColorOverride() { return isColorVisible(panel_color); }
 
     void setTheme(Theme theme) override { this->theme = theme; };
@@ -43,7 +47,6 @@ struct ThemeBase: ITheme
 
     virtual json_t* save(json_t* root);
     virtual void load(json_t* root);
-
 };
 
 

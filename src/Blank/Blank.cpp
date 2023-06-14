@@ -1,4 +1,5 @@
 #include "Blank.hpp"
+#include "../theme_helpers.hpp"
 
 namespace pachde {
 
@@ -59,6 +60,7 @@ void BlankModuleWidget::setScrews(bool screws)
         add_screws();
     } else {
         RemoveScrewCaps(this);
+        topRightScrew = bottomRightScrew = nullptr;
     }
 }
 

@@ -50,13 +50,31 @@ TPortWidget* createThemeOutput(Theme theme, math::Vec pos, engine::Module* modul
 	return o;
 }
 
-
 template <class TPortWidget>
 TPortWidget* createThemeOutputCentered(Theme theme, math::Vec pos, engine::Module* module, int outputId) {
 	TPortWidget* o = createThemeOutput<TPortWidget>(theme, pos, module, outputId);
 	o->box.pos = o->box.pos.minus(o->box.size.div(2));
 	return o;
 }
+
+template <class TColorPortWidget>
+TColorPortWidget* createColorOutput(Theme theme, NVGcolor color, math::Vec pos, engine::Module* module, int outputId) {
+	TColorPortWidget* o = new TColorPortWidget(theme);
+	o->setPanelColor(color);
+	o->box.pos = pos;
+	o->app::PortWidget::module = module;
+	o->app::PortWidget::type = engine::Port::OUTPUT;
+	o->app::PortWidget::portId = outputId;
+	return o;
+}
+
+template <class TColorPortWidget>
+TColorPortWidget* createColorOutputCentered(Theme theme, NVGcolor color, math::Vec pos, engine::Module* module, int outputId) {
+	TColorPortWidget* o = createColorOutput<TColorPortWidget>(theme, color, pos, module, outputId);
+	o->box.pos = o->box.pos.minus(o->box.size.div(2));
+	return o;
+}
+
 
 template <class TWidget>
 TWidget* createThemeWidget(Theme theme, math::Vec pos) {

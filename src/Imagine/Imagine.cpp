@@ -1,9 +1,12 @@
-#include <osdialog.h>
 #include "Imagine.hpp"
+#include <osdialog.h>
+#include "imagine_layout.hpp"
 #include "../components.hpp"
 #include "../text.hpp"
 #include "../dsp.hpp"
 
+namespace pachde {
+    
 Imagine::Imagine() {
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, 0);
 
@@ -41,10 +44,12 @@ Imagine::Imagine() {
     });
     configOutput(X_OUT, "x");
     configOutput(Y_OUT, "y");
+    configOutput(RED_OUT,     "Red");
+    configOutput(GREEN_OUT,   "Green");
+    configOutput(BLUE_OUT,    "Blue");
     configOutput(VOLTAGE_OUT, "Voltage");
-    configOutput(GATE_OUT, "Gate");
+    configOutput(GATE_OUT,    "Gate");
     configOutput(TRIGGER_OUT, "Trigger");
-
     updateParams();
 }
 
@@ -54,7 +59,8 @@ bool Imagine::loadImageDialog()
     DEFER({osdialog_filters_free(filters);});
 
     std::string dir = pic_folder.empty() ? asset::user("") : pic_folder;
-    char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), image.name().c_str(), filters);
+    std::string name = system::getFilename(image.name());
+    char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), name.c_str(), filters);
     if (!pathC) {
         pause();
         image.close();
@@ -63,6 +69,9 @@ bool Imagine::loadImageDialog()
     auto run = setPlaying(false);
     std::string path = pathC;
     std::free(pathC);
+
+    if (path == image.name()) return true;
+
     DEBUG("Selected image (%s)", path.c_str());
     DEBUG("Image size %d x %d", image.width(), image.height());
     pic_folder = system::getDirectory(path);
@@ -138,11 +147,12 @@ void Imagine::updateParams()
 
     float slew = getParam(SLEW_PARAM).getValue();
     float sample_rate = APP->engine->getSampleRate();
+#ifdef XYSLEW
     x_slew.configure(sample_rate, slew, .01f);
     y_slew.configure(sample_rate, slew, .01f);
-    voct_slew.configure(sample_rate, slew, .01f);
-
-    voct_range = (getParam(VOLTAGE_RANGE_PARAM).getValue() < 0.5)
+#endif
+    voltage_slew.configure(sample_rate, slew, .01f);
+    voltage_range = (getParam(VOLTAGE_RANGE_PARAM).getValue() < 0.5)
         ? VRange::BIPOLAR
         : VRange::UNIPOLAR;
 
@@ -180,35 +190,58 @@ void Imagine::process(const ProcessArgs& args)
 
     int width, height;
     if (image.ok()) {
-        width = image.width();
-        height = image.height();
+        width = std::max(1, image.width());
+        height = std::max(1, image.height());
     } else {
-        width = PANEL_IMAGE_WIDTH;
-        height = PANEL_IMAGE_HEIGHT;
+        width = height = 1;
     }
 
     if (outputs[X_OUT].isConnected()) {
         auto v = pos.x / width * 10.0f;
+#ifdef XYSLEW
         outputs[X_OUT].setVoltage(x_slew.next(v));
+#else
+        outputs[X_OUT].setVoltage(v);
+#endif
     }
 
     if (outputs[Y_OUT].isConnected()) {
         auto v = pos.y / height * 10.0f;
+#ifdef XYSLEW
         outputs[Y_OUT].setVoltage(y_slew.next(v));
+#else
+        outputs[Y_OUT].setVoltage(v);
+#endif
     }
 
-    if (outputs[VOLTAGE_OUT].isConnected()) {
-        if (image.ok()) {
-            auto pix = image.pixel(pos.x, pos.y);
-            auto v = ComponentValue(pix) * 10.0f;
-            if (voct_range == VRange::BIPOLAR) {
-                v -= 5.0f;
-            }
-            outputs[VOLTAGE_OUT].setVoltage(voct_slew.next(v));
-        } else {
-            outputs[VOLTAGE_OUT].setVoltage(0.0f);
+    if (isPixelOutput()) {
+        auto pix = image.ok() ? image.pixel(pos.x, pos.y) : COLOR_NONE;
+        // RGB outputs are unipolar 0-10v
+        if (outputs[RED_OUT].isConnected()) {
+            outputs[RED_OUT].setVoltage(pix.r * 10.f);
+        }
+        if (outputs[GREEN_OUT].isConnected()) {
+            outputs[GREEN_OUT].setVoltage(pix.g * 10.f);
+        }
+        if (outputs[BLUE_OUT].isConnected()) {
+            outputs[BLUE_OUT].setVoltage(pix.b * 10.f);
+        }
+
+        if (outputs[VOLTAGE_OUT].isConnected()) {
+            // hack alert: branchless computation of v taking advantage of 
+            // integer value of VRange::BIPOLAR being 1, and VRange::UNIPOLAR as 0
+            auto v = (ComponentValue(pix) * 10.0f) - (static_cast<int>(voltage_range) * 0.5f);
+            outputs[VOLTAGE_OUT].setVoltage(voltage_slew.next(v));
+        }
+        if (outputs[GATE_OUT].isConnected()) {
+            //outputs[GATE_OUT].setVoltage(v);
+        }
+        if (outputs[TRIGGER_OUT].isConnected()) {
+            //outputs[TRIGGER_OUT].setVoltage(v);
         }
     }
+}
+
 }
 
 Model *modelImagine = createModel<Imagine, ImagineUi>("pachde-imagine");

@@ -1,6 +1,5 @@
 #pragma once
 #include <rack.hpp>
-#include "../colors.hpp"
 #include "../components.hpp"
 #include "../resizable.hpp"
 

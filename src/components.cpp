@@ -66,32 +66,35 @@ void SetScrewColors(Widget* widget, NVGcolor color) {
     }    
 }
 
-void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color)
+
+void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewPos pos)
 {
     bool set_color = isColorVisible(color);
+
+    // top left
     auto screw = new ScrewCap(theme);
-    screw->box.pos = Vec(RACK_GRID_WIDTH, 0);
+    screw->box.pos = Vec(tl_screw_inset(pos), 0);
     if (set_color) {
         screw->setPanelColor(color);
     }
     widget->addChild(screw);
-
+    //top right
     screw = new ScrewCap(theme);
-    screw->box.pos = Vec(widget->box.size.x - RACK_GRID_WIDTH * 2, 0);
+    screw->box.pos = Vec(widget->box.size.x - ONE_HP - tr_screw_inset(pos), 0);
     if (set_color) {
         screw->setPanelColor(color);
     }
     widget->addChild(screw);
-
+    //bottom left
     screw = new ScrewCap(theme);
-    screw->box.pos = Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
+    screw->box.pos = Vec(bl_screw_inset(pos), RACK_GRID_HEIGHT - ONE_HP);
     if (set_color) {
         screw->setPanelColor(color);
     }
     widget->addChild(screw);
-
+    // bottom right
     screw = new ScrewCap(theme);
-    screw->box.pos = Vec(widget->box.size.x - RACK_GRID_WIDTH * 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
+    screw->box.pos = Vec(widget->box.size.x - ONE_HP - br_screw_inset(pos), RACK_GRID_HEIGHT - ONE_HP);
     if (set_color) {
         screw->setPanelColor(color);
     }
@@ -157,7 +160,7 @@ void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isC
                 if (isColorVisible(color)) {
                     editField->setText(rack::color::toHexString(color));
                 } else {
-                    editField->setText("[#<hex>]");
+                    editField->setText("#<hex>");
                 }
                 editField->changeHandler = [=](std::string text) {
                     auto color = COLOR_NONE;

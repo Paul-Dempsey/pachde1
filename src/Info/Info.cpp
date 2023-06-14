@@ -1,7 +1,6 @@
 #include <rack.hpp>
 #include <osdialog.h>
 #include "plugin.hpp"
-#include "../colors.hpp"
 #include "../components.hpp"
 #include "../resizable.hpp"
 #include "../text.hpp"
@@ -160,7 +159,8 @@ struct InfoTheme : ThemeBase {
         std::string dir = font_folder.empty() ? asset::user("") : font_folder;
         DEBUG("Font Open: %s %s", dir.c_str(), font_file.c_str());
 
-        char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), nullptr, filters);
+        std::string name = system::getFilename(font_file);
+        char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), name.c_str(), filters);
         if (!pathC) {
             return false;
         }
@@ -303,13 +303,13 @@ struct FontSizeSlider : ui::Slider {
 
 struct InfoModuleWidget : ModuleWidget, ITheme
 {
-    ModuleResizeHandle *rightHandle = NULL;
-    ScrewCap *topRightScrew = NULL;
-    ScrewCap *bottomRightScrew = NULL;
-    Widget *title = NULL;
-    Widget *logo = NULL;
-    InfoPanel *panel = NULL;
-    InfoTheme * info_theme = nullptr;
+    ModuleResizeHandle* rightHandle = nullptr;
+    ScrewCap* topRightScrew = nullptr;
+    ScrewCap* bottomRightScrew = nullptr;
+    Widget* title = nullptr;
+    Widget* logo = nullptr;
+    InfoPanel* panel = nullptr;
+    InfoTheme* info_theme = nullptr;
 
     virtual ~InfoModuleWidget() {
         if (!module) { delete info_theme; }
@@ -354,6 +354,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
             addScrews();
         } else {
             RemoveScrewCaps(this);
+            bottomRightScrew = topRightScrew = nullptr;
         }
     }
 
@@ -427,8 +428,12 @@ struct InfoModuleWidget : ModuleWidget, ITheme
             box.size.x = module->width * RACK_GRID_WIDTH;
         }
         panel->box.size = box.size;
-        topRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
-        bottomRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
+        if (topRightScrew) {
+            topRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
+        }
+        if (bottomRightScrew) {
+            bottomRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
+        }
         title->box.pos.x = box.size.x / 2 - title->box.size.x / 2;
         logo->box.pos.x = box.size.x / 2 - logo->box.size.x / 2;
         if (rightHandle)
@@ -448,6 +453,20 @@ struct InfoModuleWidget : ModuleWidget, ITheme
         AddThemeMenu(menu, this, true, true);
 
         menu->addChild(new MenuSeparator);
+        menu->addChild(createSubmenuItem("Info", "",
+            [=](Menu *menu)
+            {
+                auto mymodule = dynamic_cast<InfoModule*>(module);
+                EventParamField *editField = new EventParamField();
+                editField->box.size.x = 200.f;
+                editField->box.size.y = 100.f;
+                editField->setText(mymodule->text);
+                editField->commitHandler = [=](std::string text) {
+                    mymodule->text = text;
+                };
+                menu->addChild(editField);
+             }));
+
         auto name = system::getStem(info_theme->font_file);
         menu->addChild(construct<MenuLabel>(&MenuLabel::text, name));
         menu->addChild(createMenuItem("Font...", "", [=]() {
@@ -497,20 +516,6 @@ struct InfoModuleWidget : ModuleWidget, ITheme
                 };
                 menu->addChild(editField);
             }));
-
-        menu->addChild(createSubmenuItem("Info", "",
-            [=](Menu *menu)
-            {
-                auto mymodule = dynamic_cast<InfoModule*>(module);
-                EventParamField *editField = new EventParamField();
-                editField->box.size.x = 200.f;
-                editField->box.size.y = 100.f;
-                editField->setText(mymodule->text);
-                editField->commitHandler = [=](std::string text) {
-                    mymodule->text = text;
-                };
-                menu->addChild(editField);
-             }));
     }
 };
 
