@@ -16,7 +16,6 @@ struct PlayPauseButton: Switch, ThemeLite
     PlayPauseButton(Theme theme);
 
     void draw(const DrawArgs &args) override;
-    //void onButton(const event::Button& e) override;
     void onDragEnd(const DragEndEvent & e) override;
 	void initParamQuantity() override {
         Switch::initParamQuantity();

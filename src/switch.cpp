@@ -11,7 +11,7 @@ Switch::Switch(Theme theme)
 void Switch::setTheme(Theme theme)
 {
     ThemeLite::setTheme(theme);
-    background = PanelBackground(theme);
+    
     switch (theme) {
         default:
         case Theme::Unset:
@@ -20,18 +20,21 @@ void Switch::setTheme(Theme theme)
             thumb = COLOR_BRAND;
             thumb_top = nvgRGB(0xcb, 0xdc, 0xe9);
             thumb_bottom = nvgRGB(0x2e, 0x51, 0x6b);
+            background = GrayRamp[G_75];
             break;
         case Theme::Dark:
             frame = RampGray(G_50);
             thumb = RampGray(G_40);
             thumb_top = RampGray(G_70);
             thumb_bottom = RampGray(G_10);
+            background = GrayRamp[G_30];
             break;
         case Theme::HighContrast:
             frame = RampGray(G_50);
-            thumb = RampGray(G_75);
-            thumb_top = RampGray(G_WHITE);
+            thumb = RampGray(G_60);
+            thumb_top = RampGray(G_85);
             thumb_bottom = RampGray(G_35);
+            background = GrayRamp[G_15];
             break;
     }
 }
@@ -57,17 +60,41 @@ void Switch::onChange(const ChangeEvent& e)
 
 void Switch::draw(const DrawArgs &args)
 {
-    bool horizontal = box.size.x >= box.size.y;
+    bool vertical = box.size.y >= box.size.x;
     auto vg = args.vg;
+ 
     FillRect(vg, 0.f, 0.f, box.size.x, box.size.y, background);
     BoxRect(vg, 0.f, 0.f, box.size.x, box.size.y, frame);
-    auto w = horizontal ? box.size.x / units : box.size.x + 0.5f;
-    auto h = horizontal ? box.size.y + 0.5f: box.size.y / units;
-    auto x = horizontal ? w * value : 0.f;
-    auto y = horizontal ? 0.f : (box.size.y - h) - (h * value);
+ 
+    auto w = vertical ? box.size.x : box.size.x / units;
+    auto h = vertical ? box.size.y / units : box.size.y;
+    auto x = vertical ? 0.f : w * value;
+    auto y = vertical ? (box.size.y - h) - (h * value) : 0.f;
+ 
     FillRect(vg, x, y, w, h, thumb);
-    Line(vg, x, y, x + w, y, thumb_top, 1.3f);
-    Line(vg, x, y + h, x + w, y + h, thumb_bottom, 1.3f);
+
+    auto bevel = 3.f;
+    auto bevel_depth = 1.25f;
+    auto ty = y + h - bevel;
+
+    nvgBeginPath(vg);
+    nvgMoveTo(vg, x, y + h);
+    nvgLineTo(vg, x + w, y + h);
+    nvgLineTo(vg, x + w, y + h - bevel);
+    nvgBezierTo(vg, w * .2f, ty + bevel_depth, w * .8f, ty + bevel_depth, x, ty);
+    nvgClosePath(vg);
+    nvgFillColor(vg, thumb_bottom);
+    nvgFill(vg);
+
+    nvgBeginPath(vg);
+    nvgMoveTo(vg, x, y);
+    nvgLineTo(vg, x + w, y);
+    nvgLineTo(vg, x + w, y + bevel);
+    ty = y + bevel;
+    nvgBezierTo(vg, w * .2f, ty - bevel_depth, w * .8f, ty - bevel_depth, x, ty);
+    nvgClosePath(vg);
+    nvgFillColor(vg, thumb_top);
+    nvgFill(vg);
 }
 
 }

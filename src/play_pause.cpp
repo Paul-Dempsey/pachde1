@@ -20,12 +20,15 @@ void PlayPauseButton::setTheme(Theme theme)
         default:
         case Theme::Unset:
         case Theme::Light:
+            collar = RampGray(G_50);
+            edge = RampGray(G_65);
             break;
         case Theme::Dark:
             face = COLOR_BRAND_LO;
             break;
         case Theme::HighContrast:
             collar = RampGray(G_05);
+            edge = RampGray(G_85);
             face = RampGray(G_20);
             break;
     }
@@ -61,16 +64,6 @@ void PlayPauseButton::draw(const DrawArgs &args)
         nvgStroke(vg);
     }
 }
-
-// void PlayPauseButton::onButton(const event::Button& e)
-// {
-//     rack::OpaqueWidget::onButton(e);
-//     if (!(e.action == GLFW_PRESS
-//         && e.button == GLFW_MOUSE_BUTTON_LEFT
-//         && (e.mods & RACK_MOD_MASK) == 0)) {
-//         return;
-//     }
-// }
 
 void PlayPauseButton::onDragEnd(const DragEndEvent & e)
 {

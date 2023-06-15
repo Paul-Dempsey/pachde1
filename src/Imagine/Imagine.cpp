@@ -13,8 +13,8 @@ Imagine::Imagine() {
     configParam(SLEW_PARAM, 0.f, 1.f, 0.f,
         "Slew", "%", 0.f, 100.f);
 
-    configSwitch(VOLTAGE_RANGE_PARAM, 0.f, 1.0f, 0.0f,
-        "Voltage Polarity", { "Bipolar -5v — +5v", "Unipolar 0v — +10v" });
+    configSwitch(POLARITY_PARAM, 0.f, 1.0f, 0.0f,
+        "Polarity", { "Bipolar (-5 - 5v)", "Unipolar (0 - 10v)" });
 
     configSwitch(RUN_PARAM, 0.f, 1.f, 0.f,
         "Play", { "Paused", "Playing" });
@@ -152,7 +152,7 @@ void Imagine::updateParams()
     y_slew.configure(sample_rate, slew, .01f);
 #endif
     voltage_slew.configure(sample_rate, slew, .01f);
-    voltage_range = (getParam(VOLTAGE_RANGE_PARAM).getValue() < 0.5)
+    polarity = (getParam(POLARITY_PARAM).getValue() < 0.5)
         ? VRange::BIPOLAR
         : VRange::UNIPOLAR;
 
@@ -193,7 +193,8 @@ void Imagine::process(const ProcessArgs& args)
         width = std::max(1, image.width());
         height = std::max(1, image.height());
     } else {
-        width = height = 1;
+        width = PANEL_IMAGE_WIDTH;
+        height = PANEL_IMAGE_HEIGHT;
     }
 
     if (outputs[X_OUT].isConnected()) {
@@ -215,7 +216,17 @@ void Imagine::process(const ProcessArgs& args)
     }
 
     if (isPixelOutput()) {
-        auto pix = image.ok() ? image.pixel(pos.x, pos.y) : COLOR_NONE;
+        NVGcolor pix;
+        if (image.ok()) {
+            pix = image.pixel(pos.x, pos.y);
+        } else if (isXYPad()) {
+            // r = x, g = y, b = .5, a = 1.
+            float hf = height;
+            pix = nvgRGBAf(pos.x / width, hf - pos.y / hf, 0.5, 1.);
+        } else {
+            pix = COLOR_NONE;
+        }
+
         // RGB outputs are unipolar 0-10v
         if (outputs[RED_OUT].isConnected()) {
             outputs[RED_OUT].setVoltage(pix.r * 10.f);
@@ -228,9 +239,10 @@ void Imagine::process(const ProcessArgs& args)
         }
 
         if (outputs[VOLTAGE_OUT].isConnected()) {
-            // hack alert: branchless computation of v taking advantage of 
-            // integer value of VRange::BIPOLAR being 1, and VRange::UNIPOLAR as 0
-            auto v = (ComponentValue(pix) * 10.0f) - (static_cast<int>(voltage_range) * 0.5f);
+            auto v = ComponentValue(pix) * 10.0f;
+            if (polarity == VRange::BIPOLAR) {
+                v -= 0.5;
+            }
             outputs[VOLTAGE_OUT].setVoltage(voltage_slew.next(v));
         }
         if (outputs[GATE_OUT].isConnected()) {

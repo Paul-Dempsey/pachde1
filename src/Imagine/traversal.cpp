@@ -139,6 +139,8 @@ ITraversal * MakeTraversal(Traversal id) {
             return new Vinyl();
         case Traversal::WANDER:
             return new Wander();
+        case Traversal::XYPAD:
+            return new XYPad();
     }
 }
 
@@ -147,6 +149,7 @@ const char * TraversalNames[] = {
     "Bounce",
     "Vinyl",
     "Wander",
+    "X/Y Pad"
 };
 
 std::string TraversalName(Traversal id)

@@ -2,16 +2,17 @@
 #include <rack.hpp>
 #include "../colors.hpp"
 #include "pic.hpp"
+#include "imagine_layout.hpp"
+
 using namespace rack;
 using namespace pachde;
 
 namespace traversal {
 
 inline float random_direction() {
-    return random::uniform() > 0.5 ? 1.0f : -1.0f;
+    return random::uniform() > 0.5f ? 1.0f : -1.0f;
 }
 
-// TODO: reverse?
 struct ITraversal
 {
     virtual ~ITraversal() {}
@@ -28,11 +29,11 @@ struct ITraversal
 struct TraversalBase : ITraversal
 {
     ~TraversalBase() {}
-    Vec image_size = Vec(0.0f,0.0f);
-    Vec position = Vec(0.0f, 0.0f);
-    float pixel_rate = 100.0f;
+    Vec image_size = Vec(0.f,0.f);
+    Vec position = Vec(0.f, 0.f);
+    float pixel_rate = 100.f;
     float sample_rate = 44100;
-    float advance = 0.00;;
+    float advance = 0.f;;
     void configure_rate(float pixel_rate, float sample_rate) override
     {
         if (pixel_rate == this->pixel_rate && sample_rate == this->sample_rate) {
@@ -46,35 +47,35 @@ struct TraversalBase : ITraversal
     void configure_image(Vec size) override
     {
         image_size = size;
-        position = Vec(0.0f, 0.0f);
+        position = Vec(0.f, 0.f);
     }
 
     void reset() override {
-        position = Vec(0.0f,0.0f);
+        position = Vec(0.f,0.f);
     }    
 
     void set_position(Vec pos) override
     {
-        assert(pos.x >= 0.0f && pos.x < image_size.x);
-        assert(pos.y >= 0.0f && pos.y < image_size.y);
+        assert(pos.x >= 0.f && pos.x < image_size.x);
+        assert(pos.y >= 0.f && pos.y < image_size.y);
         position = pos;
     }
 
     void clip_position() {
-        position.x = std::max(0.0f, std::min(position.x, image_size.x-PIC_EPSILON));
-        position.y = std::max(0.0f, std::min(position.y, image_size.y-PIC_EPSILON));
+        position.x = std::max(0.f, std::min(position.x, image_size.x-PIC_EPSILON));
+        position.y = std::max(0.f, std::min(position.y, image_size.y-PIC_EPSILON));
     }
 
     void wrap_position() {
-        if (position.x < 0.0f) {
-            position.x = std::max(0.0f, image_size.x-PIC_EPSILON);
+        if (position.x < 0.f) {
+            position.x = std::max(0.f, image_size.x-PIC_EPSILON);
         } else if (position.x >= image_size.x) {
-            position.x = 0.0f;
+            position.x = 0.f;
         }
-        if (position.y < 0.0f) {
-            position.y = std::max(0.0f, image_size.y-PIC_EPSILON);
+        if (position.y < 0.f) {
+            position.y = std::max(0.f, image_size.y-PIC_EPSILON);
         } else if (position.y >= image_size.y) {
-            position.y = 0.0f;
+            position.y = 0.f;
         }
     }
     Vec get_position() override { return position; }
@@ -85,6 +86,7 @@ enum class Traversal {
     BOUNCE,
     VINYL,
     WANDER,
+    XYPAD,
     NUM_TRAVERSAL
 };
 
@@ -100,9 +102,9 @@ struct Scanline : TraversalBase {
 
 struct Vinyl : TraversalBase {
     float direction = -1.0f;
-    float r = 0.999f;
-    float theta = 0.0f;
-    float r_limit = 1.0f;
+    float r = 0.9999f;
+    float theta = 0.f;
+    float r_limit = 1.f;
 
     ~Vinyl() {}
     void reset() override;
@@ -123,15 +125,32 @@ struct Bounce : TraversalBase {
 
 
 struct Wander : TraversalBase {
-    float angle = 0.0f;
+    float angle = 0.f;
     int count = 0;
     int max = 0;
-    float dir = 1.0f;
+    float dir = 1.f;
     int dcount = 0;
     int dmax = 0;
     int new_max();
     void process() override;
     void reset() override;
+};
+
+struct XYPad : TraversalBase {
+    void process() override {}
+    void reset() override {
+        position = Vec(image_size.x/2.f, image_size.y/2.f);
+    }
+    void configure_rate(float, float) override {}
+    void configure_image(Vec size) override
+    {
+        image_size = size;
+        if (image_size.x <= 0.f || image_size.y <= 0.f) {
+            image_size.x = PANEL_IMAGE_WIDTH;
+            image_size.y = PANEL_IMAGE_HEIGHT;
+        }
+        reset();
+    }
 };
 
 }

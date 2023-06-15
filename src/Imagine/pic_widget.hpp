@@ -17,9 +17,12 @@ struct PicWidget : OpaqueWidget {
 
     PicWidget(Imagine *module);
 
+    void clearImageCache();
+
     void onButton(const event::Button& e) override;
     void onDragMove(const event::DragMove& e) override;
 
+    void updateImageCache(NVGcontext* vg, Pic* pic);
     void updateClient();
 
     void drawPic(const DrawArgs &args);

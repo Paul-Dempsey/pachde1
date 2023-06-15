@@ -53,7 +53,9 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     knob->snap = true;
     addParam(knob);
 
-    addParam(createThemeParamCentered<SmallKnob>(theme, Vec(85.f, CONTROL_ROW), module, Imagine::SLEW_PARAM));
+    knob = createThemeParamCentered<SmallKnob>(theme, Vec(85.f, CONTROL_ROW), module, Imagine::SLEW_PARAM);
+    knob->stepIncrementBy = 0.01f;
+    addParam(knob);
 
     knob = createThemeParamCentered<SmallKnob>(theme, Vec(115.f, CONTROL_ROW), module, Imagine::COMP_PARAM);
     knob->snap = true;
@@ -72,10 +74,10 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     addOutput(createColorOutput<ColorPort>(theme, PORT_GREEN, Vec(64.f, OUTPUT_ROW + 13.f), module, Imagine::GREEN_OUT));
     addOutput(createColorOutput<ColorPort>(theme, PORT_BLUE,  Vec(87.f, OUTPUT_ROW), module, Imagine::BLUE_OUT));
 
-    addOutput(createThemeOutput<ColorPort>(theme, Vec(180.f, OUTPUT_ROW), module, Imagine::VOLTAGE_OUT));
-    auto p = createThemeParam<Switch>(theme, Vec(210.f, OUTPUT_ROW + 2.f), module, Imagine::VOLTAGE_RANGE_PARAM);
+    auto p = createThemeParam<Switch>(theme, Vec(180.f, OUTPUT_ROW + 3.5f), module, Imagine::POLARITY_PARAM);
     p->box.size.y = 18.f;
     addParam(p);
+    addOutput(createThemeOutput<ColorPort>(theme, Vec(205.f, OUTPUT_ROW), module, Imagine::VOLTAGE_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(230.f, OUTPUT_ROW), module, Imagine::GATE_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(255.f, OUTPUT_ROW), module, Imagine::TRIGGER_OUT));
 }

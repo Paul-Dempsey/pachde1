@@ -62,18 +62,75 @@ struct LogoOverlayWidget : rack::OpaqueWidget, ThemeLite {
 };
 
 struct SmallKnob: rack::RoundKnob, ThemeLite {
+
+    bool clickStepValue = true;
+    float stepIncrementBy = 1.f;
+    bool modified = false;
+
     SmallKnob(Theme theme) {
         setTheme(theme);
+    }
+
+    std::function<void(void)> clickHandler;
+    void onClick(std::function<void(void)> callback)
+    {
+        clickHandler = callback;
+    }
+
+    void onHoverKey(const HoverKeyEvent& e) override {
+        rack::RoundKnob::onHoverKey(e);
+
+        modified = (e.mods & RACK_MOD_MASK) == RACK_MOD_CTRL;
+    }
+
+    void onAction(const ActionEvent& e) override {
+        rack::RoundKnob::onAction(e);
+
+        if (clickHandler) {
+            clickHandler();
+        } else if (clickStepValue) {
+            auto pq = getParamQuantity();
+            if (pq) {
+                float value = pq->getValue();
+                if (!modified) {
+                    value += stepIncrementBy;
+                    if (value > pq->getMaxValue()) {
+                       value = pq->getMinValue();
+                    }
+                } else {
+                    value -= stepIncrementBy;
+                    if (value < pq->getMinValue()) {
+                        value = pq->getMaxValue();
+                    }
+                }
+                pq->setValue(value);
+            }
+
+        }
     }
 
     void setTheme(Theme theme) override {
         if (theme == getTheme() && bg && bg->svg) return;
         ThemeLite::setTheme(theme);
-        bool light = IsLighter(theme);
-        setSvg(Svg::load(asset::plugin(pluginInstance,
-            light ? "res/SmallKnob.svg" : "res/SmallKnobDark.svg")));
-        bg->setSvg(Svg::load(asset::plugin(pluginInstance,
-            light ? "res/SmallKnob-bg.svg" : "res/SmallKnobDark-bg.svg")));
+        auto knob = "res/SmallKnob.svg";
+        auto back = "res/SmallKnob-bg.svg";
+        switch (theme) {
+            default:
+            case Theme::Unset:
+            case Theme::Light:
+                break;
+            case Theme::Dark:
+                knob = "res/SmallKnobDark.svg";
+                back = "res/SmallKnobDark-bg.svg";
+                break;
+            case Theme::HighContrast:
+                knob = "res/SmallKnobHighContrast.svg";
+                back = "res/SmallKnobDark-bg.svg";
+                break;
+        }
+
+        setSvg(Svg::load(asset::plugin(pluginInstance, knob)));
+        bg->setSvg(Svg::load(asset::plugin(pluginInstance, back)));
         if (fb) {
             fb->setDirty(true);
         }

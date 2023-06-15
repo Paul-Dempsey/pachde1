@@ -41,7 +41,7 @@ struct Imagine : ThemeModule
 {
     enum ParamIds {
         SLEW_PARAM,
-        VOLTAGE_RANGE_PARAM,
+        POLARITY_PARAM,
         RUN_PARAM,
         PATH_PARAM,
         SPEED_PARAM,
@@ -71,7 +71,7 @@ struct Imagine : ThemeModule
     ITraversal * traversal = nullptr;
     Traversal traversal_id = Traversal::SCANLINE;
     ColorComponent color_component = ColorComponent::LUMINANCE;
-    VRange voltage_range = VRange::BIPOLAR;
+    VRange polarity = VRange::BIPOLAR;
     SlewLimiter voltage_slew;
 #ifdef XYSLEW
     SlewLimiter x_slew, y_slew;
@@ -98,6 +98,15 @@ struct Imagine : ThemeModule
     Traversal getTraversalId() {
         auto pp = getParamQuantity(PATH_PARAM);
         return static_cast<Traversal>(static_cast<int>(std::floor(pp->getValue() - pp->getMinValue())));
+    }
+    bool isXYPad() {
+        return Traversal::XYPAD == getTraversalId();
+    }
+    bool isBipolar() {
+        return polarity == VRange::BIPOLAR;
+    }
+    bool isUnipolar() {
+        return polarity == VRange::UNIPOLAR;
     }
     ColorComponent getColorComponent() {
         auto pp = getParamQuantity(COMP_PARAM);

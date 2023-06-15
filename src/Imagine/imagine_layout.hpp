@@ -2,9 +2,9 @@
 
 namespace pachde {
 
-constexpr const float PANEL_WIDTH = 300.0f; // 20hp
-constexpr const float PANEL_CENTER = PANEL_WIDTH / 2.0f;
-constexpr const float PANEL_MARGIN = 5.0f;
+constexpr const float PANEL_WIDTH = 300.F; // 20hp
+constexpr const float PANEL_CENTER = PANEL_WIDTH / 2.F;
+constexpr const float PANEL_MARGIN = 5.F;
 
 // const float IMAGE_UNIT = 18.0f; // 18px image unit for 16x9 landscape
 // const float PANEL_IMAGE_WIDTH = 16.0f * IMAGE_UNIT;

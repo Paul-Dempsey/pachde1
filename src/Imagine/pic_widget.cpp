@@ -1,5 +1,6 @@
 #include "pic_widget.hpp"
 #include "../text.hpp"
+#include "imagine_layout.hpp"
 
 namespace pachde {
 
@@ -29,19 +30,61 @@ void PicWidget::onDragMove(const event::DragMove& e)
 void PicWidget::updateClient()
 {
     if (!module) return;
+    float pwidth, pheight, scale, width, height, left, top, px, py;
     auto pic = module->getImage();
-    if (!pic || !pic->ok()) return;
-    float pwidth = pic->width();
-    float pheight = pic->height();
-    float scale = std::min(box.size.x / pwidth, box.size.y / pheight);
-    float width = pwidth * scale;
-    float height = pheight * scale;
-    float left = (box.size.x - width)/2.0f;
-    float top = (box.size.y - height)/2.0f;
-    float px = (mousepos.x - left)/scale;
-    float py = (mousepos.y - top)/scale;
+    bool havePic = pic && pic->ok();
+
+    pwidth = havePic ? pic->width() : PANEL_IMAGE_WIDTH;
+    pheight = havePic ? pic->height() : PANEL_IMAGE_HEIGHT;
+    scale = std::min(box.size.x / pwidth, box.size.y / pheight);
+    width = pwidth * scale;
+    height = pheight * scale;
+    left = (box.size.x - width)/2.0f;
+    top = (box.size.y - height)/2.0f;
+    px = (mousepos.x - left)/scale;
+    py = (mousepos.y - top)/scale;
     if (px >= 0.0f && px < pwidth && py >= 0.0f && py < pheight) {
         module->traversal->set_position(Vec(px, py));
+    }
+}
+
+void PicWidget::clearImageCache()
+{
+    if (vg_cookie && image_handle) {
+        auto vg = reinterpret_cast<NVGcontext*>(vg_cookie);
+        nvgDeleteImage(vg, image_handle);
+    }
+    image_handle = 0;
+    vg_cookie = 0;
+}
+
+void PicWidget::updateImageCache(NVGcontext* vg, Pic* pic)
+{
+    if (!pic) {
+        clearImageCache();
+        return;
+    }
+    auto icookie = reinterpret_cast<intptr_t>(pic->data());
+    auto vcookie = reinterpret_cast<intptr_t>(vg);
+    if (!image_cookie && !image_handle && !vg_cookie) {
+        image_handle = nvgCreateImageRGBA(vg, pic->width(),  pic->height(), 0, pic->data());
+        image_cookie = icookie;
+        vg_cookie = vcookie;
+    } else {
+        if (icookie != image_cookie || vcookie != vg_cookie) {
+            if (image_handle) {
+                nvgDeleteImage(vg, image_handle);
+                image_handle = 0;
+                image_handle = nvgCreateImageRGBA(vg, pic->width(),  pic->height(), 0, pic->data());
+            }
+            if (image_handle) {
+                image_cookie = icookie;
+                vg_cookie = vcookie;
+            } else {
+                image_cookie = 0;
+                vg_cookie = 0;
+            }
+        }
     }
 }
 
@@ -52,37 +95,17 @@ void PicWidget::drawPic(const DrawArgs &args)
     if (pic && pic->ok()) {
         auto width = pic->width();
         auto height = pic->height();
-        auto icookie = reinterpret_cast<intptr_t>(pic->data());
-        auto vcookie = reinterpret_cast<intptr_t>(args.vg);
-        if (!image_cookie && !image_handle && !vg_cookie) {
-            image_handle = nvgCreateImageRGBA(vg, width, height, 0, pic->data());
-            image_cookie = icookie;
-            vg_cookie = vcookie;
-        } else {
-            if (icookie != image_cookie || vcookie != vg_cookie) {
-                if (image_handle) {
-                    nvgDeleteImage(vg, image_handle);
-                    image_handle = 0;
-                    image_handle = nvgCreateImageRGBA(vg, width, height, 0, pic->data());
-                }
-                if (image_handle) {
-                    image_cookie = icookie;
-                    vg_cookie = vcookie;
-                } else {
-                    image_cookie = 0;
-                    vg_cookie = 0;
-                }
-            }
-        }
+        updateImageCache(vg, pic);
+
         if (image_handle) {
             float scale = std::min(box.size.x / width, box.size.y / height);
-            float x = (box.size.x/scale - width)/2.0f;
-            float y = (box.size.y/scale - height)/2.0f;
+            float x = (box.size.x/scale - width)/2.f;
+            float y = (box.size.y/scale - height)/2.f;
 
             nvgSave(vg);
             nvgBeginPath(vg);
             nvgScale(vg, scale, scale);
-            NVGpaint imgPaint = nvgImagePattern(vg, x, y, width, height, 0, image_handle, 1.0f);
+            NVGpaint imgPaint = nvgImagePattern(vg, x, y, width, height, 0.f, image_handle, 1.f);
             nvgRect(vg, x, y, width, height);
             nvgFillPaint(vg, imgPaint);
             nvgFill(vg);
@@ -90,13 +113,31 @@ void PicWidget::drawPic(const DrawArgs &args)
             nvgRestore(vg);
             return;
         }
-        FillRect(vg, 0, 0, box.size.x, box.size.y, COLOR_BRAND);
-        auto font = GetPluginFontSemiBold();
-        if (FontOk(font))
-        {
-            auto text = !pic || (pic && pic->reason().empty()) ? "[no image]" : pic->reason().c_str();
-            SetTextStyle(vg, font, GRAY85, 16);
-            CenterText(vg, box.size.x/2, box.size.y/2, text, NULL);
+    }
+    // no pic or bad pic
+    clearImageCache();
+
+    auto background = COLOR_BRAND;
+    FillRect(vg, 0, 0, box.size.x, box.size.y, background);
+    auto font = GetPluginFontSemiBold();
+    if (FontOk(font))
+    {
+        auto color = RampGray(G_85);
+        auto text = !pic || (pic && pic->reason().empty()) ? "[no image]" : pic->reason().c_str();
+
+        if (module && module->isXYPad()) {
+            text = "[ xy pad ]";
+            if (module->isBipolar())
+            {
+                Line(vg, 0., box.size.y/2., box.size.x, box.size.y/2., color, .5f);
+                Line(vg, box.size.x/2., 0, box.size.x/2., box.size.y, color, .5f);
+            }
+            FillRect(vg, box.size.x/2 - 2, box.size.y - box.size.y/8.f - 12.f, 4.f, 20.f, background);
+            SetTextStyle(vg, font, color, 16.f);
+            CenterText(vg, box.size.x/2.f, box.size.y - box.size.y/8.f, text, nullptr);
+        } else {
+            SetTextStyle(vg, font, color, 16.f);
+            CenterText(vg, box.size.x/2.f, box.size.y/2.f, text, nullptr);
         }
     }
 }
@@ -105,43 +146,47 @@ void PicWidget::drawSample(const DrawArgs &args) {
     if (!module) return;
     if (module->isBypassed()) return;
     auto pic = module->getImage();
-    if (!pic || !pic->ok()) return;
+    bool is_xypad = (!pic || !pic->ok()) && module->isXYPad();
+    if (!is_xypad && (!pic || !pic->ok())) return;
 
     auto vg = args.vg;
 
-    auto width = pic->width();
-    auto height = pic->height();
-    float scale = std::min(box.size.x / width, box.size.y / height);
-    float x = (box.size.x/scale - width)/2.0f;
-    float y = (box.size.y/scale - height)/2.0f;
     auto pos = module->traversal->get_position();
-    auto color = module->image.pixel(pos.x, pos.y);
+
+    float width = is_xypad ? PANEL_IMAGE_WIDTH : pic->width();
+    float height = is_xypad ? PANEL_IMAGE_HEIGHT : pic->height();
+    float scale = std::min(box.size.x / width, box.size.y / height);
+    float x = (box.size.x/scale - width)/2.f;
+    float y = (box.size.y/scale - height)/2.f;
+    auto color = is_xypad
+        ? nvgHSL(pos.x / width, .6f, pos.y / height)
+        : module->image.pixel(pos.x, pos.y);
     float cx = x*scale + pos.x*scale;
     float cy = y*scale + pos.y*scale;
 
     // halo
-    if (rack::settings::rackBrightness < 0.98f && rack::settings::haloBrightness > 0.0f) {
+    if (rack::settings::rackBrightness < 0.98 && rack::settings::haloBrightness > 0.) {
         auto haloColor = COLOR_BRAND_HI; //nvgRGB(255,255,255);
         nvgBeginPath(vg);
-        nvgRect(vg, cx - 13.0f, cy - 13.0f, 26.0f, 26.0f);
+        nvgRect(vg, cx - 13.f, cy - 13.f, 26.f, 26.f);
         NVGcolor icol = nvgTransRGBAf(haloColor, rack::settings::haloBrightness);
         NVGcolor ocol = nvgTransRGBAf(haloColor, 0);
-        NVGpaint paint = nvgRadialGradient(vg, cx, cy, 5, 13, icol, ocol);
+        NVGpaint paint = nvgRadialGradient(vg, cx, cy, 5.f, 13.f, icol, ocol);
         nvgFillPaint(vg, paint);
         nvgFill(vg);
     }
 
     // sample
     nvgBeginPath(vg);
-    nvgCircle(vg, cx, cy, 3.0);
+    nvgCircle(vg, cx, cy, 3.f);
     nvgFillColor(vg, color);
     nvgFill(vg);
 
     // outline
     auto lum = LuminanceLinear(color);
-    auto outline = lum < 0.5 ? nvgRGB(255,255,255) : nvgRGB(0,0,0);
+    auto outline = lum < 0.5f ? nvgRGBf(1.f,1.f,1.f) : nvgRGBf(0.f,0.f,0.f);
     nvgBeginPath(vg);
-    nvgCircle(vg, cx, cy, 3.0);
+    nvgCircle(vg, cx, cy, 3.f);
     nvgStrokeColor(vg, outline);
     nvgStrokeWidth(vg, 0.4f);
     nvgStroke(vg);
