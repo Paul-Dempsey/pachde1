@@ -4,6 +4,7 @@ namespace pachde {
 
 PicButton::PicButton(Theme theme)
 {
+    tip = nullptr;
     box.size.x = box.size.y = 15.f;
     line.a = 0.f; // force theme init
     setTheme(theme);
@@ -29,12 +30,12 @@ void PicButton::setTheme(Theme theme)
             moon = nvgHSL(210./360., .5, .5);
             break;
         case Theme::Dark:
-            line = nvgHSL(210./360., .5, .5);
+            line = RampGray(G_65); //nvgHSL(210./360., .5, .5);
             sky1 = nvgHSL(210./360., 0.5, .2);
-            sky2 = nvgHSL(30./360., 0.3, .60);
+            sky2 = nvgHSL(30./360., 0.3, .70);
             gradient_stop_x = box.size.x *.67;
-            mountain = nvgHSL(120./360., 0.35, 0.25);
-            moon = nvgHSL(210./360., .25, .65);
+            mountain = nvgHSL(120./360., 0.5, 0.25);
+            moon = nvgHSL(210./360., .25, .7);
             break;
         case Theme::HighContrast:
             line = nvgHSL(210./360., .5, .95);
@@ -107,10 +108,27 @@ void PicButton::onDragEnd(const DragEndEvent & e)
     rack::OpaqueWidget::onDragEnd(e);
     if (e.button != GLFW_MOUSE_BUTTON_LEFT)
         return;
+    destroyTooltip();
     if (clickHandler) {
         clickHandler();
     }
     pressed = false;
 }
 
+void PicButton::createTooltip() {
+    if (!settings::tooltips)
+        return;
+    if (tip) return;
+    auto newTip = new Tooltip();
+    newTip->text = "Open image";
+    APP->scene->addChild(newTip);
+    tip = newTip;
+}
+
+void PicButton::destroyTooltip() {
+    if (!tip) return;
+    APP->scene->removeChild(tip);
+    delete tip;
+    tip = nullptr;
+}
 }
