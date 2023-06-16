@@ -29,8 +29,22 @@ void DrawNull(NVGcontext*vg, float x, float y, NVGcolor ring_color, NVGcolor sla
 }
 
 // ----------------------------------------------------------------------------
+json_t* BlankModule::dataToJson() {
+    auto root = ResizableModule::dataToJson();
+    json_object_set_new(root, "glow", json_boolean(glow));
+    return root;
+}
+void BlankModule::dataFromJson(json_t* root) {
+    ResizableModule::dataFromJson(root);
+    auto j = json_object_get(root, "glow");
+    if (j) {
+        glow = json_boolean_value(j);
+    }
+}
 
-BlankModuleWidget::BlankModuleWidget(ResizableModule *module)
+// ----------------------------------------------------------------------------
+
+BlankModuleWidget::BlankModuleWidget(BlankModule *module)
 {
     setModule(module);
     setTheme(ModuleTheme(module));
@@ -97,17 +111,18 @@ void BlankModuleWidget::add_screws() {
 void BlankModuleWidget::setPanelColor(NVGcolor color) {
     auto itheme = getITheme();
     itheme->setPanelColor(color);
-    SetScrewColors(this, color);
-    if (panel) {
-        widget::EventContext cDirty;
-        widget::Widget::DirtyEvent eDirty;
-        eDirty.context = &cDirty;
-        panel->onDirty(eDirty);
-    }
+    //SetScrewColors(this, color);
+    SetChildrenThemeColor(this, color);
+    // if (panel) {
+    //     widget::EventContext cDirty;
+    //     widget::Widget::DirtyEvent eDirty;
+    //     eDirty.context = &cDirty;
+    //     panel->onDirty(eDirty);
+    // }
 }
 
-void BlankModuleWidget::draw(const DrawArgs &args) {
-    ModuleWidget::draw(args);
+void BlankModuleWidget::drawPanel(const DrawArgs &args) {
+
     auto theme = getITheme()->getTheme();
     NVGcolor logo = LogoColor(theme);
     NVGcolor ring, slash;
@@ -128,7 +143,7 @@ void BlankModuleWidget::draw(const DrawArgs &args) {
             slash = ring = WHITE;
             break;
     }
-    auto panel_color = panel->getColor();
+    auto panel_color = getITheme()->getPanelColor();
     if (isColorVisible(panel_color)) {
         auto lum = LuminanceLinear(panel_color);
         if (lum <= 0.5f) {
@@ -144,6 +159,28 @@ void BlankModuleWidget::draw(const DrawArgs &args) {
         }
     }
 
+    if (glowing()) {
+        auto vg = args.vg;
+        const float rad = 60.f;
+        float x, y, w, h;
+        x = -rad/2.f;
+        y = -rad/2.f;
+        w = box.size.x + rad; 
+        h = box.size.y + rad;
+        NVGcolor icol = nvgTransRGBAf(panel_color, rack::settings::rackBrightness);
+        NVGcolor ocol = COLOR_NONE;
+
+        NVGpaint paint;
+        nvgBeginPath(vg);
+        nvgRect(vg, x, y, w, h);
+        paint = nvgBoxGradient(vg, 0, 0, box.size.x, box.size.y, 4.f, 28.f, icol, ocol);
+        nvgFillPaint(vg, paint);
+        nvgFill(vg);
+
+    }
+
+    ModuleWidget::draw(args);
+
     bool skinny = hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);
 
     auto y = skinny ? RACK_GRID_WIDTH : 0.0f;
@@ -155,6 +192,16 @@ void BlankModuleWidget::draw(const DrawArgs &args) {
     if (!module) {
         DrawLogo(args.vg, 0, box.size.y / 2.0f - 40, Overlay(COLOR_BRAND), 4.0);
     } 
+}
+
+void BlankModuleWidget::draw(const DrawArgs &args) {
+    if (glowing()) return;
+    drawPanel(args);
+}
+void BlankModuleWidget::drawLayer(const DrawArgs &args, int layer) {
+    if (glowing()) {
+        drawPanel(args);
+    }
 }
 
 void BlankModuleWidget::setTheme(Theme theme)
@@ -211,9 +258,15 @@ void BlankModuleWidget::step()
 
 void BlankModuleWidget::appendContextMenu(Menu *menu)
 {
+    auto mymodule = dynamic_cast<BlankModule*>(module);
+    if (!module) return;
     AddThemeMenu(menu, this, true, true);
+    menu->addChild(createCheckMenuItem(
+        "Glow in the dark", "",
+        [=]() { return mymodule->glowing(); },
+        [=]() { mymodule->setGlow(!mymodule->glowing()); }));
 }
 
 }
 
-Model *modelBlank = createModel<pachde::ResizableModule, pachde::BlankModuleWidget>("pachde-null");
+Model *modelBlank = createModel<pachde::BlankModule, pachde::BlankModuleWidget>("pachde-null");

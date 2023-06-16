@@ -5,6 +5,14 @@
 
 namespace pachde {
 
+struct BlankModule : ResizableModule {
+    bool glow = false;
+    bool glowing() { return glow && rack::settings::rackBrightness < 0.90f; }
+    void setGlow(bool g) { glow = g; }
+    json_t* dataToJson() override;
+    void dataFromJson(json_t* root) override;
+};
+
 struct BlankModuleWidget : ModuleWidget, ITheme
 {
     ITheme * alternateTheme = nullptr;
@@ -31,10 +39,18 @@ struct BlankModuleWidget : ModuleWidget, ITheme
         return alternateTheme;
     }
 
-    BlankModuleWidget(ResizableModule *module);
+    bool glowing() {
+        auto m = dynamic_cast<BlankModule*>(module);
+        if (!module) return false;
+        return m->glowing();
+    }
+
+    BlankModuleWidget(BlankModule* module);
+    void drawPanel(const DrawArgs &args);
 
     void step() override;
     void draw(const DrawArgs& args) override;
+    void drawLayer(const DrawArgs &args, int layer) override;
     void appendContextMenu(Menu *menu) override;
     void setTheme(Theme theme) override;
     void setPanelColor(NVGcolor color) override;
