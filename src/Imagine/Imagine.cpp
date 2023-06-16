@@ -82,6 +82,8 @@ bool Imagine::loadImageDialog()
         return true;
     } else {
         DEBUG("Image load failed: %s", image.reason().c_str());
+        traversal->configure_image(Vec(image.width(), image.height()));
+        traversal->reset();
         //image.close();
         return false;
     }
@@ -122,7 +124,10 @@ void Imagine::dataFromJson(json_t *root)
         if (image.open(path)) {
             DEBUG("Opened image (%s)", path.c_str());
             DEBUG("Image size %d x %d", image.width(), image.height());
-            traversal->configure_image(Vec(image.width(), image.height()));
+            if (traversal) {
+                traversal->configure_image(Vec(image.width(), image.height()));
+                traversal->reset();
+            }
         } else {
             DEBUG("Image load failed: %s", image.reason().c_str());
         }
@@ -162,8 +167,9 @@ void Imagine::updateParams()
             delete traversal;
         }
         traversal = MakeTraversal(id);
-        traversal_id = id;
         traversal->configure_image(Vec(image.width(), image.height()));
+        traversal->reset();
+        traversal_id = id;
     }
     traversal->configure_rate(getSpeed(), sample_rate);
     color_component = getColorComponent();

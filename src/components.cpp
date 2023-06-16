@@ -4,18 +4,19 @@ namespace pachde {
 
 void ThemePanel::draw(const DrawArgs &args)
 {
+    Widget::draw(args);
+
     auto color = theme_holder->getPanelColor();
     if (isColorTransparent(color))
     {
         color = PanelBackground(theme_holder->getTheme());
     }
+    auto vg = args.vg;
 
-    nvgBeginPath(args.vg);
-    nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
-    nvgFillColor(args.vg, color);
-    nvgFill(args.vg);
-
-    Widget::draw(args);
+    nvgBeginPath(vg);
+    nvgRect(vg, 0.0f, 0.0f, box.size.x, box.size.y);
+    nvgFillColor(vg, color);
+    nvgFill(vg);
 }
 
 void SetChildrenTheme(Widget * widget, Theme theme, bool top)

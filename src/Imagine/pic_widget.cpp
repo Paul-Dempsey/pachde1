@@ -92,7 +92,18 @@ void PicWidget::drawPic(const DrawArgs &args)
 {
     auto vg = args.vg;
     auto pic = module ? module->getImage() : nullptr;
-    if (pic && pic->ok()) {
+    if (pic && !pic->ok()) {
+        pic = nullptr;
+    }
+    // experiment
+    // if (pic && !pic->ok()) {
+    //     if (!spectrum)
+    //     {
+    //         spectrum = CreateHSLSpectrum(.6f);
+    //     }
+    //     pic = spectrum;
+    // }
+    if (pic) {
         auto width = pic->width();
         auto height = pic->height();
         updateImageCache(vg, pic);
@@ -146,9 +157,15 @@ void PicWidget::drawSample(const DrawArgs &args) {
     if (!module) return;
     if (module->isBypassed()) return;
     auto pic = module->getImage();
-    bool is_xypad = (!pic || !pic->ok()) && module->isXYPad();
-    if (!is_xypad && (!pic || !pic->ok())) return;
-
+    if (!pic->ok()) {
+        pic = nullptr;
+    }
+    // experiment
+    // if (!pic && spectrum) {
+    //     pic = spectrum;
+    // }
+    bool is_xypad = !pic && module->isXYPad();
+    if (!pic && !is_xypad) return;
     auto vg = args.vg;
 
     auto pos = module->traversal->get_position();
@@ -165,20 +182,20 @@ void PicWidget::drawSample(const DrawArgs &args) {
     float cy = y*scale + pos.y*scale;
 
     // halo
-    if (rack::settings::rackBrightness < 0.98 && rack::settings::haloBrightness > 0.) {
+    if (rack::settings::rackBrightness < 0.98f && rack::settings::haloBrightness > 0.f) {
         auto haloColor = COLOR_BRAND_HI; //nvgRGB(255,255,255);
         nvgBeginPath(vg);
-        nvgRect(vg, cx - 13.f, cy - 13.f, 26.f, 26.f);
+        nvgRect(vg, cx - 15.f, cy - 15.f, 30.f, 30.f);
         NVGcolor icol = nvgTransRGBAf(haloColor, rack::settings::haloBrightness);
-        NVGcolor ocol = nvgTransRGBAf(haloColor, 0);
-        NVGpaint paint = nvgRadialGradient(vg, cx, cy, 5.f, 13.f, icol, ocol);
+        NVGcolor ocol = nvgTransRGBAf(haloColor, 0.f);
+        NVGpaint paint = nvgRadialGradient(vg, cx, cy, 6.f, 15.f, icol, ocol);
         nvgFillPaint(vg, paint);
         nvgFill(vg);
     }
 
     // sample
     nvgBeginPath(vg);
-    nvgCircle(vg, cx, cy, 3.f);
+    nvgCircle(vg, cx, cy, 6.f);
     nvgFillColor(vg, color);
     nvgFill(vg);
 
@@ -186,9 +203,9 @@ void PicWidget::drawSample(const DrawArgs &args) {
     auto lum = LuminanceLinear(color);
     auto outline = lum < 0.5f ? nvgRGBf(1.f,1.f,1.f) : nvgRGBf(0.f,0.f,0.f);
     nvgBeginPath(vg);
-    nvgCircle(vg, cx, cy, 3.f);
+    nvgCircle(vg, cx, cy, 6.25f);
     nvgStrokeColor(vg, outline);
-    nvgStrokeWidth(vg, 0.4f);
+    nvgStrokeWidth(vg, 1.f);
     nvgStroke(vg);
 }
 

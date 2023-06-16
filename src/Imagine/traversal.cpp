@@ -98,9 +98,7 @@ void Bounce::process() {
 }
 
 void Wander::reset() {
-    position.x = image_size.x / 2.0f;
-    position.y = image_size.y / 2.0f;
-    angle = random::uniform() * TWO_PI;
+    position = Vec(image_size.x / 2.f, image_size.y / 2.f);
     max = 0;
 }
 

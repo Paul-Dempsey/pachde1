@@ -13,6 +13,7 @@ bool Pic::open(std::string filename)
     if (_data) {
         return true;
     } else {
+        _width = _height = 0;
         _reason = stbi_failure_reason();
         return false;
     }
@@ -166,6 +167,27 @@ void Pic::close()
     }
     _name = "";
     _reason = "";
+}
+
+Pic * CreateHSLSpectrum(float saturation)
+{
+    auto spec = new Pic();
+    int w = 256, h = 256;
+    spec->_width = w;
+    spec->_height = h;
+    spec->_data = new unsigned char[w * h * 4];
+    unsigned char* rgba = spec->_data;
+    for (int y = 0; y < h; ++y) {
+        auto L = static_cast<float>(y)/255.f;
+        for (int x = 0; x < w; ++x) {
+            auto pix = nvgHSL(static_cast<float>(x)/255.f, saturation, L);
+            *rgba++ = static_cast<unsigned char>(pix.r * 255.f);
+            *rgba++ = static_cast<unsigned char>(pix.g * 255.f);
+            *rgba++ = static_cast<unsigned char>(pix.b * 255.f);
+            *rgba++ = static_cast<unsigned char>(255);
+        }
+    }
+    return spec;
 }
 
 }

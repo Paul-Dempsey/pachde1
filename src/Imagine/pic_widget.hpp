@@ -7,6 +7,13 @@ namespace pachde {
 
 struct PicWidget : OpaqueWidget {
     Imagine *module = nullptr;
+
+    // experiment
+    // Pic * spectrum = nullptr;
+    // virtual ~PicWidget() {
+    //     if (spectrum) delete spectrum;
+    // }
+
     Vec mousepos;
     // to manage image data properly, we must manage the NVG image handle properly, 
     // which means invalidating our cache and deleting the NVG image handle when

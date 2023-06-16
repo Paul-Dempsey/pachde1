@@ -5,7 +5,7 @@
 namespace pachde {
 constexpr const float PIC_EPSILON = 0.00001f;
 
-class Pic {
+struct Pic {
     int _width = 0;
     int _height = 0;
     int _components = 0;
@@ -13,7 +13,6 @@ class Pic {
     std::string _name;
     std::string _reason;
 
-    public:
     int width() const { return _width; }
     int height() const { return _height; }
     Point extent() const { return Point(_width, _height); }
@@ -40,5 +39,7 @@ class Pic {
         close();
     }
 };
+
+Pic * CreateHSLSpectrum(float saturation);
 
 }
