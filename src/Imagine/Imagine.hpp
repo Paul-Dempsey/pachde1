@@ -20,7 +20,7 @@ enum VRange {
     BIPOLAR = 1
 };
 enum ColorComponent {
-    LUMINANCE, SATURATION, HUE, R, G, B, ALPHA,
+    LUMINANCE, SATURATION, HUE, MIN, MAX, AVE, R, G, B, ALPHA,
     NUM_COMPONENTS
 };
 
@@ -30,6 +30,9 @@ inline const char * ComponentInitial(ColorComponent co) {
         case ColorComponent::LUMINANCE: return "L";
         case ColorComponent::SATURATION: return "S";
         case ColorComponent::HUE: return "H";
+        case ColorComponent::MIN: return "min";
+        case ColorComponent::MAX: return "max";
+        case ColorComponent::AVE: return "ave";
         case ColorComponent::R: return "R";
         case ColorComponent::G: return "G";
         case ColorComponent::B: return "B";
@@ -81,6 +84,7 @@ struct Imagine : ThemeModule
     bool bright_image = false;
     Pic image;
     std::string pic_folder;
+
     Pic* getImage() { return &image; }
 
     void play() { running = true;}
@@ -118,6 +122,9 @@ struct Imagine : ThemeModule
             case ColorComponent::LUMINANCE: return LuminanceLinear(color);
             case ColorComponent::SATURATION: return Saturation(color);
             case ColorComponent::HUE: return Hue(color);
+            case ColorComponent::MIN: return std::min(color.r, std::min(color.g, color.b));
+            case ColorComponent::MAX: return std::max(color.r, std::max(color.g, color.b));
+            case ColorComponent::AVE: return (color.r + color.g + color.b) / 3.f;
             case ColorComponent::R: return color.r;
             case ColorComponent::G: return color.g;
             case ColorComponent::B: return color.b;
@@ -125,13 +132,12 @@ struct Imagine : ThemeModule
         }
     }
     bool isPixelOutput() {
-        if (outputs[VOLTAGE_OUT].isConnected()) return true;
-        if (outputs[GATE_OUT].isConnected()) return true;
-        if (outputs[TRIGGER_OUT].isConnected()) return true;
-        if (outputs[RED_OUT].isConnected()) return true;
-        if (outputs[GREEN_OUT].isConnected()) return true;
-        if (outputs[BLUE_OUT].isConnected()) return true;
-        return false;
+        return 0 < outputs[VOLTAGE_OUT].isConnected()
+            + outputs[GATE_OUT].isConnected()
+            + outputs[TRIGGER_OUT].isConnected()
+            + outputs[RED_OUT].isConnected()
+            + outputs[GREEN_OUT].isConnected()
+            + outputs[BLUE_OUT].isConnected();
     }
     bool loadImageDialog();
 

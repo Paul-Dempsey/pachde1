@@ -37,6 +37,9 @@ Imagine::Imagine() {
         "Luminance",
         "Saturation",
         "Hue",
+        "Minimum",
+        "Maximum",
+        "Average",
         "Red",
         "Green",
         "Blue",
@@ -234,15 +237,9 @@ void Imagine::process(const ProcessArgs& args)
         }
 
         // RGB outputs are unipolar 0-10v
-        if (outputs[RED_OUT].isConnected()) {
-            outputs[RED_OUT].setVoltage(pix.r * 10.f);
-        }
-        if (outputs[GREEN_OUT].isConnected()) {
-            outputs[GREEN_OUT].setVoltage(pix.g * 10.f);
-        }
-        if (outputs[BLUE_OUT].isConnected()) {
-            outputs[BLUE_OUT].setVoltage(pix.b * 10.f);
-        }
+        outputs[RED_OUT].setVoltage(pix.r * 10.f);
+        outputs[GREEN_OUT].setVoltage(pix.g * 10.f);
+        outputs[BLUE_OUT].setVoltage(pix.b * 10.f);
 
         if (outputs[VOLTAGE_OUT].isConnected()) {
             auto v = ComponentValue(pix) * 10.0f;
