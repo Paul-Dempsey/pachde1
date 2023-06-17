@@ -70,7 +70,8 @@ Ctrl+Click to decrement (Cmd+Click on Mac).
 
 - Open an image by clicking the Picture button next to the Play/Pause button.
 
-- Adjust the speed of the read head with the **speed** and **x_n_** knobs.
+- Adjust the speed of the read head with the **speed** knob.
+The next **x?** knob multiplies the **speed** by **x1** - **x10** times.
 
 - If the output is janky, smooth it out with a higher **slew** rate.
 
@@ -91,14 +92,6 @@ Ctrl+Click to decrement (Cmd+Click on Mac).
   Only PNGs with transparency will have an effect.
   Everything else will ouput a steady maximum voltage.
 
-- Choose polarity of voltages with the **p** switch.
-Switches calculated outputs between -5 to +5v and 0 to 10V.
-Also sets the coordinate system for the plain XY Pad.
-
-- Imagine has a variety of outputs.
-Raw unipolar outputs for **x**, **y**, and pixel **R**, **G**, and **B** values are on the left,
-and calculated outputs for **v**oltage **g**ate and **t**riger to the right.
-
 - Choose a **path** to move through the image:
 
   | Path | Description |
@@ -109,6 +102,17 @@ and calculated outputs for **v**oltage **g**ate and **t**riger to the right.
   | **Wander**   | Just wander around the image to see what you can find. |
   | **XY Pad**   | No automatic movement of the read head. Reads from where you click. Drag the mouse to scrub through the image. With a carefully prepared image, you can get precise voltages for controlling a patch. |
 
-To use Imagine as an plain XY Pad, set **path** to **XY Pad** without an image.
-To close an image after you've opened one, cancel out of the **Open image** dialog.
+  To use Imagine as an plain XY Pad, set **path** to **XY Pad** without an image.
+  To close an image after you've opened one, cancel out of the **Open image** dialog.
 
+- Start and stop the read head with the **Play/Pause** button.
+
+- Select an image using the **Picture** button.
+
+- Imagine has a variety of outputs.
+Raw unipolar outputs for **x**, **y**, and pixel **R**, **G**, and **B** values are on the left,
+and calculated outputs for **v**oltage **g**ate and **t**riger to the right.
+
+- Choose polarity of voltages with the **p** switch.
+Switches calculated outputs between -5 to +5v and 0 to 10V.
+Also sets the coordinate system for the plain XY Pad.
