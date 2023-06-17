@@ -60,7 +60,7 @@ Load an image and generate voltages, gates, and triggers as the image is scanned
 Click on the image to set the position of the read head.
 Drag to scrub.
 
-![Imagine with light theme](docs/Imagine.png)
+![Imagine with light theme](docs/imagine.png)
 
 Features:
 
