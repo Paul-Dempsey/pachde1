@@ -111,14 +111,7 @@ void BlankModuleWidget::add_screws() {
 void BlankModuleWidget::setPanelColor(NVGcolor color) {
     auto itheme = getITheme();
     itheme->setPanelColor(color);
-    //SetScrewColors(this, color);
     SetChildrenThemeColor(this, color);
-    // if (panel) {
-    //     widget::EventContext cDirty;
-    //     widget::Widget::DirtyEvent eDirty;
-    //     eDirty.context = &cDirty;
-    //     panel->onDirty(eDirty);
-    // }
 }
 
 void BlankModuleWidget::drawPanel(const DrawArgs &args) {
@@ -160,14 +153,17 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args) {
     }
 
     if (glowing()) {
+        if (isColorTransparent(panel_color)) {
+            panel_color = PanelBackground(theme);
+        }
         auto vg = args.vg;
-        const float rad = 60.f;
+        const float rad = 30.f;
         float x, y, w, h;
-        x = -rad/2.f;
-        y = -rad/2.f;
-        w = box.size.x + rad; 
-        h = box.size.y + rad;
-        NVGcolor icol = nvgTransRGBAf(panel_color, rack::settings::rackBrightness);
+        x = -rad;
+        y = -rad;
+        w = box.size.x + rad + rad;
+        h = box.size.y + rad + rad;
+        NVGcolor icol = nvgTransRGBAf(panel_color, rack::settings::haloBrightness);
         NVGcolor ocol = COLOR_NONE;
 
         NVGpaint paint;
@@ -176,7 +172,6 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args) {
         paint = nvgBoxGradient(vg, 0, 0, box.size.x, box.size.y, 4.f, 28.f, icol, ocol);
         nvgFillPaint(vg, paint);
         nvgFill(vg);
-
     }
 
     ModuleWidget::draw(args);

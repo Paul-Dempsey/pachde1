@@ -29,6 +29,8 @@ struct InfoTheme : ThemeBase {
     NVGcolor user_text_background = COLOR_NONE;
     NVGcolor user_text_color = COLOR_NONE;;
 
+    bool brilliant = false;
+
     float font_size = DEFAULT_FONT_SIZE;
     std::string font_file = asset::plugin(pluginInstance, "res/fonts/HankenGrotesk-SemiBold.ttf");
     std::string font_folder = "";
@@ -68,6 +70,7 @@ struct InfoTheme : ThemeBase {
         }
         json_object_set_new(root, "font", json_string(font_file.c_str()));
         json_object_set_new(root, "font-folder", json_string(font_folder.c_str()));
+        json_object_set_new(root, "bright", json_boolean(brilliant));
         return root;
     }
 
@@ -98,6 +101,10 @@ struct InfoTheme : ThemeBase {
         if (j) {
             font_folder =  json_string_value(j);
         }
+        j = json_object_get(root, "bright");
+        if (j) {
+            brilliant = json_boolean_value(j);
+        }
     }
 
     Theme getTheme() override { 
@@ -118,6 +125,10 @@ struct InfoTheme : ThemeBase {
 
     void setUserTextColor(NVGcolor color) { user_text_color = color; }
     NVGcolor getUserTextColor() { return user_text_color; }
+
+    void setBrilliant(bool brilliant) { this->brilliant = brilliant; }
+    bool getBrilliant() { return brilliant; }
+    void toggleBrilliant() { brilliant = !brilliant; }
 
     void setTheme(Theme theme) override
     {
@@ -230,17 +241,9 @@ struct InfoPanel : Widget
         SetTextStyle(vg, font, info_theme->getDisplayTextColor(), info_theme->getFontSize());
         nvgTextBox(vg, box.pos.x + 10.f, box.pos.y + ONE_HP + 20.f, box.size.x - 10.f, text.c_str(), nullptr);
     }
-    void draw(const DrawArgs &args) override
-    {
-        assert(info_theme);
-        
-        NVGcolor outer = info_theme->getDisplayPanelColor();
-        NVGcolor inner = info_theme->getDisplayTextBackground();
 
-        nvgBeginPath(args.vg);
-        nvgRect(args.vg, 0.f, 0.f, box.size.x, box.size.y);
-        nvgFillColor(args.vg, outer);
-        nvgFill(args.vg);
+    void drawText(const DrawArgs &args) {
+        NVGcolor inner = info_theme->getDisplayTextBackground();
 
         nvgBeginPath(args.vg);
         nvgRect(args.vg, 5.0, ONE_HP, box.size.x - 10.f, box.size.y - RACK_GRID_WIDTH * 2.f);
@@ -270,6 +273,30 @@ struct InfoPanel : Widget
                 }
             }
         }
+
+    }
+    void drawLayer(const DrawArgs &args, int layer) override
+    {
+        if (layer == 1 && info_theme->getBrilliant()) {
+            drawText(args);
+        }
+    }
+    
+    void draw(const DrawArgs &args) override
+    {
+        assert(info_theme);
+        
+        NVGcolor outer = info_theme->getDisplayPanelColor();
+
+        nvgBeginPath(args.vg);
+        nvgRect(args.vg, 0.f, 0.f, box.size.x, box.size.y);
+        nvgFillColor(args.vg, outer);
+        nvgFill(args.vg);
+
+        if (!info_theme->getBrilliant()) {
+            drawText(args);
+        }
+
         if (preview) {
             DrawLogo(args.vg, box.size.x / 2.f - 30.0f, box.size.y / 2.f - 40.f, Overlay(COLOR_BRAND), 4.f);
         }
@@ -451,6 +478,10 @@ struct InfoModuleWidget : ModuleWidget, ITheme
         if (!this->module)
             return;
         AddThemeMenu(menu, this, true, true);
+
+        menu->addChild(createCheckMenuItem("Bright text in a dark room", "",
+            [=]() { return info_theme->getBrilliant(); },
+            [=]() { info_theme->toggleBrilliant(); }));
 
         menu->addChild(new MenuSeparator);
         menu->addChild(createSubmenuItem("Info", "",

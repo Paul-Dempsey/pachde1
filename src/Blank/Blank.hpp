@@ -40,9 +40,9 @@ struct BlankModuleWidget : ModuleWidget, ITheme
     }
 
     bool glowing() {
-        auto m = dynamic_cast<BlankModule*>(module);
-        if (!module) return false;
-        return m->glowing();
+        auto mymodule = dynamic_cast<BlankModule*>(module);
+        if (!mymodule) return false;
+        return mymodule->glowing();
     }
 
     BlankModuleWidget(BlankModule* module);
