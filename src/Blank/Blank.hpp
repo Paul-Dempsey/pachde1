@@ -55,8 +55,9 @@ struct BlankModule : ResizableModule {
     BlankModule();
     float getFlicker()
     {
-        return inputs[0].getVoltage(0) * inputs[0].isConnected();
+        return inputs[0].isConnected() ? inputs[0].getVoltage(0) : 0.f;
     }
+    bool flickering() { return inputs[0].isConnected(); }
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;
 };

@@ -163,18 +163,21 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
     }
 
     auto bmodule = dynamic_cast<BlankModule*>(module);
-    auto flicker = bmodule ? bmodule->getFlicker() : 0.f;
-    if (flicker < 0.f) {
-        flicker_unipolar = false;
-    } else if (flicker > 5.25f) {
-        flicker_unipolar = true;
+    bool flickering = bmodule ? bmodule->flickering() : false;
+    float flicker = 0.f;
+    if (flickering) {
+        flicker = bmodule->getFlicker();
+        if (flicker < 0.f) {
+            flicker_unipolar = false;
+        } else if (flicker > 5.25f) {
+            flicker_unipolar = true;
+        }
+        if (flicker_unipolar) {
+            flicker = flicker - 5.f;
+        }
+        flicker *= .2f;
+        clamp(flicker, -5.f, 5.f);
     }
-    if (flicker_unipolar) {
-        flicker = flicker - 5.f;
-    }
-    flicker *= .2f;
-    clamp(flicker, -5.f, 5.f);
-
     if (glowing()) {
         if (isColorTransparent(panel_color)) {
             panel_color = PanelBackground(theme);
@@ -193,7 +196,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
         NVGpaint paint;
         nvgBeginPath(vg);
         nvgRect(vg, x, y, w, h);
-        if (flicker != 0.f) {
+        if (flickering) {
             ocol.r += flicker/255.f;
             ocol.g += flicker/255.f;
             ocol.b += flicker/255.f;
@@ -205,13 +208,16 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
 
     ModuleWidget::draw(args);
 
-    if (abs(flicker) > 0.01) {
+    if (flickering) {
         nvgBeginPath(args.vg);
         nvgRect(vg, 0.f, 0.f, box.size.x, box.size.y);
         NVGcolor ocol = nvgRGBAf(0.f, 0.f, 0.f, abs(flicker));
-        NVGpaint paint = nvgRadialGradient(vg, box.size.x/2.f, box.size.y/2.f, box.size.x*.3f, box.size.y, panel_color, ocol);
+        float innr = std::min(box.size.x, box.size.y) * .5f;
+        float outr = std::max(box.size.x, box.size.y);
+        NVGpaint paint = nvgRadialGradient(vg, box.size.x/2.f, box.size.y/2.f, innr, outr, panel_color, ocol);
         nvgFillPaint(vg, paint);
         nvgFill(vg);
+        //logo_port->draw(args);
     }
 
     bool skinny = hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);

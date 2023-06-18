@@ -22,7 +22,7 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     setPanel(panel);
 
     if (!module || module->hasScrews()) {
-        AddScrewCaps(this, theme, COLOR_NONE, TOP_SCREWS_INSET);
+        AddScrewCaps(this, theme, COLOR_NONE, SCREWS_OUTSIDE);
     }
 
     auto image = new PicWidget(module);
@@ -106,7 +106,7 @@ void ImagineUi::setScrews(bool screws)
     }
     if (screws) {
         if (HaveScrewChildren(this)) return;
-        AddScrewCaps(this, getTheme(), COLOR_NONE, TOP_SCREWS_INSET);
+        AddScrewCaps(this, getTheme(), COLOR_NONE, SCREWS_OUTSIDE);
     } else {
         RemoveScrewCaps(this);
     }
