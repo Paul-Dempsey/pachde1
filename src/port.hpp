@@ -24,10 +24,10 @@ namespace pachde {
 struct ColorPort : PortWidget, ThemeLite
 {
     NVGcolor ring = PORT_DEFAULT;
-    NVGcolor collar1, collar2, edge, bevel1, bevel2, sleeve;
+    NVGcolor collar1, collar2, bezel, tube, bevel1, bevel2, sleeve;
 
     ColorPort(Theme theme) { 
-        box.size.x = box.size.y = 24.f;
+        box.size.x = box.size.y = 22.f;
         setTheme(theme);
     }
 	void draw(const DrawArgs& args) override;
