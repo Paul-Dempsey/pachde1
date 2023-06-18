@@ -105,6 +105,8 @@ struct Vinyl : TraversalBase {
     float r = 0.9999f;
     float theta = 0.f;
     float r_limit = 1.f;
+    float half_x;
+    float half_y;
 
     ~Vinyl() {}
     void reset() override;

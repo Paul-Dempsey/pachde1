@@ -17,7 +17,7 @@ void Scanline::process()
 }
 
 void Vinyl::process() {
-    theta += advance / (3.0f *simd::sqrt(r));
+    theta += advance / (3.0f * std::sqrt(r));
     r += direction * advance / TWO_PI;
     if (r < 0.0f) {
         direction = -direction;
@@ -33,31 +33,31 @@ void Vinyl::process() {
 }
 
 void Vinyl::pos_to_polar() {
-    auto x = position.x - image_size.x/2.0f;
-    auto y = position.y - image_size.y/2.0f;
-    r = std::min(r_limit - PIC_EPSILON, simd::sqrt(x*x + y*y));
+    auto x = position.x - half_x;
+    auto y = position.y - half_y;
+    r = std::min(r_limit - PIC_EPSILON, std::sqrt(x*x + y*y));
     theta = simd::atan2(y, x);
 }
 
 void Vinyl::polar_to_pos() {
     sincosf(theta, &position.y, &position.x);
-    position.x *= r;
-    position.x += image_size.x/2.0f;
-    position.y *= r;
-    position.y += image_size.y/2.0f;
+    position.x = position.x * r + half_x;
+    position.y = position.y * r + half_y;
     clip_position();
 }
 
 void Vinyl::reset()
 {
-    position.x = image_size.x/2.0f + r_limit - PIC_EPSILON;
-    position.y = image_size.y/2.0f;
+    position.x = half_x + r_limit - PIC_EPSILON;
+    position.y = half_y;
     pos_to_polar();
 }
 
 void Vinyl::configure_image(Vec size)
 {
     image_size = size;
+    half_x = image_size.x/2.f;
+    half_y = image_size.y/2.f;
     r_limit = std::min(image_size.x, image_size.y)/2.0f;
     reset();
 }
@@ -82,15 +82,15 @@ void Bounce::process() {
     position.x += (dx * advance)*2;
     position.y += (dy * advance)*2;
     if (position.x < 0.0f ) {
-        angle = angle + PI/4.0 + (random::uniform() - 0.5f)/1000.0;
+        angle = angle + PI/4.0f + (random::uniform() - 0.5f)/1000.0f;
         position.x -= dx;
         position.y += dy;
     } else if (position.x >= image_size.x) {
-        angle = angle - PI/4.0 + (random::uniform() - 0.5f)/1000.0;
+        angle = angle - PI/4.0f + (random::uniform() - 0.5f)/1000.0f;
         position.x -= dx;
         position.y += dy;
     } else if (position.y < 0.0f || position.y >= image_size.y) {
-        angle = -angle + (random::uniform() - 0.5f)/10000.0;
+        angle = -angle + (random::uniform() - 0.5f)/1000.0f;
         position.x += dx;
         position.y -= dy;
     }
@@ -98,12 +98,12 @@ void Bounce::process() {
 }
 
 void Wander::reset() {
-    position = Vec(image_size.x / 2.f, image_size.y / 2.f);
+    position = Vec(image_size.x/2.f, image_size.y/2.f);
     max = 0;
 }
 
 int Wander::new_max() {
-    return 100 + random::uniform() * 500; 
+    return 100 + random::uniform() * 500;
 }
 
 void Wander::process() {

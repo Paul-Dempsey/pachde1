@@ -1,6 +1,7 @@
 #include <rack.hpp>
-#include "pic.hpp"
 #include "stb_image.h"
+#include "pic.hpp"
+#include "../colors.hpp"
 
 using namespace ::rack;
 namespace pachde {
@@ -73,7 +74,7 @@ NVGcolor Pic::pixel(int x, int y) const
     }
 }
 
-
+#ifdef USE_SIMD_PIXEL
 // Interpolated floating point coordinates
 // for same-pixel-dimension image.
 NVGcolor Pic::pixel(float x, float y) const
@@ -105,17 +106,72 @@ NVGcolor Pic::pixel(float x, float y) const
         b*b + d*d
     };
 
-    // exclude points farther than 1 unit
-    std::for_each(weight.begin(), weight.end(), [](float &f){ if (f > 1.0f) f = 0.0f; });
+    // exclude out of range pixels or distances > 1
+    if (weight[0] > 1.f) weight[0] = 0.f;
+    if ((ix1 + 1 >= _width) || weight[1] > 1.f) weight[1] = 0.f;
+    if ((iy1 + 1 >= _height) || weight[2] > 1.f) weight[2] = 0.f;
+    if ((iy1 + 1 >= _height) || (ix1 + 1 >= _width) || weight[3] > 1.f) weight[3] = 0.f;
 
-    // exclude points outside the image
-    if (ix1 + 1 >= _width) {
-        weight[1] = weight[3] = 0.0f;
+    // compute weights from squares
+    float sum = std::accumulate(weight.begin(), weight.end(), 0.0f);
+    // shortcut if only corner pixel is valid
+    if (sum == weight[0]) {
+        return nvgRGBA(*pixels, *(pixels+1), *(pixels+2), *(pixels+3));
     }
-    if (iy1 + 1 >= _height) {
-        weight [2] = weight[3] = 0.0f;
+    std::for_each(weight.begin(), weight.end(), [sum](float &f){ f = f/sum; });
+
+    simd::float_4 pd = 0;
+    int rowskip = stride();
+    unsigned char * quad[4] = { pixels, pixels + 4,  pixels + rowskip, pixels + rowskip + 4};
+    for (int i = 0; i < 4; ++i) {
+        auto w = weight[i];
+        if (w > 0.f) {
+            auto px = quad[i];
+            simd::float_4 t = { static_cast<float>(*px), static_cast<float>(*(px+1)), static_cast<float>(*(px+2)), static_cast<float>(*(px+3)) };
+            t /= 255.f;
+            t *= w;
+            pd += t;
+        }
+    }
+    return nvgRGBAf(pd[0], pd[1], pd[2], pd[3]);
+}
+#else
+// Interpolated floating point coordinates
+// for same-pixel-dimension image.
+NVGcolor Pic::pixel(float x, float y) const
+{
+    float fx = std::floor(x);
+    float fy = std::floor(y);
+
+    // p1 p2
+    // p3 p4
+    int ix1 = static_cast<int>(fx);
+    int iy1 = static_cast<int>(fy);
+    auto pixels = pixel_address(ix1, iy1);
+    if (!pixels) {
+        return nvgRGBA(0,0,0,0);
     }
 
+    if (x - fx < PIC_EPSILON && y - fy < PIC_EPSILON) {
+        return pixel(ix1, iy1);
+    }
+
+    float a = x - fx;
+    float b = 1.0f - a;
+    float c = y - fy;
+    float d = 1.0f - c;
+    std::vector<float> weight = {
+        a*a + c*c,
+        (ix1 + 1 < _width) ? b*b + c*c : 0.f,
+        (iy1 + 1 < _height) ? a*a + d*d : 0.f,
+        ((iy1 + 1 < _height) && (ix1 + 1 < _width)) ? b*b + d*d : 0.f
+    };
+
+    // exclude out of range pixels or distances > 1
+    if (weight[0] > 1.f) weight[0] = 0.f;
+    if (weight[1] > 1.f) weight[1] = 0.f;
+    if (weight[2] > 1.f) weight[2] = 0.f;
+    if (weight[3] > 1.f) weight[3] = 0.f;
 
     // compute weights from squares
     float sum = std::accumulate(weight.begin(), weight.end(), 0.0f);
@@ -137,7 +193,7 @@ NVGcolor Pic::pixel(float x, float y) const
     if (w > 0.0f) {
         auto px = pixels + 4;
         for (auto n = 0; n < 4; ++n) {
-            p.rgba[n] += px[n]/255.0f * w;
+            p.rgba[n] += *px++/255.0f * w;
         }
     }
     int rowskip = stride();
@@ -145,18 +201,19 @@ NVGcolor Pic::pixel(float x, float y) const
     if (w > 0.0f) {
         auto px = pixels + rowskip;
         for (auto n = 0; n < 4; ++n) {
-            p.rgba[n] += px[n]/255.0f * w;
+            p.rgba[n] += *px++/255.0f * w;
         }
     }
     w = weight[3];
     if (w > 0.0f) {
         auto px = pixels + rowskip + 4;
         for (auto n = 0; n < 4; ++n) {
-            p.rgba[n] += px[n]/255.0f * w;
+            p.rgba[n] += *px++/255.0f * w;
         }
     }
     return p;
 }
+#endif
 
 void Pic::close()
 {
