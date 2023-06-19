@@ -105,5 +105,6 @@ API is provided to:
 - Add a Theme submenu, containing an option list for the themes defined in the set.
 - Apply a theme to an svg.
 - Apply a theme to widget hierarchy for all widgets that implement IApplyTheme.
+- Query theme for tag, which is an open definition so that modules can use theme-based explicit drawing, in additiion to SVG-based ui.
 
 Possibly templates for various structures containing SVGs (members, backgrounds, frames).
