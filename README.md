@@ -23,8 +23,11 @@ A Minimalist resizable blank panel. All blank, no advertising.
 Select options in the module menu:
 
 - Removable screws.
+
 - Light, Dark, and High Contrast themes.
+
 - Customizable panel color. Enter using standard hex text color format: **`#`**_hex-rgb_, or copy/paste from Copper.
+
 - Glow in the dark. The panel lights up in a darkened room.
 
 Extend by placing Copper immediately to the right or the left.
@@ -34,9 +37,11 @@ Hidden treat: Turn down the lights, set a panel color, and plug audio or CV into
 
 ## Info
 
-_Status_: Basic text entry in menu
+_Status_: Basic text entry in menu, in-place editing TBD.
 
 A Minimalist resizable patch notes panel.
+
+![Info panel with themes and menu](docs/Info.png)
 
 - Resizable - Drag the left and right edges when the overlay appears.
 
@@ -53,8 +58,6 @@ Enter using standard hex text color format: **`#`**_hex-rgb_, or copy/paste from
 
 - Customizable font and font size.
 
-![Info panel with themes and menu](docs/Info.png)
-
 ## Imagine
 
 _Status_: MVP nearly complete
@@ -62,11 +65,11 @@ _Status_: MVP nearly complete
 An eccentric source of volage, gates, and triggers using an image.
 You can think of it as a sequencer or image sampler.
 
-Load an image and generate voltages, gates, and triggers as the image is scanned a read head.
+![Imagine with light theme](docs/Imagine-sample.png)
+
+Load an image and generate voltages, gates, and triggers as the image is scanned by a read head.
 Click on the image to set the position of the read head.
 Drag to scrub.
-
-![Imagine with light theme](docs/Imagine-sample.png)
 
 Features:
 
@@ -135,7 +138,8 @@ I wanted to develop a color picker widget (Rack doesn't have one),
 and it was a little easier to begin implementation with a module,
 so **Copper** is born.
 
-Click on the Hue ramp on the left, or the Lightness/Saturation ramp on the right to select the corresponding HSL parameters. Twist the knobs to adjust Hue, Saturation, Lightness, and Alpha (AKA Transparency).
+Click on the Hue ramp on the left, or the Lightness/Saturation ramp on the right to select the corresponding HSL parameters.
+Twist the knobs to adjust Hue, Saturation, Lightness, and Alpha (AKA Transparency).
 
 Knobs are clicky for moving by a fixed increment. Use Ctrl+Click (Cmd+CLick on Mac) to decrement.
 
