@@ -101,7 +101,7 @@ void ImaginePanel::draw(const DrawArgs &args)
         nvgText(vg, 164.f, CONTROL_ROW + 8.f, TraversalName(module  ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
     }
 
-    Circle(vg, PANEL_CENTER, RACK_GRID_HEIGHT + 7.5f, 30.f, nvgHSL(30.f/360.f, 0.8f, 0.48f));
+    Circle(vg, PANEL_CENTER, RACK_GRID_HEIGHT + 7.5f, 30.f, nvgHSL(40.f/360.f, 0.8f, 0.5f));
     Line(vg, PANEL_CENTER-30.f, RACK_GRID_HEIGHT-1.f, PANEL_CENTER+30.f, RACK_GRID_HEIGHT-1.f, panel_color, 2.f);
     DrawLogo(vg, PANEL_CENTER-12.f, RACK_GRID_HEIGHT-ONE_HP-7.f, (Theme::HighContrast == theme) ? RampGray(G_90) : RampGray(G_20) , 1.5);
 

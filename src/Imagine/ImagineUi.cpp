@@ -49,7 +49,7 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     addChild(picButton);
 
     addParam(createThemeParamCentered<SmallKnob>(theme, Vec(25.f, CONTROL_ROW), module, Imagine::SPEED_PARAM));
-    auto knob =createThemeParamCentered<SmallKnob>(theme, Vec(55.f, CONTROL_ROW), module, Imagine::SPEED_MULT_PARAM);
+    auto knob = createThemeParamCentered<SmallKnob>(theme, Vec(55.f, CONTROL_ROW), module, Imagine::SPEED_MULT_PARAM);
     knob->snap = true;
     addParam(knob);
 
@@ -114,8 +114,7 @@ void ImagineUi::setScrews(bool screws)
 
 void ImagineUi::appendContextMenu(Menu *menu)
 {
-    if (!this->module)
-        return;
+    if (!this->module) return;
 
     auto module = dynamic_cast<Imagine*>(this->module);
     menu->addChild(new MenuSeparator);

@@ -48,46 +48,6 @@ void PicWidget::updateClient()
     }
 }
 
-void PicWidget::clearImageCache()
-{
-    if (vg_cookie && image_handle) {
-        auto vg = reinterpret_cast<NVGcontext*>(vg_cookie);
-        nvgDeleteImage(vg, image_handle);
-    }
-    image_handle = 0;
-    vg_cookie = 0;
-}
-
-void PicWidget::updateImageCache(NVGcontext* vg, Pic* pic)
-{
-    if (!pic) {
-        clearImageCache();
-        return;
-    }
-    auto icookie = reinterpret_cast<intptr_t>(pic->data());
-    auto vcookie = reinterpret_cast<intptr_t>(vg);
-    if (!image_cookie && !image_handle && !vg_cookie) {
-        image_handle = nvgCreateImageRGBA(vg, pic->width(),  pic->height(), 0, pic->data());
-        image_cookie = icookie;
-        vg_cookie = vcookie;
-    } else {
-        if (icookie != image_cookie || vcookie != vg_cookie) {
-            if (image_handle) {
-                nvgDeleteImage(vg, image_handle);
-                image_handle = 0;
-                image_handle = nvgCreateImageRGBA(vg, pic->width(),  pic->height(), 0, pic->data());
-            }
-            if (image_handle) {
-                image_cookie = icookie;
-                vg_cookie = vcookie;
-            } else {
-                image_cookie = 0;
-                vg_cookie = 0;
-            }
-        }
-    }
-}
-
 void PicWidget::drawPic(const DrawArgs &args)
 {
     auto vg = args.vg;
@@ -95,6 +55,8 @@ void PicWidget::drawPic(const DrawArgs &args)
     if (pic && !pic->ok()) {
         pic = nullptr;
     }
+    cpic.setPic(pic);
+
     // experiment
     // if (pic && !pic->ok()) {
     //     if (!spectrum)
@@ -103,12 +65,12 @@ void PicWidget::drawPic(const DrawArgs &args)
     //     }
     //     pic = spectrum;
     // }
-    if (pic) {
-        auto width = pic->width();
-        auto height = pic->height();
-        updateImageCache(vg, pic);
 
+    if (pic) {
+        auto image_handle = cpic.getHandle(vg);
         if (image_handle) {
+            auto width = pic->width();
+            auto height = pic->height();
             float scale = std::min(box.size.x / width, box.size.y / height);
             float x = (box.size.x/scale - width)/2.f;
             float y = (box.size.y/scale - height)/2.f;
@@ -120,13 +82,10 @@ void PicWidget::drawPic(const DrawArgs &args)
             nvgRect(vg, x, y, width, height);
             nvgFillPaint(vg, imgPaint);
             nvgFill(vg);
-            nvgClosePath(vg);
             nvgRestore(vg);
             return;
         }
     }
-    // no pic or bad pic
-    clearImageCache();
 
     auto background = COLOR_BRAND;
     FillRect(vg, 0, 0, box.size.x, box.size.y, background);

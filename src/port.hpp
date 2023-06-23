@@ -17,8 +17,7 @@ namespace pachde {
 #define PORT_BLUE    nvgHSL(240./360., 0.5, 0.55)
 #define PORT_VIOLET  nvgHSL(270./360., 0.5, 0.5)
 #define PORT_MAGENTA nvgHSL(300./360., 0.5, 0.5)
-#define PORT_PINK    nvgHSL(330./360., 0.5, 0.5)
-
+#define PORT_PINK    nvgHSL(330./360., 0.65, 0.65)
 #define PORT_DEFAULT nvgHSL(210./360., 0.5, 0.65)
 
 struct ColorPort : PortWidget, ThemeLite

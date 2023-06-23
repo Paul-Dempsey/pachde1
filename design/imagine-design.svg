@@ -26,8 +26,8 @@
      inkscape:document-units="px"
      showgrid="true"
      inkscape:zoom="2.8284271"
-     inkscape:cx="560.5589"
-     inkscape:cy="295.57063"
+     inkscape:cx="550.83619"
+     inkscape:cy="293.62609"
      inkscape:window-width="3840"
      inkscape:window-height="2054"
      inkscape:window-x="3829"
@@ -1591,6 +1591,12 @@
      id="layer3"
      inkscape:label="Base"
      style="display:inline"><rect
+       style="fill:#e5e5e5;stroke-width:0.131024"
+       id="rect4133"
+       width="79.950203"
+       height="100.97485"
+       x="0.18856181"
+       y="-0.66666669" /><rect
        style="opacity:0.998;fill:#e5e5e5;stroke:none;stroke-width:0.268257;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none"
        id="rect27354"
        width="80"

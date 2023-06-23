@@ -7,7 +7,8 @@ This is a work in progress.
 The first VCV Rack plugin for pachde (#d).
 
 All pachde-One modules have light, dark, and high contrast themes. Right click to choose a theme.
-They also come with caps on the screws for an elegant look. Screws are removable.
+They also come with caps on the screws for an elegant look.
+All screws are removable if you're more relaxed about your Rack.
 
 ## Null
 
@@ -15,16 +16,21 @@ _Status_: Complete
 
 A Minimalist resizable blank panel. All blank, no advertising.
 
+![Null module with dark and light theme](docs/Null.png)
+
 - Resizable - Drag the left and right edges when the overlay appears.
 
 Select options in the module menu:
 
 - Removable screws.
 - Light, Dark, and High Contrast themes.
-- Customizable panel color. Enter using standard hex text color format: **`#`**_hex-rgb_.
+- Customizable panel color. Enter using standard hex text color format: **`#`**_hex-rgb_, or copy/paste from Copper.
 - Glow in the dark. The panel lights up in a darkened room.
 
-![null module with dark and light theme](docs/nullLightDark.png)
+Extend by placing Copper immediately to the right or the left.
+Null's panel color is the color you choose in Copper.
+
+Hidden treat: Turn down the lights, set a panel color, and plug audio or CV into the secret "flicker" port hidden behind the **#d** logo.
 
 ## Info
 
@@ -43,11 +49,11 @@ Select options in the module menu:
 - Bright text panel in a dark room.
 
 - Customizable text and panel colors.
-Enter using standard hex text color format: **`#`**_hex-rgb_.
+Enter using standard hex text color format: **`#`**_hex-rgb_, or copy/paste from Copper.
 
 - Customizable font and font size.
 
-![info panel in dark and light theme](docs/InfoLightDark.png)
+![Info panel with themes and menu](docs/Info.png)
 
 ## Imagine
 
@@ -116,3 +122,27 @@ and calculated outputs for **v**oltage **g**ate and **t**riger to the right.
 - Choose polarity of voltages with the **p** switch.
 Switches calculated outputs between -5 to +5v and 0 to 10V.
 Also sets the coordinate system for the plain XY Pad.
+
+## Copper
+
+Status: Complete
+
+A **co**lor **p**ick**er** module. The module menu offers themes, removable screws, and **Copy hex color** so you can paste the selected hex color into another module or another application's color selection.
+
+![pachde-One Copper module](docs/Copper.png)
+
+I wanted to develop a color picker widget (Rack doesn't have one),
+and it was a little easier to begin implementation with a module,
+so **Copper** is born.
+
+Click on the Hue ramp on the left, or the Lightness/Saturation ramp on the right to select the corresponding HSL parameters. Twist the knobs to adjust Hue, Saturation, Lightness, and Alpha (AKA Transparency).
+
+Knobs are clicky for moving by a fixed increment. Use Ctrl+Click (Cmd+CLick on Mac) to decrement.
+
+HSLA inputs modulate the color selected by the knobs or the picker.
+Outputs are the modulated versions of the selected color.
+
+The **Poly** output gives you 7 channels for H, S, L, A, R, G, and B on one cable.
+
+**Copper** extends **Null**, giving it the modulated color when it's placed next to it.
+

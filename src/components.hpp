@@ -20,13 +20,52 @@ inline float PixToHp(float pix) { return pix / 15.0; }
 inline float ClampBipolar(float v) { return rack::math::clamp(v, -5.0f, 5.0f); }
 inline float ClampUnipolar(float v) { return rack::math::clamp(v, 0.0f, 10.0f); }
 
-struct ScrewCap : rack::TransparentWidget, ThemeBase
+enum ScrewAlign {
+    TL_INSET = 0x01,
+    TR_INSET = 0x02,
+    BL_INSET = 0x04,
+    BR_INSET = 0x08,
+    SCREWS_OUTSIDE = 0,
+    SCREWS_INSET = TL_INSET|TR_INSET|BL_INSET|BR_INSET,
+    TOP_SCREWS_INSET = TL_INSET|TR_INSET,
+    BOTTOM_SCREWS_INSET = BL_INSET|BR_INSET,
+};
+
+enum WhichScrew {
+    TL = 0x01,
+    TR = 0x02,
+    BL = 0x04,
+    BR = 0x08,
+    UNKNOWN = 0x80,
+    TOP_SCREWS = TL|TR,
+    BOTTOM_SCREWS = BL|BR,
+    UP_SCREWS = TR|BL,
+    DOWN_SCREWS = TL|BR,
+    ALL_SCREWS = TL|TR|BL|BR,
+};
+inline bool isUnknown(WhichScrew which) { return which & WhichScrew::UNKNOWN; }
+inline bool isApplicable(WhichScrew which_screw, WhichScrew mask) { return mask & which_screw; }
+inline float tl_screw_inset(ScrewAlign pos) { return ONE_HP * static_cast<bool>(pos & ScrewAlign::TL_INSET); }
+inline float tr_screw_inset(ScrewAlign pos) { return ONE_HP * static_cast<bool>(pos & ScrewAlign::TR_INSET); }
+inline float bl_screw_inset(ScrewAlign pos) { return ONE_HP * static_cast<bool>(pos & ScrewAlign::BL_INSET); }
+inline float br_screw_inset(ScrewAlign pos) { return ONE_HP * static_cast<bool>(pos & ScrewAlign::BR_INSET); }
+
+void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewAlign positions = ScrewAlign::SCREWS_INSET, WhichScrew which = WhichScrew::ALL_SCREWS);
+void RemoveScrewCaps(Widget* widget, WhichScrew which = WhichScrew::ALL_SCREWS);
+void SetScrewColors(Widget* widget, NVGcolor color, WhichScrew which = WhichScrew::ALL_SCREWS);
+
+struct ScrewCap : rack::TransparentWidget, ThemeLite
 {
     NVGcolor color = COLOR_NONE;
+    WhichScrew which = WhichScrew::UNKNOWN;
 
     ScrewCap(Theme theme) {
         box.size.x = box.size.y = 15.f;
         setTheme(theme);
+    }
+
+    void setPanelColor(NVGcolor color) override {
+        this->color = color;
     }
 
     void draw(const DrawArgs &args) override {
@@ -34,6 +73,9 @@ struct ScrewCap : rack::TransparentWidget, ThemeBase
         DrawScrewCap(args.vg, 0, 0, getTheme(), color);
     }
 };
+
+WhichScrew GetScrewPosition(const ScrewCap* screw);
+WhichScrew SetScrewPosition(ScrewCap* screw, WhichScrew which);
 
 struct LogoWidget : rack::OpaqueWidget, ThemeLite {
     LogoWidget(Theme theme) {
@@ -61,13 +103,14 @@ struct LogoOverlayWidget : rack::OpaqueWidget, ThemeLite {
     }
 };
 
-struct SmallKnob: rack::RoundKnob, ThemeLite {
-
+template<class T>
+struct TKnob: rack::RoundKnob, ThemeLite 
+{
     bool clickStepValue = true;
     float stepIncrementBy = 1.f;
-    bool modified = false;
+    bool key_modified = false;
 
-    SmallKnob(Theme theme) {
+    TKnob(Theme theme) {
         setTheme(theme);
     }
 
@@ -79,63 +122,154 @@ struct SmallKnob: rack::RoundKnob, ThemeLite {
 
     void onHoverKey(const HoverKeyEvent& e) override {
         rack::RoundKnob::onHoverKey(e);
-
-        modified = (e.mods & RACK_MOD_MASK) == RACK_MOD_CTRL;
+        key_modified = (e.mods & RACK_MOD_MASK) == RACK_MOD_CTRL;
     }
 
     void onAction(const ActionEvent& e) override {
-        rack::RoundKnob::onAction(e);
-
         if (clickHandler) {
             clickHandler();
         } else if (clickStepValue) {
+            // TODO: quantize to step granularity, rather than stepping from current value
             auto pq = getParamQuantity();
             if (pq) {
                 float value = pq->getValue();
-                if (!modified) {
-                    value += stepIncrementBy;
-                    if (value > pq->getMaxValue()) {
-                       value = pq->getMinValue();
+                if (!key_modified) {
+                    auto lim = pq->getMaxValue();
+                    if (value == lim) {
+                        value = pq->getMinValue();
+                    } else {
+                        value += stepIncrementBy;
+                        if (value > lim) {
+                            value = lim;
+                        }
                     }
                 } else {
-                    value -= stepIncrementBy;
-                    if (value < pq->getMinValue()) {
+                    auto lim = pq->getMinValue();
+                    if (value == lim) {
                         value = pq->getMaxValue();
+                    } else {
+                        value -= stepIncrementBy;
+                        if (value < pq->getMinValue()) {
+                            value = lim;
+                        }
                     }
                 }
                 pq->setValue(value);
             }
-
         }
+        rack::RoundKnob::onAction(e);
     }
 
     void setTheme(Theme theme) override {
         if (theme == getTheme() && bg && bg->svg) return;
         ThemeLite::setTheme(theme);
-        auto knob = "res/SmallKnob.svg";
-        auto back = "res/SmallKnob-bg.svg";
-        switch (theme) {
-            default:
-            case Theme::Unset:
-            case Theme::Light:
-                break;
-            case Theme::Dark:
-                knob = "res/SmallKnobDark.svg";
-                back = "res/SmallKnobDark-bg.svg";
-                break;
-            case Theme::HighContrast:
-                knob = "res/SmallKnobHighContrast.svg";
-                back = "res/SmallKnobDark-bg.svg";
-                break;
-        }
-
-        setSvg(Svg::load(asset::plugin(pluginInstance, knob)));
-        bg->setSvg(Svg::load(asset::plugin(pluginInstance, back)));
+        setSvg(Svg::load(asset::plugin(pluginInstance, T::knob(theme))));
+        bg->setSvg(Svg::load(asset::plugin(pluginInstance, T::background(theme))));
         if (fb) {
             fb->setDirty(true);
         }
     }
 };
+
+struct LargeKnobSvg {
+    static std::string knob(Theme theme) {
+        switch (theme) {
+            default:
+            case Theme::Unset:
+            case Theme::Light:
+                return "res/LargeKnob.svg";
+            case Theme::Dark:
+                return "res/LargeKnobDark.svg";
+            case Theme::HighContrast:
+                return "res/LargeKnobHighContrast.svg";
+        }
+        
+    }
+    static std::string background(Theme theme) {
+        switch (theme) {
+            default:
+            case Theme::Unset:
+            case Theme::Light:
+                return "res/LargeKnob-bg.svg";
+            case Theme::Dark:
+            case Theme::HighContrast:
+                return "res/LargeKnobDark-bg.svg";
+        }
+    }
+};
+using LargeKnob = TKnob<LargeKnobSvg>;
+
+struct SmallKnobSvg {
+    static std::string knob(Theme theme) {
+        switch (theme) {
+            default:
+            case Theme::Unset:
+            case Theme::Light:
+                return "res/SmallKnob.svg";
+            case Theme::Dark:
+                return "res/SmallKnobDark.svg";
+            case Theme::HighContrast:
+                return "res/SmallKnobHighContrast.svg";
+        }
+    }
+    static std::string background(Theme theme) {
+        switch (theme) {
+            default:
+            case Theme::Unset:
+            case Theme::Light:
+                return "res/SmallKnob-bg.svg";
+            case Theme::Dark:
+            case Theme::HighContrast:
+                return "res/SmallKnobDark-bg.svg";
+        }
+    }
+};
+using SmallKnob = TKnob<SmallKnobSvg>;
+
+// TSvgProvider is any class/struct with a static 
+// `static std::string background(Theme theme)` method.
+// The method should return the full path of the SVG.
+//
+// For example:
+//
+// ```cpp
+// struct CopperSvg {
+//     static std::string background(Theme theme)
+//     {
+//         const char * asset;
+//         switch (theme) {
+//         default:
+//         case Theme::Unset:
+//         case Theme::Light:
+//             asset = "res/Copper.svg";
+//             break;
+//         case Theme::Dark:
+//             asset = "res/CopperDark.svg";
+//             break;
+//         case Theme::HighContrast:
+//             asset = "res/CopperHighContrast.svg";
+//             break;
+//         }
+//         return asset::plugin(pluginInstance, asset);
+//     }
+// };
+// ```
+template <class TSvgProvider>
+struct SvgThemePanel : SvgPanel, ThemeLite
+{
+    SvgThemePanel(Theme theme) {
+        setTheme(theme);
+    }
+    void setTheme(Theme theme) override
+    {
+        SvgPanel::setBackground(window::Svg::load(TSvgProvider::background(theme)));
+    }
+};
+
+template <class TSvgProvider>
+inline SvgThemePanel<TSvgProvider>* createSvgThemePanel(Theme theme) {
+	return new SvgThemePanel<TSvgProvider>(theme);
+}
 
 struct PushButtonBase: rack::SvgSwitch {
     CircularShadow* orphan_shadow = nullptr;
@@ -240,7 +374,7 @@ struct ThemePanel : Widget
 };
 
 // textfield as menu item, originally adapted from SubmarineFree
-struct EventParamField : ui::TextField {
+struct MenuTextField : ui::TextField {
     std::function<void(std::string)> changeHandler;
     std::function<void(std::string)> commitHandler;
     void step() override {
@@ -273,24 +407,37 @@ struct EventParamField : ui::TextField {
             TextField::onSelectKey(e);
     }
 };
-enum ScrewPos {
-    TL_INSET = 0x01,
-    TR_INSET = 0x02,
-    BL_INSET = 0x04,
-    BR_INSET = 0x08,
-    SCREWS_OUTSIDE = 0,
-    SCREWS_INSET = TL_INSET|TR_INSET|BL_INSET|BR_INSET,
-    TOP_SCREWS_INSET = TL_INSET|TR_INSET,
-    BOTTOM_SCREWS_INSET = BL_INSET|BR_INSET,
+
+struct PickerTextField : ui::TextField {
+    std::function<void(std::string)> changeHandler;
+    std::function<void(std::string)> commitHandler;
+    void step() override {
+        // Keep selected
+        APP->event->setSelectedWidget(this);
+        TextField::step();
+    }
+    void setText(std::string text) {
+        this->text = text;
+        selectAll();
+    }
+
+    void onChange(const ChangeEvent& e) override {
+        ui::TextField::onChange(e);
+        if (changeHandler) { 
+            changeHandler(text);
+        }
+    }
+
+    void onSelectKey(const event::SelectKey &e) override {
+        if (e.action == GLFW_PRESS && (e.key == GLFW_KEY_ENTER || e.key == GLFW_KEY_KP_ENTER)) {
+            if (commitHandler) {
+                commitHandler(text);
+            }
+            e.consume(this);
+        }
+        if (!e.getTarget())
+            TextField::onSelectKey(e);
+    }
 };
-
-inline float tl_screw_inset(ScrewPos pos) { return ONE_HP * static_cast<bool>(pos & ScrewPos::TL_INSET); }
-inline float tr_screw_inset(ScrewPos pos) { return ONE_HP * static_cast<bool>(pos & ScrewPos::TR_INSET); }
-inline float bl_screw_inset(ScrewPos pos) { return ONE_HP * static_cast<bool>(pos & ScrewPos::BL_INSET); }
-inline float br_screw_inset(ScrewPos pos) { return ONE_HP * static_cast<bool>(pos & ScrewPos::BR_INSET); }
-
-void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewPos positions = SCREWS_INSET);
-void RemoveScrewCaps(Widget* widget);
-void SetScrewColors(Widget* widget, NVGcolor color);
 
 } // namespace pachde

@@ -34,8 +34,9 @@ Imagine::Imagine() {
     });
 
     configSwitch(COMP_PARAM, 0.0f, static_cast<int>(ColorComponent::NUM_COMPONENTS)-1, 0.0f, "Component", {
+        "Lightness",
         "Luminance",
-        "Saturation",
+        "Saturation (chroma)",
         "Hue",
         "Minimum",
         "Maximum",

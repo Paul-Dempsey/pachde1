@@ -15,27 +15,28 @@ struct PicWidget : OpaqueWidget {
     // }
 
     Vec mousepos;
-    // to manage image data properly, we must manage the NVG image handle properly, 
-    // which means invalidating our cache and deleting the NVG image handle when
-    // either the Image or the graphics context has changed.
-    int image_handle = 0; // nvg Image handle
-    intptr_t image_cookie = 0; // cookie for image data
-    intptr_t vg_cookie = 0; // cookie for graphics context
+    cachePic cpic;
 
     PicWidget(Imagine *module);
-
-    void clearImageCache();
-
+    void onEnter(const EnterEvent &e) override
+    {
+        OpaqueWidget::onEnter(e);
+        glfwSetCursor(APP->window->win, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
+    }
+    void onLeave(const LeaveEvent &e) override
+    {
+        OpaqueWidget::onLeave(e);
+        glfwSetCursor(APP->window->win, NULL);
+    }
     void onButton(const event::Button& e) override;
     void onDragMove(const event::DragMove& e) override;
 
-    void updateImageCache(NVGcontext* vg, Pic* pic);
     void updateClient();
 
+    // Consider: Use framebuffer for pic, and only draw the sample each frame
     void drawPic(const DrawArgs &args);
     void drawSample(const DrawArgs &args);
     void drawLayer(const DrawArgs &args, int layer) override;
-
     void draw(const DrawArgs &args) override;
 };
 

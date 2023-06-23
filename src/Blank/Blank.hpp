@@ -58,6 +58,8 @@ struct BlankModule : ResizableModule {
         return inputs[0].isConnected() ? inputs[0].getVoltage(0) : 0.f;
     }
     bool flickering() { return inputs[0].isConnected(); }
+    NVGcolor externalcolor();
+
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;
 };
@@ -66,23 +68,25 @@ struct BlankModuleWidget : ModuleWidget, ITheme
 {
     ITheme * alternateTheme = nullptr;
     ThemePanel* panel = nullptr;
+    BlankModule* my_module = nullptr;
     ModuleResizeHandle* rightHandle = nullptr;
     ScrewCap* topRightScrew = nullptr;
     ScrewCap* bottomRightScrew = nullptr;
     LogoPort* logo_port = nullptr;
     bool flicker_unipolar = true;
+
     virtual ~BlankModuleWidget() {
         if (alternateTheme) {
             delete alternateTheme;
         }
     }
     ITheme * getITheme() {
+        if (alternateTheme) {
+            return alternateTheme;
+        }
         auto it = dynamic_cast<ITheme*>(module);
         if (it) {
             return it;
-        }
-        if (alternateTheme) {
-            return alternateTheme;
         }
         alternateTheme = new ThemeBase();
         alternateTheme->setScrews(true);
@@ -90,9 +94,8 @@ struct BlankModuleWidget : ModuleWidget, ITheme
     }
 
     bool glowing() {
-        auto mymodule = dynamic_cast<BlankModule*>(module);
-        if (!mymodule) return false;
-        return mymodule->glowing();
+        if (!my_module) return false;
+        return my_module->glowing();
     }
 
     BlankModuleWidget(BlankModule* module);

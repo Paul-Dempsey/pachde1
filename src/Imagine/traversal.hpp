@@ -1,7 +1,7 @@
 #pragma once
 #include <rack.hpp>
 #include "../colors.hpp"
-#include "pic.hpp"
+#include "../pic.hpp"
 #include "imagine_layout.hpp"
 
 using namespace rack;
@@ -56,9 +56,10 @@ struct TraversalBase : ITraversal
 
     void set_position(Vec pos) override
     {
-        assert(pos.x >= 0.f && pos.x < image_size.x);
-        assert(pos.y >= 0.f && pos.y < image_size.y);
+        //assert(pos.x == 0.f || (pos.x >= 0.f && pos.x < image_size.x));
+        //assert(pos.y == 0.f || (pos.y >= 0.f && pos.y < image_size.y));
         position = pos;
+        clip_position(); // HACK: find bad positioning code.
     }
 
     void clip_position() {

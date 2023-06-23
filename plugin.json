@@ -15,21 +15,27 @@
   "modules": [
     {
       "slug": "pachde-null",
-      "name": "null",
+      "name": "Null",
       "description": "A discreet resizable blank panel with light and dark themes",
-      "tags": [ "Visual", "Blank" ]
+      "tags": [ "Visual", "Blank", "Utility" ]
     },
     {
       "slug": "pachde-info",
-      "name": "info",
+      "name": "Info",
       "description": "Resizable text notes with light and dark themes",
-      "tags": [ "Visual", "Blank" ]
+      "tags": [ "Visual", "Blank", "Utility" ]
     },
     {
       "slug": "pachde-imagine",
-      "name": "imagine",
+      "name": "Imagine",
       "description": "An eccentric source of voltage, gates, and triggers using an image",
-      "tags": [ "Visual", "Sequencer", "Controller" ]
+      "tags": [ "Visual", "Sampler", "Sequencer", "Controller" ]
+    },
+    {
+      "slug": "pachde-copper",
+      "name": "Copper",
+      "description": "A simple color picker",
+      "tags": [ "Visual", "Controller", "Polyphonic", "Utility" ]
     }
   ]
 }

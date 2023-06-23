@@ -2,7 +2,7 @@
 #include "../components.hpp"
 #include "../plugin.hpp"
 #include "../dsp.hpp"
-#include "pic.hpp"
+#include "../pic.hpp"
 #include "traversal.hpp"
 
 // feature flags
@@ -20,14 +20,15 @@ enum VRange {
     BIPOLAR = 1
 };
 enum ColorComponent {
-    LUMINANCE, SATURATION, HUE, MIN, MAX, AVE, R, G, B, ALPHA,
+    LIGHTNESS, LUMINANCE, SATURATION, HUE, MIN, MAX, AVE, R, G, B, ALPHA,
     NUM_COMPONENTS
 };
 
 inline const char * ComponentInitial(ColorComponent co) {
     switch (co) {
         default:
-        case ColorComponent::LUMINANCE: return "L";
+        case ColorComponent::LIGHTNESS: return "L";
+        case ColorComponent::LUMINANCE: return "Lu";
         case ColorComponent::SATURATION: return "S";
         case ColorComponent::HUE: return "H";
         case ColorComponent::MIN: return "min";
@@ -73,7 +74,7 @@ struct Imagine : ThemeModule
     std::atomic<bool> running;
     ITraversal * traversal = nullptr;
     Traversal traversal_id = Traversal::SCANLINE;
-    ColorComponent color_component = ColorComponent::LUMINANCE;
+    ColorComponent color_component = ColorComponent::LIGHTNESS;
     VRange polarity = VRange::BIPOLAR;
     SlewLimiter voltage_slew;
 #ifdef XYSLEW
@@ -119,9 +120,10 @@ struct Imagine : ThemeModule
     float ComponentValue(NVGcolor color) {
         switch (color_component) {
             default:
+            case ColorComponent::LIGHTNESS: return Lightness(color);
             case ColorComponent::LUMINANCE: return LuminanceLinear(color);
             case ColorComponent::SATURATION: return Saturation(color);
-            case ColorComponent::HUE: return Hue(color);
+            case ColorComponent::HUE: return Hue1(color);
             case ColorComponent::MIN: return std::min(color.r, std::min(color.g, color.b));
             case ColorComponent::MAX: return std::max(color.r, std::max(color.g, color.b));
             case ColorComponent::AVE: return (color.r + color.g + color.b) / 3.f;

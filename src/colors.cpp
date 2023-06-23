@@ -3,6 +3,30 @@
 
 namespace pachde {
 
+float Hue1(const NVGcolor& color)
+{
+    auto r = color.r, g = color.g, b = color.b;
+
+    auto M = std::max(std::max(r, g), b);
+    auto m = std::min(std::min(r, g), b);
+    auto C = M - m;
+
+    float result;
+    if (0.f == C) {
+        result = 0.f;
+    } else if (M == g) {
+        result = (b - r)/C + 2.0f;
+    } else if (M == b) {
+        result = ((r - g)/C) + 4.0f;
+    } else {
+        result = fmodf((g - b)/C, 6.0f);
+    }
+    result = (result * 60.f)/360.f;
+    //assert(result >= 0.f && result <= 1.0f);
+    return result;
+}
+
+
 Theme ParseTheme(std::string text) {
     if (text.empty()) return Theme::Unset;
     switch (text[0]) {
@@ -154,6 +178,15 @@ void Circle(NVGcontext * vg, float cx, float cy, float r, NVGcolor fill)
     nvgFillColor(vg, fill);
     nvgCircle(vg, cx, cy, r);
     nvgFill(vg);
+}
+
+void OpenCircle(NVGcontext * vg, float cx, float cy, float r, NVGcolor stroke, float stroke_width)
+{
+    nvgBeginPath(vg);
+    nvgStrokeColor(vg, stroke);
+    nvgStrokeWidth(vg, stroke_width);
+    nvgCircle(vg, cx, cy, r);
+    nvgStroke(vg);
 }
 
 }

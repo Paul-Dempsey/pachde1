@@ -31,9 +31,9 @@ void CenterText(NVGcontext *vg, float x, float y, const char * text, const char 
 void RightAlignText(NVGcontext *vg, float x, float y, const char * text, const char * end, BaselineCorrection correction)
 {
     float bounds[4] = { 0, 0, 0, 0 };
-    auto width = nvgTextBounds(vg, x, y, text, end, bounds);
-    auto descent = correction == BaselineCorrection::Baseline ? bounds[3] - y : 0.;
-    nvgText(vg, x - width, y - descent, text, end);
+    nvgTextBounds(vg, 0, 0, text, end, bounds);
+    auto descent = correction == BaselineCorrection::Baseline ? bounds[3] : 0.;
+    nvgText(vg, x - bounds[2], y - descent, text, end);
 }
 
 }

@@ -1,11 +1,19 @@
 #include <rack.hpp>
 #include "stb_image.h"
 #include "pic.hpp"
-#include "../colors.hpp"
+#include "colors.hpp"
 
 using namespace ::rack;
 namespace pachde {
-    
+
+Pic* Pic::CreateRaw(int width, int height) {
+    auto p = new Pic();
+    p->_width = width;
+    p->_height = height;
+    p->_data = new unsigned char[width * height * 4];
+    return p;
+}
+
 bool Pic::open(std::string filename)
 {
     close();
@@ -226,25 +234,80 @@ void Pic::close()
     _reason = "";
 }
 
+
 Pic * CreateHSLSpectrum(float saturation)
 {
-    auto spec = new Pic();
-    int w = 256, h = 256;
-    spec->_width = w;
-    spec->_height = h;
-    spec->_data = new unsigned char[w * h * 4];
-    unsigned char* rgba = spec->_data;
-    for (int y = 0; y < h; ++y) {
+    auto p = Pic::CreateRaw(256, 256);
+    unsigned char* data = p->_data;
+    for (int y = 0; y < 256; ++y) {
         auto L = static_cast<float>(y)/255.f;
-        for (int x = 0; x < w; ++x) {
+        for (int x = 0; x < 256; ++x) {
             auto pix = nvgHSL(static_cast<float>(x)/255.f, saturation, L);
-            *rgba++ = static_cast<unsigned char>(pix.r * 255.f);
-            *rgba++ = static_cast<unsigned char>(pix.g * 255.f);
-            *rgba++ = static_cast<unsigned char>(pix.b * 255.f);
-            *rgba++ = static_cast<unsigned char>(255);
+            *data++ = static_cast<unsigned char>(pix.r * 255.f);
+            *data++ = static_cast<unsigned char>(pix.g * 255.f);
+            *data++ = static_cast<unsigned char>(pix.b * 255.f);
+            *data++ = static_cast<unsigned char>(255);
         }
     }
-    return spec;
+    return p;
+}
+
+Pic * CreateHueRamp(int width, int height, bool vertical)
+{
+    auto p = Pic::CreateRaw(width, height);
+    unsigned char* data = p->_data;
+    if (vertical) {
+        auto hf = static_cast<float>(height);
+        for (float y = 0; y < hf; ++y) {
+            auto color = nvgHSL(y/hf, 1.0f, 0.5f);
+            for (int x = 0; x < width; ++x) {
+                *data++ = static_cast<unsigned char>(color.r * 255.f);
+                *data++ = static_cast<unsigned char>(color.g * 255.f);
+                *data++ = static_cast<unsigned char>(color.b * 255.f);
+                *data++ = 255;
+            }
+        }
+    } else {
+        auto wf = static_cast<float>(width);
+        for (float x = 0.f; x < wf; ++x) {
+            auto color = nvgHSL(x/wf, 1.0f, 0.8f);
+            auto row = data;
+            for (int y = 0; y < height; ++y, row += p->stride()) {
+                auto pixel = row;
+                *pixel++ = static_cast<unsigned char>(color.r * 255.f);
+                *pixel++ = static_cast<unsigned char>(color.g * 255.f);
+                *pixel++ = static_cast<unsigned char>(color.b * 255.f);
+                *pixel++ = 255;
+            }
+        }
+
+    }
+    return p;
+}
+
+// init a saturation-lightness spectrum 
+// for a given hue on a 256x256 image
+void SetSLSpectrum(Pic* pic, float hue) {
+    unsigned char* data = pic->_data;
+    auto h = pic->height();
+    float hf = h;
+    auto w = pic->width();
+    float wf = w;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            auto pix = nvgHSL(hue, x/wf, (hf-y)/hf);
+            *data++ = static_cast<unsigned char>(pix.r * 255.f);
+            *data++ = static_cast<unsigned char>(pix.g * 255.f);
+            *data++ = static_cast<unsigned char>(pix.b * 255.f);
+            *data++ = 255;
+        }
+    }
+}
+
+Pic * CreateSLSpectrum(float hue, int width, int height) {
+    auto p = Pic::CreateRaw(width, height);
+    SetSLSpectrum(p, hue);
+    return p;
 }
 
 }

@@ -1,5 +1,6 @@
 #include "Blank.hpp"
 #include "../theme_helpers.hpp"
+#include "../Copper/Copper.hpp"
 
 namespace pachde {
 
@@ -36,6 +37,25 @@ BlankModule::BlankModule()
     configInput(0,"Flicker");
 }
 
+inline NVGcolor expanderColor(rack::engine::Module::Expander& expander)
+{
+    if (expander.module && expander.module->model == modelCopper) {
+        CopperModule* copper = dynamic_cast<CopperModule*>(expander.module);
+        if (copper) {
+            return copper->getModulatedColor();
+        }
+    }
+    return COLOR_NONE;
+}
+
+NVGcolor BlankModule::externalcolor()
+{
+    auto color = expanderColor(getRightExpander());
+    if (isColorTransparent(color)) {
+        color = expanderColor(getLeftExpander());
+    }
+    return color;        
+} 
 
 json_t* BlankModule::dataToJson() {
     auto root = ResizableModule::dataToJson();
@@ -54,23 +74,23 @@ void BlankModule::dataFromJson(json_t* root) {
 
 BlankModuleWidget::BlankModuleWidget(BlankModule *module)
 {
+    my_module = module;
     setModule(module);
     setTheme(ModuleTheme(module));
 }
 
 void BlankModuleWidget::addResizeHandles()
 {
-    auto rmodule = dynamic_cast<ResizableModule*>(module);
-    if (!rmodule) return;
+    if (!my_module) return;
 
     ModuleResizeHandle *leftHandle = new ModuleResizeHandle;
-    leftHandle->module = rmodule;
+    leftHandle->module = my_module;
     addChild(leftHandle);
 
     ModuleResizeHandle *rightHandle = new ModuleResizeHandle;
     rightHandle->right = true;
     rightHandle->box.pos.x = box.size.x - rightHandle->HandleWidth();
-    rightHandle->module = rmodule;
+    rightHandle->module = my_module;
     this->rightHandle = rightHandle;
     addChild(rightHandle);
 }
@@ -126,6 +146,7 @@ void BlankModuleWidget::setPanelColor(NVGcolor color)
 void BlankModuleWidget::drawPanel(const DrawArgs &args)
 {
     auto vg = args.vg;
+
     auto theme = getITheme()->getTheme();
     NVGcolor logo = LogoColor(theme);
     NVGcolor ring, slash;
@@ -146,7 +167,11 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
             slash = ring = WHITE;
             break;
     }
-    auto panel_color = getITheme()->getPanelColor();
+
+    auto panel_color = my_module ? my_module->externalcolor() : COLOR_NONE;
+    if (isColorTransparent(panel_color)) {
+        panel_color = getITheme()->getPanelColor();
+    }
     if (isColorVisible(panel_color)) {
         auto lum = LuminanceLinear(panel_color);
         if (lum <= 0.5f) {
@@ -162,11 +187,10 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
         }
     }
 
-    auto bmodule = dynamic_cast<BlankModule*>(module);
-    bool flickering = bmodule ? bmodule->flickering() : false;
+    bool flickering = my_module ? my_module->flickering() : false;
     float flicker = 0.f;
     if (flickering) {
-        flicker = bmodule->getFlicker();
+        flicker = my_module->getFlicker();
         if (flicker < 0.f) {
             flicker_unipolar = false;
         } else if (flicker > 5.25f) {
@@ -178,6 +202,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
         flicker *= .2f;
         clamp(flicker, -5.f, 5.f);
     }
+
     if (glowing()) {
         if (isColorTransparent(panel_color)) {
             panel_color = PanelBackground(theme);
@@ -275,6 +300,14 @@ void BlankModuleWidget::setTheme(Theme theme)
 
 void BlankModuleWidget::step()
 {
+    if (my_module) {
+        auto color = my_module->externalcolor();
+        if (isColorVisible(color) && panel->theme_holder)
+        {
+            panel->theme_holder->setPanelColor(color);
+        }
+    }
+
     auto module = dynamic_cast<ResizableModule *>(this->module);
     if (module)
     {

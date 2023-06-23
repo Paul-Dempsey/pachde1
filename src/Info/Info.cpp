@@ -57,6 +57,8 @@ struct InfoTheme : ThemeBase {
 
     json_t* save(json_t* root) override
     {
+        root = ThemeBase::save(root);
+
         if (isColorVisible(user_text_background)) {
             auto color_string = rack::color::toHexString(user_text_background);
             json_object_set_new(root, "text-background", json_stringn(color_string.c_str(), color_string.size()));
@@ -76,6 +78,8 @@ struct InfoTheme : ThemeBase {
 
     void load(json_t* root) override
     {
+        ThemeBase::load(root);
+
         auto j = json_object_get(root, "text-background");
         if (j) {
             auto color_string = json_string_value(j);
@@ -210,11 +214,12 @@ struct InfoModule : ResizableModule
     void dataFromJson(json_t *root) override
     {
         ResizableModule::dataFromJson(root);
+        info_theme->load(root);
+
         json_t *j = json_object_get(root, "text");
         if (j) {
             text = json_string_value(j);
         }
-        info_theme->load(root);
     }
 
     InfoTheme* getInfoTheme() {
@@ -239,7 +244,7 @@ struct InfoPanel : Widget
 
     void showText(NVGcontext* vg, std::shared_ptr<rack::window::Font> font, std::string text) {
         SetTextStyle(vg, font, info_theme->getDisplayTextColor(), info_theme->getFontSize());
-        nvgTextBox(vg, box.pos.x + 10.f, box.pos.y + ONE_HP + 20.f, box.size.x - 10.f, text.c_str(), nullptr);
+        nvgTextBox(vg, box.pos.x + 10.f, box.pos.y + ONE_HP + 20.f, box.size.x - 15.f, text.c_str(), nullptr);
     }
 
     void drawText(const DrawArgs &args) {
@@ -488,7 +493,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
             [=](Menu *menu)
             {
                 auto mymodule = dynamic_cast<InfoModule*>(module);
-                EventParamField *editField = new EventParamField();
+                MenuTextField *editField = new MenuTextField();
                 editField->box.size.x = 200.f;
                 editField->box.size.y = 100.f;
                 editField->setText(mymodule->text);
@@ -511,7 +516,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
         menu->addChild(createSubmenuItem("Text color", "",
             [=](Menu *menu)
             {
-                EventParamField *editField = new EventParamField();
+                MenuTextField *editField = new MenuTextField();
                 editField->box.size.x = 100;
                 if (isColorVisible(info_theme->user_text_color)) {
                     editField->setText(rack::color::toHexString(info_theme->user_text_color));
@@ -531,7 +536,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
         menu->addChild(createSubmenuItem("Text background color", "",
             [=](Menu *menu)
             {
-                EventParamField *editField = new EventParamField();
+                MenuTextField *editField = new MenuTextField();
                 editField->box.size.x = 100;
                 if (isColorVisible(info_theme->user_text_background)) {
                     editField->setText(rack::color::toHexString(info_theme->user_text_background));

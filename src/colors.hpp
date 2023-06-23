@@ -54,12 +54,19 @@ inline const NVGcolor RampGray(Ramp g)
 #define COLOR_GREEN_LO nvgRGB(0x39,0x73,0x3a)  // #39733a
 #define COLOR_GREEN_HI nvgRGB(0xbd,0xfc,0xbd)  // #bdfcbd
 
-#define IS_SAME_COLOR(p,q) (((p).a == (q).a) && ((p).r == (q).r) && ((p).g == (q).g) && ((p).b == (q).b))
+#define IS_SAME_COLOR(p,q) (((p).r == (q).r) && ((p).g == (q).g) && ((p).b == (q).b) && ((p).a == (q).a))
 inline NVGcolor Overlay(NVGcolor color) { return nvgTransRGBAf(color, 0.2f); }
 inline NVGcolor Gray(float L) {
     NVGcolor color;
     color.r = color.b = color.g = L;
     color.a = 1.0f;
+    return color;
+}
+
+inline NVGcolor nvgHSLAf(float h, float s, float l, float a)
+{
+    NVGcolor color = nvgHSL(h,s,l);
+    color.a = a;
     return color;
 }
 
@@ -79,7 +86,8 @@ NVGcolor ThemeTextColor(Theme theme);
 NVGcolor OutputBackground(Theme theme);
 NVGcolor LogoColor(Theme theme);
 
-//https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
+// https://en.wikipedia.org/wiki/HSL_and_HSV
+// https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
 
 // inline float sRGBToLinear(float c) {
 //     //rack::simd::pow
@@ -99,16 +107,35 @@ inline float LuminanceLinear(const NVGcolor& color) {
     return 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
 }
 
+inline float Lightness(const NVGcolor& color) {
+    return (std::max(std::max(color.r, color.g), color.b) + std::min(std::min(color.r, color.g), color.b))/2.f;
+}
+
+// BUGBUG: these functions don't generate values that round trip with nvgHSL/nvgHSLA,
+// needed for Copper
+
 inline float Saturation(const NVGcolor& color) {
     return std::max(std::max(color.r, color.g), color.b) - std::min(std::min(color.r, color.g), color.b);
 }
 
+inline float Chroma(const NVGcolor& color) {
+    return std::max(std::max(color.r, color.g), color.b) - std::min(std::min(color.r, color.g), color.b);
+}
+
+inline float Saturation1(const NVGcolor& color) {
+    auto L = Lightness(color);
+    if (0.f == L || 1.0f == L) return 0;
+    return Chroma(color)/(1.f - (2.f * L - 1.f));
+}
+
+float Hue1(const NVGcolor& color);
+
 inline float Hue(const NVGcolor& color) {
-    return (rack::simd::atan2(SQRT3*(color.g - color.b), 2*color.r -color.g - color.b) + PI) / TWO_PI;
+    return (rack::simd::atan2(SQRT3 * (color.g - color.b), 2 * color.r - color.g - color.b) + PI) / TWO_PI;
 }
 
 inline bool isColorTransparent(NVGcolor& color) { return color.a == 0.f; }
-inline bool isColorVisible(NVGcolor& color) { return !isColorTransparent(color); }
+inline bool isColorVisible(NVGcolor& color) { return color.a > 0.f; }
 
 std::string ToString(Theme theme);
 Theme ParseTheme(std::string text);
@@ -121,5 +148,6 @@ void RoundBoxRect(NVGcontext *vg, float x, float y, float width, float height, N
 void Line(NVGcontext * vg, float x1, float y1, float x2, float y2, NVGcolor color, float strokeWidth = 1.0);
 void CircleGradient(NVGcontext * vg, float cx, float cy, float r, NVGcolor top, NVGcolor bottom);
 void Circle(NVGcontext * vg, float cx, float cy, float r, NVGcolor fill);
+void OpenCircle(NVGcontext * vg, float cx, float cy, float r, NVGcolor stroke, float stroke_width = 1.f);
 
 }

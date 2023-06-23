@@ -8,6 +8,7 @@ SOURCES += src/resizable.cpp
 SOURCES += src/colors.cpp
 SOURCES += src/text.cpp
 SOURCES += src/dsp.cpp
+SOURCES += src/pic.cpp
 SOURCES += src/pic_button.cpp
 SOURCES += src/play_pause.cpp
 SOURCES += src/port.cpp
@@ -21,11 +22,13 @@ SOURCES += src/Blank/Blank.cpp
 SOURCES += src/Info/Info.cpp
 SOURCES += src/Info/info_symbol.cpp
 
+# Copper module
+SOURCES += src/Copper/Copper.cpp
+
 # Imagine module
 SOURCES += src/Imagine/Imagine.cpp
 SOURCES += src/Imagine/ImaginePanel.cpp
 SOURCES += src/Imagine/ImagineUi.cpp
-SOURCES += src/Imagine/pic.cpp
 SOURCES += src/Imagine/pic_widget.cpp
 SOURCES += src/Imagine/traversal.cpp
 

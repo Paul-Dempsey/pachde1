@@ -57,59 +57,88 @@ void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top)
     }
 }
 
-void SetScrewColors(Widget* widget, NVGcolor color) {
+void SetScrewColors(Widget* widget, NVGcolor color, WhichScrew which) {
     if (!widget || widget->children.empty()) return;
     for (Widget * child: widget->children) {
         auto screw = dynamic_cast<ScrewCap*>(child);
-        if (screw) {
+        if (screw && isApplicable(screw->which, which)) {
             screw->setPanelColor(color);
         }
     }    
 }
 
-
-void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewPos pos)
+WhichScrew GetScrewPosition(const ScrewCap* screw)
 {
-    bool set_color = isColorVisible(color);
-
-    // top left
-    auto screw = new ScrewCap(theme);
-    screw->box.pos = Vec(tl_screw_inset(pos), 0);
-    if (set_color) {
-        screw->setPanelColor(color);
+    if (isUnknown(screw->which)) {
+        // assume relative to parent
+        bool left = screw->box.pos.x <= 2.5f * ONE_HP;
+        bool top = screw->box.pos.y <= ONE_HP;
+        if (left) {
+            return top ? WhichScrew::TL : WhichScrew::BL;
+        } else {
+            return top ? WhichScrew::TR : WhichScrew::BR;
+        }
     }
-    widget->addChild(screw);
-    //top right
-    screw = new ScrewCap(theme);
-    screw->box.pos = Vec(widget->box.size.x - ONE_HP - tr_screw_inset(pos), 0);
-    if (set_color) {
-        screw->setPanelColor(color);
-    }
-    widget->addChild(screw);
-    //bottom left
-    screw = new ScrewCap(theme);
-    screw->box.pos = Vec(bl_screw_inset(pos), RACK_GRID_HEIGHT - ONE_HP);
-    if (set_color) {
-        screw->setPanelColor(color);
-    }
-    widget->addChild(screw);
-    // bottom right
-    screw = new ScrewCap(theme);
-    screw->box.pos = Vec(widget->box.size.x - ONE_HP - br_screw_inset(pos), RACK_GRID_HEIGHT - ONE_HP);
-    if (set_color) {
-        screw->setPanelColor(color);
-    }
-    widget->addChild(screw);
+    return screw->which; 
 }
 
-void RemoveScrewCaps(Widget* widget)
+WhichScrew SetScrewPosition(ScrewCap* screw, WhichScrew which)
+{
+    return screw->which = isUnknown(which)
+        ? GetScrewPosition(screw)
+        : which;
+}
+
+
+void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewAlign pos, WhichScrew which)
+{
+    ScrewCap* screw;
+
+    // top left
+    if (which & WhichScrew::TL) {
+        screw = new ScrewCap(theme);
+        screw->which = WhichScrew::TL;
+        screw->box.pos = Vec(tl_screw_inset(pos), 0);
+        screw->color = color;
+        widget->addChild(screw);
+    }
+
+    //top right
+    if (which & WhichScrew::TR) {
+        screw = new ScrewCap(theme);
+        screw->which = WhichScrew::TR;
+        screw->box.pos = Vec(widget->box.size.x - ONE_HP - tr_screw_inset(pos), 0);
+        screw->color = color;
+        widget->addChild(screw);
+    }
+
+    //bottom left
+    if (which & WhichScrew::BL) {
+        screw = new ScrewCap(theme);
+        screw->which = WhichScrew::BL;
+        screw->box.pos = Vec(bl_screw_inset(pos), RACK_GRID_HEIGHT - ONE_HP);
+        screw->color = color;
+        widget->addChild(screw);
+    }
+
+    // bottom right
+    if (which & WhichScrew::BR) {
+        screw = new ScrewCap(theme);
+        screw->which = WhichScrew::BR;
+        screw->box.pos = Vec(widget->box.size.x - ONE_HP - br_screw_inset(pos), RACK_GRID_HEIGHT - ONE_HP);
+        screw->color = color;
+        widget->addChild(screw);
+    }
+}
+
+void RemoveScrewCaps(Widget* widget, WhichScrew which)
 {
     if (!widget || widget->children.empty()) return;
 
     std::vector<Widget*> remove;
     for (Widget * child: widget->children) {
         auto screw = dynamic_cast<ScrewCap*>(child);
-        if (screw) {
+        if (screw && isApplicable(GetScrewPosition(screw), which)) {
             remove.push_back(child);
         }
     }
@@ -155,7 +184,7 @@ void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isC
         menu->addChild(createSubmenuItem("Panel color", "",
             [=](Menu *menu)
             {
-                EventParamField *editField = new EventParamField();
+                MenuTextField *editField = new MenuTextField();
                 editField->box.size.x = 100;
                 auto color = it->getPanelColor();
                 if (isColorVisible(color)) {

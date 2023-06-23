@@ -1,4 +1,9 @@
-# Sketch of lightweight SVG themeing with a json style sheet
+# Notes for lightweight (nano)SVG themeing with a json style sheet
+
+> **NOTE**
+>
+> Since almost everything in pachde-One is drawn procedurally,
+> I haven't actually needed SVG theming, so none of this is implemented.
 
 The svg element id is used to target an element for modification.
 The element id to be targeted has a suffix beginning with two dashes, followed by a tag.
