@@ -20,9 +20,12 @@ For example, the following element is tagged with `theme-bezel`:
 ```
 
 In this example, all the tags begin with `theme-`, but this prefix isn't required.
-The only requirement is that each item has a unique name.
+The only requirement is that each item has a unique name after the last double-dash in the id.
 
-A theme in the JSON is an object containing tag-named children that provide a definition of what atributes will be modified when the theme is applied.
+Nano restricts ids to 64 characters.
+
+The JSON is an array of theme objects.
+A theme objects has a `"name"` string and a `"theme"` object containing tag-named members that each provide an object contians a definition of what atributes will be modified when the theme is applied.
 
 A limited set of attributes can be modified by theming:
 
@@ -38,17 +41,19 @@ This is necessary because the scheme does not have a complete definition of a gr
 This may be unwieldy to author in regards to start/end coordinates, requiring multiple dimension-dependent gradients.
 It may be that both stop-targeting and gradient refs are needed.
 
-Unlike SVG, the theme color attributes in the theme json are full Rack-style RGB + Alpha colors,
+Unlike SVG, the theme colors in the json are full Rack-style RGB + Alpha colors,
 so we don't need to add complexity of separately targeting opacity (although that is possible).
 
 ## Example theme
 
-```jsonc
+Not everything you see here may be implemented (e.g. gradient defs), but the scheme is easily extended this way.
+
+```json
 [
     {
         "name": "Light",
         "theme": {
-            "gradient-defs": "<relative-path>.svg", // svg containg defs tag definining id'd gradients
+            "gradient-defs": "<relative-path>.svg",
             "theme_background": {
                 "fill": {
                     "color": "#RRGGBBaa",
@@ -95,10 +100,12 @@ so we don't need to add complexity of separately targeting opacity (although tha
 
 ## Implementation
 
-The theme description (style sheet) is a simple hash of styles.
-To apply the theme, we travers the list of elements in the svg, parsing any element id present to exract a theme tag.
-If the id contains a theme tag, it's looked up in the style sheet.
-The style is then applied to modify the appropriate colors of the svg element.
+The theme description (style sheet) is a simple hash of "style" objects.
+To apply the theme, we travers the list of elements in the svg, parsing any element id present to exract a tag.
+If the id contains a tag, it's looked up in the style sheet.
+If the tag is present in the stylesheet, the style is then applied to modify the appropriate colors of the svg element.
+
+This is a straightforward single pass through the nano parsed representation, so shouldnot have performance issues.
 
 TBD what would be required to manage any caching that rack widgets may be doing, but this is likely straightforward.
 
@@ -106,9 +113,12 @@ TBD what would be required to manage any caching that rack widgets may be doing,
 
 API is provided to:
 
-- Load set of themes.
-- Add a Theme submenu, containing an option list for the themes defined in the set.
+- Load the themes json, return an object providing most of the apis.
 - Apply a theme to an svg.
-- Apply a theme to widget hierarchy for all widgets that implement the interface needed.
-- Query a theme for a tag, which is an open definition so that modules can look up colors for theme-based explicit drawing in additiion to SVG-based UI.
-- Possibly templates for various widget structures containing SVGs (members, backgrounds, frames) that make it easy to apply a theme.
+- Add a Theme submenu, containing an option list for the themes defined in the json, and a callback for applying hte selected theme.
+
+More advanced scenarios are conceivable so that less code is needed to take advantage of theme-able SVGs.
+
+- Apply a theme to widget hierarchy for all widgets that implement a specific interface needed to apply it to svgs contained in the widget.
+- Query a theme for a tag, which is an open definition so that modules can look up colors for theme-based procedural UI in additiion to SVG-based UI.
+- Possibly templates for common widget structures containing SVGs (members, backgrounds, frames) that make it easy to apply a theme.
