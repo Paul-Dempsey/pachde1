@@ -1,0 +1,12 @@
+
+Copyright © 2023 Paul Chase Dempsey
+
+All **source code**, documentation, and documentation images are copyright © 2023 Paul Chase Dempsey
+
+This program is free software: you can redistribute it and/or modify it under the terms of the [GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.en.html) as published by the [Free Software Foundation](https://www.fsf.org/), either version 3 of the License, or (at your option) any later version.
+
+The **#d logo and icon** are copyright © 2023 Paul Chase Dempsey and may not be used in derivative works.
+
+The **visual design of the pachde-One modules** is copyright © 2023 Paul Chase Dmepsey and licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+Commercial use and derivative works are not allowed.
+

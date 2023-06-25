@@ -33,6 +33,7 @@ SOURCES += src/Imagine/pic_widget.cpp
 SOURCES += src/Imagine/traversal.cpp
 
 DISTRIBUTABLES += res
+DISTRIBUTABLES += $(wildcard LICENSE*)
 
 # DISTRIBUTABLES += presets
 # DISTRIBUTABLES += selections
