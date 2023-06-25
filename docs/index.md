@@ -8,9 +8,9 @@ Right click to choose a theme, add/remove screws, set a custom panel color, or c
 
 | Module | Description |
 | -- | -- |
-| **[Null](Null)** | A truly blank blank panel, with some fancy features (for a blank). |
-| **[Info](Info)** | A simple resizable text notes panel. |
-| **[Imagine](Imagine)** | An eccentric source of voltage, gates, and triggers using an image. |
-| **[Copper](Copper)** | A color picker with modulation and outputs. Extender for **Null** |
+| **[Null](Null.md)** | A truly blank blank panel, with some fancy features (for a blank). |
+| **[Info](Info.md)** | A simple resizable text notes panel. |
+| **[Imagine](Imagine.md)** | An eccentric source of voltage, gates, and triggers using an image. |
+| **[Copper](Copper.md)** | A color picker with modulation and outputs. Extender for **Null** |
 
 ![pachde (#d) Logo](Logo.svg)

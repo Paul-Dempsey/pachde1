@@ -20,7 +20,7 @@ A truly blank, blank panel with some fun features (for a blank panel).
 _Status_: Basic text entry in menu, in-place editing TBD.
 
 A Minimalist resizable patch notes panel.
-[Info user guide](docs/Info)
+[Info user guide](docs/Info.md)
 
 ## Imagine
 
@@ -28,12 +28,12 @@ _Status_: MVP nearly complete
 
 An eccentric source of volage, gates, and triggers using an image.
 You can think of it as a sequencer or image sampler.
-[Imagine user guide](docs/Imagine)
+[Imagine user guide](docs/Imagine.md)
 
 ## Copper
 
 _Status_: complete (for now)
 
-A color picker with modulation and color component outputs. [Copper user guide](docs/Copper)
+A color picker with modulation and color component outputs. [Copper user guide](docs/Copper.md)
 
 ![pachde logo](docs/Logo.svg)
