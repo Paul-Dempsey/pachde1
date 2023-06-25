@@ -103,7 +103,7 @@ struct LogoOverlayWidget : rack::OpaqueWidget, ThemeLite {
     }
 };
 
-template<class T>
+template<typename T>
 struct TKnob: rack::RoundKnob, ThemeLite 
 {
     bool clickStepValue = true;
@@ -254,7 +254,7 @@ using SmallKnob = TKnob<SmallKnobSvg>;
 //     }
 // };
 // ```
-template <class TSvgProvider>
+template <typename TSvgProvider>
 struct SvgThemePanel : SvgPanel, ThemeLite
 {
     SvgThemePanel(Theme theme) {

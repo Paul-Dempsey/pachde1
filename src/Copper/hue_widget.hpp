@@ -6,11 +6,20 @@
 using namespace rack;
 namespace pachde {
 
-struct HueWidget : OpaqueWidget {
+struct HueWidget : OpaqueWidget
+{
     std::function<void(float)> clickHandler;
     
     float hue = 0.f;
     cachePic* ramp = nullptr;
+
+    virtual ~HueWidget() {
+        if (ramp) {
+            auto pic = ramp->getPic();
+            delete ramp;
+            delete pic;
+        }
+    }
 
     bool getHue() { return hue; }
     void setHue(float hue) { this->hue = hue; }
@@ -23,6 +32,23 @@ struct HueWidget : OpaqueWidget {
         }
         return ramp;
     }
+
+    void onContextCreate(const ContextCreateEvent& e)  override
+    {
+        OpaqueWidget::onContextCreate(e);
+        if (ramp) {
+            ramp->onContextCreate(e);
+        }
+    }
+
+    void onContextDestroy(const ContextDestroyEvent& e) override
+    {
+        if (ramp) {
+            ramp->onContextDestroy(e);
+        }
+        OpaqueWidget::onContextDestroy(e);
+    }
+    
     void onEnter(const EnterEvent &e) override
     {
         OpaqueWidget::onEnter(e);

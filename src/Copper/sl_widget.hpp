@@ -6,6 +6,9 @@
 using namespace rack;
 namespace pachde {
 
+// TODO: when rendering a new hue, it's likely much more efficient to 
+// use nvgUpdateImage than destroying and creating a new nvgImage.
+
 struct SLWidget : OpaqueWidget
 {
     float hue = 0.f;
@@ -16,6 +19,15 @@ struct SLWidget : OpaqueWidget
 
     SLWidget() { }
     SLWidget(float hue) { this->hue = hue; }
+
+    virtual ~SLWidget() {
+        if (ramp) {
+            auto pic = ramp->getPic(); // cache doesn't own the pic.
+            delete ramp;
+            delete pic;
+        }
+    }
+
     float getSaturation() { return sat; }
     float getLightness() { return light; }
     void setSaturation(float s) { sat = s; }
@@ -24,11 +36,7 @@ struct SLWidget : OpaqueWidget
         if (new_hue == hue) return;
         hue = new_hue;
         SetSLSpectrum(ramp->getPic(), hue);
-        ramp->clearImageCache();
-        // widget::EventContext cDirty;
-        // widget::Widget::DirtyEvent eDirty;
-        // eDirty.context = &cDirty;
-        // onDirty(eDirty);
+        ramp->invalidateImage();
     }
     cachePic* getRamp() {
         if (nullptr == ramp) {
@@ -36,11 +44,26 @@ struct SLWidget : OpaqueWidget
         }
         return ramp;
     }
+    void onContextCreate(const ContextCreateEvent& e) override
+    {
+        OpaqueWidget::onContextCreate(e);
+        if (ramp) {
+            ramp->onContextCreate(e);
+        }
+    }
+    void onContextDestroy(const ContextDestroyEvent& e) override
+    {
+        if (ramp) {
+            ramp->onContextDestroy(e);
+        }
+        OpaqueWidget::onContextDestroy(e);
+    }
 
     void onClick(std::function<void(float, float)> callback)
     {
         clickHandler = callback;
     }
+
     void onEnter(const EnterEvent &e) override
     {
         OpaqueWidget::onEnter(e);

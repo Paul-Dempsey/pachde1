@@ -43,22 +43,88 @@ struct Pic {
     }
 };
 
-// caching of associate nvg structure for a pic
-// does not own the pic.
+// Caching of associate nvg structure for a pic.
+// Does not own the pic, only the cached nvg handle
 struct cachePic
 {
     Pic* pic = nullptr;
     int image_handle = 0; // nvg Image handle
     intptr_t image_cookie = 0; // cookie for image data
-    intptr_t vg_cookie = 0; // cookie for graphics context
+
+    ~cachePic() {
+        //HACK grab a VG context from anywhere and hope its the right one
+        if (image_handle) {
+            auto window = APP->window;
+            if (window && window->vg) {
+                nvgDeleteImage(window->vg, image_handle);
+            }
+        }
+    }
 
     cachePic() { }
     cachePic(Pic * pic) { setPic(pic); }
 
+#define TRUST_RACK_CONTEXT
+#ifndef TRUST_RACK_CONTEXT
+    // hack to workaround rack bug wrt uninitialized vg in context change events
+    bool isLaterVersion(int maj, int min) {
+        auto parts = rack::string::split(rack::APP_VERSION, "."); 
+        auto i1 = std::strtol(parts[0].c_str(), nullptr, 10);
+        auto i2 = std::strtol(parts[1].c_str(), nullptr, 10);
+        if (i1 > maj) return true;
+        if (i2 > min) return true;
+        return false;
+    }
+#endif
+
+    // Widgets using cachePic must forward the 
+    // onContextCreate and onContextDestroy events
+    void onContextCreate(const rack::widget::Widget::ContextCreateEvent& e)
+    {
+#ifndef TRUST_RACK_CONTEXT
+        NVGcontext* ctx = nullptr;
+        //HACK: work around uninitialized e.vg
+        if (!isLaterVersion(2, 3)) {
+            auto window = APP->window;
+            if (window && window->vg) {
+                ctx = window->vg;
+            }
+        } else {
+            ctx = e.vg;
+        }
+        if (ctx) {
+            updateImageCache(ctx);
+        } // else leak
+#else
+        updateImageCache(e.vg);
+#endif
+    }
+
+    void onContextDestroy(const rack::widget::Widget::ContextDestroyEvent& e)
+    {
+#ifndef TRUST_RACK_CONTEXT
+        NVGcontext* ctx = nullptr;
+        //HACK: work around uninitialized e.vg
+        if (!isLaterVersion(2, 3)) {
+            auto window = APP->window;
+            if (window && window->vg) {
+                ctx = window->vg;
+            }
+        } else {
+            ctx = e.vg;
+        }
+        if (ctx) {
+            clearImageCache(ctx);
+        } // else leak
+#else
+        clearImageCache(e.vg);
+#endif
+    }
+
     void setPic(Pic * picture) {
         pic = picture;
         if (!pic || image_cookie != reinterpret_cast<intptr_t>(pic->data())) {
-            clearImageCache();
+            invalidateImage();
         }
     }
     Pic * getPic() { return pic; }
@@ -68,40 +134,39 @@ struct cachePic
         return image_handle;
     }
 
-    void clearImageCache() {
-        if (vg_cookie && image_handle) {
-            auto vg = reinterpret_cast<NVGcontext*>(vg_cookie);
+    void invalidateImage() {
+        image_cookie = 0;
+    }
+
+    void clearImageCache(NVGcontext* vg) {
+        if (image_handle) {
             nvgDeleteImage(vg, image_handle);
+            image_handle = 0;
         }
-        image_handle = 0;
-        vg_cookie = 0;
+        image_cookie = 0;
     }
 
     void updateImageCache(NVGcontext* vg)
     {
         if (!pic) {
-            clearImageCache();
+            clearImageCache(vg);
             return;
         }
-        auto icookie = reinterpret_cast<intptr_t>(pic->data());
-        auto vcookie = reinterpret_cast<intptr_t>(vg);
-        if (!image_cookie && !image_handle && !vg_cookie) {
+        if (!image_cookie && !image_handle) {
             image_handle = nvgCreateImageRGBA(vg, pic->width(),  pic->height(), 0, pic->data());
-            image_cookie = icookie;
-            vg_cookie = vcookie;
+            image_cookie = reinterpret_cast<intptr_t>(pic->data());
         } else {
-            if (icookie != image_cookie || vcookie != vg_cookie) {
+            auto new_image_cookie = reinterpret_cast<intptr_t>(pic->data());
+            if (new_image_cookie != image_cookie) {
                 if (image_handle) {
                     nvgDeleteImage(vg, image_handle);
                     image_handle = 0;
                     image_handle = nvgCreateImageRGBA(vg, pic->width(),  pic->height(), 0, pic->data());
                 }
                 if (image_handle) {
-                    image_cookie = icookie;
-                    vg_cookie = vcookie;
+                    image_cookie = new_image_cookie;
                 } else {
                     image_cookie = 0;
-                    vg_cookie = 0;
                 }
             }
         }
