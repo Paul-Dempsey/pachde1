@@ -16,13 +16,13 @@
     {
       "slug": "pachde-null",
       "name": "Null",
-      "description": "A discreet resizable blank panel with light and dark themes",
+      "description": "A discreet resizable blank panel with themes, colors, and animation",
       "tags": [ "Visual", "Blank", "Utility" ]
     },
     {
       "slug": "pachde-info",
       "name": "Info",
-      "description": "Resizable text notes with light and dark themes",
+      "description": "Resizable text notes with themes",
       "tags": [ "Visual", "Blank", "Utility" ]
     },
     {
@@ -34,7 +34,7 @@
     {
       "slug": "pachde-copper",
       "name": "Copper",
-      "description": "A simple color picker",
+      "description": "A color picker with modulation and outputs",
       "tags": [ "Visual", "Controller", "Polyphonic", "Utility" ]
     }
   ]

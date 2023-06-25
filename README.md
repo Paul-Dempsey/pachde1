@@ -14,49 +14,15 @@ All screws are removable if you're more relaxed about your Rack.
 
 _Status_: Complete
 
-A Minimalist resizable blank panel. All blank, no advertising.
-
-![Null module with dark and light theme](docs/Null.png)
-
-- Resizable - Drag the left and right edges when the overlay appears.
-
-Select options in the module menu:
-
-- Removable screws.
-
-- Light, Dark, and High Contrast themes.
-
-- Customizable panel color. Enter using standard hex text color format: **`#`**_hex-rgb_, or copy/paste from Copper.
-
-- Glow in the dark. The panel lights up in a darkened room.
-
-Extend by placing Copper immediately to the right or the left.
-Null's panel color is the color you choose in Copper.
-
-Hidden treat: Turn down the lights, set a panel color, and plug audio or CV into the secret "flicker" port hidden behind the **#d** logo.
+A truly blank, blank panel with some fun features (for a blank panel). 
+[Null user guide](docs/Null)
 
 ## Info
 
 _Status_: Basic text entry in menu, in-place editing TBD.
 
 A Minimalist resizable patch notes panel.
-
-![Info panel with themes and menu](docs/Info.png)
-
-- Resizable - Drag the left and right edges when the overlay appears.
-
-Select options in the module menu:
-
-- Removable screws.
-
-- Light, Dark, and High Contrast themes.
-
-- Bright text panel in a dark room.
-
-- Customizable text and panel colors.
-Enter using standard hex text color format: **`#`**_hex-rgb_, or copy/paste from Copper.
-
-- Customizable font and font size.
+[Info user guide](docs/Info)
 
 ## Imagine
 
@@ -120,7 +86,7 @@ The next **x?** knob multiplies the **speed** by **x1** - **x10** times.
 
 - Imagine has a variety of outputs.
 Raw unipolar outputs for **x**, **y**, and pixel **R**, **G**, and **B** values are on the left,
-and calculated outputs for **v**oltage **g**ate and **t**riger to the right.
+and calculated outputs for **v**oltage **g**ate and **t**rigger to the right.
 
 - Choose polarity of voltages with the **p** switch.
 Switches calculated outputs between -5 to +5v and 0 to 10V.

@@ -1,6 +1,6 @@
-# imagine
+# Dev notes for Imagine
 
-**imagine** is an image sampler.
+**Imagine** is an image sampler.
 
 Load an image and generate voltages, gates, and triggers as the image is scanned or touched.
 
@@ -9,6 +9,18 @@ Consider: multi-frame formats (gif, animated png, video).
 How to position initial read head? Click may be too coarse. Right click head for precise numeric x/y coordinates?
 
 Allow scrub always (drag on read head).
+
+While it isn't really a design goal to be a very sophisticated interpreter of images, consider providing _some_ image processing to enhance the musical usefulness of the output.
+
+- "smart blur" to smooth + enhance edges
+
+   This could be the most direct way to improve the musical usefulness of the module
+
+- "Posterize" the image might be another way to do the combined smoothing + edges.
+
+- downsample large images
+
+  Apparent speed of the traversal is dependent on image size, becuase speed is in terms of pixels/time, and the image is scaled to fit the constrained size of a module.
 
 Parameters:
 
