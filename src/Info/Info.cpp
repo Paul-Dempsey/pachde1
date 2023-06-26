@@ -5,6 +5,7 @@
 #include "../resizable.hpp"
 #include "../text.hpp"
 #include "info_symbol.hpp"
+#include "../Copper/Copper.hpp" // expander
 
 using namespace pachde;
 
@@ -17,6 +18,49 @@ enum HpSizes
 constexpr const float DEFAULT_FONT_SIZE = 16.f;
 constexpr const float MIN_FONT_SIZE = 5.f;
 constexpr const float MAX_FONT_SIZE = 60.f;
+// ----------------------------------------------------------------------------
+
+enum HAlign {
+    Left, Center, Right
+};
+inline const char* HAlignName(HAlign h){
+    switch (h) {
+        default:
+        case HAlign::Left: return "Left";
+        case HAlign::Center: return "Center";
+        case HAlign::Right: return "Right";
+    }
+}
+inline char HAlignLetter(HAlign h){
+    switch (h) {
+        default:
+        case HAlign::Left: return 'l';
+        case HAlign::Center: return 'c';
+        case HAlign::Right: return 'r';
+    }
+}
+inline NVGalign nvgAlignFromHAlign(HAlign h) {
+    switch (h) {
+        default:
+        case HAlign::Left: return NVGalign::NVG_ALIGN_LEFT;
+        case HAlign::Center: return NVGalign::NVG_ALIGN_CENTER;
+        case HAlign::Right: return NVGalign::NVG_ALIGN_RIGHT;
+    }
+}
+
+HAlign parseHAlign(std::string text) {
+    if (text.empty()) {
+        return HAlign::Left;
+    }
+    switch (*text.begin()) {
+        default:
+        case 'l': return HAlign::Left;
+        case 'c': return HAlign::Center;
+        case 'r': return HAlign::Right;
+    }
+}
+
+// ----------------------------------------------------------------------------
 
 struct InfoTheme : ThemeBase {
     ITheme * module_theme = nullptr;
@@ -27,7 +71,8 @@ struct InfoTheme : ThemeBase {
 
     // overrides
     NVGcolor user_text_background = COLOR_NONE;
-    NVGcolor user_text_color = COLOR_NONE;;
+    NVGcolor user_text_color = COLOR_NONE;
+    HAlign horizontal_alignment = HAlign::Left;
 
     bool brilliant = false;
 
@@ -44,7 +89,12 @@ struct InfoTheme : ThemeBase {
     }
     float getFontSize() { return font_size; }
     void setFontSize(float size) { font_size = clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE); }
-
+    HAlign getHorizontalAlignment() {
+        return horizontal_alignment;
+    }
+    void setHorizontalAlignment(HAlign h) {
+        horizontal_alignment = h;
+    }
     NVGcolor getDisplayPanelColor() {
         return isColorTransparent(panel_color) ? theme_panel_color : panel_color;
     }
@@ -70,6 +120,8 @@ struct InfoTheme : ThemeBase {
         if (DEFAULT_FONT_SIZE != font_size) {
             json_object_set_new(root, "text-size", json_real(font_size));
         }
+        std::string align_string = { HAlignLetter(horizontal_alignment) };
+        json_object_set_new(root, "text-align", json_stringn(align_string.c_str(), align_string.size()));
         json_object_set_new(root, "font", json_string(font_file.c_str()));
         json_object_set_new(root, "font-folder", json_string(font_folder.c_str()));
         json_object_set_new(root, "bright", json_boolean(brilliant));
@@ -97,13 +149,17 @@ struct InfoTheme : ThemeBase {
                 font_size = DEFAULT_FONT_SIZE;
             }
         }
+        j = json_object_get(root, "text-align");
+        if (j) {
+            horizontal_alignment = parseHAlign(json_string_value(j));
+        }
         j = json_object_get(root, "font");
         if (j) {
-            font_file =  json_string_value(j);
+            font_file = json_string_value(j);
         }
         j = json_object_get(root, "font-folder");
         if (j) {
-            font_folder =  json_string_value(j);
+            font_folder = json_string_value(j);
         }
         j = json_object_get(root, "bright");
         if (j) {
@@ -188,6 +244,8 @@ struct InfoTheme : ThemeBase {
     }
 };
 
+// ----------------------------------------------------------------------------
+
 struct InfoModule : ResizableModule
 {
     std::string text;
@@ -226,8 +284,28 @@ struct InfoModule : ResizableModule
         assert(info_theme);
         return info_theme;
     }
+
+    NVGcolor expanderColor(rack::engine::Module::Expander& expander)
+    {
+        if (expander.module && expander.module->model == modelCopper) {
+            CopperModule* copper = dynamic_cast<CopperModule*>(expander.module);
+            if (copper) {
+                return copper->getModulatedColor();
+            }
+        }
+        return COLOR_NONE;
+    }
+
+    NVGcolor leftExpanderColor() {
+        return expanderColor(getLeftExpander());
+    }
+    NVGcolor rightExpanderColor() {
+        return expanderColor(getRightExpander());
+    }
+
 };
 
+// ----------------------------------------------------------------------------
 struct InfoPanel : Widget
 {
     InfoModule* module = nullptr;
@@ -242,9 +320,13 @@ struct InfoPanel : Widget
         box.size = size;
     }
 
-    void showText(NVGcontext* vg, std::shared_ptr<rack::window::Font> font, std::string text) {
-        SetTextStyle(vg, font, info_theme->getDisplayTextColor(), info_theme->getFontSize());
-        nvgTextBox(vg, box.pos.x + 10.f, box.pos.y + ONE_HP + 20.f, box.size.x - 15.f, text.c_str(), nullptr);
+    void showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, std::string text) {
+        nvgScissor(args.vg, RECT_ARGS(args.clipBox));
+        auto font_size = info_theme->getFontSize();
+        SetTextStyle(args.vg, font, info_theme->getDisplayTextColor(), font_size);
+        nvgTextAlign(args.vg, nvgAlignFromHAlign(info_theme->getHorizontalAlignment()));
+        nvgTextBox(args.vg, box.pos.x + 10.f, box.pos.y + ONE_HP + font_size, box.size.x - 15.f, text.c_str(), nullptr);
+    	nvgResetScissor(args.vg);
     }
 
     void drawText(const DrawArgs &args) {
@@ -259,12 +341,12 @@ struct InfoPanel : Widget
         if (!text.empty()) {
             auto font = APP->window->loadFont(info_theme->font_file);
             if (FontOk(font)) {
-                showText(args.vg, font, text);
+                showText(args, font, text);
             } else {
                 info_theme->resetFont();
                 font = APP->window->loadFont(info_theme->font_file);
                 if (FontOk(font)) {
-                    showText(args.vg, font, text);
+                    showText(args, font, text);
                 } else {
                     auto r = box.size.x /3.;
                     auto color = nvgRGB(250,0,0);
@@ -309,6 +391,7 @@ struct InfoPanel : Widget
     }
 };
 
+// ----------------------------------------------------------------------------
 struct FontSizeQuantity : Quantity {
     InfoTheme* info_theme;
     FontSizeQuantity(InfoTheme* it) {
@@ -324,6 +407,7 @@ struct FontSizeQuantity : Quantity {
 	std::string getUnit() override { return "px"; }
 };
 
+// ----------------------------------------------------------------------------
 struct FontSizeSlider : ui::Slider {
 	FontSizeSlider(InfoTheme* info_theme) {
 		quantity = new FontSizeQuantity(info_theme);
@@ -333,6 +417,7 @@ struct FontSizeSlider : ui::Slider {
 	}
 };
 
+// ----------------------------------------------------------------------------
 struct InfoModuleWidget : ModuleWidget, ITheme
 {
     ModuleResizeHandle* rightHandle = nullptr;
@@ -512,6 +597,26 @@ struct InfoModuleWidget : ModuleWidget, ITheme
 		FontSizeSlider* slider = new FontSizeSlider(info_theme);
 		slider->box.size.x = 250.0;
 		menu->addChild(slider);
+
+        menu->addChild(createSubmenuItem("Text alignment", "",
+            [=](Menu *menu)
+            {
+                menu->addChild(createCheckMenuItem(
+                    "Left", "",
+                    [=]() { return info_theme->getHorizontalAlignment() == HAlign::Left; },
+                    [=]() { info_theme->setHorizontalAlignment(HAlign::Left); }
+                    ));
+                menu->addChild(createCheckMenuItem(
+                    "Center", "",
+                    [=]() { return info_theme->getHorizontalAlignment() == HAlign::Center; },
+                    [=]() { info_theme->setHorizontalAlignment(HAlign::Center); }
+                    ));
+                menu->addChild(createCheckMenuItem(
+                    "Right", "",
+                    [=]() { return info_theme->getHorizontalAlignment() == HAlign::Right; },
+                    [=]() { info_theme->setHorizontalAlignment(HAlign::Right); }
+                    ));
+            }));
 
         menu->addChild(createSubmenuItem("Text color", "",
             [=](Menu *menu)
