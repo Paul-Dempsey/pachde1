@@ -27,6 +27,11 @@ CopperModule::CopperModule()
     configOutput(L_OUT, "Lightness");
     configOutput(A_OUT, "Alpha (transparency)");
     configOutput(POLY_OUT, "Polyphonic hsla,rgb");
+
+    configBypass(H_INPUT, H_OUT);
+    configBypass(S_INPUT, S_OUT);
+    configBypass(L_INPUT, L_OUT);
+    configBypass(A_INPUT, A_OUT);
 }
 
 NVGcolor CopperModule::getChosenColor() {
