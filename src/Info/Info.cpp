@@ -9,11 +9,7 @@
 
 using namespace pachde;
 
-enum HpSizes
-{
-    Default = 5,
-    Least = 3,
-};
+enum HpSizes { Default = 5, Least = 3, };
 
 constexpr const float DEFAULT_FONT_SIZE = 16.f;
 constexpr const float MIN_FONT_SIZE = 5.f;
@@ -47,7 +43,6 @@ inline NVGalign nvgAlignFromHAlign(HAlign h) {
         case HAlign::Right: return NVGalign::NVG_ALIGN_RIGHT;
     }
 }
-
 HAlign parseHAlign(std::string text) {
     if (text.empty()) {
         return HAlign::Left;
@@ -295,7 +290,6 @@ struct InfoModule : ResizableModule
         }
         return COLOR_NONE;
     }
-
     NVGcolor leftExpanderColor() {
         return expanderColor(getLeftExpander());
     }
@@ -305,12 +299,19 @@ struct InfoModule : ResizableModule
 
 };
 
+enum CopperTarget { Panel, Interior };
+
 // ----------------------------------------------------------------------------
 struct InfoPanel : Widget
 {
     InfoModule* module = nullptr;
     InfoTheme* info_theme = nullptr;
     bool preview = false;
+    NVGcolor panel;
+    NVGcolor background;
+    NVGcolor text_color;
+
+    CopperTarget copper_target = CopperTarget::Panel;
 
     InfoPanel(InfoModule* module, InfoTheme* info, Vec size)
     {
@@ -319,22 +320,73 @@ struct InfoPanel : Widget
         info_theme = info;
         box.size = size;
     }
+    CopperTarget getCopperTarget() { return copper_target; }
+    void setCopperTarget(CopperTarget target) { copper_target = target; }
+
+    void fetchColors() {
+        panel = info_theme->getDisplayPanelColor();
+        background = info_theme->getDisplayTextBackground();
+        text_color = info_theme->getDisplayTextColor();
+        if (module) {
+            auto left = module->leftExpanderColor();
+            auto right = module->rightExpanderColor();
+            if (CopperTarget::Interior == copper_target) {
+                if (isColorVisible(left)) {
+                    background = left;
+                    info_theme->setUserTextBackground(background);
+                }
+                if (isColorVisible(right)) {
+                    text_color = right;
+                    info_theme->setUserTextColor(text_color);
+                }
+            } else {
+                bool set_panel = false;
+                if (isColorVisible(left)) {
+                    set_panel = true;
+                    panel = left;
+                }
+                if (isColorVisible(right)) {
+                    set_panel = true;
+                    panel = right;
+                }
+                if (set_panel) {
+                    info_theme->setPanelColor(panel);
+                }
+            }
+        }
+    }
+    
+    void step() override {
+        Widget::step();
+        fetchColors();
+    }
 
     void showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, std::string text) {
         nvgScissor(args.vg, RECT_ARGS(args.clipBox));
         auto font_size = info_theme->getFontSize();
-        SetTextStyle(args.vg, font, info_theme->getDisplayTextColor(), font_size);
+        SetTextStyle(args.vg, font, text_color, font_size);
         nvgTextAlign(args.vg, nvgAlignFromHAlign(info_theme->getHorizontalAlignment()));
         nvgTextBox(args.vg, box.pos.x + 10.f, box.pos.y + ONE_HP + font_size, box.size.x - 15.f, text.c_str(), nullptr);
     	nvgResetScissor(args.vg);
     }
 
+    void drawError(const DrawArgs &args) {
+        auto r = box.size.x /3.;
+        auto color = nvgRGB(250,0,0);
+        nvgBeginPath(args.vg);
+        nvgCircle(args.vg, box.size.x/2., box.size.y/2., r);
+        nvgMoveTo(args.vg, box.size.x/2.-r, box.size.y/2 + r);
+        nvgLineTo(args.vg, box.size.x/2 + r, box.size.y/2 - r);
+        nvgStrokeColor(args.vg, color);
+        nvgStrokeWidth(args.vg, 6.);
+        nvgStroke(args.vg);
+    }
+
     void drawText(const DrawArgs &args) {
-        NVGcolor inner = info_theme->getDisplayTextBackground();
 
         nvgBeginPath(args.vg);
         nvgRect(args.vg, 5.0, ONE_HP, box.size.x - 10.f, box.size.y - RACK_GRID_WIDTH * 2.f);
-        nvgFillColor(args.vg, inner);
+        nvgFillColor(args.vg, background);
         nvgFill(args.vg);
 
         std::string text = module ? module->text : "";
@@ -348,20 +400,13 @@ struct InfoPanel : Widget
                 if (FontOk(font)) {
                     showText(args, font, text);
                 } else {
-                    auto r = box.size.x /3.;
-                    auto color = nvgRGB(250,0,0);
-                    nvgBeginPath(args.vg);
-                    nvgCircle(args.vg, box.size.x/2., box.size.y/2., r);
-                    nvgMoveTo(args.vg, box.size.x/2.-r, box.size.y/2 + r);
-                    nvgLineTo(args.vg, box.size.x/2 + r, box.size.y/2 - r);
-                    nvgStrokeColor(args.vg, color);
-                    nvgStrokeWidth(args.vg, 6.);
-                    nvgStroke(args.vg);
+                    drawError(args);
                 }
             }
         }
 
     }
+
     void drawLayer(const DrawArgs &args, int layer) override
     {
         if (layer == 1 && info_theme->getBrilliant()) {
@@ -372,12 +417,10 @@ struct InfoPanel : Widget
     void draw(const DrawArgs &args) override
     {
         assert(info_theme);
-        
-        NVGcolor outer = info_theme->getDisplayPanelColor();
 
         nvgBeginPath(args.vg);
         nvgRect(args.vg, 0.f, 0.f, box.size.x, box.size.y);
-        nvgFillColor(args.vg, outer);
+        nvgFillColor(args.vg, panel);
         nvgFill(args.vg);
 
         if (!info_theme->getBrilliant()) {
@@ -560,7 +603,6 @@ struct InfoModuleWidget : ModuleWidget, ITheme
         ModuleWidget::step();
     }
 
-
     const char * HEXPLACEHOLDER = "#<hexcolor>";
 
     void appendContextMenu(Menu *menu) override
@@ -657,6 +699,22 @@ struct InfoModuleWidget : ModuleWidget, ITheme
                 };
                 menu->addChild(editField);
             }));
+
+        menu->addChild(createSubmenuItem("Copper sets", "",
+            [=](Menu *menu)
+            {
+                menu->addChild(createCheckMenuItem(
+                    "Panel color", "",
+                    [=]() { return panel->getCopperTarget() == CopperTarget::Panel; },
+                    [=]() { panel->setCopperTarget(CopperTarget::Panel); }
+                    ));
+                menu->addChild(createCheckMenuItem(
+                    "Background(L) and Text(R)", "",
+                    [=]() { return panel->getCopperTarget() == CopperTarget::Interior; },
+                    [=]() { panel->setCopperTarget(CopperTarget::Interior); }
+                    ));
+            }));
+
     }
 };
 
