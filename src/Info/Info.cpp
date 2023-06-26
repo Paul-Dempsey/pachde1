@@ -700,16 +700,16 @@ struct InfoModuleWidget : ModuleWidget, ITheme
                 menu->addChild(editField);
             }));
 
-        menu->addChild(createSubmenuItem("Copper sets", "",
+        menu->addChild(createSubmenuItem("Copper", "",
             [=](Menu *menu)
             {
                 menu->addChild(createCheckMenuItem(
-                    "Panel color", "",
+                    "Panel", "",
                     [=]() { return panel->getCopperTarget() == CopperTarget::Panel; },
                     [=]() { panel->setCopperTarget(CopperTarget::Panel); }
                     ));
                 menu->addChild(createCheckMenuItem(
-                    "Background(L) and Text(R)", "",
+                    "Interior (L/R B/T)", "",
                     [=]() { return panel->getCopperTarget() == CopperTarget::Interior; },
                     [=]() { panel->setCopperTarget(CopperTarget::Interior); }
                     ));

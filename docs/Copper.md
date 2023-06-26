@@ -14,13 +14,15 @@ Below the colored pickers, the selected color is displayed opaquely on the left 
 
 If the color is modulated by CV inputs, the color bar is split, with the unmodulated chosen color on top, and the modulated color below.
 
-The slected, unmodulated hex color is shown on the outputs section.
-Right click to find a menu opetion to copy that value for use in another module.
+The selected, unmodulated hex color is shown on the outputs section.
+Right click to find a menu option to copy that value for use in another module.
 
 ## As extender
 
 Copper works as an extender to [Null](Null.md) for choosing it's panel color -- even live modulating it for some excitement.
 See [Null](Null.md) for more details on the entertainment value of this configuration.
+
+Copper is also an extender for [Info](Info.md) for choosing it's colors, configured in the Info menu.
 
 ## Inputs
 
