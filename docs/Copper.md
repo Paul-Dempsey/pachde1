@@ -2,7 +2,7 @@
 
 A color picker with modulation and outputs
 
-![Copper in Light, Dark, and High Contrast themes](copper.png)
+![Copper in Light, Dark, and High Contrast themes](Copper.png)
 
 Click on the Hue selector or twist the H knob to select the color's hue.
 
@@ -32,7 +32,7 @@ H (hue), S (saturation, AKA chroma), L (lightness), and A (alpha, AKA transparen
 
 All output jacks represent the modulated color when any input jacks are connected.
 
-| Jack | Jack Color | Color coompontnet |
+| Jack | Jack Color | Color component |
 | -- | -- | -- |
 | R | Red | Red component |
 | G | Green | Green component |

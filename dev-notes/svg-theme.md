@@ -29,7 +29,9 @@ A theme objects has a `"name"` string and a `"theme"` object containing tag-name
 
 A limited set of attributes can be modified by theming:
 
-- Color of stroke and fill.
+- Opactiy of the object.
+
+- Color of stroke and fill. Colors include opacity.
 
 - Stroke width
 
@@ -41,12 +43,12 @@ This is necessary because the scheme does not have a complete definition of a gr
 This may be unwieldy to author in regards to start/end coordinates, requiring multiple dimension-dependent gradients.
 It may be that both stop-targeting and gradient refs are needed.
 
-Unlike SVG, the theme colors in the json are full Rack-style RGB + Alpha colors,
+Unlike SVG, the theme colors in the json are full RGB + Alpha colors,
 so we don't need to add complexity of separately targeting opacity (although that is possible).
 
 ## Example theme
 
-Not everything you see here may be implemented (e.g. gradient defs), but the scheme is easily extended this way.
+Not everything you see here may be implemented (e.g. gradient defs/refs), but the scheme is easily extended.
 
 ```json
 [
@@ -72,6 +74,7 @@ Not everything you see here may be implemented (e.g. gradient defs), but the sch
                 "stroke": { "color": "#RRGGBBaa", "width": 2.0, "gradient-ref": "name" },
             },
             "theme_ouzel": {
+                "Opacity": 0.8,
                 "fill": {
                     "gradient" [
                         {
@@ -101,13 +104,16 @@ Not everything you see here may be implemented (e.g. gradient defs), but the sch
 ## Implementation
 
 The theme description (style sheet) is a simple hash of "style" objects.
-To apply the theme, we travers the list of elements in the svg, parsing any element id present to exract a tag.
+To apply the theme, traverse the list of elements in the svg, parsing any element id present to exract a tag.
 If the id contains a tag, it's looked up in the style sheet.
 If the tag is present in the stylesheet, the style is then applied to modify the appropriate colors of the svg element.
 
-This is a straightforward single pass through the nano parsed representation, so shouldnot have performance issues.
+It would be easy to support targeting entire tag ids.
 
-TBD what would be required to manage any caching that rack widgets may be doing, but this is likely straightforward.
+This is a straightforward single pass through the nanosvg parsed representation, so should not have performance issues.
+
+TBD what would be required to manage caching that rack widgets may be doing, but this is likely straightforward.
+This likely requires nothing more than sending a Dirty or Change event. For any widget that is modified when applying a theme.
 
 ## API
 
@@ -115,7 +121,7 @@ API is provided to:
 
 - Load the themes json, return an object providing most of the apis.
 - Apply a theme to an svg.
-- Add a Theme submenu, containing an option list for the themes defined in the json, and a callback for applying hte selected theme.
+- Add a Theme submenu, containing an option list for the themes defined in the json, and a callback for applying the selected theme.
 
 More advanced scenarios are conceivable so that less code is needed to take advantage of theme-able SVGs.
 
