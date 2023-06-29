@@ -9,7 +9,7 @@ I did a little research into the parsed representation of SVGs in nano,
 and I can see a path to a simple, lightweight, in-process way to implement SVG themeing in a declarative way.
 
 The key is that nano preserves element ids, providing an easy way to target theme-able elements.
-Inkscape preserves existing ids across edits of the SVG, so the mechanism is robust to edits of the SVG.
+Inkscape preserves ids across edits of the SVG, so the mechanism is robust to editing.
 
 The svg element id is used to target an element for modification.
 The element id to be targeted has a suffix beginning with two dashes, followed by a tag.
@@ -20,45 +20,48 @@ For example, the following element is tagged with `theme-bezel`:
 ```
 
 In this example, all the tags begin with `theme-`, but this prefix isn't required.
-The only requirement is that each item has a unique name after the last double-dash in the id.
+It's just a handy way to notate that the element is a theme-able element.
 
-Nano restricts ids to 64 characters.
+If a double dash isn't present, then the entire id is considered the tag.
+This means that you can target specific elements by id, or multiple elements with a double-dash tag.
+
+You can edit an object's id in Inkscape: Right click and choose **Object Properties...**. The id is separate from Inkscape's object label which is kept in a separate `inkscape:label` attribute. Inkscape uses it's labels for what it shows you in **Layers and Objects**.
+
+Nano restricts ids to 63 characters.
 
 The JSON is an array of theme objects.
 A theme objects has a `"name"` string and a `"theme"` object containing tag-named members that each provide an object contians a definition of what atributes will be modified when the theme is applied.
 
 A limited set of attributes can be modified by theming:
 
-- Opactiy of the object.
+- Opacity of the element.
 
-- Color of stroke and fill. Colors include opacity.
+- Stroke and fill color. Colors include opacity.
+Targeting only the opacity of a stroke or fill color is currently not supported -- only the full rgba.
 
 - Stroke width
 
-- Color and offset of a gradient stop.
-To target a gradient, the element in the master SVG must also define a gradient.
-This is necessary because the scheme does not have a complete definition of a gradient.
+- Color and offset of an existing gradient stop.
+To target a gradient, the element in the master SVG must also define a gradient with that stop.
+This is necessary because the scheme does not have a complete definition of a gradient,
+and we don't have the ability to synthesize gradients.
 
-  A possibility is to use gradient defs from an SVG (e.g. your panel SVG).
-This may be unwieldy to author in regards to start/end coordinates, requiring multiple dimension-dependent gradients.
-It may be that both stop-targeting and gradient refs are needed.
+- Gradients can't be removed. A color fill or stroke can be changed to 'none', but setting a gradient fill or stroke to 'none' or a color would cause a memory leak.
+
+- Stroke dashes not supported, but could be.
 
 Unlike SVG, the theme colors in the json are full RGB + Alpha colors,
 so we don't need to add complexity of separately targeting opacity (although that is possible).
 
 ## Example theme
 
-Not everything you see here may be implemented (e.g. gradient defs/refs), but the scheme is easily extended.
-
 ```json
 [
     {
         "name": "Light",
         "theme": {
-            "gradient-defs": "<relative-path>.svg",
             "theme_background": {
                 "fill": {
-                    "color": "#RRGGBBaa",
                     "gradient": [            
                         {
                             "index":0,
@@ -69,9 +72,15 @@ Not everything you see here may be implemented (e.g. gradient defs/refs), but th
                 },
                 "stroke": { "color":"#RRGGBBaa", "width":1.5 }
             },
+            "theme_no-fill": {
+                "fill":"none",
+            },
+            "theme_no-stroke": {
+                "stroke":"none",
+            },
             "theme_bezel": {
-                "fill": { "color": "#RRGGBBaa", "gradient-ref": "name" },
-                "stroke": { "color": "#RRGGBBaa", "width": 2.0, "gradient-ref": "name" },
+                "fill": "#RRGGBBaa",
+                "stroke": "#RRGGBBaa",
             },
             "theme_ouzel": {
                 "Opacity": 0.8,
@@ -100,6 +109,20 @@ Not everything you see here may be implemented (e.g. gradient defs/refs), but th
     }
 ]
 ```
+
+## Creating a theme
+
+- Start with a design that will be one of your themes.
+
+- Decide which elements will change depending on the theme.
+
+- For each theme-able element, define a style to address the things that will be changed, with the attributes your base SVG.
+This is necessary so that user can get back to the default theme after changing it.
+
+- Copy the theme, rename it, and change the colors to suit.
+
+- To prevent leftovers from one theme appearing when another is chosen, each theme must provide all the same style names, setting the same alements.
+At this time, the theme engine does not provide a way to verify this, so care must be taken.
 
 ## Implementation
 
