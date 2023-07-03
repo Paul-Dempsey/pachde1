@@ -61,9 +61,8 @@ struct InfoTheme : ThemeBase {
     ITheme * module_theme = nullptr;
     // computed from theme
     NVGcolor theme_panel_color = COLOR_NONE;
-    NVGcolor theme_text_background;
-    NVGcolor theme_text_color;
-
+    NVGcolor theme_text_background = RampGray(G_90);
+    NVGcolor theme_text_color = RampGray(G_20);
     // overrides
     NVGcolor user_text_background = COLOR_NONE;
     NVGcolor user_text_color = COLOR_NONE;
@@ -187,9 +186,6 @@ struct InfoTheme : ThemeBase {
 
     void setTheme(Theme theme) override
     {
-        if (isColorVisible(theme_panel_color) && theme == getTheme()) {
-            return;
-        }
         ThemeBase::setTheme(theme);
         if (module_theme) module_theme->setTheme(theme);
         switch (theme) {
@@ -307,9 +303,9 @@ struct InfoPanel : Widget
     InfoModule* module = nullptr;
     InfoTheme* info_theme = nullptr;
     bool preview = false;
-    NVGcolor panel;
-    NVGcolor background;
-    NVGcolor text_color;
+    NVGcolor panel = RampGray(G_80);
+    NVGcolor background = RampGray(G_90);
+    NVGcolor text_color = RampGray(G_20);
 
     CopperTarget copper_target = CopperTarget::Panel;
 

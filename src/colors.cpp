@@ -47,8 +47,8 @@ std::string ToString(Theme t) {
 }
 
 Theme ThemeFromJson(json_t * root) {
-    json_t* themeJ = json_object_get(root, "theme");
-    return themeJ ? ParseTheme(json_string_value(themeJ)) : Theme::Unset;
+    json_t* j = json_object_get(root, "theme");
+    return j ? ParseTheme(json_string_value(j)) : Theme::Unset;
 }
 
 NVGcolor PanelBackground(Theme theme)

@@ -60,7 +60,6 @@ struct PicWidget : OpaqueWidget {
 
     void updateClient();
 
-    // Consider: Use framebuffer for pic, and only draw the sample each frame
     void drawPic(const DrawArgs &args);
     void drawSample(const DrawArgs &args);
     void drawLayer(const DrawArgs &args, int layer) override;

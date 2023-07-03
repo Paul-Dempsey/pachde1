@@ -37,7 +37,7 @@ BlankModule::BlankModule()
     configInput(0,"Flicker");
 }
 
-inline NVGcolor expanderColor(rack::engine::Module::Expander& expander)
+NVGcolor expanderColor(rack::engine::Module::Expander& expander)
 {
     if (expander.module && expander.module->model == modelCopper) {
         CopperModule* copper = dynamic_cast<CopperModule*>(expander.module);
@@ -172,6 +172,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
     if (isColorTransparent(panel_color)) {
         panel_color = getITheme()->getPanelColor();
     }
+    
     if (isColorVisible(panel_color)) {
         auto lum = LuminanceLinear(panel_color);
         if (lum <= 0.5f) {

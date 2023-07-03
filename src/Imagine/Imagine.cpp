@@ -76,8 +76,8 @@ bool Imagine::loadImageDialog()
 
     if (path == image.name()) return true;
 
-    DEBUG("Selected image (%s)", path.c_str());
-    DEBUG("Image size %d x %d", image.width(), image.height());
+    //DEBUG("Selected image (%s)", path.c_str());
+    //DEBUG("Image size %d x %d", image.width(), image.height());
     pic_folder = system::getDirectory(path);
     if (image.open(path)) {
         traversal->configure_image(Vec(image.width(), image.height()));
@@ -85,7 +85,7 @@ bool Imagine::loadImageDialog()
         setPlaying(run);
         return true;
     } else {
-        DEBUG("Image load failed: %s", image.reason().c_str());
+        //DEBUG("Image load failed: %s", image.reason().c_str());
         traversal->configure_image(Vec(image.width(), image.height()));
         traversal->reset();
         //image.close();
@@ -126,14 +126,14 @@ void Imagine::dataFromJson(json_t *root)
     if (j) {
         std::string path = json_string_value(j);
         if (image.open(path)) {
-            DEBUG("Opened image (%s)", path.c_str());
-            DEBUG("Image size %d x %d", image.width(), image.height());
+            //DEBUG("Opened image (%s)", path.c_str());
+            //DEBUG("Image size %d x %d", image.width(), image.height());
             if (traversal) {
                 traversal->configure_image(Vec(image.width(), image.height()));
                 traversal->reset();
             }
         } else {
-            DEBUG("Image load failed: %s", image.reason().c_str());
+            //DEBUG("Image load failed: %s", image.reason().c_str());
         }
     }
 

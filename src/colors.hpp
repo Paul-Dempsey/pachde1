@@ -134,8 +134,8 @@ inline float Hue(const NVGcolor& color) {
     return (rack::simd::atan2(SQRT3 * (color.g - color.b), 2 * color.r - color.g - color.b) + PI) / TWO_PI;
 }
 
-inline bool isColorTransparent(NVGcolor& color) { return color.a == 0.f; }
-inline bool isColorVisible(NVGcolor& color) { return color.a > 0.f; }
+inline bool isColorTransparent(NVGcolor& color) { return color.a < 0.001f; }
+inline bool isColorVisible(NVGcolor& color) { return color.a > 0.001f; }
 
 std::string ToString(Theme theme);
 Theme ParseTheme(std::string text);
