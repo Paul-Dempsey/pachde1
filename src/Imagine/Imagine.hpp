@@ -41,6 +41,12 @@ inline const char * ComponentInitial(ColorComponent co) {
     }
 }
 
+// struct GateKeeper
+// {
+//     rack::dsp::PulseGenerator pulse;
+//     LookbackBuffer<float, 6> buf;
+// };
+
 struct Imagine : ThemeModule
 {
     enum ParamIds {
@@ -51,10 +57,11 @@ struct Imagine : ThemeModule
         SPEED_PARAM,
         SPEED_MULT_PARAM,
         COMP_PARAM,
+        GT_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
-        //SPEED_INPUT,
+        PLAY_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
@@ -66,6 +73,7 @@ struct Imagine : ThemeModule
         RED_OUT,
         GREEN_OUT,
         BLUE_OUT,
+        TEST_OUT,
         NUM_OUTPUTS
     };
 
@@ -82,6 +90,11 @@ struct Imagine : ThemeModule
 #endif
     ControlRateTrigger control_rate;
 
+    rack::dsp::SchmittTrigger smitty;
+    rack::dsp::PulseGenerator trigger_pulse;
+    LookbackBuffer<float, 6> lookback;
+    bool gate_high = false;
+    float gt = 0;
     bool bright_image = false;
     Pic image;
     std::string pic_folder;
@@ -91,6 +104,7 @@ struct Imagine : ThemeModule
     void play() { running = true;}
     void pause() { running = false; }
     bool setPlaying(bool play) {
+        smitty.reset();
         bool previous = running;
         running = play;
         return previous;
@@ -163,7 +177,7 @@ struct ImagineUi : ModuleWidget, ThemeBase
 {
     ImaginePanel *panel = nullptr;
     Imagine* imagine = nullptr;
-
+    PlayPauseButton * playButton = nullptr;
     ImagineUi(Imagine *module);
 
     void makeUi(Imagine* module, Theme theme);
@@ -177,6 +191,7 @@ struct ImagineUi : ModuleWidget, ThemeBase
         if (imagine) return imagine->hasScrews();
         return ThemeBase::hasScrews();
     }
+    void step() override;
     void appendContextMenu(rack::ui::Menu* menu) override;
 };
 

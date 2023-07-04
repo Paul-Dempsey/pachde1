@@ -6,18 +6,23 @@
 #include "../dsp.hpp"
 
 namespace pachde {
-    
+
 Imagine::Imagine() {
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, 0);
 
     configParam(SLEW_PARAM, 0.f, 1.f, 0.f,
         "Slew", "%", 0.f, 100.f);
 
+    configParam(GT_PARAM, 0.f, 1.f, .3f,
+        "Gate/Trigger spread threshhold");
+
     configSwitch(POLARITY_PARAM, 0.f, 1.0f, 0.0f,
-        "Polarity", { "Bipolar (-5 - 5v)", "Unipolar (0 - 10v)" });
+        "Polarity", { "Unipolar (0 - 10v)", "Bipolar (-5 - 5v)" });
 
     configSwitch(RUN_PARAM, 0.f, 1.f, 0.f,
         "Play", { "Paused", "Playing" });
+
+    configInput(PLAY_INPUT, "Play/Pause Trigger");
 
     configParam(SPEED_PARAM, 0.f, 100.f, 10.f,
         "Speed");
@@ -54,6 +59,7 @@ Imagine::Imagine() {
     configOutput(VOLTAGE_OUT, "Voltage");
     configOutput(GATE_OUT,    "Gate");
     configOutput(TRIGGER_OUT, "Trigger");
+    //configOutput(TEST_OUT, "Test");
     updateParams();
 }
 
@@ -152,7 +158,7 @@ void Imagine::dataFromJson(json_t *root)
 
 void Imagine::updateParams()
 {
-    running = getParam(RUN_PARAM).getValue() > 0.5f;
+    gt = getParam(GT_PARAM).getValue();
 
     float slew = getParam(SLEW_PARAM).getValue();
     float sample_rate = APP->engine->getSampleRate();
@@ -161,9 +167,11 @@ void Imagine::updateParams()
     y_slew.configure(sample_rate, slew, .01f);
 #endif
     voltage_slew.configure(sample_rate, slew, .01f);
-    polarity = (getParam(POLARITY_PARAM).getValue() < 0.5)
-        ? VRange::BIPOLAR
-        : VRange::UNIPOLAR;
+
+    auto p = getParam(POLARITY_PARAM).getValue();
+    polarity = p <= 0.5
+        ? VRange::UNIPOLAR
+        : VRange::BIPOLAR;
 
     Traversal id = getTraversalId();
     if (id != traversal_id || !traversal) {
@@ -176,6 +184,7 @@ void Imagine::updateParams()
         traversal_id = id;
     }
     traversal->configure_rate(getSpeed(), sample_rate);
+
     color_component = getColorComponent();
 }
 
@@ -192,6 +201,12 @@ void Imagine::process(const ProcessArgs& args)
     
     if (control_rate.process()) {
         updateParams();
+    }
+    if (inputs[PLAY_INPUT].isConnected()) {
+        auto v = inputs[PLAY_INPUT].getVoltage();
+        if (smitty.process(v, 0.1f, 5.f)) {
+            setPlaying(!isPlaying());
+        }
     }
     if (running) {
         traversal->process();
@@ -242,19 +257,24 @@ void Imagine::process(const ProcessArgs& args)
         outputs[GREEN_OUT].setVoltage(pix.g * 10.f);
         outputs[BLUE_OUT].setVoltage(pix.b * 10.f);
 
-        if (outputs[VOLTAGE_OUT].isConnected()) {
-            auto v = ComponentValue(pix) * 10.0f;
-            if (polarity == VRange::BIPOLAR) {
-                v -= 0.5;
+        auto v = ComponentValue(pix) * 10.0f;
+        lookback.push(v);
+        auto spread = lookback.spread();
+        if (spread > gt) {
+            trigger_pulse.trigger();
+            if (lookback.isFilled()) {
+                gate_high = !gate_high;
             }
-            outputs[VOLTAGE_OUT].setVoltage(voltage_slew.next(v));
         }
-        if (outputs[GATE_OUT].isConnected()) {
-            //outputs[GATE_OUT].setVoltage(v);
+        //outputs[TEST_OUT].setVoltage(spread);
+
+        if (isBipolar()) {
+            v -= 5.f;
         }
-        if (outputs[TRIGGER_OUT].isConnected()) {
-            //outputs[TRIGGER_OUT].setVoltage(v);
-        }
+        outputs[VOLTAGE_OUT].setVoltage(voltage_slew.next(v));
+
+        outputs[GATE_OUT].setVoltage(gate_high * 10.f);
+        outputs[TRIGGER_OUT].setVoltage(trigger_pulse.process(args.sampleTime) * 10.f);
     }
 }
 

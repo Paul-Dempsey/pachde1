@@ -13,6 +13,13 @@ ImagineUi::ImagineUi(Imagine *module)
     setTheme(ModuleTheme(module));
 }
 
+void ImagineUi::step()
+{
+    if (imagine && playButton) {
+        playButton->pressed = imagine->isPlaying();
+    }
+}
+
 void ImagineUi::makeUi(Imagine* module, Theme theme)
 {
     assert(children.empty());
@@ -30,14 +37,15 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     image->box.size = Vec(PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT);
     addChild(image);
 
-    auto run = createThemeParamCentered<PlayPauseButton>(theme, Vec(265.f, CONTROL_ROW), module, Imagine::RUN_PARAM);
-    //run->momentary = false;
+    addChild(createColorInputCentered<ColorPort>(theme, PORT_LIME, Vec(242.f, CONTROL_ROW), module, Imagine::PLAY_INPUT));
+
+    playButton = createThemeParamCentered<PlayPauseButton>(theme, Vec(265.f, CONTROL_ROW), module, Imagine::RUN_PARAM);
     if (module) {
-        run->onClick([module]() {
+        playButton->onClick([module]() {
             module->setPlaying(!module->isPlaying());
         });
     }
-    addParam(run);
+    addParam(playButton);
 
     auto picButton = new PicButton(theme);
     picButton->center(Vec (285.f, CONTROL_ROW));
@@ -61,7 +69,11 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     knob->snap = true;
     addParam(knob);
 
-    knob = createThemeParamCentered<SmallKnob>(theme, Vec(145.f, CONTROL_ROW), module, Imagine::PATH_PARAM);
+    knob = createThemeParamCentered<SmallKnob>(theme, Vec(145.f, CONTROL_ROW), module, Imagine::GT_PARAM);
+    knob->stepIncrementBy = 0.05f;
+    addParam(knob);
+
+    knob = createThemeParamCentered<SmallKnob>(theme, Vec(175.f, CONTROL_ROW), module, Imagine::PATH_PARAM);
     knob->minAngle = -1.5;
     knob->maxAngle = 1.5;
     knob->snap = true;
@@ -80,6 +92,9 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     addOutput(createThemeOutput<ColorPort>(theme, Vec(205.f, OUTPUT_ROW), module, Imagine::VOLTAGE_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(230.f, OUTPUT_ROW), module, Imagine::GATE_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(255.f, OUTPUT_ROW), module, Imagine::TRIGGER_OUT));
+
+    //addOutput(createColorOutput<ColorPort>(theme, PORT_LIME, Vec(280.f, OUTPUT_ROW), module, Imagine::TEST_OUT));
+
 }
 
 void ImagineUi::setTheme(Theme theme)

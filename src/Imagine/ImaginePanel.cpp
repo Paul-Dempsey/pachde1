@@ -66,7 +66,8 @@ void ImaginePanel::draw(const DrawArgs &args)
         }
         CenterText(vg, 85., CONTROL_ROW_TEXT, "slew", nullptr);
         CenterText(vg, 115.0, CONTROL_ROW_TEXT, ComponentInitial(module? module->color_component : ColorComponent::LUMINANCE) , nullptr);
-        CenterText(vg, 145.0, CONTROL_ROW_TEXT, "path", nullptr);
+        CenterText(vg, 145.0, CONTROL_ROW_TEXT, "g/t", nullptr);
+        CenterText(vg, 175.0, CONTROL_ROW_TEXT, "path:", nullptr);
 
         // raw outputs
         auto gray50 = RampGray(G_50);
@@ -95,10 +96,10 @@ void ImaginePanel::draw(const DrawArgs &args)
     if (FontOk(font))
     {
         auto color = IsLighter(theme) ? COLOR_BRAND : COLOR_BRAND_HI;
-        Line(vg, 162., CONTROL_ROW + 10.f, 215.f, CONTROL_ROW + 10.f, color, 0.5f);
+        Line(vg, 190.f, CONTROL_ROW_TEXT + 5.f, 190.f + 48.f, CONTROL_ROW_TEXT + 5.f, color, 0.5f);
         SetTextStyle(vg, font, color, 14.f);
-        nvgTextAlign(vg, NVG_ALIGN_BOTTOM);
-        nvgText(vg, 164.f, CONTROL_ROW + 8.f, TraversalName(module  ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
+        nvgTextAlign(vg, NVG_ALIGN_LEFT);
+        nvgText(vg, 193.5f, CONTROL_ROW_TEXT, TraversalName(module  ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
     }
 
     Circle(vg, PANEL_CENTER, RACK_GRID_HEIGHT + 7.5f, 30.f, nvgHSL(40.f/360.f, 0.8f, 0.5f));
