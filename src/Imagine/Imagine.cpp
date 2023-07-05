@@ -36,6 +36,7 @@ Imagine::Imagine() {
         "Bounce",
         "Vinyl",
         "Wander",
+        "X/Y Pad"
     });
 
     configSwitch(COMP_PARAM, 0.0f, static_cast<int>(ColorComponent::NUM_COMPONENTS)-1, 0.0f, "Component", {
