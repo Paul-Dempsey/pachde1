@@ -109,6 +109,7 @@ struct TKnob: rack::RoundKnob, ThemeLite
     bool clickStepValue = true;
     float stepIncrementBy = 1.f;
     bool key_modified = false;
+    bool key_modified2 = false;
 
     TKnob(Theme theme) {
         setTheme(theme);
@@ -122,14 +123,15 @@ struct TKnob: rack::RoundKnob, ThemeLite
 
     void onHoverKey(const HoverKeyEvent& e) override {
         rack::RoundKnob::onHoverKey(e);
-        key_modified = (e.mods & RACK_MOD_MASK) == RACK_MOD_CTRL;
+        key_modified = (e.mods & RACK_MOD_MASK) & RACK_MOD_CTRL;
+        key_modified2 = (e.mods & RACK_MOD_MASK) & GLFW_MOD_SHIFT;
     }
 
     void onAction(const ActionEvent& e) override {
+        rack::RoundKnob::onAction(e);
         if (clickHandler) {
             clickHandler();
         } else if (clickStepValue) {
-            // TODO: quantize to step granularity, rather than stepping from current value
             auto pq = getParamQuantity();
             if (pq) {
                 float value = pq->getValue();
@@ -138,7 +140,7 @@ struct TKnob: rack::RoundKnob, ThemeLite
                     if (value == lim) {
                         value = pq->getMinValue();
                     } else {
-                        value += stepIncrementBy;
+                        value = value + (key_modified2 ? stepIncrementBy * 10 : stepIncrementBy);
                         if (value > lim) {
                             value = lim;
                         }
@@ -148,7 +150,7 @@ struct TKnob: rack::RoundKnob, ThemeLite
                     if (value == lim) {
                         value = pq->getMaxValue();
                     } else {
-                        value -= stepIncrementBy;
+                        value = value - (key_modified2 ? stepIncrementBy * 10 : stepIncrementBy);
                         if (value < pq->getMinValue()) {
                             value = lim;
                         }
@@ -157,7 +159,9 @@ struct TKnob: rack::RoundKnob, ThemeLite
                 pq->setValue(value);
             }
         }
-        rack::RoundKnob::onAction(e);
+        if (fb) {
+            fb->setDirty(true);
+        }
     }
 
     void setTheme(Theme theme) override {

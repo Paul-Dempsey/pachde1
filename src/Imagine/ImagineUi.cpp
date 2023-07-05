@@ -15,6 +15,7 @@ ImagineUi::ImagineUi(Imagine *module)
 
 void ImagineUi::step()
 {
+    ModuleWidget::step();
     if (imagine && playButton) {
         playButton->pressed = imagine->isPlaying();
     }
@@ -37,7 +38,7 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     image->box.size = Vec(PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT);
     addChild(image);
 
-    addChild(createColorInputCentered<ColorPort>(theme, PORT_LIME, Vec(242.f, CONTROL_ROW), module, Imagine::PLAY_INPUT));
+    addChild(createColorInputCentered<ColorPort>(theme, nvgHSL(270./360., 0.75, 0.75), Vec(242.f, CONTROL_ROW), module, Imagine::PLAY_INPUT));
 
     playButton = createThemeParamCentered<PlayPauseButton>(theme, Vec(265.f, CONTROL_ROW), module, Imagine::RUN_PARAM);
     if (module) {
@@ -56,7 +57,11 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     }
     addChild(picButton);
 
-    addParam(createThemeParamCentered<SmallKnob>(theme, Vec(25.f, CONTROL_ROW), module, Imagine::SPEED_PARAM));
+    auto speed = createThemeParamCentered<SmallKnob>(theme, Vec(25.f, CONTROL_ROW), module, Imagine::SPEED_PARAM);
+    speed->stepIncrementBy = 0.1;
+    addParam(speed);
+
+
     auto knob = createThemeParamCentered<SmallKnob>(theme, Vec(55.f, CONTROL_ROW), module, Imagine::SPEED_MULT_PARAM);
     knob->snap = true;
     addParam(knob);
@@ -89,7 +94,7 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     auto p = createThemeParam<Switch>(theme, Vec(180.f, OUTPUT_ROW + 3.5f), module, Imagine::POLARITY_PARAM);
     p->box.size.y = 18.f;
     addParam(p);
-    addOutput(createThemeOutput<ColorPort>(theme, Vec(205.f, OUTPUT_ROW), module, Imagine::VOLTAGE_OUT));
+    addOutput(createThemeOutput<ColorPort>(theme, Vec(200.f, OUTPUT_ROW), module, Imagine::VOLTAGE_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(230.f, OUTPUT_ROW), module, Imagine::GATE_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(255.f, OUTPUT_ROW), module, Imagine::TRIGGER_OUT));
 

@@ -14,8 +14,11 @@ Drag to scrub.
 - All knobs are clicky knobs.
 Click on a knob to increment the value by a useful unit.
 Ctrl+Click to decrement (Cmd+Click on Mac).
+Hold down Shift for 10x the un-shifted amount.
 
 - Open an image by clicking the Picture button next to the Play/Pause button.
+
+- The violet input port next to the Play/Pause button toggles between play and pause when it receives a trigger.
 
 - Adjust the speed of the read head with the **speed** knob.
 The next **x?** knob multiplies the **speed** by **x1** - **x10** times.
@@ -61,5 +64,5 @@ Raw unipolar outputs for **x**, **y**, and pixel **R**, **G**, and **B** values 
 and calculated outputs for **v**oltage **g**ate and **t**rigger to the right.
 
 - Choose polarity of voltages with the **p** switch.
-Switches calculated outputs between -5 to +5v and 0 to 10V.
+Switches calculated outputs between -5 to +5v (bipolar) and 0 to 10V (unipolar).
 Also sets the coordinate system for the plain XY Pad.

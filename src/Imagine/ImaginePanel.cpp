@@ -40,22 +40,12 @@ void ImaginePanel::draw(const DrawArgs &args)
     //     RoundBoxRect(vg, 5.f, 314.f, 290.f, 50.f, RampGray(Ramp::G_WHITE), 6.0f);
     // }
 
-    // 1hp grid
-    // auto gridline = IsLighter(theme) ? GRAY25 : nvgTransRGBAf(COLOR_GREEN_HI, 0.65);
-    // for (float y = ONE_HP; y < box.size.y; y += ONE_HP) {
-    //     Line(vg, 5.0f, y, box.size.x - 5.0f, y, gridline, 0.35f);
-    // }
-
     auto font = GetPluginFontRegular();//GetPluginFontSemiBold();
     if (FontOk(font))
     {
         // title
         SetTextStyle(vg, font, textColor);
         CenterText(vg, PANEL_CENTER, ONE_HP - 2.5, "imagine", nullptr);
-
-        // if (!module || !module->image.ok()) {
-        //     CenterText(vg, PANEL_CENTER, PANEL_IMAGE_TOP + PANEL_IMAGE_HEIGHT - TWO_HP, "[ no image ]", nullptr);
-        // }
 
         CenterText(vg, 25.0, CONTROL_ROW_TEXT, "speed", nullptr);
         if (module) {
@@ -72,7 +62,7 @@ void ImaginePanel::draw(const DrawArgs &args)
         // raw outputs
         auto gray50 = RampGray(G_50);
 
-        CenterText(vg, 37, OUTPUT_ROW_TEXT, "xy•rgb", nullptr);
+        CenterText(vg, 37, OUTPUT_ROW_TEXT, "xy", nullptr);
 
         // divider
         const float divider_x = 126.5;
@@ -88,7 +78,7 @@ void ImaginePanel::draw(const DrawArgs &args)
 
         // processed outputs
         CenterText(vg, 180.f + 7.5f, OUTPUT_ROW_TEXT, "p", nullptr);
-        CenterText(vg, 205.f + 12.f, OUTPUT_ROW_TEXT, "v", nullptr);
+        CenterText(vg, 200.f + 12.f, OUTPUT_ROW_TEXT, "v", nullptr);
         CenterText(vg, 230.f + 12.f, OUTPUT_ROW_TEXT, "g", nullptr);
         CenterText(vg, 255.f + 12.f, OUTPUT_ROW_TEXT, "t", nullptr);
     }
