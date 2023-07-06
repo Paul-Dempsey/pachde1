@@ -224,7 +224,12 @@ void Imagine::process(const ProcessArgs& args)
     }
 
     if (outputs[X_OUT].isConnected()) {
-        auto v = pos.x / width * 10.0f;
+        float v;
+        if (isBipolar()) {
+            v = (pos.x - width/2.f) / width * 10.f;
+        } else {
+            v = pos.x / width * 10.0f;
+        }
 #ifdef XYSLEW
         outputs[X_OUT].setVoltage(x_slew.next(v));
 #else
@@ -233,7 +238,13 @@ void Imagine::process(const ProcessArgs& args)
     }
 
     if (outputs[Y_OUT].isConnected()) {
-        auto v = pos.y / height * 10.0f;
+        float v;
+        if (isBipolar()) {
+            v =  -(pos.y - height/2.f) / height * 10.f;
+        } else {
+            v = pos.y / height * 10.0f;
+        }
+
 #ifdef XYSLEW
         outputs[Y_OUT].setVoltage(y_slew.next(v));
 #else

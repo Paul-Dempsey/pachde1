@@ -91,7 +91,7 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     addOutput(createColorOutput<ColorPort>(theme, PORT_GREEN, Vec(64.f, OUTPUT_ROW + 13.f), module, Imagine::GREEN_OUT));
     addOutput(createColorOutput<ColorPort>(theme, PORT_BLUE,  Vec(87.f, OUTPUT_ROW), module, Imagine::BLUE_OUT));
 
-    auto p = createThemeParam<Switch>(theme, Vec(180.f, OUTPUT_ROW + 3.5f), module, Imagine::POLARITY_PARAM);
+    auto p = createThemeParam<Switch>(theme, Vec(180.f, OUTPUT_ROW + 1.5f), module, Imagine::POLARITY_PARAM);
     p->box.size.y = 18.f;
     addParam(p);
     addOutput(createThemeOutput<ColorPort>(theme, Vec(200.f, OUTPUT_ROW), module, Imagine::VOLTAGE_OUT));
