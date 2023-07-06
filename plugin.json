@@ -22,13 +22,13 @@
     {
       "slug": "pachde-info",
       "name": "Info",
-      "description": "Resizable text notes with themes",
+      "description": "Resizable text notes with themes, colors, and animation",
       "tags": [ "Visual", "Blank", "Utility" ]
     },
     {
       "slug": "pachde-imagine",
       "name": "Imagine",
-      "description": "An eccentric source of voltage, gates, and triggers using an image",
+      "description": "An eccentric source of voltage, gates, and triggers from an image",
       "tags": [ "Visual", "Sampler", "Sequencer", "Controller" ]
     },
     {
