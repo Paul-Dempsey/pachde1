@@ -219,7 +219,7 @@ struct InfoTheme : ThemeBase {
         DEFER({osdialog_filters_free(filters);});
 
         std::string dir = font_folder.empty() ? asset::user("") : font_folder;
-        DEBUG("Font Open: %s %s", dir.c_str(), font_file.c_str());
+        //DEBUG("Font Open: %s %s", dir.c_str(), font_file.c_str());
 
         std::string name = system::getFilename(font_file);
         char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), name.c_str(), filters);
@@ -228,7 +228,7 @@ struct InfoTheme : ThemeBase {
         }
         std::string path = pathC;
         std::free(pathC);
-        DEBUG("Selected font (%s)", path.c_str());
+        //DEBUG("Selected font (%s)", path.c_str());
         font_file = path;
         font_folder = system::getDirectory(path);
         return true;
