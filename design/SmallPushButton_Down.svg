@@ -14,22 +14,22 @@
     </linearGradient>
     <linearGradient id="b"
        x1="7.5" y1="1" x2="7.5" y2="12"
-       gradientUnits="userSpaceOnUse" >
-      <stop offset="0" style="stop-color:#ffffff;" />
-      <stop offset="1" style="stop-color:#808080;" />
+       gradientUnits="userSpaceOnUse">
+      <stop offset="0" style="stop-color:#808080;" />
+      <stop offset="1" style="stop-color:#d9d9d9;" />
     </linearGradient>
     <linearGradient id="c"
-       x1="7.5" y1="5" x2="7.5" y2="11"
+       x1="7.5" y1="5" x2="7.5" y2="12"
        gradientUnits="userSpaceOnUse" >
-      <stop offset="0" style="stop-color:#ededed;" />
-      <stop offset="1" style="stop-color:#bfbfbf;" />
+      <stop offset="0" style="stop-color:#a0a0a0;" />
+      <stop offset="1" style="stop-color:#ededed;" />
     </linearGradient>
   </defs>
   <g>
-    <circle cx="7.5" cy="7.5" r="7.5" fill="url(#a)" />
-    <circle cx="7.5" cy="7.5" r="7"   fill="#d9d9d9" />
-    <circle cx="7.5" cy="7.5" r="5.5" fill="#4d6b99" />
-    <circle cx="7.5" cy="7.5" r="4.5" fill="url(#b)" />
-    <circle cx="7.5" cy="7.5" r="4"   fill="url(#c)" />
+    <circle cx="7.5" cy="7.5" r="7.5" style="fill:url(#a);" />
+    <circle cx="7.5" cy="7.5" r="7" style="fill:#d9d9d9;" />
+    <circle cx="7.5" cy="7.5" r="5.5" style="fill:#4d6b99;" />
+    <circle cx="7.5" cy="7.5" r="4.5" style="fill:url(#b);" />
+    <circle cx="7.5" cy="7.5" r="4" style="fill:url(#c);" />
   </g>
 </svg>
