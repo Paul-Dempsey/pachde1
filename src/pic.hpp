@@ -65,7 +65,7 @@ struct cachePic
     cachePic() { }
     cachePic(Pic * pic) { setPic(pic); }
 
-#define TRUST_RACK_CONTEXT // depends on a fixed Rack post 2.3
+//#define TRUST_RACK_CONTEXT // depends on a fixed Rack post 2.3
 #ifndef TRUST_RACK_CONTEXT
     // hack to workaround rack bug wrt uninitialized vg in context change events
     bool isLaterVersion(int maj, int min) {
