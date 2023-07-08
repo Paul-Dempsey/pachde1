@@ -11,6 +11,7 @@ Pic* Pic::CreateRaw(int width, int height) {
     p->_width = width;
     p->_height = height;
     p->_data = new unsigned char[width * height * 4];
+    p->_raw_data = true;
     return p;
 }
 
@@ -20,6 +21,7 @@ bool Pic::open(std::string filename)
     _name = filename;
     _data = stbi_load(_name.c_str(), &_width, &_height, &_components, 4);
     if (_data) {
+        _raw_data = false;
         return true;
     } else {
         _width = _height = 0;
@@ -228,12 +230,16 @@ void Pic::close()
     if (_data) {
         auto mem = _data;
         _data = nullptr;
-        stbi_image_free(mem);
+        if (_raw_data) {
+            delete [] mem;
+        } else {
+            stbi_image_free(mem);
+        }
     }
+    _raw_data = false;
     _name = "";
     _reason = "";
 }
-
 
 Pic * CreateHSLSpectrum(float saturation)
 {

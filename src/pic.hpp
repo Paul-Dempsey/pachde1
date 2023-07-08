@@ -10,6 +10,7 @@ struct Pic {
     int _height = 0;
     int _components = 0;
     unsigned char * _data = nullptr;
+    bool _raw_data = false;
     std::string _name;
     std::string _reason;
 
