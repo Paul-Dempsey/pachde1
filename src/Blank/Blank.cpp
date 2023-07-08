@@ -112,7 +112,7 @@ void BlankModuleWidget::add_screws() {
 
     auto itheme = getITheme();
     auto theme = itheme->getTheme();
-    auto color = itheme->getPanelColor();
+    auto color = itheme->getMainColor();
     bool set_color = isColorVisible(color);
 
     auto screw = new ScrewCap(theme);
@@ -136,10 +136,10 @@ void BlankModuleWidget::add_screws() {
     addChild(bottomRightScrew);
 }
 
-void BlankModuleWidget::setPanelColor(NVGcolor color)
+void BlankModuleWidget::setMainColor(NVGcolor color)
 {
     auto itheme = getITheme();
-    itheme->setPanelColor(color);
+    itheme->setMainColor(color);
     SetChildrenThemeColor(this, color);
 }
 
@@ -170,7 +170,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
 
     auto panel_color = my_module ? my_module->externalcolor() : COLOR_NONE;
     if (isColorTransparent(panel_color)) {
-        panel_color = getITheme()->getPanelColor();
+        panel_color = getITheme()->getMainColor();
     }
     
     if (isColorVisible(panel_color)) {
@@ -288,7 +288,7 @@ void BlankModuleWidget::setTheme(Theme theme)
         SetChildrenTheme(this, theme);
         auto themeModule = dynamic_cast<ThemeModule*>(this->module);
         if (ModuleColorOverride(themeModule)) {
-            SetChildrenThemeColor(this, itheme->getPanelColor());
+            SetChildrenThemeColor(this, itheme->getMainColor());
         }
     }
 
@@ -305,7 +305,7 @@ void BlankModuleWidget::step()
         auto color = my_module->externalcolor();
         if (isColorVisible(color) && panel->theme_holder)
         {
-            panel->theme_holder->setPanelColor(color);
+            panel->theme_holder->setMainColor(color);
         }
     }
 

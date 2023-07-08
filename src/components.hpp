@@ -8,6 +8,7 @@
 using namespace ::rack;
 
 namespace pachde {
+
 constexpr const float ONE_HP = 15.0f;
 constexpr const float TWO_HP = 30.0f;
 constexpr const float HALF_HP = 7.5f;
@@ -64,7 +65,7 @@ struct ScrewCap : rack::TransparentWidget, ThemeLite
         setTheme(theme);
     }
 
-    void setPanelColor(NVGcolor color) override {
+    void setMainColor(NVGcolor color) override {
         this->color = color;
     }
 
@@ -356,7 +357,7 @@ inline Theme ModuleTheme(ThemeModule* module)
 }
 inline NVGcolor ModuleColor(ThemeModule* module)
 {
-    return module ? module->panel_color : COLOR_NONE;
+    return module ? module->main_color : COLOR_NONE;
 }
 inline bool ModuleColorOverride(ThemeModule* module)
 {
@@ -373,7 +374,7 @@ struct ThemePanel : Widget
     ThemePanel(ITheme* it) : theme_holder(it) {}
 
     Theme getTheme() { return theme_holder->getTheme(); }
-    NVGcolor getColor() { return theme_holder->getPanelColor(); }
+    NVGcolor getColor() { return theme_holder->getMainColor(); }
     void draw(const DrawArgs &args) override;
 };
 

@@ -35,10 +35,10 @@ ModuleResizeHandle::ModuleResizeHandle()
 
 NVGcolor ModuleResizeHandle::HandleOverlay()
 {
-    if (isColorVisible(module->panel_color)) {
+    if (isColorVisible(module->main_color)) {
         bool hi_contrast = Theme::HighContrast == module->theme;
         NVGcolor overlay;
-        auto L = LuminanceLinear(module->panel_color);
+        auto L = LuminanceLinear(module->main_color);
         if (L < 0.5f) {
             overlay = hi_contrast ? RampGray(G_WHITE) : COLOR_BRAND_HI;
         } else {

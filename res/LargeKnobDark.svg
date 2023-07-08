@@ -9,6 +9,8 @@ xmlns:svg="http://www.w3.org/2000/svg">
    fill="none" stroke="#202020" stroke-width="1.75" />
 <path fill="#cedcf2"
    d="m 13.25,1.8 0,11 h 1.5 l 0,-11 z" />
+<circle fill="none" stroke="#202020"  stroke-width="1.25"
+   cx="14" cy="14" r=".9" />
 <path opacity="0.8" fill="#cedcf2"
    d="m 13,.2 2,0 -.2,1.75 h -1.6 z" />
 </svg>

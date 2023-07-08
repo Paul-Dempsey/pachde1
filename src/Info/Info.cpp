@@ -89,8 +89,8 @@ struct InfoTheme : ThemeBase {
     void setHorizontalAlignment(HAlign h) {
         horizontal_alignment = h;
     }
-    NVGcolor getDisplayPanelColor() {
-        return isColorTransparent(panel_color) ? theme_panel_color : panel_color;
+    NVGcolor getDisplayMainColor() {
+        return isColorTransparent(main_color) ? theme_panel_color : main_color;
     }
     NVGcolor getDisplayTextBackground() {
         return isColorTransparent(user_text_background) ? theme_text_background : user_text_background;
@@ -164,8 +164,8 @@ struct InfoTheme : ThemeBase {
     Theme getTheme() override { 
         return module_theme ? module_theme->getTheme() : ThemeBase::getTheme();
     }
-    NVGcolor getPanelColor() override {
-        return module_theme ? module_theme->getPanelColor() : ThemeBase::getPanelColor();
+    NVGcolor getMainColor() override {
+        return module_theme ? module_theme->getMainColor() : ThemeBase::getMainColor();
     }
     bool hasScrews() override {
         return module_theme ? module_theme->hasScrews() : ThemeBase::hasScrews();
@@ -320,7 +320,7 @@ struct InfoPanel : Widget
     void setCopperTarget(CopperTarget target) { copper_target = target; }
 
     void fetchColors() {
-        panel = info_theme->getDisplayPanelColor();
+        panel = info_theme->getDisplayMainColor();
         background = info_theme->getDisplayTextBackground();
         text_color = info_theme->getDisplayTextColor();
         if (module) {
@@ -346,7 +346,7 @@ struct InfoPanel : Widget
                     panel = right;
                 }
                 if (set_panel) {
-                    info_theme->setPanelColor(panel);
+                    info_theme->setMainColor(panel);
                 }
             }
         }
@@ -501,7 +501,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
     }
 
     Theme getTheme() override { return info_theme->getTheme(); }
-    NVGcolor getPanelColor() override { return info_theme->getPanelColor(); }
+    NVGcolor getMainColor() override { return info_theme->getMainColor(); }
     bool hasScrews() override { return info_theme->hasScrews(); }
 
     void setScrews(bool screws) override {
@@ -517,36 +517,36 @@ struct InfoModuleWidget : ModuleWidget, ITheme
     void addScrews() {
         if (HaveScrewChildren(this)) return;
 
-        bool colored = isColorVisible(info_theme->panel_color);
+        bool colored = isColorVisible(info_theme->main_color);
         auto theme = info_theme->theme;
         
         // left screws
         auto screw = new ScrewCap(theme);
         screw->box.pos = Vec(0, 0);
-        if (colored) screw->setPanelColor(info_theme->panel_color);
+        if (colored) screw->setMainColor(info_theme->main_color);
         addChild(screw);
 
         screw = new ScrewCap(theme);
         screw->box.pos = Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
-        if (colored) screw->setPanelColor(info_theme->panel_color);
+        if (colored) screw->setMainColor(info_theme->main_color);
         addChild(screw);
 
         // right screws
         screw = new ScrewCap(theme);
         screw->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, 0);
-        if (colored) screw->setPanelColor(info_theme->panel_color);
+        if (colored) screw->setMainColor(info_theme->main_color);
         addChild(screw);
         topRightScrew = screw;
 
         screw = new ScrewCap(theme);
         screw->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
-        if (colored) screw->setPanelColor(info_theme->panel_color);
+        if (colored) screw->setMainColor(info_theme->main_color);
         addChild(screw);
         bottomRightScrew = screw;
     }
 
-    void setPanelColor(NVGcolor color) override {
-        info_theme->setPanelColor(color);
+    void setMainColor(NVGcolor color) override {
+        info_theme->setMainColor(color);
         SetChildrenThemeColor(this, color);
     }
 
@@ -570,8 +570,8 @@ struct InfoModuleWidget : ModuleWidget, ITheme
 
         } else {
             SetChildrenTheme(this, theme);
-            if (isColorVisible(info_theme->panel_color)) {
-                SetChildrenThemeColor(this, info_theme->panel_color);
+            if (isColorVisible(info_theme->main_color)) {
+                SetChildrenThemeColor(this, info_theme->main_color);
             }
         }
     }

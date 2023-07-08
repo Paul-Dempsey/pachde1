@@ -13,6 +13,7 @@ SOURCES += src/pic_button.cpp
 SOURCES += src/play_pause.cpp
 SOURCES += src/port.cpp
 SOURCES += src/switch.cpp
+SOURCES += src/small_push.cpp
 SOURCES += src/theme.cpp
 
 # Blank module

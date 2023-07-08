@@ -8,11 +8,11 @@ namespace pachde {
 struct ITheme {
     virtual ~ITheme() {}
     virtual void setTheme(Theme theme) {}
-    virtual void setPanelColor(NVGcolor color) {}
+    virtual void setMainColor(NVGcolor color) {}
     virtual void setScrews(bool showScrews) {}
 
     virtual Theme getTheme() = 0;
-    virtual NVGcolor getPanelColor() = 0;
+    virtual NVGcolor getMainColor() = 0;
     virtual bool hasScrews() = 0;
 };
 
@@ -23,26 +23,26 @@ struct ThemeLite: ITheme
     Theme theme = DefaultTheme;
     void setTheme(Theme theme) override { this->theme = theme; };
     Theme getTheme() override { return theme; }
-    NVGcolor getPanelColor() override { return COLOR_NONE; }
+    NVGcolor getMainColor() override { return COLOR_NONE; }
     bool hasScrews() override { return false; }
 };
 
 struct ThemeBase: ITheme
 {
     Theme theme = DefaultTheme;
-    NVGcolor panel_color = COLOR_NONE;
+    NVGcolor main_color = COLOR_NONE;
     bool screws = false;
 
     virtual ~ThemeBase() {}
 
-    bool isColorOverride() { return isColorVisible(panel_color); }
+    bool isColorOverride() { return isColorVisible(main_color); }
 
     void setTheme(Theme theme) override { this->theme = theme; };
-    void setPanelColor(NVGcolor color) override { panel_color = color; };
+    void setMainColor(NVGcolor color) override { main_color = color; };
     void setScrews(bool showScrews) override { screws = showScrews;};
 
     Theme getTheme() override { return ConcreteTheme(theme); };
-    NVGcolor getPanelColor() override { return panel_color; };
+    NVGcolor getMainColor() override { return main_color; };
     bool hasScrews() override { return screws; }
 
     virtual json_t* save(json_t* root);

@@ -14,7 +14,6 @@ namespace pachde {
 using namespace rack;
 using namespace traversal;
 
-
 enum VRange {
     UNIPOLAR = 0,
     BIPOLAR = 1
@@ -24,7 +23,7 @@ enum ColorComponent {
     NUM_COMPONENTS
 };
 
-inline const char * ComponentInitial(ColorComponent co) {
+inline const char * ComponentShortName(ColorComponent co) {
     switch (co) {
         default:
         case ColorComponent::LIGHTNESS: return "L";
@@ -41,12 +40,6 @@ inline const char * ComponentInitial(ColorComponent co) {
     }
 }
 
-// struct GateKeeper
-// {
-//     rack::dsp::PulseGenerator pulse;
-//     LookbackBuffer<float, 6> buf;
-// };
-
 struct Imagine : ThemeModule
 {
     enum ParamIds {
@@ -62,6 +55,9 @@ struct Imagine : ThemeModule
     };
     enum InputIds {
         PLAY_INPUT,
+        RESET_POS_INPUT,
+        X_INPUT,
+        Y_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
@@ -80,6 +76,7 @@ struct Imagine : ThemeModule
     Imagine();
 
     std::atomic<bool> running;
+    Vec reset_pos = Vec(-1.f, -1.f);
     ITraversal * traversal = nullptr;
     Traversal traversal_id = Traversal::SCANLINE;
     ColorComponent color_component = ColorComponent::LIGHTNESS;
@@ -90,26 +87,39 @@ struct Imagine : ThemeModule
 #endif
     ControlRateTrigger control_rate;
 
-    rack::dsp::SchmittTrigger smitty;
+    rack::dsp::SchmittTrigger play_trigger;
+    rack::dsp::SchmittTrigger resetpos_trigger;
     rack::dsp::PulseGenerator trigger_pulse;
     LookbackBuffer<float, 6> lookback;
     bool gate_high = false;
     float gt = 0;
+
+    bool labels = true;
     bool bright_image = false;
     Pic image;
     std::string pic_folder;
+    uint64_t image_size = 0.f;
 
     Pic* getImage() { return &image; }
 
     void play() { running = true;}
     void pause() { running = false; }
     bool setPlaying(bool play) {
-        smitty.reset();
+        play_trigger.reset();
         bool previous = running;
         running = play;
         return previous;
     }
     bool isPlaying() { return running; }
+
+    const Vec & getResetPos() { return reset_pos; }
+    void setResetPos(Vec pos) {
+        resetpos_trigger.reset();
+        reset_pos = pos;
+    }
+    void setResetPos(float x, float y) {
+        reset_pos = Vec(x, y);
+    }
 
     float getSpeed() {
         return getParam(SPEED_PARAM).getValue() * getParam(SPEED_MULT_PARAM).getValue();
@@ -147,6 +157,9 @@ struct Imagine : ThemeModule
             case ColorComponent::ALPHA: return color.a;
         }
     }
+    bool isXYInput() {
+        return inputs[X_INPUT].isConnected() && inputs[Y_INPUT].isConnected();
+    }
     bool isPixelOutput() {
         return 0 < outputs[VOLTAGE_OUT].isConnected()
             + outputs[GATE_OUT].isConnected()
@@ -156,6 +169,8 @@ struct Imagine : ThemeModule
             + outputs[BLUE_OUT].isConnected();
     }
     bool loadImageDialog();
+    bool loadImage(std::string path);
+    bool reloadImage();
 
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;
@@ -170,6 +185,9 @@ struct ImaginePanel : Widget
     Imagine* module = nullptr;
 
     ImaginePanel(Imagine* mod, Vec size);
+    enum TraversalDrawOptions { Frame = 1, Text = 2, Both = 3 };
+    void drawTraversal(const DrawArgs &args, TraversalDrawOptions options);
+    void drawLayer(const DrawArgs &args, int layer) override;
     void draw(const DrawArgs &args) override;
 };
 
@@ -178,8 +196,9 @@ struct ImagineUi : ModuleWidget, ThemeBase
     ImaginePanel *panel = nullptr;
     Imagine* imagine = nullptr;
     PlayPauseButton * playButton = nullptr;
-    ImagineUi(Imagine *module);
 
+    ImagineUi(Imagine *module);
+    void resetHeadPosition(bool ctrl, bool shift);
     void makeUi(Imagine* module, Theme theme);
     void setTheme(Theme theme) override;
     void setScrews(bool screws) override;

@@ -54,6 +54,24 @@ inline const NVGcolor RampGray(Ramp g)
 #define COLOR_GREEN_LO nvgRGB(0x39,0x73,0x3a)  // #39733a
 #define COLOR_GREEN_HI nvgRGB(0xbd,0xfc,0xbd)  // #bdfcbd
 
+// PORT_* colors are HSL 30-degree hue increments
+#define PORT_RED     nvgHSL(0.f, 0.6f, 0.5f)
+#define PORT_ORANGE  nvgHSL(30.f/360.f, 0.80f, 0.5f)
+#define PORT_YELLOW  nvgHSL(60.f/360.f, 0.65f, 0.5f)
+#define PORT_LIME    nvgHSL(90.f/360.f, 0.60f, 0.5f)
+#define PORT_GREEN   nvgHSL(120.f/360.f, 0.5f, 0.5f)
+#define PORT_GRASS   nvgHSL(150.f/360.f, 0.5f, 0.5f)
+#define PORT_CYAN    nvgHSL(180.f/360.f, 0.5f, 0.5f)
+#define PORT_CORN    nvgHSL(210.f/360.f, 0.5f, 0.55f)
+#define PORT_BLUE    nvgHSL(240.f/360.f, 0.5f, 0.55f)
+#define PORT_VIOLET  nvgHSL(270.f/360.f, 0.5f, 0.5f)
+#define PORT_MAGENTA nvgHSL(300.f/360.f, 0.5f, 0.5f)
+#define PORT_PINK    nvgHSL(330.f/360.f, 0.65f, 0.65f)
+#define PORT_DEFAULT nvgHSL(210.f/360.f, 0.5f, 0.65f)
+
+#define PORT_LIGHT_LIME   nvgHSL(90.f/360.f, 0.75f, 0.75f)
+#define PORT_LIGHT_VIOLET nvgHSL(270.f/360.f, 0.75f, 0.75f)
+
 #define IS_SAME_COLOR(p,q) (((p).r == (q).r) && ((p).g == (q).g) && ((p).b == (q).b) && ((p).a == (q).a))
 inline NVGcolor Overlay(NVGcolor color) { return nvgTransRGBAf(color, 0.2f); }
 inline NVGcolor Gray(float L) {

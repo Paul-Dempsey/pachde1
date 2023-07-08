@@ -27,6 +27,31 @@ void PicWidget::onDragMove(const event::DragMove& e)
     updateClient();
 }
 
+bool isImage(std::string path)
+{
+    auto ext = system::getExtension(path);
+    if (ext.empty()) return false;
+    if (ext == ".png") return true;
+    if (ext == ".jpg") return true;
+    if (ext == ".gif") return true;
+    if (ext == ".jpeg") return true;
+    if (ext == ".PNG") return true;
+    if (ext == ".JPG") return true;
+    if (ext == ".GIF") return true;
+    if (ext == ".JPEG") return true;
+    return false;
+}
+
+void PicWidget::onPathDrop(const PathDropEvent& e)
+{
+    if (!module) return;
+    for (auto path: e.paths) {
+        if (isImage(path)) {
+            module->loadImage(path);
+        }
+    }
+}
+
 void PicWidget::updateClient()
 {
     if (!module) return;
@@ -180,10 +205,10 @@ void PicWidget::drawLayer(const DrawArgs &args, int layer)
 
 void PicWidget::draw(const DrawArgs &args)
 {
+    OpaqueWidget::draw(args);
     if (!module || !module->bright_image) {
         drawPic(args);
     }
-    OpaqueWidget::draw(args);
 }
 
 }

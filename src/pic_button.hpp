@@ -16,6 +16,10 @@ struct PicButton: OpaqueWidget, ThemeLite
     bool pressed = false;
     std::function<void(void)> clickHandler;
 
+    virtual ~PicButton() {
+        if (tip) delete tip;
+    }
+
     PicButton(Theme theme);
 
     void setTheme(Theme theme) override;

@@ -73,10 +73,10 @@ NVGcolor ThemeTextColor(Theme theme)
         break;
 
     case Theme::Dark:
-        return GrayRamp[G_85];
+        return GrayRamp[G_65];
 
     case Theme::HighContrast:
-        return GrayRamp[G_95];
+        return GrayRamp[G_90];
         break;
     };
 }
@@ -167,11 +167,21 @@ void Line(NVGcontext * vg, float x1, float y1, float x2, float y2, NVGcolor colo
 void CircleGradient(NVGcontext * vg, float cx, float cy, float r, NVGcolor top, NVGcolor bottom)
 {
     nvgBeginPath(vg);
-    auto gradient = nvgLinearGradient(vg, cx, 0.f, cx, 2.f * r, top, bottom);
+    auto gradient = nvgLinearGradient(vg, cx, cy - r, cx, cy + r, top, bottom);
     nvgFillPaint(vg, gradient);
     nvgCircle(vg, cx, cy, r);
     nvgFill(vg);
 }
+
+// void CircleGradient(NVGcontext * vg, float cx, float cy, float r, float dy1, float dy2, NVGcolor top, NVGcolor bottom)
+// {
+//     nvgBeginPath(vg);
+//     auto gradient = nvgLinearGradient(vg, cx, 0.f + dy1, cx, 2.f * r + dy2, top, bottom);
+//     nvgFillPaint(vg, gradient);
+//     nvgCircle(vg, cx, cy, r);
+//     nvgFill(vg);
+// }
+
 void Circle(NVGcontext * vg, float cx, float cy, float r, NVGcolor fill)
 {
     nvgBeginPath(vg);

@@ -5,11 +5,11 @@
 using namespace rack;
 namespace pachde {
 
+// static NVGcolor screen = nvgRGBAf(0.95f, 0.95f, 0.95f, 0.4f);
+// static NVGcolor shade = nvgRGBAf(0.,0.,0.,0.4f);
 struct PlayPauseButton: Switch, ThemeLite
 {
-    NVGcolor collar, edge, face, symbol;
-    NVGcolor screen = nvgRGBAf(0.9f,0.9f,0.9f,0.3f);
-    NVGcolor shade = nvgRGBAf(0.,0.,0.,0.3f);
+    NVGcolor collar, edge, face, face2, symbol;
     bool pressed = false;
     std::function<void(void)> clickHandler;
 

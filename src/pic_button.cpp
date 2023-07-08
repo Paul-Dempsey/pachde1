@@ -2,10 +2,11 @@
 
 namespace pachde {
 
+
 PicButton::PicButton(Theme theme)
 {
     tip = nullptr;
-    box.size.x = box.size.y = 15.f;
+    box.size.x = box.size.y = 24.f;
     line.a = 0.f; // force theme init
     setTheme(theme);
 }
@@ -16,8 +17,8 @@ void PicButton::setTheme(Theme theme)
         return;
     }
     ThemeLite::setTheme(theme);
-    gradient_stop_y = 13.5;
-    gradient_stop_x = 7.5;
+    gradient_stop_y = 17.5;
+    gradient_stop_x = 10.f;
     switch (theme) {
         default:
         case Theme::Unset:
@@ -68,22 +69,28 @@ void PicButton::draw(const DrawArgs &args) {
     }
 
     nvgBeginPath(vg);
-    nvgRoundedRect(vg, 0.75, 0.75, 13.5, 13.5, 2.25);
-    auto grad = nvgLinearGradient(vg, 7.5, 1., gradient_stop_x, gradient_stop_y, sky1, sky2);
+    nvgRoundedRect(vg, 0.75, 0.75, box.size.x - 1.5f, box.size.y - 1.5f, 2.25);
+    auto grad = nvgLinearGradient(vg, box.size.x / 2.f, 1., gradient_stop_x, gradient_stop_y, sky1, sky2);
     nvgFillPaint(vg, grad);
     nvgFill(vg);
 
-    RoundBoxRect(vg, 0.75, 0.75, 13.5, 13.5, line, 2.25);
-
+    auto horizon = box.size.y - box.size.y *.26f;
+    auto peak_x = box.size.x * .24f;
+    auto peak_y = box.size.y * .45f;
     nvgBeginPath(vg);
-    nvgMoveTo(vg, 1.5, 13.5);
-    nvgLineTo(vg, 6., 8.);
-    nvgLineTo(vg, 13.5, 13.5);
+    nvgMoveTo(vg, 1.f, box.size.y - 1.f);
+    nvgLineTo(vg, 1.f, horizon);
+    nvgLineTo(vg, peak_x, peak_y);
+    horizon += box.size.y *.05;
+    nvgLineTo(vg, box.size.x - 1.f, horizon);
+    nvgLineTo(vg, box.size.x - 1.f, box.size.y - 1.f);
     nvgFillColor(vg, mountain);
     nvgFill(vg);
 
+    RoundBoxRect(vg, 0.75, 0.75, box.size.x - 1.5f, box.size.y - 1.5f, line, 2.25);
+
     nvgBeginPath(vg);
-    nvgCircle(vg, 10.2, 5.25, 1.5);
+    nvgCircle(vg, box.size.x - (box.size.x * 0.3f), (box.size.y * .3f), box.size.y / 10.f);
     nvgFillColor(vg, moon);
     nvgFill(vg);
 
@@ -131,4 +138,5 @@ void PicButton::destroyTooltip() {
     delete tip;
     tip = nullptr;
 }
+
 }

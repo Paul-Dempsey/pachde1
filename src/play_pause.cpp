@@ -4,7 +4,7 @@ namespace pachde {
 
 PlayPauseButton::PlayPauseButton(Theme theme)
 {
-    box.size.x = box.size.y = 20.f;
+    box.size.x = box.size.y = 24.f;
     setTheme(theme);
 }
 
@@ -13,6 +13,7 @@ void PlayPauseButton::setTheme(Theme theme)
     collar = RampGray(G_35);
     edge = RampGray(G_20);
     face = COLOR_BRAND;
+    face2 = COLOR_BRAND_HI;
     symbol = RampGray(G_WHITE);
 
     switch (theme)
@@ -21,46 +22,54 @@ void PlayPauseButton::setTheme(Theme theme)
         case Theme::Unset:
         case Theme::Light:
             collar = RampGray(G_50);
-            edge = RampGray(G_65);
+            edge = RampGray(G_75);
             break;
         case Theme::Dark:
             face = COLOR_BRAND_LO;
+            face2 = COLOR_BRAND;
             break;
         case Theme::HighContrast:
-            collar = RampGray(G_05);
-            edge = RampGray(G_85);
-            face = RampGray(G_20);
+            collar = RampGray(G_WHITE);
+            edge = RampGray(G_05);
+            face = RampGray(G_15);
+            face2 = RampGray(G_35);
             break;
     }
-
 }
 
 void PlayPauseButton::draw(const DrawArgs &args)
 {
     auto vg = args.vg;
-    Circle(vg, 10.f, 10.f, 10.f,  collar);
-    Circle(vg, 10.f, 10.f, 8.75, edge);
-    Circle(vg, 10.f, 10.f, 7.5,  face);
+    auto m = box.size.x / 2.f;
+    auto u = box.size.x / 4.f;
+    auto q = box.size.x / 8.f;
+    auto sw = m/8.f;
+
+    Circle(vg, m, m, m,  collar);
+    Circle(vg, m, m, m - .8f, edge);
 
     if (pressed) {
-        CircleGradient(vg, 10.f, 10.f, 7.5, shade, screen);
+        CircleGradient(vg, m, m, .75f * m, face, face2);
         nvgBeginPath(vg);
-        nvgMoveTo(vg, 7.f, 5.f);
-        nvgLineTo(vg, 15.f, 10.f);
-        nvgLineTo(vg, 7.f, 15.f);
+        nvgMoveTo(vg, u + q, u);
+        nvgLineTo(vg, box.size.x - u, m);
+        nvgLineTo(vg, u + q, box.size.y - u);
         nvgFillColor(vg, symbol);
         nvgFill(vg);
     } else {
-        CircleGradient(vg, 10.f, 10.f, 7.5, screen, shade);
-        nvgStrokeWidth(vg, 2.f);
+        sw *= 1.5f;
+        CircleGradient(vg, m, m, .75f * m, face2, face);
+        nvgStrokeWidth(vg, sw);
         nvgStrokeColor(vg, symbol);
+
         nvgBeginPath(vg);
-        nvgMoveTo(vg, 8.25f, 5.f);
-        nvgLineTo(vg, 8.25f, 15.f);
+        nvgMoveTo(vg, m - sw, u);
+        nvgLineTo(vg, m - sw, box.size.y - u);
         nvgStroke(vg);
+
         nvgBeginPath(vg);
-        nvgMoveTo(vg, 11.75f, 5.f);
-        nvgLineTo(vg, 11.75f, 15.f);
+        nvgMoveTo(vg, m + sw, u);
+        nvgLineTo(vg, m + sw, box.size.y - u);
         nvgStroke(vg);
     }
 }

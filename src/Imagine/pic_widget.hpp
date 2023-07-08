@@ -5,25 +5,6 @@
 using namespace rack;
 namespace pachde {
 
-// TPicProvider has
-// Pic * getPic()
-// bool isBrightPic() // to draw on layer 1
-
-// this was a start at an inner widget to make child of framebuffer, but 
-// it's not clear how to use a framebuffer to render to layer 1.
-
-// template<typename TPicProvider>
-// struct SimplePicture : OpaqueWidget {
-
-//     SimplePicture() {}
-
-//     void drawPic(const DrawArgs &args) {
-//         auto vg = args.vg;
-
-//     }
-
-// };
-
 struct PicWidget : OpaqueWidget {
     Imagine *module = nullptr;
     Vec mousepos;
@@ -57,7 +38,7 @@ struct PicWidget : OpaqueWidget {
 
     void onButton(const event::Button& e) override;
     void onDragMove(const event::DragMove& e) override;
-
+    void onPathDrop(const PathDropEvent& e) override;
     void updateClient();
 
     void drawPic(const DrawArgs &args);

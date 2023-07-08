@@ -2,7 +2,8 @@
 
 namespace pachde {
 
-void ColorPort::setTheme(Theme theme) {
+void ColorPort::setTheme(Theme theme)
+{
     ThemeLite::setTheme(theme);
 
     sleeve = RampGray(G_20);
@@ -35,7 +36,8 @@ void ColorPort::setTheme(Theme theme) {
 
 }
 
-void ColorPort::draw(const DrawArgs& args) {
+void ColorPort::draw(const DrawArgs& args)
+{
     auto vg = args.vg;
     float center = 11.f;
     CircleGradient(vg, center, center, 11.75f, collar1, collar2);

@@ -6,7 +6,7 @@ void ThemePanel::draw(const DrawArgs &args)
 {
     Widget::draw(args);
 
-    auto color = theme_holder->getPanelColor();
+    auto color = theme_holder->getMainColor();
     if (isColorTransparent(color))
     {
         color = PanelBackground(theme_holder->getTheme());
@@ -43,7 +43,7 @@ void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top)
     for (Widget* child : widget->children) {
         auto change = dynamic_cast<ITheme*>(child);
         if (change) {
-            change->setPanelColor(color);
+            change->setMainColor(color);
         }
         if (!child->children.empty()) {
             SetChildrenThemeColor(child, color, false);
@@ -62,7 +62,7 @@ void SetScrewColors(Widget* widget, NVGcolor color, WhichScrew which) {
     for (Widget * child: widget->children) {
         auto screw = dynamic_cast<ScrewCap*>(child);
         if (screw && isApplicable(screw->which, which)) {
-            screw->setPanelColor(color);
+            screw->setMainColor(color);
         }
     }    
 }
@@ -186,7 +186,7 @@ void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isC
             {
                 MenuTextField *editField = new MenuTextField();
                 editField->box.size.x = 100;
-                auto color = it->getPanelColor();
+                auto color = it->getMainColor();
                 if (isColorVisible(color)) {
                     editField->setText(rack::color::toHexString(color));
                 } else {
@@ -197,7 +197,7 @@ void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isC
                     if (!text.empty() && text[0] == '#') {
                         color = rack::color::fromHexString(text);
                     }
-                    it->setPanelColor(color);
+                    it->setMainColor(color);
                 };
                 menu->addChild(editField);
             }));

@@ -161,7 +161,14 @@ void CopperModule::process(const ProcessArgs& args)
         v = inputs[H_INPUT].getVoltage();
         h_uni = detectUnipolar(h_uni, v);
         if (h_uni) { v -= 5.f; }
-        h = rack::math::clamp(hue + v * .1f);
+        v = hue + v * .1f;
+        // wrap if out of range
+        if (v < 0) {
+            v = 1.f - v;
+        } else if (v > 1.0f) {
+            v = v - 1.f;
+        }
+        h = rack::math::clamp(v);
     } else {
         h = hue;
     }

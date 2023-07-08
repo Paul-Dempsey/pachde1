@@ -28,8 +28,8 @@ struct LogoPort : PortWidget, ThemeBase
             case Theme::HighContrast:
                 break;
         }
-        if (isColorVisible(panel_color)) {
-            auto lum = LuminanceLinear(panel_color);
+        if (isColorVisible(main_color)) {
+            auto lum = LuminanceLinear(main_color);
             if (lum <= 0.5f) {
                 logo = Gray(lum + 0.5);
             } else {
@@ -106,9 +106,9 @@ struct BlankModuleWidget : ModuleWidget, ITheme
     void drawLayer(const DrawArgs &args, int layer) override;
     void appendContextMenu(Menu *menu) override;
     void setTheme(Theme theme) override;
-    void setPanelColor(NVGcolor color) override;
+    void setMainColor(NVGcolor color) override;
     void setScrews(bool showScrews) override;
-    NVGcolor getPanelColor() override { return getITheme()->getPanelColor(); }
+    NVGcolor getMainColor() override { return getITheme()->getMainColor(); }
     Theme getTheme() override { return getITheme()->getTheme(); }
     bool hasScrews() override { return getITheme()->hasScrews(); }
     void addResizeHandles();

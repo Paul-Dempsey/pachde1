@@ -46,7 +46,7 @@ template <class TColorPortWidget>
 TColorPortWidget *createColorInput(Theme theme, NVGcolor color, math::Vec pos, engine::Module *module, int id)
 {
     TColorPortWidget *o = new TColorPortWidget(theme);
-    o->setPanelColor(color);
+    o->setMainColor(color);
     o->box.pos = pos;
     o->app::PortWidget::module = module;
     o->app::PortWidget::type = engine::Port::INPUT;
@@ -85,7 +85,7 @@ template <class TColorPortWidget>
 TColorPortWidget *createColorOutput(Theme theme, NVGcolor color, math::Vec pos, engine::Module *module, int outputId)
 {
     TColorPortWidget *o = new TColorPortWidget(theme);
-    o->setPanelColor(color);
+    o->setMainColor(color);
     o->box.pos = pos;
     o->app::PortWidget::module = module;
     o->app::PortWidget::type = engine::Port::OUTPUT;
