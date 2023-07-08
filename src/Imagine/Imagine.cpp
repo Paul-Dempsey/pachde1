@@ -8,6 +8,7 @@
 namespace pachde {
 
 Imagine::Imagine() {
+    setPlaying(false);
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, 0);
 
     configParam(SLEW_PARAM, 0.f, 1.f, 0.f,

@@ -4,6 +4,7 @@ namespace pachde {
 
 PlayPauseButton::PlayPauseButton(Theme theme)
 {
+    pressed = false;
     box.size.x = box.size.y = 24.f;
     setTheme(theme);
 }
