@@ -22,6 +22,16 @@ A Minimalist resizable patch notes panel.
 | Text background color  | A standard Rack #_hex_ code for the color of the text|
 | Copper | Chose what colors the Copper extender module sets. Choose from **Panel** or **Interior**. When set to **Interior**, choose a Background color from a Copper on the left, and Text color from a Copper on the right. |
 
+## Fonts
+
+Any Truetype font can be used. There are thousands of free fonts available for download on the web.
+[Google Fonts](https://fonts.google.com/) has some nice ones.
+
+On Windows, it can be difficult to browse to a font that is installed on your system:
+the file browser doesn't show the actual .ttf files, but there's a trick.
+You can get to the actual file path you need from a regular Windows command prompt.
+Start a command prompt and type `dir /S /B c:\windows\fonts\*.ttf`, copy the full path of file,
+then paste it into the Font chooser dialog.
 
 ## Extender
 

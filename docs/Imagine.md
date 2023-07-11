@@ -1,6 +1,6 @@
-## Imagine
+# Imagine
 
-An eccentric source of volage, gates, and triggers using an image.
+An unique and perhaps eccentric source of volage, gates, and triggers using an image.
 You can think of it as a sequencer or image sampler.
 
 ![Imagine with 3 variations of theme and settings](Imagine-sample.png)
@@ -16,53 +16,94 @@ Click on a knob to increment the value by a useful unit.
 Ctrl+Click to decrement (Cmd+Click on Mac).
 Hold down Shift for 10x the un-shifted amount.
 
-- Open an image by clicking the Picture button next to the Play/Pause button.
+- Select an image using the **Picture** button, or drag and drop the image file onto the image area.
 
-- The violet input port next to the Play/Pause button toggles between play and pause when it receives a trigger.
+- Start and stop the read head with the **Play/Pause** button, or send a trigger to the violet **pp** input port.
+
+- Press the **reset** button, or send a triggger to the **r** input port to reset the read head to it's default position.
+  Shift+Click to set the default psoition to the current position.
 
 - Adjust the speed of the read head with the **speed** knob.
-The next **x?** knob multiplies the **speed** by **x1** - **x10** times.
+  The **x?** knob next to speed multiplies the speed by **x1** - **x10** times.
 
-- If the output is janky, smooth it out with a higher **slew** rate.
+  While there is a lot of room to go very fast, some of the best results may be obtained by slowing it down to speeds less than one.
+  Right click to enter precise small values.
 
-- Choose the color component at the read to output to **v**oltage, and analyze for **g**ates and **t**riggers.
-  The knob has a dynamic display that shows the current color component:
+- If the output is too janky for you, smooth it out with a higher **slew** rate.
+
+- Choose the color component from the read head to output to **v**oltage and analyze for **g**ates and **t**riggers.
+  The knob has a dynamic label that shows the selected color component:
 
   | Component | Description |
   | -- | -- |
-  | **L** | Luminance |
-  | **S** | Saturation |
+  | **L** | Lightness |
+  | **Lu** | Luminance |
+  | **S** | Saturation (chroma) |
   | **H** | Hue |
+  | **min** | Minumum of R, G, B |
+  | **max** | Maximum of R, G, B |
+  | **ave** | Average of R, G, B |
   | **R** | Red component |
   | **G** | Green component |
   | **B** | Blue component |
   | **a** | Alpha (transparancy) |
 
   Alpha isn't useful for most images.
-  Only PNGs with transparency will have an effect.
-  Everything else will ouput a steady maximum voltage.
+  Only PNGs with transparency will have an effect:
+  everything else will ouput a steady maximum voltage for Alpha.
+
+- Set the threshhold for gates and triggers with the **g/t** knob. Low values are very sensitive.
+  If you're getting too many too fast, set a higher threshhold or slow the read head down.
 
 - Choose a **path** to move through the image:
 
   | Path | Description |
   | -- | -- |
-  | **Scanline** | Simple left-to right, top to bottom scan. |
-  | **Bounce**   | Travel in straight lines and bounce at the edges. Bounces are randomly very slightly askew from a perfect reflection. |
-  | **Vinyl**    | (my favorite) Spin in like a record (baby), then spin back out. |
+  | **Scanline** | Simple left-to right, top to bottom scan, like a television or video display. |
+  | **Bounce**   | Travel in straight lines and bounce at the edges. Bounces are randomly very slightly askew from a perfect reflection, so you don't get stuck in the same orbit. |
+  | **Vinyl**    | (my favorite) Spin in like a record (baby), spin it right round, then spin back out. |
   | **Wander**   | Just wander around the image to see what you can find. |
-  | **XY Pad**   | No automatic movement of the read head. Reads from where you click. Drag the mouse to scrub through the image. With a carefully prepared image, you can get precise voltages for controlling a patch. |
+  | **XY Pad**   | No automatic movement of the read head. Reads from where you click. Drag the mouse to scrub. With a carefully prepared image, you can get specific voltages for controlling a patch. |
+
+  The selected path is shown in the backlit text display in the middle of the panel.
 
   To use Imagine as an plain XY Pad, set **path** to **XY Pad** without an image.
   To close an image after you've opened one, cancel out of the **Open image** dialog.
 
-- Start and stop the read head with the **Play/Pause** button.
-
-- Select an image using the **Picture** button.
-
 - Imagine has a variety of outputs.
-Raw unipolar outputs for **x**, **y**, and pixel **R**, **G**, and **B** values are on the left,
-and calculated outputs for **v**oltage **g**ate and **t**rigger to the right.
+Raw outputs for **x**, **y**, and unipolar pixel **R**, **G**, and **B** values are on the left,
+and computed outputs for **v**oltage **g**ate and **t**rigger to the right.
 
-- Choose polarity of voltages with the **p** switch.
-Switches calculated outputs between -5 to +5v (bipolar) and 0 to 10V (unipolar).
-Also sets the coordinate system for the plain XY Pad.
+  X/Y outputs from the X/Y Pad follow the Polarity (**p**) switch to select from Unipolar positive offsets from top-left to Bipolar Cartesian coordinates.
+
+- Choose polarity of voltage ouput with the  Polarity (**p**)  switch.
+Switches computed outputs between -5 to +5v (bipolar) and 0 to 10V (unipolar).
+Also sets the coordinate system for the XY Pad.
+
+## Inputs
+
+| Input | Description |
+| -- | -- |
+| x/y | The peach ports are unipolar CV control of read head position overrides the path, speed, and multiplier knowbs. |
+| r | The lime port is a unipolar trigger for read head reset to its default starting position. |
+| pp | The violet port is a unipolar trigger that toggles Play/Pause of the read head. |
+
+## Outputs
+
+| Output | Description |
+| -- | -- |
+| x/y | x/y coordinates of the read head. Follows the polarity of the Polarity switch. |
+| R, G, B | Raw Red, Green, and Blue components at the read head. |
+| v | Voltage of the selected color component. |
+| g | Gate based on analyzing v.  Use g/t to adjust sensitivity. |
+| t | Trigger based on analyzing v. Use g/t to adjust sensitivity. |
+
+## Menu options
+
+| Option | Description |
+| -- | -- |
+| Screws | Add or remove the screw caps. |
+| Theme | Choose Light, Dark, or High Contrast theme. |
+| Labels | Show labels on controls and jacks, or hide all text for clean look. |
+| Gold medallion | Show the gold **#d** brand medallion, or hide it if it's a bit too bold.   |
+| Bright image in a dark room | Keep the image bright when it's dark. |
