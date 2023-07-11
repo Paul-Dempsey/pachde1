@@ -54,8 +54,8 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     image->box.size = Vec(PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT);
     addChild(image);
 
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_ORANGE, Vec(33.f, CONTROL_ROW_2), module, Imagine::X_INPUT));
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_ORANGE, Vec(58.f, CONTROL_ROW_2), module, Imagine::Y_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(33.f, CONTROL_ROW_2), module, Imagine::X_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(58.f, CONTROL_ROW_2), module, Imagine::Y_INPUT));
 
     auto reset = createThemeWidgetCentered<SmallPush>(theme, Vec(215.f, CONTROL_ROW_2));
     if (module) {
@@ -111,8 +111,8 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
 
     addOutput(createThemeOutput<ColorPort>(theme, Vec(21.f, OUTPUT_ROW), module, Imagine::X_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(46.f, OUTPUT_ROW), module, Imagine::Y_OUT));
-    addOutput(createColorOutput<ColorPort>(theme, PORT_RED,   Vec(70.f, OUTPUT_ROW - 12.f), module, Imagine::RED_OUT));
-    addOutput(createColorOutput<ColorPort>(theme, PORT_GREEN, Vec(70.f, OUTPUT_ROW + 13.f), module, Imagine::GREEN_OUT));
+    addOutput(createColorOutput<ColorPort>(theme, PORT_RED,   Vec(71.f, OUTPUT_ROW - 12.f), module, Imagine::RED_OUT));
+    addOutput(createColorOutput<ColorPort>(theme, PORT_GREEN, Vec(71.f, OUTPUT_ROW + 13.f), module, Imagine::GREEN_OUT));
     addOutput(createColorOutput<ColorPort>(theme, PORT_BLUE,  Vec(95.f, OUTPUT_ROW), module, Imagine::BLUE_OUT));
 
     auto p = createThemeParam<Switch>(theme, Vec(190.f, OUTPUT_ROW + 1.5f), module, Imagine::POLARITY_PARAM);
@@ -165,6 +165,11 @@ void ImagineUi::appendContextMenu(Menu *menu)
         "Labels", "",
         [this]() { return imagine->labels; },
         [this]() { imagine->labels = !imagine->labels; }));
+    menu->addChild(createCheckMenuItem(
+        "Gold medallion", "",
+        [this]() { return imagine->medallion_fill; },
+        [this]() { imagine->medallion_fill = !imagine->medallion_fill; }));
+
     menu->addChild(createCheckMenuItem(
         "Bright image in a dark room", "",
         [this]() { return imagine->bright_image; },

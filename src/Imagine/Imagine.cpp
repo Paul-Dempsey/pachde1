@@ -17,9 +17,6 @@ Imagine::Imagine() {
     configParam(GT_PARAM, 0.f, 1.f, .3f,
         "Gate/Trigger spread threshhold");
 
-    // configParam(RESETPOS_PARAM, 0.f, 1.f, 0.f,
-    //     "Reset position");
-
     configSwitch(POLARITY_PARAM, 0.f, 1.0f, 0.0f,
         "Polarity", { "Unipolar (0 - 10v)", "Bipolar (-5 - 5v)" });
 
@@ -141,6 +138,7 @@ constexpr static const char * IMAGE_FOLDER_KEY = "image-folder";
 constexpr static const char * BRIGHT_IMAGE_KEY = "bright-image";
 constexpr static const char * POSX_KEY = "x-pos";
 constexpr static const char * POSY_KEY = "y-pos";
+constexpr static const char * MEDALLION_KEY = "medallion-fill";
 
 json_t *Imagine::dataToJson()
 {
@@ -155,6 +153,7 @@ json_t *Imagine::dataToJson()
         json_object_set_new(root, POSY_KEY, json_real(reset_pos.y));
     }
     json_object_set_new(root, BRIGHT_IMAGE_KEY, json_boolean(bright_image));
+    json_object_set_new(root, MEDALLION_KEY, json_boolean(medallion_fill));
 
     if (!pic_folder.empty()) {
         json_object_set_new(root, IMAGE_FOLDER_KEY, json_stringn(pic_folder.c_str(), pic_folder.size()));
@@ -187,6 +186,11 @@ void Imagine::dataFromJson(json_t *root)
         if (traversal) {
             traversal->set_position(reset_pos);
         }
+    }
+
+    j = json_object_get(root, MEDALLION_KEY);
+    if (j) {
+        medallion_fill = json_is_true(j);
     }
 
     j = json_object_get(root, BRIGHT_IMAGE_KEY);

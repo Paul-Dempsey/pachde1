@@ -55,7 +55,7 @@ void ImaginePanel::draw(const DrawArgs &args)
     // dividers
     auto gray = RampGray(G_60);
     const float divider_x = 134.f;
-    Line(vg, divider_x, OUTPUT_ROW - 5.f, divider_x, OUTPUT_ROW + 30.f, gray);
+    Line(vg, divider_x, OUTPUT_ROW - 5.f, divider_x, OUTPUT_ROW + 20.f, gray, 0.5f);
     Line(vg, 7.5f, OUTPUT_ROW - 5.f, PANEL_WIDTH - 7.5f, OUTPUT_ROW - 5.f, gray, 0.5f);
 
     drawTraversal(args, module ? TraversalDrawOptions::Frame : TraversalDrawOptions::Both);
@@ -94,7 +94,7 @@ void ImaginePanel::draw(const DrawArgs &args)
             nvgRotate(vg, nvgDegToRad(90.f));
             nvgFontSize(vg, 14.f);
             nvgFillColor(vg, gray);
-            CenterText(vg, 0.f, 8.f, "raw", nullptr);
+            CenterText(vg, 0, 8.f, "raw", nullptr);
             nvgRestore(vg);
 
             // raw outputs
@@ -110,9 +110,17 @@ void ImaginePanel::draw(const DrawArgs &args)
     }
 
     NVGcolor gold = nvgRGB(0xe6, 0xa2, 0x1a);
-    Circle(vg, PANEL_CENTER, RACK_GRID_HEIGHT + 7.5f, 30.f, gold);
+    if (!module || module->medallion_fill) {
+        Circle(vg, PANEL_CENTER, RACK_GRID_HEIGHT + 7.5f, 30.f, gold);
+    } else {
+        OpenCircle(vg, PANEL_CENTER, RACK_GRID_HEIGHT + 7.5f, 30.f, gold, .75f);
+    }
     Line(vg, PANEL_CENTER-30.f, RACK_GRID_HEIGHT-1.f, PANEL_CENTER+30.f, RACK_GRID_HEIGHT-1.f, panel_color, 2.f);
-    DrawLogo(vg, PANEL_CENTER-12.f, RACK_GRID_HEIGHT-ONE_HP-7.f, (Theme::HighContrast == theme) ? RampGray(G_05) : RampGray(G_20) , 1.5);
+    DrawLogo(vg, PANEL_CENTER-12.f, RACK_GRID_HEIGHT-ONE_HP-7.f, 
+        IsDarker(theme)
+            ? (!module || module->medallion_fill) ? RampGray(G_05) : gold
+            : RampGray(G_20),
+        1.5);
 
     Widget::draw(args);
     // nvgResetScissor(args.vg);

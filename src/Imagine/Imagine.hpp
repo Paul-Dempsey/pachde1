@@ -94,6 +94,7 @@ struct Imagine : ThemeModule
     bool gate_high = false;
     float gt = 0;
 
+    bool medallion_fill = true;
     bool labels = true;
     bool bright_image = false;
     Pic image;

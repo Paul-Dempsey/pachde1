@@ -69,8 +69,9 @@ inline const NVGcolor RampGray(Ramp g)
 #define PORT_PINK    nvgHSL(330.f/360.f, 0.65f, 0.65f)
 #define PORT_DEFAULT nvgHSL(210.f/360.f, 0.5f, 0.65f)
 
-#define PORT_LIGHT_LIME   nvgHSL(90.f/360.f, 0.75f, 0.75f)
-#define PORT_LIGHT_VIOLET nvgHSL(270.f/360.f, 0.75f, 0.75f)
+#define PORT_LIGHT_ORANGE  nvgHSL(30.f/360.f, 0.80f, 0.75f)
+#define PORT_LIGHT_LIME    nvgHSL(90.f/360.f, 0.75f, 0.75f)
+#define PORT_LIGHT_VIOLET  nvgHSL(270.f/360.f, 0.75f, 0.75f)
 
 #define IS_SAME_COLOR(p,q) (((p).r == (q).r) && ((p).g == (q).g) && ((p).b == (q).b) && ((p).a == (q).a))
 inline NVGcolor Overlay(NVGcolor color) { return nvgTransRGBAf(color, 0.2f); }
