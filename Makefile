@@ -36,7 +36,7 @@ SOURCES += src/Imagine/traversal.cpp
 DISTRIBUTABLES += res
 DISTRIBUTABLES += $(wildcard LICENSE*)
 
-# DISTRIBUTABLES += presets
+DISTRIBUTABLES += presets
 # DISTRIBUTABLES += selections
 
 # Include the VCV Rack plugin Makefile framework

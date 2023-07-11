@@ -1,0 +1,15 @@
+# IMAGE LICENSE
+
+All images included with the pachde-One plugin are original works
+by Paul Dempsey.
+
+Copyright (C) Paul Chase Dempsey
+
+They are free to use with the Imagine module, including published videos, audio,
+illustrations, or documents showing the Imagine module. Any audio or data generated 
+using the Imagine module with these images is free for any purpose.
+
+All other rights reserved.
+
+They may not be independently published or used in derived works without
+explicit permission.
