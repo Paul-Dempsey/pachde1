@@ -35,10 +35,10 @@ A color picker with modulation and color component outputs. Extends Null and Inf
 
 There's nothing special about building this module. There are no external dependencies, and no submodules.
 
-If you already have a Rack build environment set up, 
+If you already have a Rack build environment set up:
 
-1. clone the repo, 
-2. cd to the plugin folder, and 
-3. run `make`.
+1. clone the repo
+2. cd to the plugin folder
+3. run `make`
 
-   (or `make plugins`` from the Rack root if you have a full rack build).
+   Or `make plugins` from the Rack root if you have a full rack build.
