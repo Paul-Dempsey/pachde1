@@ -30,3 +30,15 @@ You can think of it as a sequencer or image sampler.
 A color picker with modulation and color component outputs. Extends Null and Info. [Copper user guide](docs/Copper.md)
 
 ![pachde logo](docs/Logo.svg)
+
+## Building
+
+There's nothing special about building this module. There are no external dependencies, and no submodules.
+
+If you already have a Rack build environment set up, 
+
+1. clone the repo, 
+2. cd to the plugin folder, and 
+3. run `make`.
+
+   (or `make plugins`` from the Rack root if you have a full rack build).
