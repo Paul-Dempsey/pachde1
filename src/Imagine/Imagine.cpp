@@ -232,6 +232,11 @@ void Imagine::dataFromJson(json_t *root)
 
 void Imagine::updateParams()
 {
+    // Close gate when not running
+    if (!running) {
+        gate_high = 0;
+        trigger_pulse.reset();
+    }
     gt = getParam(GT_PARAM).getValue();
 
     float slew = getParam(SLEW_PARAM).getValue();
