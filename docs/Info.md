@@ -24,7 +24,7 @@ Here are some samples with Light, Dark and High Contrast themes, and selected op
 | Text alignment | Choose **Left**, **Center**, or **Right**-aligned layout. |
 | Text color  | A standard Rack #_hex_ code for the color of the text. |
 | Text background color  | A standard Rack #_hex_ code for the color of the text|
-| Copper | Chose which colors the Copper extender module sets. Choose from **Panel** or **Interior**. When set to **Interior**, choose a Background color from a Copper on the left, and Text color from a Copper on the right. |
+| Copper | Choose which colors the Copper extender module sets. Choose from **Panel** or **Interior**. When set to **Interior**, choose a Background color from a Copper on the left, and Text color from a Copper on the right. |
 
 ## Fonts
 

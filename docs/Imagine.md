@@ -10,6 +10,7 @@ Click on the image to set the position of the read head.
 Drag to scrub.
 
 Try out the images available with the factory presets.
+Or download the [Imagine-Demo-1](https://patchstorage.com/imagine-demo-1/) patch from **patchstorage**.
 
 ## Features
 
