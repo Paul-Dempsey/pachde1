@@ -139,7 +139,7 @@ struct InfoTheme : ThemeBase {
         j = json_object_get(root, "text-size");
         if (j) {
             font_size = clamp(static_cast<float>(json_real_value(j)), MIN_FONT_SIZE, MAX_FONT_SIZE);
-            if (isnanf(font_size)) {
+            if (std::isnan(font_size)) {
                 font_size = DEFAULT_FONT_SIZE;
             }
         }
