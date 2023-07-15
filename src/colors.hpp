@@ -89,6 +89,36 @@ inline NVGcolor nvgHSLAf(float h, float s, float l, float a)
     return color;
 }
 
+// 8-bit (0-255) abgr packed into an unsigned int.
+typedef unsigned int PackedColor;
+
+inline PackedColor PackRGB(unsigned int r, unsigned int g, unsigned int b) {
+    return r | (g << 8) | (b << 16) | (255 << 24);
+}
+
+inline PackedColor PackRGBA(unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
+    return r | (g << 8) | (b << 16) | (a << 24);
+}
+
+inline NVGcolor fromPacked(PackedColor co)
+{
+    return nvgRGBA(co & 0xff, (co >> 8) & 0xff, (co >> 16) & 0xff, (co >> 24) & 0xff);
+}
+
+inline PackedColor toPacked(NVGcolor co) {
+    return PackRGBA(
+        static_cast<unsigned int>(co.r * 255), 
+        static_cast<unsigned int>(co.g * 255),
+        static_cast<unsigned int>(co.b * 255),
+        static_cast<unsigned int>(co.a * 255));
+}
+
+struct NamedColor {
+    const char * name;
+    PackedColor color;
+};
+extern NamedColor stock_colors[];
+
 enum class Theme {
     Unset = 0,
     Light = 1,
@@ -168,5 +198,39 @@ void Line(NVGcontext * vg, float x1, float y1, float x2, float y2, NVGcolor colo
 void CircleGradient(NVGcontext * vg, float cx, float cy, float r, NVGcolor top, NVGcolor bottom);
 void Circle(NVGcontext * vg, float cx, float cy, float r, NVGcolor fill);
 void OpenCircle(NVGcontext * vg, float cx, float cy, float r, NVGcolor stroke, float stroke_width = 1.f);
+
+
+template <class TMenuItem = rack::ui::MenuEntry>
+rack::ui::MenuEntry* createColorMenuItem(PackedColor previewColor, std::string text, std::string rightText, std::function<bool()> checked, std::function<void()> action, bool disabled = false, bool alwaysConsume = false)
+{
+    struct ColorItem : rack::ui::MenuEntry {
+        NVGcolor preview;
+        rack::ui::MenuItem* check_menu;
+
+        void step() override {
+            MenuEntry::step();
+            box.size.x = check_menu->box.size.x + 12;
+            box.size.y = check_menu->box.size.y;
+        }
+
+        void draw(const rack::widget::Widget::DrawArgs& args) override
+        {
+            MenuEntry::draw(args);
+            FillRect(args.vg, 0.f, 1.f, 12.f, box.size.y - 2.f, preview);
+        }
+
+    };
+
+	ColorItem* item = new ColorItem;
+    item->preview = fromPacked(previewColor);
+
+    rack::ui::MenuItem* child = rack::createCheckMenuItem(text, rightText, checked, action, disabled, alwaysConsume);
+    child->box.pos.x = 12.f;
+    item->addChild(child);
+    item->check_menu = child;
+   
+	return item;
+}
+
 
 }

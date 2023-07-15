@@ -31,7 +31,7 @@ struct ThemeBase: ITheme
 {
     Theme theme = DefaultTheme;
     NVGcolor main_color = COLOR_NONE;
-    bool screws = false;
+    bool screws = true;
 
     virtual ~ThemeBase() {}
 

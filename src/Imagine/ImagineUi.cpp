@@ -20,6 +20,12 @@ void ImagineUi::step()
     if (imagine && playButton) {
         playButton->pressed = imagine->isPlaying();
     }
+    // sync to cover preset loading
+    if (imagine && imagine->isDirty()) {
+        setScrews(imagine->screws);
+        setTheme(imagine->theme);
+        imagine->setClean();
+    }
 }
 
 void ImagineUi::resetHeadPosition(bool ctrl, bool shift)
@@ -71,8 +77,16 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     auto picButton = new PicButton(theme);
     picButton->center(Vec (PANEL_CENTER - 15, CONTROL_ROW_2));
     if (module) {
-        picButton->onClick([this, module]() {
-            module->loadImageDialog();
+        picButton->onClick([this, module](bool ctrl, bool shift) {
+            if (shift) {
+                if (ctrl) {
+                    module->closeImage();
+                } else {
+                    module->reloadImage();
+                }
+            } else {
+                module->loadImageDialog();
+            }
         });
     }
     addChild(picButton);

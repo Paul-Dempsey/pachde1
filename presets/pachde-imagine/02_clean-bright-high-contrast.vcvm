@@ -1,0 +1,12 @@
+{
+  "plugin": "pachde-one",
+  "model": "pachde-imagine",
+  "version": "2.0.0",
+  "data": {
+    "screws": false,
+    "theme": "highcontrast",
+    "bright-image": true,
+    "medallion-fill": false,
+    "labels": false
+  }
+}

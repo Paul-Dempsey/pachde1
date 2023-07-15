@@ -9,6 +9,8 @@ Load an image and generate voltages, gates, and triggers as the image is scanned
 Click on the image to set the position of the read head.
 Drag to scrub.
 
+Try out the images available with the factory presets.
+
 ## Features
 
 - All knobs are clicky knobs.
@@ -107,3 +109,32 @@ Also sets the coordinate system for the XY Pad.
 | Labels | Show labels on controls and jacks, or hide all text for clean look. |
 | Gold medallion | Show the gold **#d** brand medallion, or hide it if it's a bit too bold.   |
 | Bright image in a dark room | Keep the image bright when it's dark. |
+
+## Factory presets
+
+| Preset | Description |
+| -- | -- |
+| clean-bright-light | Clean panel in Light theme with no screws or labels. The image is bright in a dark room. |
+| clean-bright-dark | Clean panel in Dark theme with no screws or labels. The image is bright in a dark room. |
+| clean-bright-high-contrast | Clean panel in High Contrast theme with no screws or labels. The image is bright in a dark room. |
+| default-ui | Factory default UI settings. |
+
+### Image presets
+
+Imagine includes a few sample image presets to try things out with.
+
+| Preset | Notes | Image |
+| -- | -- | -- |
+| **Sampler** | Try scrubbing or letting Scanline run across a barcode. The QR codes are working links. The barcodes and QR codes were created with the Inkscape Barcode extension. | ![image title: Sampler](../presets/images/sampler.png) |
+| **Burning-balloon** | A digital painting | ![Burning Balloon](../presets/images/burning_balloon.jpg) |
+| **fields** | A digital painting | ![image title: Fields](../presets/images/fields.jpg) |
+| **Guitar-shirt** | pachde's favorite guitar shirt | ![image title: Guitar Shirt](../presets/images/guitar-shirt.jpg) |
+| **Mica** | A digital painting | ![image title: Mica](../presets/images/mica.jpg) |
+| **Monkey** | A digital painting | ![image title: Monkey](../presets/images/monkey.jpg) |
+| **Sandstone** | Chuckanut sandstone erosion texture from Waldron island. This one is manipulated to have both smooth transitions (at low speeds) and sudden jumps. | ![image title: Sandstone](../presets/images/sandstone.jpg) |
+| **Seaweed** | Photo from the beach. | ![image title: Seaweed on a log](../presets/images/seaweed-on-log.jpg) |
+| **Stratus** | Eroded bluff face on a US Pacific beach. | ![image title: Stratus](../presets/images/stratus.jpg) |
+
+The images are free for use with Imagine: [Check the license](../presets/images/LICENSE.txt).
+
+![pachde (#d) Logo](Logo.svg)

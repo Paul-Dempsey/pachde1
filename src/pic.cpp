@@ -18,8 +18,8 @@ Pic* Pic::CreateRaw(int width, int height) {
 bool Pic::open(std::string filename)
 {
     close();
-    _name = filename;
-    _data = stbi_load(_name.c_str(), &_width, &_height, &_components, 4);
+    _path = filename;
+    _data = stbi_load(_path.c_str(), &_width, &_height, &_components, 4);
     if (_data) {
         _raw_data = false;
         return true;
@@ -237,7 +237,7 @@ void Pic::close()
         }
     }
     _raw_data = false;
-    _name = "";
+    _path = "";
     _reason = "";
 }
 

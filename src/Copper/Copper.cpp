@@ -92,19 +92,12 @@ json_t* CopperModule::dataToJson()
 
 void CopperModule::dataFromJson(json_t* root)
 {
-    json_t *j = json_object_get(root, "hue");
-    if (j) { hue = json_real_value(j); }
-
-    j = json_object_get(root, "sat");
-    if (j) { saturation = json_real_value(j); }
-
-    j = json_object_get(root, "light");
-    if (j) { lightness = json_real_value(j); }
-
-    j = json_object_get(root, "alpha");
-    if (j) { alpha = json_real_value(j); }
-
+    hue = GetFloat(root, "hue", hue);
+    saturation = GetFloat(root, "sat", saturation);
+    lightness = GetFloat(root, "light", lightness);
+    alpha = GetFloat(root, "alpha", alpha);
     ThemeModule::dataFromJson(root);
+    dirty_settings = true;
 }
 
 void CopperModule::onSampleRateChange()
@@ -510,6 +503,7 @@ void CopperUi::setTheme(Theme theme)
 {
     if (copper_module) {
         copper_module->setTheme(theme);
+        ThemeBase::setTheme(theme);
     } else {
         ThemeBase::setTheme(theme);
     }
@@ -542,6 +536,13 @@ void CopperUi::step()
 {
     ModuleWidget::step();
 
+    // sync with module for change from presets
+    if (copper_module && copper_module->isDirty()) {
+        setTheme(copper_module->getTheme());
+        setScrews(copper_module->hasScrews());
+        copper_module->setClean();
+    }
+
     auto current = getColor();
     if (!IS_SAME_COLOR(current, last_color)) {
         last_color = current;
@@ -557,14 +558,37 @@ void CopperUi::step()
     }
 }
 
+void AddColorItem(CopperUi* self, Menu* menu, const char * name, PackedColor color, PackedColor current) {
+    menu->addChild(createColorMenuItem(
+        color, name, "",
+        [=]() { return current == color; },
+        [=]() { 
+            auto new_color = fromPacked(color);
+            self->setHue(Hue1(new_color));
+            self->setSaturation(Saturation(new_color));
+            self->setLightness(Lightness(new_color));
+            self->setAlpha(new_color.a);
+        }
+        ));
+}
+
 void CopperUi::appendContextMenu(rack::ui::Menu* menu)
 {
     if (!this->module) return;
     AddThemeMenu(menu, this, false, true);
+    menu->addChild(createSubmenuItem("Palette color", "",
+        [=](Menu *menu)
+        {
+            auto current = toPacked(getColor());
+            for (auto pco = stock_colors; nullptr != pco->name; ++pco) {
+                AddColorItem(this, menu, pco->name, pco->color, current);
+            }
+        })); 
     menu->addChild(createMenuItem("Copy hex color", "", [=]() {
         auto hex = rack::color::toHexString(getColor());
         glfwSetClipboardString(nullptr, hex.c_str());
     }));
+
 #ifdef USE_BAD_HEX_INPUT
     // BUGBUG: We don't have working inverses yet for round-tripping nvgHSL(),
     menu->addChild(createSubmenuItem("Color", "",

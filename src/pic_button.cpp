@@ -117,7 +117,7 @@ void PicButton::onDragEnd(const DragEndEvent & e)
         return;
     destroyTooltip();
     if (clickHandler) {
-        clickHandler();
+        clickHandler(ctrl, shift);
     }
     pressed = false;
 }
@@ -127,7 +127,11 @@ void PicButton::createTooltip() {
         return;
     if (tip) return;
     auto newTip = new Tooltip();
-    newTip->text = "Open image";
+#if defined ARCH_MAC
+    newTip->text = "Open image\nShift to reload\nCmd+Shift to close";
+#else
+    newTip->text = "Open image\nShift to reload\nCtrl+Shift to close";
+#endif
     APP->scene->addChild(newTip);
     tip = newTip;
 }

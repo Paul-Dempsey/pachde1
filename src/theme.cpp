@@ -1,3 +1,4 @@
+#include "plugin.hpp"
 #include "theme.hpp"
 
 namespace pachde {
@@ -25,8 +26,7 @@ void ThemeBase::load(json_t* root)
         main_color = rack::color::fromHexString(color_string);
     }
 
-    j = json_object_get(root, "screws");
-    screws = j ? json_is_true(j) : true;
+    screws = GetBool(root, "screws", screws);
 };
 
 }

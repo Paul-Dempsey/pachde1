@@ -10,8 +10,8 @@ struct Pic {
     int _height = 0;
     int _components = 0;
     unsigned char * _data = nullptr;
-    bool _raw_data = false;
-    std::string _name;
+    bool _raw_data = false; // true when we've new'd _data otherwise use stbi alloc/free
+    std::string _path;
     std::string _reason;
 
     // create a Pic with allocated but uninitialized pixel data.
@@ -34,7 +34,7 @@ struct Pic {
     NVGcolor pixel(float x, float y) const;
     NVGcolor pixel(rack::Vec pos) const { return pixel(pos.x, pos.y); }
 
-    std::string name() const { return _name; }
+    std::string name() const { return _path; }
     std::string reason() const { return _reason; }
     bool open(std::string filename);
     void close();

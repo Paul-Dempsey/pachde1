@@ -14,7 +14,9 @@ struct PicButton: OpaqueWidget, ThemeLite
     Tooltip* tip = nullptr;
 
     bool pressed = false;
-    std::function<void(void)> clickHandler;
+    bool ctrl = false;
+    bool shift = false;
+    std::function<void(bool,bool)> clickHandler;
 
     virtual ~PicButton() {
         if (tip) delete tip;
@@ -24,6 +26,11 @@ struct PicButton: OpaqueWidget, ThemeLite
 
     void setTheme(Theme theme) override;
     void draw(const DrawArgs &args) override;
+    void onHoverKey(const HoverKeyEvent& e) override {
+        rack::OpaqueWidget::onHoverKey(e);
+        ctrl = (e.mods & RACK_MOD_MASK) & RACK_MOD_CTRL;
+        shift = (e.mods & RACK_MOD_MASK) & GLFW_MOD_SHIFT;
+    }
     void onButton(const event::Button& e) override;
     void onDragEnd(const DragEndEvent & e) override;
     void onEnter(const EnterEvent& e) override {
@@ -39,7 +46,7 @@ struct PicButton: OpaqueWidget, ThemeLite
     void center(Vec pos) {
         box.pos = pos.minus(box.size.div(2));
     }
-    void onClick(std::function<void(void)> callback) {
+    void onClick(std::function<void(bool,bool)> callback) {
         clickHandler = callback;
     }
 };

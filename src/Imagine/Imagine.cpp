@@ -5,6 +5,36 @@
 #include "../text.hpp"
 #include "../dsp.hpp"
 
+fs::file_time_type LastWriteTime(std::string path)
+{
+    try {
+        return fs::last_write_time(fs::u8path(path));
+    } catch (fs::filesystem_error& e) {
+        return fs::file_time_type();
+    }
+}
+
+// Make a fake path if under plugin folder, so that presets are portable
+std::string MakePluginPath(std::string path)
+{
+    path = system::getCanonical(path);
+    auto plug = pluginInstance->path;
+    if (0 == plug.compare(0, plug.size(), path.c_str(), 0, plug.size())) {
+        return path.replace(0, plug.size(), "{plug}");
+    }
+    return path;
+}
+
+// Decode fake path as needed to make a real path
+std::string MakeUnPluginPath(std::string path)
+{
+    std::string plug = "{plug}";
+    if (0 == plug.compare(0, plug.size(), path, 0, plug.size())) {
+        path = path.replace(0, plug.size(), pluginInstance->path);
+    }
+    return system::getCanonical(path);
+}
+
 namespace pachde {
 
 Imagine::Imagine() {
@@ -68,24 +98,27 @@ Imagine::Imagine() {
     updateParams();
 }
 
+void Imagine::closeImage() {
+    setPlaying(false);
+    image.close();
+}
+
 bool Imagine::reloadImage()
 {
-    if (!image.ok()) return false;
-    auto name = image.name();
-    // $BUGBUG: Also use last modified time (system currently doesn't expose it)
-    auto size = system::getFileSize(name);
-    if (size == image_size) return true;
-    return loadImage(name);
+    return image.ok() ? loadImage(image.name()) : false;
 }
 
 bool Imagine::loadImage(std::string path)
 {
     auto run = setPlaying(false);
     auto last_size = image_size;
-    // $BUGBUG: Also use last modified time (system currently doesn't expose it)
+    auto last_time = image_time;
+    path = system::getCanonical(path);
     image_size = system::getFileSize(path);
+    image_time = LastWriteTime(path);
     if (image_size != 0
         && last_size == image_size
+        && last_time == image_time
         && path == image.name()) {
         return true;
     }
@@ -99,11 +132,12 @@ bool Imagine::loadImage(std::string path)
         setPlaying(run);
         return true;
     } else {
+        image_size = 0;
+        image_time = fs::file_time_type();
         //DEBUG("Image load failed: %s", image.reason().c_str());
         traversal->configure_image(Vec(image.width(), image.height()));
         traversal->reset();
         //image.close();
-        image_size = 0;
         return false;
     }
 }
@@ -139,6 +173,7 @@ constexpr static const char * BRIGHT_IMAGE_KEY = "bright-image";
 constexpr static const char * POSX_KEY = "x-pos";
 constexpr static const char * POSY_KEY = "y-pos";
 constexpr static const char * MEDALLION_KEY = "medallion-fill";
+constexpr static const char * LABELS_KEY = "labels";
 
 json_t *Imagine::dataToJson()
 {
@@ -146,7 +181,8 @@ json_t *Imagine::dataToJson()
 
     auto name = image.name();
     if (!name.empty()) {
-        json_object_set_new(root, IMAGE_KEY, json_stringn(name.c_str(), name.size()));
+        auto persist_name = MakePluginPath(name);
+        json_object_set_new(root, IMAGE_KEY, json_stringn(persist_name.c_str(), persist_name.size()));
     }
     if ((reset_pos.x >= 0.f) && (reset_pos.y >= 0.f)) {
         json_object_set_new(root, POSX_KEY, json_real(reset_pos.x));
@@ -154,6 +190,7 @@ json_t *Imagine::dataToJson()
     }
     json_object_set_new(root, BRIGHT_IMAGE_KEY, json_boolean(bright_image));
     json_object_set_new(root, MEDALLION_KEY, json_boolean(medallion_fill));
+    json_object_set_new(root, LABELS_KEY, json_boolean(labels));
 
     if (!pic_folder.empty()) {
         json_object_set_new(root, IMAGE_FOLDER_KEY, json_stringn(pic_folder.c_str(), pic_folder.size()));
@@ -163,20 +200,17 @@ json_t *Imagine::dataToJson()
 
 void Imagine::dataFromJson(json_t *root)
 {
-    json_t *j = json_object_get(root, IMAGE_KEY);
+    auto j = json_object_get(root, IMAGE_FOLDER_KEY);
     if (j) {
-        std::string path = json_string_value(j);
-        if (image.open(path)) {
-            //DEBUG("Opened image (%s)", path.c_str());
-            //DEBUG("Image size %d x %d", image.width(), image.height());
-            if (traversal) {
-                traversal->configure_image(Vec(image.width(), image.height()));
-                traversal->reset();
-            }
-        } else {
-            //DEBUG("Image load failed: %s", image.reason().c_str());
-        }
+        pic_folder = json_string_value(j);
     }
+
+    j = json_object_get(root, IMAGE_KEY);
+    if (j) {
+        std::string path = MakeUnPluginPath(json_string_value(j));
+        loadImage(path);
+    }
+
     j = json_object_get(root, POSX_KEY);
     if (j) {
         float x = json_number_value(j);
@@ -188,22 +222,12 @@ void Imagine::dataFromJson(json_t *root)
         }
     }
 
-    j = json_object_get(root, MEDALLION_KEY);
-    if (j) {
-        medallion_fill = json_is_true(j);
-    }
-
-    j = json_object_get(root, BRIGHT_IMAGE_KEY);
-    if (j) {
-        bright_image = json_is_true(j);
-    }
-
-    j = json_object_get(root, IMAGE_FOLDER_KEY);
-    if (j) {
-        pic_folder = json_string_value(j);
-    }
+    medallion_fill = GetBool(root, MEDALLION_KEY, medallion_fill);
+    bright_image = GetBool(root, BRIGHT_IMAGE_KEY, bright_image);
+    labels = GetBool(root, LABELS_KEY, labels);
 
     ThemeModule::dataFromJson(root);
+    dirty_settings = true;
 }
 
 void Imagine::updateParams()
@@ -247,6 +271,11 @@ void Imagine::processBypass(const ProcessArgs& args)
     outputs[VOLTAGE_OUT].setVoltage(0.0f);
     outputs[X_OUT].setVoltage(0.0f);
     outputs[Y_OUT].setVoltage(0.0f);
+    outputs[GATE_OUT].setVoltage(0.0f);
+    outputs[TRIGGER_OUT].setVoltage(0.0f);
+    outputs[RED_OUT].setVoltage(0.0f);
+    outputs[GREEN_OUT].setVoltage(0.0f);
+    outputs[BLUE_OUT].setVoltage(0.0f);
 }
 
 void Imagine::process(const ProcessArgs& args)

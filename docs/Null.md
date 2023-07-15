@@ -2,6 +2,8 @@
 
 A truly blank, blank panel, with some fun features (for a blank panel).
 
+Here's a sampling of Null in Light, Dark, and High Contrast themes and various colors, widths, and options:
+
 ![Null module with themes, colors, and menu](Null.png)
 
 - Resizable - Drag the left and right edges when the overlay appears under the cursor.
@@ -13,6 +15,7 @@ A truly blank, blank panel, with some fun features (for a blank panel).
 | Screws | Add or remove the screw caps. |
 | Theme | Choose Light, Dark, or High Contrast theme. |
 | Panel color | Enter a standard rack #_hex_ code for a custom color to override the theme. Even the screw caps adopt your color!. You can copy/paste the hex code from Copper. |
+| Palette color | Choose color from a palette of named colors. |
 | Glow in the dark. | The panel stays bright in a darkened room, with a glow that follows VCV Rack's Light bloom setting. |
 
 ## Inputs

@@ -1,9 +1,12 @@
 #pragma once
+#include <ghc/filesystem.hpp>
 #include "../components.hpp"
 #include "../plugin.hpp"
 #include "../dsp.hpp"
 #include "../pic.hpp"
 #include "traversal.hpp"
+
+namespace fs = ghc::filesystem;
 
 // feature flags
 // Slew XY: apply slew to X/Y outputs
@@ -97,9 +100,11 @@ struct Imagine : ThemeModule
     bool medallion_fill = true;
     bool labels = true;
     bool bright_image = false;
+
     Pic image;
     std::string pic_folder;
     uint64_t image_size = 0.f;
+    fs::file_time_type image_time;
 
     Pic* getImage() { return &image; }
 
@@ -172,6 +177,11 @@ struct Imagine : ThemeModule
     bool loadImageDialog();
     bool loadImage(std::string path);
     bool reloadImage();
+    void closeImage();
+
+    bool dirty_settings = false;
+    bool isDirty() { return dirty_settings; }
+    void setClean() { dirty_settings = false; }
 
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;

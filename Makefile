@@ -16,8 +16,8 @@ SOURCES += src/switch.cpp
 SOURCES += src/small_push.cpp
 SOURCES += src/theme.cpp
 
-# Blank module
-SOURCES += src/Blank/Blank.cpp
+# Null module
+SOURCES += src/Null/Null.cpp
 
 # Info module
 SOURCES += src/Info/Info.cpp

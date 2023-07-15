@@ -49,15 +49,23 @@ struct LogoPort : PortWidget, ThemeBase
 
 struct BlankModule : ResizableModule {
     bool glow = false;
+
     bool glowing() { return glow && rack::settings::rackBrightness < 0.90f; }
+    bool glow_setting() { return glow; }
     void setGlow(bool g) { glow = g; }
 
     BlankModule();
+
+    bool dirty_settings = false;
+    bool isDirty() { return dirty_settings; }
+    void setClean() { dirty_settings = false; }
+
     float getFlicker()
     {
         return inputs[0].isConnected() ? inputs[0].getVoltage(0) : 0.f;
     }
     bool flickering() { return inputs[0].isConnected(); }
+
     NVGcolor externalcolor();
 
     json_t* dataToJson() override;
@@ -94,8 +102,7 @@ struct BlankModuleWidget : ModuleWidget, ITheme
     }
 
     bool glowing() {
-        if (!my_module) return false;
-        return my_module->glowing();
+        return my_module ? my_module->glowing() : false;
     }
 
     BlankModuleWidget(BlankModule* module);

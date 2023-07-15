@@ -10,3 +10,13 @@ extern rack::Model* modelBlank;
 extern rack::Model* modelInfo;
 extern rack::Model* modelCopper;
 extern rack::Model* modelImagine;
+
+inline bool GetBool(json_t* root, const char* key, bool default_value) {
+    auto j = json_object_get(root, key);
+    return j ? json_is_true(j) : default_value;
+}
+
+inline float GetFloat(json_t* root, const char* key, float default_value) {
+    auto j = json_object_get(root, key);
+    return j ? json_real_value(j) : default_value;
+}

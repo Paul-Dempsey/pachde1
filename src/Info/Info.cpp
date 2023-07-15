@@ -155,10 +155,7 @@ struct InfoTheme : ThemeBase {
         if (j) {
             font_folder = json_string_value(j);
         }
-        j = json_object_get(root, "bright");
-        if (j) {
-            brilliant = json_boolean_value(j);
-        }
+        brilliant = GetBool(root, "bright", brilliant);
     }
 
     Theme getTheme() override { 
@@ -252,6 +249,10 @@ struct InfoModule : ResizableModule
         minWidth = 4;
     }
 
+    bool dirty_settings = false;
+    bool isDirty() { return dirty_settings; }
+    void setClean() { dirty_settings = false; }
+
     json_t* dataToJson() override
     {
         json_t* root = ResizableModule::dataToJson();
@@ -269,6 +270,7 @@ struct InfoModule : ResizableModule
         if (j) {
             text = json_string_value(j);
         }
+        dirty_settings = true;
     }
 
     InfoTheme* getInfoTheme() {
@@ -582,6 +584,12 @@ struct InfoModuleWidget : ModuleWidget, ITheme
         if (module)
         {
             box.size.x = module->width * RACK_GRID_WIDTH;
+            // sync with module for change from presets
+            if (module->isDirty()) {
+                setTheme(module->getTheme());
+                setScrews(module->hasScrews());
+                module->setClean();
+            }
         }
         panel->box.size = box.size;
         if (topRightScrew) {
@@ -605,6 +613,7 @@ struct InfoModuleWidget : ModuleWidget, ITheme
     {
         if (!this->module)
             return;
+        auto mymodule = dynamic_cast<InfoModule*>(module);
         AddThemeMenu(menu, this, true, true);
 
         menu->addChild(createCheckMenuItem("Bright text in a dark room", "",
@@ -612,10 +621,11 @@ struct InfoModuleWidget : ModuleWidget, ITheme
             [=]() { info_theme->toggleBrilliant(); }));
 
         menu->addChild(new MenuSeparator);
-        menu->addChild(createSubmenuItem("Info", "",
+
+        menu->addChild(createSubmenuItem("Edit Info", "",
             [=](Menu *menu)
             {
-                auto mymodule = dynamic_cast<InfoModule*>(module);
+                //auto mymodule = dynamic_cast<InfoModule*>(module);
                 MenuTextField *editField = new MenuTextField();
                 editField->box.size.x = 200.f;
                 editField->box.size.y = 100.f;
@@ -625,6 +635,18 @@ struct InfoModuleWidget : ModuleWidget, ITheme
                 };
                 menu->addChild(editField);
              }));
+        menu->addChild(createMenuItem("Copy info", "", [=]() {
+            if (!mymodule->text.empty())
+            {
+                glfwSetClipboardString(APP->window->win, mymodule->text.c_str());
+            }
+        }, mymodule->text.empty()));
+        menu->addChild(createMenuItem("Paste info", "", [=]() {
+            auto text = glfwGetClipboardString(APP->window->win);
+            if (text) mymodule->text = text;
+        }));
+
+        menu->addChild(new MenuSeparator);
 
         auto name = system::getStem(info_theme->font_file);
         menu->addChild(construct<MenuLabel>(&MenuLabel::text, name));
