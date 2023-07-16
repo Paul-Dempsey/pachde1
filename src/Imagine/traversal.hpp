@@ -4,6 +4,10 @@
 #include "../pic.hpp"
 #include "imagine_layout.hpp"
 
+#if defined ARCH_MAC
+#define sincosf __sincosf
+#endif
+
 using namespace rack;
 using namespace pachde;
 
