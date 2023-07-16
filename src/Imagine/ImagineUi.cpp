@@ -77,7 +77,7 @@ void ImagineUi::makeUi(Imagine* module, Theme theme)
     auto picButton = new PicButton(theme);
     picButton->center(Vec (PANEL_CENTER - 15, CONTROL_ROW_2));
     if (module) {
-        picButton->onClick([this, module](bool ctrl, bool shift) {
+        picButton->onClick([module](bool ctrl, bool shift) {
             if (shift) {
                 if (ctrl) {
                     module->closeImage();

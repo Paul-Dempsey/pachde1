@@ -118,7 +118,7 @@ void PicWidget::drawPic(const DrawArgs &args)
     if (FontOk(font))
     {
         auto color = RampGray(G_85);
-        auto text = !pic || (pic && pic->reason().empty()) ? "[no image]" : pic->reason().c_str();
+        std::string text = !pic || (pic && pic->reason().empty()) ? "[no image]" : pic->reason();
 
         if (module && module->isXYPad()) {
             text = "[ xy pad ]";
@@ -129,10 +129,10 @@ void PicWidget::drawPic(const DrawArgs &args)
             }
             FillRect(vg, box.size.x/2 - 2, box.size.y - box.size.y/8.f - 12.f, 4.f, 20.f, background);
             SetTextStyle(vg, font, color, 16.f);
-            CenterText(vg, box.size.x/2.f, box.size.y - box.size.y/8.f, text, nullptr);
+            CenterText(vg, box.size.x/2.f, box.size.y - box.size.y/8.f, text.c_str(), nullptr);
         } else {
             SetTextStyle(vg, font, color, 16.f);
-            CenterText(vg, box.size.x/2.f, box.size.y/2.f, text, nullptr);
+            CenterText(vg, box.size.x/2.f, box.size.y/2.f, text.c_str(), nullptr);
         }
     }
 }

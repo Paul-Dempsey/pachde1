@@ -3,7 +3,6 @@
 namespace pachde {
 using namespace rack;
 
-constexpr const int PANEL_WIDTH = 180;
 const NVGcolor COPPER = nvgHSLAf(40.f/360.f, .85f, .5f, 1.f);
 
 CopperModule::CopperModule()

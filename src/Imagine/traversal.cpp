@@ -120,7 +120,11 @@ void Wander::process() {
         angle += random::uniform() * 0.01f * dir;
     }
     float dx, dy;
+#if defined ARCH_MAC
+    __sincosf(angle, &dy, &dx);
+#else
     sincosf(angle, &dy, &dx);
+#endif
     position.x += (dx * advance) * 2.0f;
     position.y += (dy * advance) * 2.0f;
     wrap_position();
