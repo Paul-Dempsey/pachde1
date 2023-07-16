@@ -1,6 +1,12 @@
 name: Build VCV Rack Plugin
 on:
-  [push, pull_request]
+  push:
+    paths-ignore:
+      - 'README*'
+      - 'docs/**'
+      - 'design/**'
+      - 'dev-notes/**'
+  pull_request:
 
 env:
   rack-sdk-version: 2.2.0
