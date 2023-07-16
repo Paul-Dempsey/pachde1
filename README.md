@@ -41,4 +41,8 @@ If you already have a Rack build environment set up:
 
    Or `make plugins` from the Rack root if you have a full rack build.
 
+## Credits
+
+- cosinekitty (Don Cross) for showing me how to get Github Actions working in my repo to build all the versions (including Mac ARM aka M1).
+
 ![pachde logo](docs/Logo.svg)
