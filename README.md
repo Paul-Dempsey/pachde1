@@ -43,6 +43,8 @@ If you already have a Rack build environment set up:
 
 ## Credits
 
+- Andrew Belt for creating VCV Rack
 - cosinekitty (Don Cross) for showing me how to get Github Actions working in my repo to build all the versions (including Mac ARM aka M1).
+- baconpaul for sharing improvements in the Github Actions, and other Rack inspiration.
 
 ![pachde logo](docs/Logo.svg)
