@@ -10,7 +10,6 @@ Here are some samples with Light, Dark and High Contrast themes, and selected op
 
 - Resizable - Drag the left and right edges when the overlay appears under the cursor.
 
-
 ## Options
 
 | Option | Description |

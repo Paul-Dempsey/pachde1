@@ -14,7 +14,6 @@ Drag to scrub.
 Try out the images available with the factory presets.
 Or download the [Imagine-Demo-1](https://patchstorage.com/imagine-demo-1/) patch from **patchstorage**.
 
-
 ## Features
 
 - All knobs are clicky knobs.

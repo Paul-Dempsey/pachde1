@@ -10,7 +10,6 @@ Here's a sampling of Null in Light, Dark, and High Contrast themes and various c
 
 - Resizable - Drag the left and right edges when the overlay appears under the cursor.
 
-
 ## Options
 
 | Option | Description |
