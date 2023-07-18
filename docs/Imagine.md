@@ -3,6 +3,8 @@
 An unique and perhaps eccentric source of volage, gates, and triggers using an image.
 You can think of it as a sequencer or image sampler.
 
+**See also:** [All pachde-One modules](index.md)
+
 ![Imagine with 3 variations of theme and settings](Imagine-sample.png)
 
 Load an image and generate voltages, gates, and triggers as the image is scanned by a read head.
@@ -11,6 +13,7 @@ Drag to scrub.
 
 Try out the images available with the factory presets.
 Or download the [Imagine-Demo-1](https://patchstorage.com/imagine-demo-1/) patch from **patchstorage**.
+
 
 ## Features
 

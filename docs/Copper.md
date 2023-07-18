@@ -2,6 +2,8 @@
 
 A color picker with modulation and outputs
 
+**See also:** [All pachde-One modules](index.md)
+
 Here's a sample of the module in Light, Dark, and High Contrast themes.
 
 ![Copper in Light, Dark, and High Contrast themes](Copper.png)

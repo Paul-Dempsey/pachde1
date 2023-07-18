@@ -2,11 +2,14 @@
 
 A Minimalist resizable patch notes panel.
 
+**See also:** [All pachde-One modules](index.md)
+
 Here are some samples with Light, Dark and High Contrast themes, and selected options.
 
 ![Info panel with themes and menu](Info.png)
 
 - Resizable - Drag the left and right edges when the overlay appears under the cursor.
+
 
 ## Options
 
