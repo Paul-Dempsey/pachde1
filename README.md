@@ -36,9 +36,15 @@ There's nothing special about building this plugin. There are no external depend
 
 If you already have a Rack build environment set up:
 
-1. clone the repo
-2. cd to the plugin folder
-3. run `make`
+1. Clone the repo if you just want to build.
+
+   `git clone https://github.com/Paul-Dempsey/pachde1.git`
+
+    Or, fork in GitHub if you want to make PRs.
+
+1. cd to the plugin folder
+
+1. run `make`
 
    Or `make plugins` from the Rack root if you have a full rack build.
 
@@ -49,7 +55,10 @@ No need to `make dep` or `git submodule update --init --recursive` for this modu
 Contributions are generally welcome.
 I'd appreciate if you're planning to add something, please open a Discussion so we can discuss it.
 
-If you've found a bug, please open an issue. If you have a fix for the bug, then that's fantastic. Bug fix PRs are always welcome.
+If you've found a bug, please open an issue.
+If you have a fix for the bug, then that's fantastic. Bug fix PRs are always welcome.
+
+At this time, pull requests are accepted only from forks. GitHub makes it super easy to create a fork.
 
 ## Credits
 

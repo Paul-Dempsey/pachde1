@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="13mm" height="6mm" viewBox="0 0 13 6" version="1.1" id="svg321" xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+   <defs id="defs318">
+
+      <linearGradient id="rim" 
+         x1="0" y1="0" x2="0" y2="6" gradientUnits="userSpaceOnUse">
+         <stop style="stop-color:#f0f0f0;stop-opacity:1;" offset="0" />
+         <stop style="stop-color:#706c6c;stop-opacity:1;" offset="1" />
+      </linearGradient>
+      <linearGradient id="guide"
+         x1="0" y1="1.2" x2="0" y2="3.2" gradientUnits="userSpaceOnUse" >
+         <stop style="stop-color:#ffffff;stop-opacity:0.2;" offset="0"/>
+         <stop style="stop-color:#000000;stop-opacity:0.15;" offset="1" />
+      </linearGradient>
+   </defs>
+   <g id="layer1">
+      <rect style="fill:#333333;fill-opacity:1;stroke-width:0"
+         width="13" height="6" x="0" y="0" rx="0.5" ry="0.5" />
+      <rect style="fill:url(#rim);fill-opacity:1;stroke-width:0"
+         width="12.5" height="5.5" x="0.2" y="0.16" rx="0.45" ry="0.45" />
+      <rect style="fill:#333333;fill-opacity:1;stroke-width:0.200854"
+         width="12" height="5.1" x="0.5" y="0.4" rx="0.4" ry="0.4" />
+      <rect style="fill:#3b3b3b;fill-opacity:1;stroke-width:0.252935"
+         width="11.5" height="4.6" x="0.8" y="0.65" rx="0.1" ry="0.1" />
+      <rect style="opacity:1;fill:#336699;fill-opacity:1;stroke-width:0"
+         width="10" height="2" x="1.5" y="1.2" rx="0.12" ry="0.12" />
+      <rect style="opacity:1;fill:url(#guide);fill-opacity:1;stroke-width:0"
+         width="10" height="2" x="1.5" y="1.2" rx="0.12" ry="0.12" />
+      <rect style="fill:#336699;fill-opacity:1;stroke-width:0.237033"
+         width="9.55" height="1.45" x="1.75" y="1.45" rx="0.1" ry="0.1" />
+      <path style="fill:#ffffff;fill-opacity:0.35;stroke-width:0"
+         d="M 2.9109334 3.0272054 L 2.6778727 3.1967041 L 2.6778727 3.1998047 L 4.1878581 3.1998047 L 3.913973 3.0272054 L 2.9109334 3.0272054 z M 4.9785075 3.0272054 L 4.7413127 3.1998047 L 6.242513 3.1998047 L 5.981547 3.0272054 L 4.9785075 3.0272054 z M 7.0460815 3.0272054 L 6.8176717 3.1998047 L 8.305953 3.1998047 L 8.0491211 3.0272054 L 7.0460815 3.0272054 z M 9.1136556 3.0272054 L 8.8723267 3.1998047 L 10.37301 3.1998047 L 10.37301 3.1967041 L 10.116695 3.0272054 L 9.1136556 3.0272054 z " />
+      <g style="fill:#262626;fill-opacity:1;stroke-width:0">
+         <rect width="0.5" height="1.5" x="1.6164451" y="3.5" />
+         <rect width="1.5" height="1.5" x="2.6781201" y="3.5" />
+         <rect width="1.5" height="1.5" x="4.7397952" y="3.5" />
+         <rect width="1.5" height="1.5" x="6.8014708" y="3.5" />
+         <rect width="1.5" height="1.5" x="8.8631458" y="3.5" />
+         <rect width="0.5" height="1.5" x="10.924821" y="3.5" />
+      </g>
+      <g id="contacts" style="fill:#ad8510;fill-opacity:1;stroke-width:0">
+         <rect width="1" height="0.2" x="2.9281201" y="3.1650605" />
+         <rect width="1" height="0.2" x="4.9897952" y="3.1650605" />
+         <rect width="1" height="0.2" x="7.0514708" y="3.1650605" />
+         <rect width="1" height="0.2" x="9.1131458" y="3.1650605" />
+      </g>
+   </g>
+</svg>

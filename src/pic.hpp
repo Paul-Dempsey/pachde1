@@ -67,24 +67,24 @@ struct cachePic
 
 //#define TRUST_RACK_CONTEXT // depends on a fixed Rack post 2.3
 #ifndef TRUST_RACK_CONTEXT
-    // hack to workaround rack bug wrt uninitialized vg in context change events
     bool isLaterVersion(int maj, int min) {
         auto parts = rack::string::split(rack::APP_VERSION, "."); 
-        auto i1 = std::strtol(parts[0].c_str(), nullptr, 10);
-        auto i2 = std::strtol(parts[1].c_str(), nullptr, 10);
-        if (i1 > maj) return true;
-        if (i2 > min) return true;
-        return false;
+        auto rack_maj = std::strtol(parts[0].c_str(), nullptr, 10);
+        auto rack_min = std::strtol(parts[1].c_str(), nullptr, 10);
+        if (rack_maj <= maj) return false;
+        if (rack_min <= min) return false;
+        return true;
     }
 #endif
 
     // Widgets using cachePic must forward the 
-    // onContextCreate and onContextDestroy events
+    // onContextCreate and onContextDestroy events.
     void onContextCreate(const rack::widget::Widget::ContextCreateEvent& e)
     {
 #ifndef TRUST_RACK_CONTEXT
         NVGcontext* ctx = nullptr;
-        //HACK: work around uninitialized e.vg
+        // HACK: workaround Rack bug wrt uninitialized vg in context change events.
+        // It's not that bad a hack, because Rack itself does the same thing.
         if (!isLaterVersion(2, 3)) {
             auto window = APP->window;
             if (window && window->vg) {
