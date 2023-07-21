@@ -60,11 +60,15 @@ NVGcolor BlankModule::externalcolor()
 json_t* BlankModule::dataToJson() {
     auto root = ResizableModule::dataToJson();
     json_object_set_new(root, "glow", json_boolean(glow));
+    json_object_set_new(root, "bright", json_boolean(bright));
+    json_object_set_new(root, "branding", json_boolean(branding));
     return root;
 }
 void BlankModule::dataFromJson(json_t* root) {
     ResizableModule::dataFromJson(root);
     glow = GetBool(root, "glow", glow);
+    bright = GetBool(root, "bright", bright);
+    branding = GetBool(root, "branding", branding);
     dirty_settings = true;
 }
 
@@ -202,32 +206,45 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
         clamp(flicker, -5.f, 5.f);
     }
 
-    if (glowing()) {
+    if (bright() || glowing()) {
         if (isColorTransparent(panel_color)) {
             panel_color = PanelBackground(theme);
         }
 
-        const float rad = 30.f;
-        float x, y, w, h;
-        x = -rad;
-        y = -rad;
-        w = box.size.x + rad + rad;
-        h = box.size.y + rad + rad;
-        NVGcolor icol = nvgTransRGBAf(panel_color, rack::settings::haloBrightness);
-        icol.a += flicker;
-        NVGcolor ocol = COLOR_NONE;
+        if (glowing()) {
+            const float rad = 30.f;
+            float x, y, w, h;
+            x = -rad;
+            y = -rad;
+            w = box.size.x + rad + rad;
+            h = box.size.y + rad + rad;
+            NVGcolor icol = nvgTransRGBAf(panel_color, rack::settings::haloBrightness);
+            icol.a += flicker;
+            NVGcolor ocol = COLOR_NONE;
 
-        NVGpaint paint;
-        nvgBeginPath(vg);
-        nvgRect(vg, x, y, w, h);
-        if (flickering) {
-            ocol.r += flicker/255.f;
-            ocol.g += flicker/255.f;
-            ocol.b += flicker/255.f;
+            NVGpaint paint;
+            nvgBeginPath(vg);
+            nvgRect(vg, x, y, w, h);
+            if (flickering) {
+                ocol.r += flicker/255.f;
+                ocol.g += flicker/255.f;
+                ocol.b += flicker/255.f;
+            }
+            paint = nvgBoxGradient(vg, 0, 0, box.size.x, box.size.y, 4.f, 28.f, icol, ocol);
+            nvgFillPaint(vg, paint);
+            nvgFill(vg);
+        } else {
+            nvgBeginPath(vg);
+            nvgRect(vg, 0, 0, box.size.x, box.size.y);
+            NVGcolor col = panel_color;
+            if (flickering) {
+                col.r += flicker/255.f;
+                col.g += flicker/255.f;
+                col.b += flicker/255.f;
+            }
+            nvgFillColor(vg, col);
+            nvgFill(vg);
         }
-        paint = nvgBoxGradient(vg, 0, 0, box.size.x, box.size.y, 4.f, 28.f, icol, ocol);
-        nvgFillPaint(vg, paint);
-        nvgFill(vg);
     }
 
     ModuleWidget::draw(args);
@@ -244,22 +261,24 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
         //logo_port->draw(args);
     }
 
-    bool skinny = hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);
+    if (!my_module || my_module->is_branding()) {
+        bool skinny = hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);
 
-    auto y = skinny ? RACK_GRID_WIDTH : 0.0f;
-    DrawNull(args.vg, (box.size.x/2.0f) - 7.5f, y, ring, slash);
+        auto y = skinny ? RACK_GRID_WIDTH : 0.0f;
+        DrawNull(args.vg, (box.size.x/2.0f) - 7.5f, y, ring, slash);
 
-    if (!module) {
-        DrawLogo(args.vg, 0, box.size.y / 2.0f - 40, Overlay(COLOR_BRAND), 4.0);
-    } 
+        if (!module) {
+            DrawLogo(args.vg, 0, box.size.y / 2.0f - 40, Overlay(COLOR_BRAND), 4.0);
+        }
+    }
 }
 
 void BlankModuleWidget::draw(const DrawArgs &args) {
-    if (glowing()) return;
+    if (bright() || glowing()) return;
     drawPanel(args);
 }
 void BlankModuleWidget::drawLayer(const DrawArgs &args, int layer) {
-    if (glowing()) {
+    if (bright() || glowing()) {
         drawPanel(args);
     }
 }
@@ -301,7 +320,7 @@ void BlankModuleWidget::step()
 {
     if (my_module) {
         box.size.x = my_module->width * RACK_GRID_WIDTH;
-
+        logo_port->invisible = !my_module->is_branding();
         auto color = my_module->externalcolor();
         if (isColorVisible(color) && panel->theme_holder)
         {
@@ -355,9 +374,17 @@ void BlankModuleWidget::appendContextMenu(Menu *menu)
             }
         })); 
     menu->addChild(createCheckMenuItem(
+        "Show branding", "",
+        [=]() { return my_module->is_branding(); },
+        [=]() { my_module->set_branding(!my_module->is_branding()); }));
+    menu->addChild(createCheckMenuItem(
         "Glow in the dark", "",
         [=]() { return my_module->glow_setting(); },
         [=]() { my_module->setGlow(!my_module->glow_setting()); }));
+    menu->addChild(createCheckMenuItem(
+        "Bright in a dark room", "",
+        [=]() { return my_module->is_bright(); },
+        [=]() { my_module->set_bright(!my_module->is_bright()); }));
 }
 
 }

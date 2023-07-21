@@ -1,0 +1,12 @@
+{
+  "plugin": "pachde-one",
+  "model": "pachde-null",
+  "version": "2.0.0",
+  "data": {
+    "main-color": "#ff00ff",
+    "screws": false,
+    "glow": false,
+    "bright": true,
+    "branding": false
+  }
+}

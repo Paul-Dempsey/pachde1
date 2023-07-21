@@ -8,6 +8,7 @@ namespace pachde {
 struct LogoPort : PortWidget, ThemeBase
 {
     NVGcolor logo;
+    bool invisible = false;
 
     LogoPort(Theme theme) { 
         box.size.x = box.size.y = 15.f;
@@ -42,21 +43,29 @@ struct LogoPort : PortWidget, ThemeBase
     }
 	void draw(const DrawArgs& args) override
     {
+        if (invisible) return;
         DrawLogo(args.vg, 0.f, 0.f, logo);
     }
 };
 
 
 struct BlankModule : ResizableModule {
+    bool bright = false;
     bool glow = false;
+    bool branding = true;
+    bool dirty_settings = false;
 
+    bool is_bright() { return bright; }
+    void set_bright(bool b) { bright = b; }
     bool glowing() { return glow && rack::settings::rackBrightness < 0.90f; }
     bool glow_setting() { return glow; }
     void setGlow(bool g) { glow = g; }
 
+    bool is_branding() { return branding; }
+    void set_branding(bool b) { branding = b; }
+
     BlankModule();
 
-    bool dirty_settings = false;
     bool isDirty() { return dirty_settings; }
     void setClean() { dirty_settings = false; }
 
@@ -104,7 +113,12 @@ struct BlankModuleWidget : ModuleWidget, ITheme
     bool glowing() {
         return my_module ? my_module->glowing() : false;
     }
-
+    bool bright() {
+        return my_module ? my_module->is_bright() : false;
+    }
+    bool branding() {
+        return my_module ? my_module->is_branding() : true;
+    }
     BlankModuleWidget(BlankModule* module);
     void drawPanel(const DrawArgs &args);
 
