@@ -8,6 +8,8 @@ All screws are removable if you're more relaxed about your Rack and not worried 
 
 - [Documentation](docs/index.md)
 - [Demo Patches on patchstorage](https://patchstorage.com/platform/vcv-rack/?search_query=pachde-One)
+- [Buy me a coffee (VenMo)](https://venmo.com/u/pcdempsey).
+  Thank you! Donations go to keeping me caffeinated, or help fund getting hardware for testing and development. (I have a wish list :-).
 
 ## Null
 
