@@ -7,9 +7,13 @@ They also come with caps on the screws for an elegant look.
 All screws are removable if you're more relaxed about your Rack and not worried about the panels falling out.
 
 - [Documentation](docs/index.md)
+
 - [Demo Patches on patchstorage](https://patchstorage.com/platform/vcv-rack/?search_query=pachde-One)
-- [Buy me a coffee (VenMo)](https://venmo.com/u/pcdempsey).
-  Thank you! Donations go to keeping me caffeinated, or help fund getting hardware for testing and development. (I have a wish list :-).
+
+- [Buy me a coffee](https://venmo.com/u/pcdempsey). Thank you!
+
+  Donations go to keeping me caffeinated, or help fund getting hardware for testing and development. (I have a wish list :-).\
+  ![Buy pachde a coffee with VenMo](docs/VenMo.png)
 
 ## Null
 
