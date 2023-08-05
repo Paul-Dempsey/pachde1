@@ -84,9 +84,9 @@ struct Imagine : ThemeModule
     Traversal traversal_id = Traversal::SCANLINE;
     ColorComponent color_component = ColorComponent::LIGHTNESS;
     VRange polarity = VRange::BIPOLAR;
-    SlewLimiter voltage_slew;
+    rack::dsp::SlewLimiter voltage_slew;
 #ifdef XYSLEW
-    SlewLimiter x_slew, y_slew;
+    rack::dsp::SlewLimiter x_slew, y_slew;
 #endif
     ControlRateTrigger control_rate;
 

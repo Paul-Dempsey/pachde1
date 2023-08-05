@@ -27,7 +27,7 @@ void ImaginePanel::drawTraversal(const DrawArgs &args, TraversalDrawOptions opti
         auto font = GetPluginFontSemiBold();
         if (FontOk(font)) {
             SetTextStyle(vg, font, color, 14.f);
-            nvgTextAlign(vg, NVG_ALIGN_LEFT);
+            //nvgTextAlign(vg, NVG_ALIGN_LEFT);
             CenterText(vg, PANEL_CENTER, CONTROL_ROW + 5.f, TraversalName(module ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
         }
     }
