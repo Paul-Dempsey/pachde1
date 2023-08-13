@@ -98,7 +98,7 @@ void Bounce::process() {
 }
 
 void Wander::reset() {
-    position = Vec(image_size.x/2.f, image_size.y/2.f);
+    position = Vec(image_size.x*.5f, image_size.y*.5f);
     max = 0;
 }
 
@@ -126,6 +126,37 @@ void Wander::process() {
     wrap_position();
 }
 
+void Tabalar::process()
+{
+    position.y += advance;
+    if (position.y >= image_size.y) {
+        position.y = 0.0f;
+        position.x += 1.0f;
+        if (position.x >= image_size.x) {
+            position.x = 0.0f;
+        }
+    }
+}
+void Tabalar::reset() {
+    position = image_size * .5f; //Vec(image_size.x * .5f, image_size.y * .5f);
+}
+
+void Ralabat::process()
+{
+    position.x -= advance;
+    if (position.x < 0) {
+        position.x = image_size.x - PIC_EPSILON;
+        position.y -= 1.0f;
+        if (position.y < 0) {
+            position.y = image_size.y-1;
+        }
+    }
+}
+
+void Ralabat::reset() {
+    position = Vec(image_size.x * .5f, image_size.y * .5f);
+}
+
 ITraversal * MakeTraversal(Traversal id) {
     switch (id) {
         default:
@@ -139,6 +170,10 @@ ITraversal * MakeTraversal(Traversal id) {
             return new Wander();
         case Traversal::XYPAD:
             return new XYPad();
+        case Traversal::TBLR:
+            return new Tabalar();
+        case Traversal::RLBT:
+            return new Ralabat();
     }
 }
 
@@ -147,7 +182,9 @@ const char * TraversalNames[] = {
     "Bounce",
     "Vinyl",
     "Wander",
-    "X/Y Pad"
+    "X/Y Pad",
+    "Tabalar",
+    "Ralabat"
 };
 
 std::string TraversalName(Traversal id)

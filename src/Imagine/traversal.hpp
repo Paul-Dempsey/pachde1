@@ -55,7 +55,7 @@ struct TraversalBase : ITraversal
     }
 
     void reset() override {
-        position = Vec(0.f,0.f);
+        position = Vec(0.f, 0.f);
     }    
 
     void set_position(Vec pos) override
@@ -92,6 +92,8 @@ enum class Traversal {
     VINYL,
     WANDER,
     XYPAD,
+    TBLR,
+    RLBT,
     NUM_TRAVERSAL
 };
 
@@ -102,6 +104,20 @@ extern const char * TraversalNames[];
 // LRTB
 struct Scanline : TraversalBase {
      ~Scanline() {}
+    void process() override;
+};
+
+// TBLR
+struct Tabalar : TraversalBase {
+     ~Tabalar() {}
+    void reset() override;
+    void process() override;
+};
+
+// RLBT
+struct Ralabat : TraversalBase {
+    ~Ralabat() {}
+    void reset() override;
     void process() override;
 };
 

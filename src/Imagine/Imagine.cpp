@@ -66,11 +66,13 @@ Imagine::Imagine() {
         { "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10" });
 
     configSwitch(PATH_PARAM, 0.0f, static_cast<int>(Traversal::NUM_TRAVERSAL)-1, 0.0f, "Path", {
-        "Scanline",
+        "Scanline", // Laratab
         "Bounce",
         "Vinyl",
         "Wander",
-        "X/Y Pad"
+        "X/Y Pad",
+        "Tabalar",
+        "Ralabat"
     });
 
     configSwitch(COMP_PARAM, 0.0f, static_cast<int>(ColorComponent::NUM_COMPONENTS)-1, 0.0f, "Component", {
