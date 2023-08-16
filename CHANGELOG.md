@@ -5,6 +5,7 @@
 - Add **Follow Rack - Use dark panels** option to all modules. This is enabled by default, using the Dark theme. You may want to consider switching to the High Contrast theme for an even darker look.
 
 - **Imagine**
+  - Add CV input for Speed.
   - Two new traversals: **Talabar** and **Ralabat**.
   - Fix the Mica factory preset to show the correct image.
 
