@@ -1,4 +1,4 @@
-#include "info.hpp"
+#include "Info.hpp"
 #include "info_symbol.hpp"
 
 namespace pachde {
