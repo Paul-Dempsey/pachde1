@@ -82,7 +82,8 @@ void ImaginePanel::draw(const DrawArgs &args)
             CenterText(vg, 245.f, CONTROL_ROW_TEXT, ComponentShortName(module? module->color_component : ColorComponent::LUMINANCE) , nullptr);
             CenterText(vg, 275.f, CONTROL_ROW_TEXT, "g/t", nullptr);
 
-            CenterText(vg, 45.5f, CONTROL_ROW_2_TEXT, "x/y", nullptr);
+            CenterText(vg, 25.f, CONTROL_ROW_2_TEXT, "speed", nullptr);
+            CenterText(vg, 67.75f, CONTROL_ROW_2_TEXT, "x/y", nullptr);
 
             CenterText(vg, 215.f, CONTROL_ROW_2_TEXT, "reset", nullptr);
             CenterText(vg, 245.f, CONTROL_ROW_2_TEXT, "r", nullptr);

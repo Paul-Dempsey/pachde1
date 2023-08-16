@@ -58,6 +58,7 @@ Imagine::Imagine() {
     configInput(PLAY_INPUT, "Play/Pause trigger");
     configInput(X_INPUT, "Read head X position");
     configInput(Y_INPUT, "Read head Y position");
+    configInput(SPEED_INPUT, "Read head speed");
 
     configParam(SPEED_PARAM, 0.f, 100.f, 10.f,
         "Speed");
@@ -263,6 +264,10 @@ void Imagine::updateParams()
         }
         resetpos_trigger.reset();
         traversal_id = id;
+    }
+
+    if (inputs[SPEED_INPUT].isConnected() && !isXYInput()) {
+        getParam(SPEED_PARAM).setValue(clamp(inputs[SPEED_INPUT].getVoltage() * 100.f, 0.f, 100.f));
     }
     traversal->configure_rate(getSpeed(), sample_rate);
 

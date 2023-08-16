@@ -89,8 +89,9 @@ void ImagineUi::makeUi(Theme theme)
     image->box.size = Vec(PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT);
     addChild(image);
 
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(33.f, CONTROL_ROW_2), module, Imagine::X_INPUT));
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(58.f, CONTROL_ROW_2), module, Imagine::Y_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_VIOLET, Vec(25.f, CONTROL_ROW_2), module, Imagine::SPEED_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(55.f, CONTROL_ROW_2), module, Imagine::X_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(80.f, CONTROL_ROW_2), module, Imagine::Y_INPUT));
 
     auto reset = createThemeWidgetCentered<SmallPush>(theme, Vec(215.f, CONTROL_ROW_2));
     if (imagine) {

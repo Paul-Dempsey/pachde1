@@ -91,9 +91,10 @@ Also sets the coordinate system for the XY Pad.
 
 | Input | Description |
 | -- | -- |
+| speed | The left violet-colored port controls the speed of the read head. |
 | x/y | The peach-colored ports are unipolar CV control of read head position overrides the path, speed, and multiplier knowbs. |
 | r | The lime-colored port is a unipolar trigger for read head reset to its default starting position. |
-| pp | The violet-colored port is a unipolar trigger that toggles Play/Pause of the read head. |
+| pp | The right violet-colored port is a unipolar trigger that toggles Play/Pause of the read head. |
 
 ## Outputs
 

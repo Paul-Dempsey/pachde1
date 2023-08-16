@@ -61,6 +61,7 @@ struct Imagine : ThemeModule
         RESET_POS_INPUT,
         X_INPUT,
         Y_INPUT,
+        SPEED_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
