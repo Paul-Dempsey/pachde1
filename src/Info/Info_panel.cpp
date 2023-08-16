@@ -16,31 +16,38 @@ void InfoPanel::fetchColors()
     panel = info_theme->getDisplayMainColor();
     background = info_theme->getDisplayTextBackground();
     text_color = info_theme->getDisplayTextColor();
-    if (module) {
+    if (module && module->getCopperTarget() != CopperTarget::None) {
         auto left = module->leftExpanderColor();
         auto right = module->rightExpanderColor();
-        if (CopperTarget::Interior == copper_target) {
-            if (isColorVisible(left)) {
-                background = left;
-                info_theme->setUserTextBackground(background);
-            }
-            if (isColorVisible(right)) {
-                text_color = right;
-                info_theme->setUserTextColor(text_color);
-            }
-        } else {
-            bool set_panel = false;
-            if (isColorVisible(left)) {
-                set_panel = true;
-                panel = left;
-            }
-            if (isColorVisible(right)) {
-                set_panel = true;
-                panel = right;
-            }
-            if (set_panel) {
-                info_theme->setMainColor(panel);
-            }
+        switch (module->getCopperTarget()) {
+            case CopperTarget::Interior: {
+                if (isColorVisible(left)) {
+                    background = left;
+                    info_theme->setUserTextBackground(background);
+                }
+                if (isColorVisible(right)) {
+                    text_color = right;
+                    info_theme->setUserTextColor(text_color);
+                }
+            } break;
+
+            case CopperTarget::Panel: {
+                bool set_panel = false;
+                if (isColorVisible(left)) {
+                    set_panel = true;
+                    panel = left;
+                }
+                if (isColorVisible(right)) {
+                    set_panel = true;
+                    panel = right;
+                }
+                if (set_panel) {
+                    info_theme->setMainColor(panel);
+                }
+            } break;
+
+            case CopperTarget::None:
+                break;
         }
     }
 }

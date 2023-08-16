@@ -378,9 +378,11 @@ inline bool HaveScrewChildren(Widget* widget)
 
 struct ThemeModule : Module, ThemeBase
 {
-    ThemeModule() {
-        setScrews(true);
+    void onReset(const ResetEvent& e) override
+    {
+        ThemeBase::reset();       
     }
+
     json_t* dataToJson() override { return save(json_object()); }
     void dataFromJson(json_t* root) override { load(root); }
 };

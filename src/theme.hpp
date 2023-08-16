@@ -34,19 +34,19 @@ struct ITheme : IBasicTheme
 };
 
 // a theme -- no screws
-struct ThemeLite: ITheme
-{
-    virtual ~ThemeLite() {}
-    Theme dark_theme = Theme::Dark;
-    bool follow_rack = true;
+// struct ThemeLite: ITheme
+// {
+//     virtual ~ThemeLite() {}
+//     Theme dark_theme = Theme::Dark;
+//     bool follow_rack = true;
 
-    Theme getDarkTheme() override { return dark_theme; }
-    bool getFollowRack() override { return follow_rack; }
-    bool hasScrews() override { return false; }
+//     Theme getDarkTheme() override { return dark_theme; }
+//     bool getFollowRack() override { return follow_rack; }
+//     bool hasScrews() override { return false; }
 
-    void setDarkTheme(Theme theme) override { this->dark_theme = theme; };
-    void setFollowRack(bool follow) override { follow_rack = follow; }
-};
+//     void setDarkTheme(Theme theme) override { this->dark_theme = theme; };
+//     void setFollowRack(bool follow) override { follow_rack = follow; }
+// };
 
 enum class ChangedItem : uint8_t {
     Theme,
@@ -70,6 +70,9 @@ struct ThemeBase: ITheme
     IThemeChange * notify = nullptr;
 
     virtual ~ThemeBase() {}
+
+    void reset();
+    //void randomize();
 
     // Rack sends no notifcation for changes in this setting, so we must poll.
     // `pollRackDarkChanged` checks for changes in rack preferDarkPanels.
@@ -125,6 +128,13 @@ inline Theme GetPreferredTheme(ITheme * itheme) {
 }
 void DarkToJson(ITheme * itheme, json_t* root);
 void DarkFromJson(ITheme * itheme, json_t* root);
+
+inline Theme RandomTheme() {
+    //return static_cast<Theme>(clamp(std::floor(random::uniform() * 3), 1.f, 3.f));
+    return static_cast<Theme>(1 + random::get<uint32_t>() % 3);
+}
+
+void RandomizeTheme(ITheme* itheme, bool opaque = true);
 
 }
 #endif

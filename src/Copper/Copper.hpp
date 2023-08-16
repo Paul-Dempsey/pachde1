@@ -68,7 +68,7 @@ struct CopperModule: ThemeModule {
     bool dirty_settings = false;
     bool isDirty() { return dirty_settings; }
     void setClean() { dirty_settings = false; }
-
+    void onRandomize(const RandomizeEvent& e) override;
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;
     void onSampleRateChange() override;

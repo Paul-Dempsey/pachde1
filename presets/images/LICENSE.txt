@@ -12,4 +12,4 @@ generated using the Imagine module with these images is free for any purpose.
 All other rights reserved.
 
 They may not be independently published or used in derived works without
-explicit written permission of the creator.
+explicit written permission.

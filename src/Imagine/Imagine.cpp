@@ -157,21 +157,6 @@ bool Imagine::loadImageDialog()
         image_size = 0;
         return false;
     }
-    // osdialog_filters* filters = osdialog_filters_parse("Images (.png .jpg .gif):png,jpg,jpeg,gif;Any (*):*");
-    // DEFER({osdialog_filters_free(filters);});
-
-    // std::string dir = pic_folder.empty() ? asset::user("") : pic_folder;
-    // std::string name = system::getFilename(image.name());
-    // char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), name.c_str(), filters);
-    // if (!pathC) {
-    //     pause();
-    //     image.close();
-    //     image_size = 0;
-    //     return false;
-    // }
-    // std::string path = pathC;
-    // std::free(pathC);
-    // return loadImage(path);
 }
 
 void Imagine::onSampleRateChange() {

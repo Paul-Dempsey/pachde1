@@ -8,6 +8,8 @@
     "theme": "light",
     "bright-image": false,
     "medallion-fill": true,
-    "labels": true
+    "labels": true,
+    "dark-theme": "dark",
+    "rack-dark": true
   }
 }

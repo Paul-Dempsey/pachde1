@@ -1,12 +1,13 @@
 {
   "plugin": "pachde-one",
   "model": "pachde-null",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "data": {
     "main-color": "#00ff00",
     "screws": false,
     "glow": false,
     "bright": true,
-    "branding": false
+    "branding": false,
+    "copper": false
   }
 }

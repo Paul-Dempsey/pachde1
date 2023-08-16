@@ -79,6 +79,14 @@ void CopperModule::setAlpha(float a) {
     }
 }
 
+void CopperModule::onRandomize(const RandomizeEvent& e) //override
+{
+    setHue(random::uniform());
+    setSaturation(random::uniform());
+    setLightness(random::uniform());
+    setAlpha(random::uniform());
+}
+
 json_t* CopperModule::dataToJson()
 {
     json_t *root = ThemeModule::dataToJson();

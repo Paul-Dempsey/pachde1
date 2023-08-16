@@ -8,10 +8,12 @@
 
 namespace pachde {
 
-struct BlankModule : ResizableModule {
+struct BlankModule : ResizableModule
+{
     bool bright = false;
     bool glow = false;
     bool branding = true;
+    bool copper = true;
     bool dirty_settings = false;
 
     bool is_bright() { return bright; }
@@ -24,6 +26,8 @@ struct BlankModule : ResizableModule {
     void set_branding(bool b) { branding = b; }
 
     BlankModule();
+    void onReset(const ResetEvent& e) override;
+    void onRandomize(const RandomizeEvent& e) override;
 
     bool isDirty() { return dirty_settings; }
     void setClean() { dirty_settings = false; }

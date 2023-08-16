@@ -23,10 +23,12 @@ Right click to find a menu option to copy that value for use in another module.
 
 ## As extender
 
-Copper works as an extender to [Null](Null.md) for choosing it's panel color -- even live modulating it for some excitement.
+Copper works as an extender to [Null](Null.md) for choosing its panel color -- even live modulating it for some excitement.
 See [Null](Null.md) for more details on the entertainment value of this configuration.
 
-Copper is also an extender for [Info](Info.md) for choosing it's colors, configured in the Info menu.
+Copper is also an extender for [Info](Info.md) for choosing its colors, configured in the module menu.
+
+Null and Info both allow you to turn off using Copper as an extender.
 
 ## Inputs
 

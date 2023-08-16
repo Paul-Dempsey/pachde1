@@ -9,13 +9,13 @@
 using namespace ::rack;
 namespace pachde {
 
-//enum HpSizes { Default = 5, Least = 3, };
-enum CopperTarget { Panel, Interior };
+enum CopperTarget { Panel, Interior, None, First = Panel, Last = None };
 constexpr const float DEFAULT_FONT_SIZE = 16.f;
 constexpr const float MIN_FONT_SIZE = 5.f;
 constexpr const float MAX_FONT_SIZE = 60.f;
 
-struct InfoTheme : ThemeBase {
+struct InfoTheme : ThemeBase
+{
     ThemeBase * module_theme = nullptr;
     // computed from theme
     NVGcolor theme_panel_color = RampGray(G_80);
@@ -39,6 +39,10 @@ struct InfoTheme : ThemeBase {
             ThemeBase::setScrews(true);
         }
     }
+
+    void reset();
+    void randomize();
+
     json_t* save(json_t* root) override;
     void load(json_t* root) override;
 
@@ -82,6 +86,7 @@ struct InfoTheme : ThemeBase {
 struct InfoModule : ResizableModule
 {
     std::string text;
+    CopperTarget copper_target = CopperTarget::Panel;
     InfoTheme * info_theme = nullptr;
     IDirty dirt;
 
@@ -96,6 +101,8 @@ struct InfoModule : ResizableModule
     bool isDirty() { return dirty_settings; }
     void setClean() { dirty_settings = false; }
 
+    void onReset(const ResetEvent& e) override;
+    void onRandomize(const RandomizeEvent& e) override;
     json_t* dataToJson() override;
     void dataFromJson(json_t *root) override;
 
@@ -108,6 +115,8 @@ struct InfoModule : ResizableModule
     NVGcolor rightExpanderColor() {
         return expanderColor(getRightExpander());
     }
+    CopperTarget getCopperTarget() { return copper_target; }
+    void setCopperTarget(CopperTarget target) { copper_target = target; }
 };
 
 struct InfoPanel : Widget
@@ -119,12 +128,8 @@ struct InfoPanel : Widget
     NVGcolor background = RampGray(G_90);
     NVGcolor text_color = RampGray(G_20);
 
-    CopperTarget copper_target = CopperTarget::Panel;
-
     InfoPanel(InfoModule* module, InfoTheme* info, Vec size);
 
-    CopperTarget getCopperTarget() { return copper_target; }
-    void setCopperTarget(CopperTarget target) { copper_target = target; }
 
     void fetchColors();
     void showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, std::string text);

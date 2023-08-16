@@ -66,9 +66,11 @@ Hold down Shift for 10x the un-shifted amount.
   | -- | -- |
   | **Scanline** | Simple left-to right, top to bottom scan, like a television or video display. |
   | **Bounce**   | Travel in straight lines and bounce at the edges. Bounces are randomly very slightly askew from a perfect reflection, so you don't get stuck in the same orbit. |
-  | **Vinyl**    | (my favorite) Spin in like a record (baby), spin it right round, then spin back out. |
+  | **Vinyl**    | (my favorite) Spin in like a record (baby): spin it right round; then spin back out. |
   | **Wander**   | Just wander around the image to see what you can find. |
   | **XY Pad**   | No automatic movement of the read head. Reads from where you click. Drag the mouse to scrub. With a carefully prepared image, you can get specific voltages for controlling a patch. |
+  | **Tabalar** | Top-to-bottom, left-to-right. |
+  | **Ralabat** | Right-to-left, bottom-to-top |
 
   The selected path is shown in the backlit text display in the middle of the panel.
 
@@ -89,9 +91,9 @@ Also sets the coordinate system for the XY Pad.
 
 | Input | Description |
 | -- | -- |
-| x/y | The peach ports are unipolar CV control of read head position overrides the path, speed, and multiplier knowbs. |
-| r | The lime port is a unipolar trigger for read head reset to its default starting position. |
-| pp | The violet port is a unipolar trigger that toggles Play/Pause of the read head. |
+| x/y | The peach-colored ports are unipolar CV control of read head position overrides the path, speed, and multiplier knowbs. |
+| r | The lime-colored port is a unipolar trigger for read head reset to its default starting position. |
+| pp | The violet-colored port is a unipolar trigger that toggles Play/Pause of the read head. |
 
 ## Outputs
 
@@ -108,9 +110,9 @@ Also sets the coordinate system for the XY Pad.
 | Option | Description |
 | -- | -- |
 | Screws | Add or remove the screw caps. |
-| Theme | Choose Light, Dark, or High Contrast theme. |
-| Labels | Show labels on controls and jacks, or hide all text for clean look. |
-| Gold medallion | Show the gold **#d** brand medallion, or hide it if it's a bit too bold.   |
+| Theme | Choose Light, Dark, or High Contrast theme. Choose whether to follow the Rack **Use dark panels** option, and which theme is applied when the option is selected. You can even be a rebel (or silly) and choose **Light** as the theme used when **Use dark panels** is selected. Who am I to judge? |
+| Labels | Show labels on controls and jacks, or hide all text for a clean look. |
+| Gold medallion | Show the gold **#d** brand medallion, or hide it if it's a bit too bold for you.   |
 | Bright image in a dark room | Keep the image bright when it's dark. |
 
 ## Factory presets

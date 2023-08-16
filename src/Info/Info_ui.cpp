@@ -256,14 +256,19 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
         [=](Menu *menu)
         {
             menu->addChild(createCheckMenuItem(
+                "None", "",
+                [=]() { return my_module->getCopperTarget() == CopperTarget::None; },
+                [=]() { my_module->setCopperTarget(CopperTarget::None); }
+                ));
+            menu->addChild(createCheckMenuItem(
                 "Panel", "",
-                [=]() { return panel->getCopperTarget() == CopperTarget::Panel; },
-                [=]() { panel->setCopperTarget(CopperTarget::Panel); }
+                [=]() { return my_module->getCopperTarget() == CopperTarget::Panel; },
+                [=]() { my_module->setCopperTarget(CopperTarget::Panel); }
                 ));
             menu->addChild(createCheckMenuItem(
                 "Interior (L/R B/T)", "",
-                [=]() { return panel->getCopperTarget() == CopperTarget::Interior; },
-                [=]() { panel->setCopperTarget(CopperTarget::Interior); }
+                [=]() { return my_module->getCopperTarget() == CopperTarget::Interior; },
+                [=]() { my_module->setCopperTarget(CopperTarget::Interior); }
                 ));
         }));
 

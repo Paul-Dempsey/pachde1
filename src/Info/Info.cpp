@@ -11,11 +11,26 @@ InfoModule::InfoModule()
     minWidth = 4;
 }
 
+void InfoModule::onReset(const ResetEvent& e) //override
+{
+    dirty_settings = true;
+    setCopperTarget(CopperTarget::Panel);
+    if (info_theme) { info_theme->reset(); }
+}
+
+void InfoModule::onRandomize(const RandomizeEvent& e) //override
+{
+    setCopperTarget(static_cast<CopperTarget>(random::get<uint32_t>() % 3));
+    if (info_theme) { info_theme->randomize(); }
+    dirty_settings = true;
+}
+
 json_t* InfoModule::dataToJson() //override
 {
     json_t* root = ResizableModule::dataToJson();
     root = info_theme->save(root);
     json_object_set_new(root, "text", json_stringn(text.c_str(), text.size()));
+    json_object_set_new(root, "copper-target", json_integer(static_cast<int>(copper_target)));
     return root;
 }
 
@@ -28,6 +43,11 @@ void InfoModule::dataFromJson(json_t *root) //override
     if (j) {
         text = json_string_value(j);
     }
+    j = json_object_get(root, "copper-target");
+    if (j) {
+        copper_target = static_cast<CopperTarget>(clamp(json_integer_value(j), CopperTarget::First, CopperTarget::Last));
+    }
+
     dirty_settings = true;
 }
 

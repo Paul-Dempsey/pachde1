@@ -187,6 +187,9 @@ inline float Hue(const NVGcolor& color) {
 inline bool isColorTransparent(NVGcolor& color) { return color.a < 0.001f; }
 inline bool isColorVisible(NVGcolor& color) { return color.a > 0.001f; }
 
+inline NVGcolor RandomColor() { return nvgRGBAf(random::uniform(), random::uniform(), random::uniform(), random::uniform()); }
+inline NVGcolor RandomOpaqueColor() { return nvgRGBAf(random::uniform(), random::uniform(), random::uniform(), 1.0f); }
+
 std::string ToString(Theme theme);
 Theme ParseTheme(std::string text);
 Theme ThemeFromJson(json_t * root);

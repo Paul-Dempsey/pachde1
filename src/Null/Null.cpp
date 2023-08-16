@@ -37,6 +37,27 @@ BlankModule::BlankModule()
     configInput(0,"Flicker");
 }
 
+void BlankModule::onReset(const ResetEvent& e) //override
+{
+    bright = false;
+    glow = false;
+    branding = true;
+    copper = true;
+    ResizableModule::onReset(e);
+    dirty_settings = true;
+}
+
+void BlankModule::onRandomize(const RandomizeEvent& e) //override
+{
+    ResizableModule::onRandomize(e);
+
+    bright = random::get<bool>();
+    glow = random::get<bool>();
+    branding = random::get<bool>();
+    copper = random::get<bool>();
+    RandomizeTheme(this, false);
+}
+
 NVGcolor expanderColor(rack::engine::Module::Expander& expander)
 {
     if (expander.module && expander.module->model == modelCopper) {
@@ -50,6 +71,7 @@ NVGcolor expanderColor(rack::engine::Module::Expander& expander)
 
 NVGcolor BlankModule::externalcolor()
 {
+    if (!copper) { return COLOR_NONE; }
     auto color = expanderColor(getRightExpander());
     if (isColorTransparent(color)) {
         color = expanderColor(getLeftExpander());
@@ -57,19 +79,23 @@ NVGcolor BlankModule::externalcolor()
     return color;        
 } 
 
-json_t* BlankModule::dataToJson() {
+json_t* BlankModule::dataToJson()
+{
     auto root = ResizableModule::dataToJson();
     json_object_set_new(root, "glow", json_boolean(glow));
     json_object_set_new(root, "bright", json_boolean(bright));
     json_object_set_new(root, "branding", json_boolean(branding));
+    json_object_set_new(root, "copper", json_boolean(copper));
     return root;
 
 }
-void BlankModule::dataFromJson(json_t* root) {
+void BlankModule::dataFromJson(json_t* root)
+{
     ResizableModule::dataFromJson(root);
     glow = GetBool(root, "glow", glow);
     bright = GetBool(root, "bright", bright);
     branding = GetBool(root, "branding", branding);
+    copper = GetBool(root, "copper", copper);
     dirty_settings = true;
 }
 
@@ -142,7 +168,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
             break;
     }
 
-    auto panel_color = my_module ? my_module->externalcolor() : COLOR_NONE;
+    auto panel_color = my_module && my_module->copper ? my_module->externalcolor() : COLOR_NONE;
     if (isColorTransparent(panel_color)) {
         panel_color = getITheme()->getMainColor();
     }
@@ -359,6 +385,10 @@ void BlankModuleWidget::appendContextMenu(Menu *menu)
                 AddColorItem(this, menu, pco->name, pco->color, current);
             }
         })); 
+    menu->addChild(createCheckMenuItem(
+        "Copper sets panel color", "",
+        [=]() { return my_module->copper; },
+        [=]() { my_module->copper = !my_module->copper; }));
     menu->addChild(createCheckMenuItem(
         "Show branding", "",
         [=]() { return my_module->is_branding(); },

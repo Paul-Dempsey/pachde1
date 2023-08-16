@@ -2,7 +2,39 @@
 #include "../open_file.hpp"
 
 namespace pachde {
-    
+
+void InfoTheme::reset()
+{
+    theme_panel_color = RampGray(G_80);
+    theme_text_background = RampGray(G_90);
+    theme_text_color = RampGray(G_20);
+    setScrews(true);
+    setMainColor(COLOR_NONE);
+    setTheme(DefaultTheme);
+    setDarkTheme(Theme::Dark);
+    setFollowRack(true);
+    setUserTextBackground(COLOR_NONE);
+    setUserTextColor(COLOR_NONE);
+    setHorizontalAlignment(HAlign::Left);
+    setBrilliant(false);
+    setFontSize(DEFAULT_FONT_SIZE);
+    resetFont();
+}
+
+void InfoTheme::randomize()
+{
+    RandomizeTheme(this, false);
+    theme_panel_color = RandomColor();
+    theme_text_background = RandomColor();
+    theme_text_color = RandomOpaqueColor();
+
+    setUserTextBackground(RandomColor());
+    setUserTextColor(RandomOpaqueColor());
+    setHorizontalAlignment(static_cast<HAlign>(random::get<uint32_t>() % 3));
+    setBrilliant(random::get<bool>());
+}
+
+
 float InfoTheme::getFontSize()
 {
     return font_size;

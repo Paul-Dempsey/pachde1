@@ -16,6 +16,15 @@ void DarkFromJson(ITheme * itheme, json_t* root)
     itheme->setFollowRack(GetBool(root, "rack-dark", itheme->getFollowRack()));
 }
 
+void ThemeBase::reset()
+{
+    setMainColor(COLOR_NONE);
+    setTheme(DefaultTheme);
+    setDarkTheme(Theme::Dark);
+    setFollowRack(true);
+    setScrews(true);
+}
+
 json_t* ThemeBase::save(json_t* root) {
     std::string value = ToString(theme);
     json_object_set_new(root, "theme", json_stringn(value.c_str(), value.size()));
@@ -43,5 +52,14 @@ void ThemeBase::load(json_t* root)
     screws = GetBool(root, "screws", screws);
     DarkFromJson(this, root);
 };
+
+void RandomizeTheme(ITheme* itheme, bool opaque)
+{
+    itheme->setMainColor(opaque ? RandomOpaqueColor() : RandomColor());
+    itheme->setScrews(random::get<bool>());
+    itheme->setTheme(RandomTheme());
+    itheme->setDarkTheme(RandomTheme());
+    itheme->setFollowRack(random::get<bool>());
+}
 
 }
