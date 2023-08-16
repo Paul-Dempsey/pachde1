@@ -2,11 +2,11 @@
 #include <rack.hpp>
 #include "../colors.hpp"
 #include "../theme.hpp"
-using namespace rack;
+using namespace ::rack;
 
 namespace pachde {
 
-struct InfoSymbol: OpaqueWidget, ThemeLite
+struct InfoSymbol: OpaqueWidget, IBasicTheme
 {
     NVGcolor color;
     InfoSymbol(Theme theme) {

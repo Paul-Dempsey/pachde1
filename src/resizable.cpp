@@ -35,10 +35,12 @@ ModuleResizeHandle::ModuleResizeHandle()
 
 NVGcolor ModuleResizeHandle::HandleOverlay()
 {
-    if (isColorVisible(module->main_color)) {
-        bool hi_contrast = Theme::HighContrast == module->theme;
+    auto theme = GetPreferredTheme(module);
+    auto color = module->getMainColor();
+    if (isColorVisible(color)) {
+        bool hi_contrast = Theme::HighContrast == theme;
         NVGcolor overlay;
-        auto L = LuminanceLinear(module->main_color);
+        auto L = LuminanceLinear(color);
         if (L < 0.5f) {
             overlay = hi_contrast ? RampGray(G_WHITE) : COLOR_BRAND_HI;
         } else {
@@ -46,7 +48,7 @@ NVGcolor ModuleResizeHandle::HandleOverlay()
         }
         return nvgTransRGBAf(overlay, 0.35f);
     }
-    switch (module->theme) {
+    switch (theme) {
         default:
         case Theme::Unset:
         case Theme::Light:
@@ -116,6 +118,11 @@ void ModuleResizeHandle::onDragMove(const DragMoveEvent &e)
     }
     module->setWidth(std::round(moduleWidget->box.size.x / ONE_HP));
 
+}
+void ModuleResizeHandle::step() {
+    if (right && parent) {
+        box.pos.x = parent->box.size.x - HandleWidth();
+    }
 }
 
 void ModuleResizeHandle::draw(const DrawArgs &args)

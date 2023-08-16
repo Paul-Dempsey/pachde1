@@ -4,6 +4,7 @@ namespace pachde {
 
 void InfoSymbol::setTheme(Theme theme)
 {
+    IBasicTheme::setTheme(theme);
     switch (theme) {
         default:
         case Theme::Unset:

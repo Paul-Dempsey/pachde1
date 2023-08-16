@@ -3,25 +3,30 @@ RACK_DIR ?= ../..
 FLAGS +=
 
 SOURCES += src/plugin.cpp
-SOURCES += src/components.cpp
-SOURCES += src/resizable.cpp
 SOURCES += src/colors.cpp
-SOURCES += src/text.cpp
+SOURCES += src/components.cpp
 SOURCES += src/dsp.cpp
-SOURCES += src/pic.cpp
+SOURCES += src/open_file.cpp
 SOURCES += src/pic_button.cpp
+SOURCES += src/pic.cpp
 SOURCES += src/play_pause.cpp
 SOURCES += src/port.cpp
-SOURCES += src/switch.cpp
+SOURCES += src/resizable.cpp
 SOURCES += src/small_push.cpp
+SOURCES += src/switch.cpp
+SOURCES += src/text.cpp
 SOURCES += src/theme.cpp
 
 # Null module
 SOURCES += src/Null/Null.cpp
 
 # Info module
-SOURCES += src/Info/Info.cpp
+SOURCES += src/Info/Info_panel.cpp
 SOURCES += src/Info/info_symbol.cpp
+SOURCES += src/Info/info_theme.cpp
+SOURCES += src/Info/Info_ui.cpp
+SOURCES += src/Info/Info.cpp
+SOURCES += src/Info/text_align.cpp
 
 # Copper module
 SOURCES += src/Copper/Copper.cpp

@@ -1,5 +1,7 @@
 #pragma once
-#include "plugin.hpp"
+#ifndef PACHDE_TEXT_HPP_INCLUDED
+#define PACHDE_TEXT_HPP_INCLUDED
+#include <rack.hpp>
 #include "colors.hpp"
 using namespace ::rack;
 
@@ -7,15 +9,9 @@ namespace pachde {
 
 std::string format_string(const char *fmt, ...);
 
-inline std::shared_ptr<window::Font> GetPluginFontSemiBold(const char * path = NULL)
-{
-    return APP->window->loadFont(asset::plugin(pluginInstance, path ? path : "res/fonts/HankenGrotesk-SemiBold.ttf"));
-}
+std::shared_ptr<window::Font> GetPluginFontSemiBold(const char * path = NULL);
 
-inline std::shared_ptr<window::Font> GetPluginFontRegular(const char * path = NULL)
-{
-    return APP->window->loadFont(asset::plugin(pluginInstance, path ? path : "res/fonts/HankenGrotesk-Regular.ttf"));
-}
+std::shared_ptr<window::Font> GetPluginFontRegular(const char * path = NULL);
 
 inline bool FontOk(std::shared_ptr<window::Font> font) {
     return font && font->handle >= 0;
@@ -38,3 +34,4 @@ enum class BaselineCorrection {
 void RightAlignText(NVGcontext *vg, float x, float y, const char * text, const char * end, BaselineCorrection correction = BaselineCorrection::None);
 
 } // namespace pachde
+#endif

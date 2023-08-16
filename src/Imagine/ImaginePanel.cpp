@@ -16,7 +16,7 @@ void ImaginePanel::drawTraversal(const DrawArgs &args, TraversalDrawOptions opti
     auto x = 85.f + 20.f;
     auto y = CONTROL_ROW - 8.5f;
     bool dim = rack::settings::rackBrightness <= .9f;
-    auto color = (dim || (module && IsDarker(module->getTheme())))
+    auto color = (dim || (IsDarker(ModuleTheme(module))))
         ? nvgRGB(0xe6, 0xa2, 0x1a)
         : COLOR_BRAND;
 
@@ -45,7 +45,7 @@ void ImaginePanel::drawLayer(const DrawArgs &args, int layer)
 
 void ImaginePanel::draw(const DrawArgs &args)
 {
-    Theme theme = module ? module->getTheme() : DefaultTheme;
+    Theme theme = ModuleTheme(module);
     NVGcolor panel_color = PanelBackground(theme), textColor = ThemeTextColor(theme);
     auto vg = args.vg;
 

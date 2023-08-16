@@ -1,53 +1,12 @@
 #pragma once
+#ifndef NULL_HPP_INCLUDED
+#define NULL_HPP_INCLUDED
 #include <rack.hpp>
-#include "../components.hpp"
+#include "../colors.hpp"
 #include "../resizable.hpp"
+#include "logo_port.hpp"
 
 namespace pachde {
-
-struct LogoPort : PortWidget, ThemeBase
-{
-    NVGcolor logo;
-    bool invisible = false;
-
-    LogoPort(Theme theme) { 
-        box.size.x = box.size.y = 15.f;
-        setTheme(theme);
-    }
-    void setTheme(Theme theme) override {
-        ThemeBase::setTheme(theme);
-        logo = LogoColor(theme);
-        switch (theme) {
-            default: 
-            case Theme::Unset:
-            case Theme::Light:
-                logo.a = 0.5f;
-                break;
-            case Theme::Dark:
-                logo.a = 0.5f;
-                break;
-            case Theme::HighContrast:
-                break;
-        }
-        if (isColorVisible(main_color)) {
-            auto lum = LuminanceLinear(main_color);
-            if (lum <= 0.5f) {
-                logo = Gray(lum + 0.5);
-            } else {
-                logo = Gray(lum - 0.4);
-            }
-            if (theme != Theme::HighContrast) {
-                logo.a = 0.75;
-            }
-        }
-    }
-	void draw(const DrawArgs& args) override
-    {
-        if (invisible) return;
-        DrawLogo(args.vg, 0.f, 0.f, logo);
-    }
-};
-
 
 struct BlankModule : ResizableModule {
     bool bright = false;
@@ -81,14 +40,11 @@ struct BlankModule : ResizableModule {
     void dataFromJson(json_t* root) override;
 };
 
-struct BlankModuleWidget : ModuleWidget, ITheme
+struct BlankModuleWidget : ModuleWidget, IThemeChange
 {
-    ITheme * alternateTheme = nullptr;
+    ThemeBase * alternateTheme = nullptr;
     ThemePanel* panel = nullptr;
     BlankModule* my_module = nullptr;
-    ModuleResizeHandle* rightHandle = nullptr;
-    ScrewCap* topRightScrew = nullptr;
-    ScrewCap* bottomRightScrew = nullptr;
     LogoPort* logo_port = nullptr;
     bool flicker_unipolar = true;
 
@@ -97,16 +53,17 @@ struct BlankModuleWidget : ModuleWidget, ITheme
             delete alternateTheme;
         }
     }
-    ITheme * getITheme() {
+    ThemeBase * getITheme() {
         if (alternateTheme) {
             return alternateTheme;
         }
-        auto it = dynamic_cast<ITheme*>(module);
+        auto it = dynamic_cast<ThemeBase*>(module);
         if (it) {
             return it;
         }
         alternateTheme = new ThemeBase();
         alternateTheme->setScrews(true);
+        alternateTheme->setNotify(this);
         return alternateTheme;
     }
 
@@ -119,21 +76,23 @@ struct BlankModuleWidget : ModuleWidget, ITheme
     bool branding() {
         return my_module ? my_module->is_branding() : true;
     }
+
     BlankModuleWidget(BlankModule* module);
+
+    void applyTheme(Theme theme);
+    void applyScrews(bool screws);
     void drawPanel(const DrawArgs &args);
 
     void step() override;
     void draw(const DrawArgs& args) override;
     void drawLayer(const DrawArgs &args, int layer) override;
+
     void appendContextMenu(Menu *menu) override;
-    void setTheme(Theme theme) override;
-    void setMainColor(NVGcolor color) override;
-    void setScrews(bool showScrews) override;
-    NVGcolor getMainColor() override { return getITheme()->getMainColor(); }
-    Theme getTheme() override { return getITheme()->getTheme(); }
-    bool hasScrews() override { return getITheme()->hasScrews(); }
+    void onChangeTheme(ChangedItem item) override;
+
     void addResizeHandles();
     void add_screws();
 };
 
 }
+#endif

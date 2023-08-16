@@ -3,6 +3,19 @@
 
 namespace pachde {
 
+void DarkToJson(ITheme * itheme, json_t* root)
+{
+    std::string value = ToString(itheme->getDarkTheme());
+    json_object_set_new(root, "dark-theme", json_stringn(value.c_str(), value.size()));
+    json_object_set_new(root, "rack-dark", json_boolean(itheme->getFollowRack()));
+}
+
+void DarkFromJson(ITheme * itheme, json_t* root)
+{
+    itheme->setDarkTheme(DarkThemeFromJson(root));
+    itheme->setFollowRack(GetBool(root, "rack-dark", itheme->getFollowRack()));
+}
+
 json_t* ThemeBase::save(json_t* root) {
     std::string value = ToString(theme);
     json_object_set_new(root, "theme", json_stringn(value.c_str(), value.size()));
@@ -13,6 +26,7 @@ json_t* ThemeBase::save(json_t* root) {
     }
 
     json_object_set_new(root, "screws", json_boolean(screws));
+    DarkToJson(this, root);
     return root;
 }
 
@@ -27,6 +41,7 @@ void ThemeBase::load(json_t* root)
     }
 
     screws = GetBool(root, "screws", screws);
+    DarkFromJson(this, root);
 };
 
 }

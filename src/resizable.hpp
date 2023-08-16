@@ -1,6 +1,7 @@
 #pragma once
-#include <common.hpp>
-
+#include <rack.hpp>
+#include "components.hpp"
+using namespace ::rack;
 namespace pachde {
 
 inline float NearestHp(float x, float minHp = 3) {
@@ -35,6 +36,7 @@ struct ModuleResizeHandle : OpaqueWidget
     void onDragStart(const DragStartEvent &e) override;
     void onDragMove(const DragMoveEvent &e) override;
 
+    void step() override;
     void draw(const DrawArgs &args) override;
 };
 

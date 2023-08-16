@@ -2,10 +2,8 @@
 
 namespace pachde {
 
-void ColorPort::setTheme(Theme theme)
+void ColorPort::applyTheme(Theme theme)
 {
-    ThemeLite::setTheme(theme);
-
     sleeve = RampGray(G_20);
     tube    = RampGray(G_05);
     switch (theme) {
@@ -33,7 +31,12 @@ void ColorPort::setTheme(Theme theme)
             bevel2  = RampGray(G_90);
             break;
     }
+}
 
+void ColorPort::setTheme(Theme theme)
+{
+    IBasicTheme::setTheme(theme);
+    applyTheme(theme);
 }
 
 void ColorPort::draw(const DrawArgs& args)

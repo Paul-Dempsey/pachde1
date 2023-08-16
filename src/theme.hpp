@@ -1,53 +1,130 @@
 #pragma once
+#ifndef THEME_HPP_INCLUDED
+#define THEME_HPP_INCLUDED
 #include <rack.hpp>
 #include "colors.hpp"
 
-using namespace rack;
+using namespace ::rack;
 namespace pachde {
 
-struct ITheme {
-    virtual ~ITheme() {}
-    virtual void setTheme(Theme theme) {}
-    virtual void setMainColor(NVGcolor color) {}
-    virtual void setScrews(bool showScrews) {}
+// theme + main color for widgets
+struct IBasicTheme
+{
+    Theme theme = DefaultTheme;
+    NVGcolor main_color = COLOR_NONE;
 
-    virtual Theme getTheme() = 0;
-    virtual NVGcolor getMainColor() = 0;
-    virtual bool hasScrews() = 0;
+    virtual ~IBasicTheme() {}
+    virtual void setTheme(Theme new_theme) { theme = new_theme; }
+    virtual Theme getTheme() { return theme; };
+    virtual void setMainColor(NVGcolor color) { main_color = color; }
+    virtual NVGcolor getMainColor() { return main_color; }
 };
 
-// just a theme -- no screws, no panel override
+// theme + main color + follow rack dark
+struct ITheme : IBasicTheme
+{
+    virtual ~ITheme() {}
+    virtual void setDarkTheme(Theme theme) {}
+    virtual void setScrews(bool showScrews) {}
+    virtual void setFollowRack(bool follow) {}
+
+    virtual bool hasScrews() { return true; }
+    virtual Theme getDarkTheme() { return Theme::Dark; }
+    virtual bool getFollowRack() { return true; }
+};
+
+// a theme -- no screws
 struct ThemeLite: ITheme
 {
     virtual ~ThemeLite() {}
-    Theme theme = DefaultTheme;
-    void setTheme(Theme theme) override { this->theme = theme; };
-    Theme getTheme() override { return theme; }
-    NVGcolor getMainColor() override { return COLOR_NONE; }
+    Theme dark_theme = Theme::Dark;
+    bool follow_rack = true;
+
+    Theme getDarkTheme() override { return dark_theme; }
+    bool getFollowRack() override { return follow_rack; }
     bool hasScrews() override { return false; }
+
+    void setDarkTheme(Theme theme) override { this->dark_theme = theme; };
+    void setFollowRack(bool follow) override { follow_rack = follow; }
+};
+
+enum class ChangedItem : uint8_t {
+    Theme,
+    DarkTheme,
+    FollowDark,
+    MainColor,
+    Screws
+};
+
+struct IThemeChange
+{
+    virtual void onChangeTheme(ChangedItem item) = 0;
 };
 
 struct ThemeBase: ITheme
 {
-    Theme theme = DefaultTheme;
-    NVGcolor main_color = COLOR_NONE;
+    Theme dark_theme = Theme::Dark;
     bool screws = true;
+    bool follow_rack = true;
+    bool rack_dark = ::rack::settings::preferDarkPanels;
+    IThemeChange * notify = nullptr;
 
     virtual ~ThemeBase() {}
 
-    bool isColorOverride() { return isColorVisible(main_color); }
+    // Rack sends no notifcation for changes in this setting, so we must poll.
+    // `pollRackDarkChanged` checks for changes in rack preferDarkPanels.
+    // Returns true and notifies with ChangedItem::FollowDark if changed.
+    bool pollRackDarkChanged() {
+        bool new_rack_dark = ::rack::settings::preferDarkPanels;
+        bool changed = rack_dark != new_rack_dark;
+        rack_dark = new_rack_dark;
+        if (changed && notify) { notify->onChangeTheme(ChangedItem::FollowDark); }
+        return changed;
+    }
 
-    void setTheme(Theme theme) override { this->theme = theme; };
-    void setMainColor(NVGcolor color) override { main_color = color; };
-    void setScrews(bool showScrews) override { screws = showScrews;};
+    bool isColorOverride() { return isColorVisible(main_color); }
+    void setNotify(IThemeChange *callback) {
+        assert(nullptr == callback || nullptr == notify);
+        notify = callback;
+    }
+    void setTheme(Theme theme) override {
+        this->theme = theme;
+        if (notify) { notify->onChangeTheme(ChangedItem::Theme); }
+    };
+    void setDarkTheme(Theme theme) override {
+        dark_theme = theme;
+        if (notify) { notify->onChangeTheme(ChangedItem::DarkTheme); }
+    }
+    void setScrews(bool showScrews) override {
+        screws = showScrews;
+        if (notify) { notify->onChangeTheme(ChangedItem::Screws); }
+    };
+    void setFollowRack(bool follow) override {
+        follow_rack = follow;
+        if (notify) { notify->onChangeTheme(ChangedItem::FollowDark); }
+    }
+    void setMainColor(NVGcolor color) override {
+        ITheme::setMainColor(color);
+        if (notify) { notify->onChangeTheme(ChangedItem::MainColor); }
+    }
 
     Theme getTheme() override { return ConcreteTheme(theme); };
-    NVGcolor getMainColor() override { return main_color; };
     bool hasScrews() override { return screws; }
+    bool getFollowRack() override { return follow_rack; }
+    Theme getDarkTheme() override { return dark_theme; }
 
     virtual json_t* save(json_t* root);
     virtual void load(json_t* root);
 };
 
+inline Theme GetPreferredTheme(ITheme * itheme) {
+    if (!itheme) return ::rack::settings::preferDarkPanels ? Theme::Dark : DefaultTheme;
+    return (itheme->getFollowRack() && ::rack::settings::preferDarkPanels)
+        ? itheme->getDarkTheme()
+        : itheme->getTheme();
+}
+void DarkToJson(ITheme * itheme, json_t* root);
+void DarkFromJson(ITheme * itheme, json_t* root);
 
 }
+#endif

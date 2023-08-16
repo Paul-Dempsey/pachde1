@@ -9,7 +9,7 @@ void ThemePanel::draw(const DrawArgs &args)
     auto color = theme_holder->getMainColor();
     if (isColorTransparent(color))
     {
-        color = PanelBackground(theme_holder->getTheme());
+        color = PanelBackground(GetPreferredTheme(theme_holder));
     }
     auto vg = args.vg;
 
@@ -22,9 +22,8 @@ void ThemePanel::draw(const DrawArgs &args)
 void SetChildrenTheme(Widget * widget, Theme theme, bool top)
 {
     for (Widget* child : widget->children) {
-        auto change = dynamic_cast<ITheme*>(child);
-        if (change) {
-            change->setTheme(theme);
+        if (auto itheme = dynamic_cast<IBasicTheme*>(child)) {
+            itheme->setTheme(theme);
         }
         if (!child->children.empty()) {
             SetChildrenTheme(child, theme, false);
@@ -41,9 +40,8 @@ void SetChildrenTheme(Widget * widget, Theme theme, bool top)
 void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top)
 {
     for (Widget* child : widget->children) {
-        auto change = dynamic_cast<ITheme*>(child);
-        if (change) {
-            change->setMainColor(color);
+        if (auto itheme = dynamic_cast<IBasicTheme*>(child)) {
+            itheme->setMainColor(color);
         }
         if (!child->children.empty()) {
             SetChildrenThemeColor(child, color, false);
@@ -89,44 +87,33 @@ WhichScrew SetScrewPosition(ScrewCap* screw, WhichScrew which)
         : which;
 }
 
-
-void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewAlign pos, WhichScrew which)
+void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewAlign align, WhichScrew which)
 {
-    ScrewCap* screw;
-
     // top left
     if (which & WhichScrew::TL) {
-        screw = new ScrewCap(theme);
-        screw->which = WhichScrew::TL;
-        screw->box.pos = Vec(tl_screw_inset(pos), 0);
-        screw->color = color;
+        auto screw = new ScrewCap(theme, WhichScrew::TL, align);
+        screw->setMainColor(color);
         widget->addChild(screw);
     }
 
     //top right
     if (which & WhichScrew::TR) {
-        screw = new ScrewCap(theme);
-        screw->which = WhichScrew::TR;
-        screw->box.pos = Vec(widget->box.size.x - ONE_HP - tr_screw_inset(pos), 0);
-        screw->color = color;
+        auto screw = new ScrewCap(theme, WhichScrew::TR, align);
+        screw->setMainColor(color);
         widget->addChild(screw);
     }
 
     //bottom left
     if (which & WhichScrew::BL) {
-        screw = new ScrewCap(theme);
-        screw->which = WhichScrew::BL;
-        screw->box.pos = Vec(bl_screw_inset(pos), RACK_GRID_HEIGHT - ONE_HP);
-        screw->color = color;
+        auto screw = new ScrewCap(theme, WhichScrew::BL, align);
+        screw->setMainColor(color);
         widget->addChild(screw);
     }
 
     // bottom right
     if (which & WhichScrew::BR) {
-        screw = new ScrewCap(theme);
-        screw->which = WhichScrew::BR;
-        screw->box.pos = Vec(widget->box.size.x - ONE_HP - br_screw_inset(pos), RACK_GRID_HEIGHT - ONE_HP);
-        screw->color = color;
+        auto screw = new ScrewCap(theme, WhichScrew::BR, align);
+        screw->setMainColor(color);
         widget->addChild(screw);
     }
 }
@@ -148,17 +135,15 @@ void RemoveScrewCaps(Widget* widget, WhichScrew which)
     }
 }
 
-void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isChangeScrews) {
+void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isChangeScrews)
+{
     assert(it);
     menu->addChild(new MenuSeparator);
     if (isChangeScrews) {
         menu->addChild(createCheckMenuItem("Screws", "",
             [=]() { return it->hasScrews(); }, 
-            [=]() {
-                    bool screws = it->hasScrews();
-                    it->setScrews(!screws);
-                }
-            ));
+            [=]() { it->setScrews(!it->hasScrews()); }
+        ));
     }
     menu->addChild(createSubmenuItem("Theme", "",
         [=](Menu *menu)
@@ -178,6 +163,31 @@ void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isC
                 [=]() { return it->getTheme() == Theme::HighContrast; },
                 [=]() { it->setTheme(Theme::HighContrast); }
                 ));
+
+            menu->addChild(createCheckMenuItem(
+                "Follow Rack - Use dark panels", "",
+                [=]() { return it->getFollowRack(); },
+                [=]() { it->setFollowRack(!it->getFollowRack()); }
+                ));
+            menu->addChild(createSubmenuItem(
+                "Dark panel", "",
+                [=](Menu * menu) {
+                    menu->addChild(createCheckMenuItem(
+                        "Light", "",
+                        [=]() { return it->getDarkTheme() == Theme::Light; },
+                        [=]() { it->setDarkTheme(Theme::Light); }
+                        ));
+                    menu->addChild(createCheckMenuItem(
+                        "Dark", "",
+                        [=]() { return it->getDarkTheme() == Theme::Dark; },
+                        [=]() { it->setDarkTheme(Theme::Dark); }
+                        ));
+                    menu->addChild(createCheckMenuItem(
+                        "High contrast", "",
+                        [=]() { return it->getDarkTheme() == Theme::HighContrast; },
+                        [=]() { it->setDarkTheme(Theme::HighContrast); }
+                        ));
+                }));
         }));
 
     if (isChangeColor) {

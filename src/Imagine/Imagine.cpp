@@ -1,9 +1,10 @@
 #include "Imagine.hpp"
-#include <osdialog.h>
+//#include <osdialog.h>
 #include "imagine_layout.hpp"
 #include "../components.hpp"
-#include "../text.hpp"
 #include "../dsp.hpp"
+#include "../open_file.hpp"
+#include "../text.hpp"
 
 fs::file_time_type LastWriteTime(std::string path)
 {
@@ -146,21 +147,31 @@ bool Imagine::loadImage(std::string path)
 
 bool Imagine::loadImageDialog()
 {
-    osdialog_filters* filters = osdialog_filters_parse("Images (.png .jpg .gif):png,jpg,jpeg,gif;Any (*):*");
-    DEFER({osdialog_filters_free(filters);});
-
-    std::string dir = pic_folder.empty() ? asset::user("") : pic_folder;
-    std::string name = system::getFilename(image.name());
-    char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), name.c_str(), filters);
-    if (!pathC) {
+    std::string path;
+    bool ok = openFileDialog(pic_folder, "Images (.png .jpg .gif):png,jpg,jpeg,gif;Any (*):*", image.name(), path);
+    if (ok) {
+        return loadImage(path);
+    } else {
         pause();
         image.close();
         image_size = 0;
         return false;
     }
-    std::string path = pathC;
-    std::free(pathC);
-    return loadImage(path);
+    // osdialog_filters* filters = osdialog_filters_parse("Images (.png .jpg .gif):png,jpg,jpeg,gif;Any (*):*");
+    // DEFER({osdialog_filters_free(filters);});
+
+    // std::string dir = pic_folder.empty() ? asset::user("") : pic_folder;
+    // std::string name = system::getFilename(image.name());
+    // char* pathC = osdialog_file(OSDIALOG_OPEN, dir.c_str(), name.c_str(), filters);
+    // if (!pathC) {
+    //     pause();
+    //     image.close();
+    //     image_size = 0;
+    //     return false;
+    // }
+    // std::string path = pathC;
+    // std::free(pathC);
+    // return loadImage(path);
 }
 
 void Imagine::onSampleRateChange() {

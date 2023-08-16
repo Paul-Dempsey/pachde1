@@ -1,5 +1,6 @@
 #pragma once
 #include <rack.hpp>
+using namespace ::rack;
 
 namespace pachde {
 
@@ -189,6 +190,7 @@ inline bool isColorVisible(NVGcolor& color) { return color.a > 0.001f; }
 std::string ToString(Theme theme);
 Theme ParseTheme(std::string text);
 Theme ThemeFromJson(json_t * root);
+Theme DarkThemeFromJson(json_t * root);
 
 void FillRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color);
 void RoundRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float radius);
@@ -199,9 +201,16 @@ void CircleGradient(NVGcontext * vg, float cx, float cy, float r, NVGcolor top, 
 void Circle(NVGcontext * vg, float cx, float cy, float r, NVGcolor fill);
 void OpenCircle(NVGcontext * vg, float cx, float cy, float r, NVGcolor stroke, float stroke_width = 1.f);
 
-
 template <class TMenuItem = rack::ui::MenuEntry>
-rack::ui::MenuEntry* createColorMenuItem(PackedColor previewColor, std::string text, std::string rightText, std::function<bool()> checked, std::function<void()> action, bool disabled = false, bool alwaysConsume = false)
+rack::ui::MenuEntry* createColorMenuItem(
+    PackedColor previewColor,
+    std::string text,
+    std::string rightText,
+    std::function<bool()> checked,
+    std::function<void()> action,
+    bool disabled = false,
+    bool alwaysConsume = false
+    )
 {
     struct ColorItem : rack::ui::MenuEntry {
         NVGcolor preview;

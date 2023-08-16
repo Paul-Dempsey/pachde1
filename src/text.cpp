@@ -1,6 +1,16 @@
+#include "plugin.hpp"
 #include "text.hpp"
 
 namespace pachde {
+
+std::shared_ptr<window::Font> GetPluginFontSemiBold(const char * path)
+{
+    return APP->window->loadFont(asset::plugin(pluginInstance, path ? path : "res/fonts/HankenGrotesk-SemiBold.ttf"));
+}
+std::shared_ptr<window::Font> GetPluginFontRegular(const char * path)
+{
+    return APP->window->loadFont(asset::plugin(pluginInstance, path ? path : "res/fonts/HankenGrotesk-Regular.ttf"));
+}
 
 std::string format_string(const char *fmt, ...)
 {

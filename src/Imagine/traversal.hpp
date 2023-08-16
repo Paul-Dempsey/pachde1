@@ -8,8 +8,8 @@
 #define sincosf __sincosf
 #endif
 
-using namespace rack;
-using namespace pachde;
+using namespace ::rack;
+using namespace ::pachde;
 
 namespace traversal {
 

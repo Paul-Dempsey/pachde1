@@ -1,5 +1,5 @@
 #pragma once
-#include "../plugin.hpp"
+#include <rack.hpp>
 #include "../components.hpp"
 #include "../text.hpp"
 #include "../port.hpp"
@@ -7,7 +7,8 @@
 #include "hue_widget.hpp"
 #include "sl_widget.hpp"
 
-using namespace rack;
+using namespace ::rack;
+
 namespace pachde {
 
 struct CopperModule: ThemeModule {
@@ -74,14 +75,20 @@ struct CopperModule: ThemeModule {
     void process(const ProcessArgs& args) override;
 };
 
-struct CopperUi : ModuleWidget, ThemeBase
+struct CopperUi : ModuleWidget, IThemeChange
 {
     CopperModule* copper_module = nullptr;
     HueWidget* hue_picker = nullptr;
     SLWidget* sl_picker = nullptr; 
     NVGcolor last_color = COLOR_NONE;
-
+    ThemeBase* theme_holder = nullptr;
+    
     CopperUi(CopperModule * module);
+    virtual ~CopperUi() {
+        if (theme_holder && !module) {
+            delete theme_holder;
+        }
+    }
 
     float getHue();
     void setHue(float hue);
@@ -94,10 +101,9 @@ struct CopperUi : ModuleWidget, ThemeBase
     NVGcolor getColor();
     void makeUi(Theme theme);
 
-    Theme getTheme() override;
-    void setTheme(Theme theme) override;
-    void setScrews(bool screws) override;
-    bool hasScrews() override;
+    void applyTheme(Theme theme);
+    void applyScrews(bool screws);
+    void onChangeTheme(ChangedItem item) override;
 
     void draw(const DrawArgs& args) override;
     void step() override;

@@ -6,7 +6,7 @@
 using namespace rack;
 namespace pachde {
 
-struct PicButton: OpaqueWidget, ThemeLite
+struct PicButton: OpaqueWidget, IBasicTheme
 {
     NVGcolor line, sky1, sky2, mountain, moon;
     float gradient_stop_x;
@@ -24,6 +24,7 @@ struct PicButton: OpaqueWidget, ThemeLite
 
     PicButton(Theme theme);
 
+    void applyTheme(Theme theme);
     void setTheme(Theme theme) override;
     void draw(const DrawArgs &args) override;
     void onHoverKey(const HoverKeyEvent& e) override {

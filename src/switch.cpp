@@ -10,7 +10,7 @@ Switch::Switch(Theme theme)
 
 void Switch::setTheme(Theme theme)
 {
-    ThemeLite::setTheme(theme);
+    IBasicTheme::setTheme(theme);
     
     switch (theme) {
         default:

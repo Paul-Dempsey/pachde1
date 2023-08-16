@@ -196,27 +196,31 @@ NamedColor stock_colors[] = {
 };
 
 Theme ParseTheme(std::string text) {
-    if (text.empty()) return Theme::Unset;
+    if (text.empty()) return DefaultTheme;
     switch (text[0]) {
         case 'l': case 'L': return Theme::Light;
         case 'd': case 'D': return Theme::Dark;
         case 'h': case 'H': return Theme::HighContrast;
     }
-    return Theme::Unset;
+    return DefaultTheme;
 }
 
 std::string ToString(Theme t) {
     switch (t) {
+        default:
         case Theme::Light: return "light";
         case Theme::Dark: return "dark";
         case Theme::HighContrast: return "highcontrast";
-        default: return "";
     }
 }
 
 Theme ThemeFromJson(json_t * root) {
     json_t* j = json_object_get(root, "theme");
-    return j ? ParseTheme(json_string_value(j)) : Theme::Unset;
+    return j ? ParseTheme(json_string_value(j)) : DefaultTheme;
+}
+Theme DarkThemeFromJson(json_t * root) {
+    json_t* j = json_object_get(root, "dark-theme");
+    return j ? ParseTheme(json_string_value(j)) : Theme::Dark;
 }
 
 NVGcolor PanelBackground(Theme theme)
@@ -225,7 +229,7 @@ NVGcolor PanelBackground(Theme theme)
         default:
         case Theme::Unset:
         case Theme::Light: return GrayRamp[G_90];
-        case Theme::Dark: return GrayRamp[G_20];
+        case Theme::Dark: return GrayRamp[G_10];
         case Theme::HighContrast: return GrayRamp[G_05];
     }
 }

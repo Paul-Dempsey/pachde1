@@ -63,6 +63,7 @@ json_t* BlankModule::dataToJson() {
     json_object_set_new(root, "bright", json_boolean(bright));
     json_object_set_new(root, "branding", json_boolean(branding));
     return root;
+
 }
 void BlankModule::dataFromJson(json_t* root) {
     ResizableModule::dataFromJson(root);
@@ -78,78 +79,49 @@ BlankModuleWidget::BlankModuleWidget(BlankModule *module)
 {
     my_module = module;
     setModule(module);
-    setTheme(ModuleTheme(module));
+    if (my_module) {
+        my_module->setNotify(this);
+    }
+    auto theme = ModuleTheme(module);
+    getITheme()->setTheme(theme);
+    applyTheme(theme);
 }
 
 void BlankModuleWidget::addResizeHandles()
 {
     if (!my_module) return;
 
-    ModuleResizeHandle * leftHandle = new ModuleResizeHandle;
-    leftHandle->module = my_module;
-    addChild(leftHandle);
+    auto handle = new ModuleResizeHandle;
+    handle->module = my_module;
+    addChild(handle);
 
-    ModuleResizeHandle * rightHandle = new ModuleResizeHandle;
-    rightHandle->right = true;
-    rightHandle->box.pos.x = box.size.x - rightHandle->HandleWidth();
-    rightHandle->module = my_module;
-    this->rightHandle = rightHandle;
-    addChild(rightHandle);
+    handle = new ModuleResizeHandle;
+    handle->right = true;
+    handle->module = my_module;
+    addChild(handle);
 }
 
-void BlankModuleWidget::setScrews(bool screws)
+void BlankModuleWidget::applyScrews(bool screws)
 {
-    getITheme()->setScrews(screws);
     if (screws) {
         add_screws();
     } else {
         RemoveScrewCaps(this);
-        topRightScrew = bottomRightScrew = nullptr;
     }
 }
 
-void BlankModuleWidget::add_screws() {
-
-    if (HaveScrewChildren(this)) return;
-
-    auto itheme = getITheme();
-    auto theme = itheme->getTheme();
-    auto color = itheme->getMainColor();
-    bool set_color = isColorVisible(color);
-
-    auto screw = new ScrewCap(theme);
-    if (set_color) { screw->color = color; }
-    screw->box.pos = Vec(0, 0);
-    addChild(screw);
-
-    topRightScrew = new ScrewCap(theme);
-    if (set_color) { topRightScrew->color = color; }
-    topRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, 0);
-    addChild(topRightScrew);
-
-    screw = new ScrewCap(theme);
-    if (set_color) { screw->color = color; }
-    screw->box.pos = Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
-    addChild(screw);
-
-    bottomRightScrew = new ScrewCap(theme);
-    if (set_color) { bottomRightScrew->color = color; }
-    bottomRightScrew->box.pos = Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH);
-    addChild(bottomRightScrew);
-}
-
-void BlankModuleWidget::setMainColor(NVGcolor color)
+void BlankModuleWidget::add_screws()
 {
+    if (HaveScrewChildren(this)) return;
     auto itheme = getITheme();
-    itheme->setMainColor(color);
-    SetChildrenThemeColor(this, color);
+    AddScrewCaps(this, GetPreferredTheme(itheme), itheme->getMainColor(), ScrewAlign::SCREWS_OUTSIDE, WhichScrew::ALL_SCREWS);
 }
 
 void BlankModuleWidget::drawPanel(const DrawArgs &args)
 {
     auto vg = args.vg;
 
-    auto theme = getITheme()->getTheme();
+    auto theme = GetPreferredTheme(getITheme());
     NVGcolor logo = LogoColor(theme);
     NVGcolor ring, slash;
     switch (theme) {
@@ -262,7 +234,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
     }
 
     if (!my_module || my_module->is_branding()) {
-        bool skinny = hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);
+        bool skinny = getITheme()->hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);
 
         auto y = skinny ? RACK_GRID_WIDTH : 0.0f;
         DrawNull(args.vg, (box.size.x/2.0f) - 7.5f, y, ring, slash);
@@ -283,14 +255,11 @@ void BlankModuleWidget::drawLayer(const DrawArgs &args, int layer) {
     }
 }
 
-void BlankModuleWidget::setTheme(Theme theme)
+void BlankModuleWidget::applyTheme(Theme theme)
 {
-    auto itheme = getITheme();
-    itheme->setTheme(theme);
-
     // set default size for module browser
     box.size = Vec(RACK_GRID_WIDTH * 4, RACK_GRID_HEIGHT);
-
+    auto itheme = getITheme();
     if (children.empty()) {
         panel = new ThemePanel(itheme);
         panel->box.size = box.size;
@@ -298,14 +267,14 @@ void BlankModuleWidget::setTheme(Theme theme)
         addResizeHandles();
         logo_port = createThemeInputCentered<LogoPort>(theme, Vec(box.size.x/2.f, RACK_GRID_HEIGHT - 7.5f), module, 0);
         addInput(logo_port);
-        if (hasScrews()) {
+        if (itheme->hasScrews()) {
             add_screws();
         }
     } else {
         SetChildrenTheme(this, theme);
-        auto themeModule = dynamic_cast<ThemeModule*>(this->module);
-        if (ModuleColorOverride(themeModule)) {
-            SetChildrenThemeColor(this, itheme->getMainColor());
+        auto co = itheme->getMainColor();
+        if (!isColorTransparent(co)) {
+            SetChildrenThemeColor(this, co);
         }
     }
 
@@ -316,8 +285,34 @@ void BlankModuleWidget::setTheme(Theme theme)
     }
 }
 
+void BlankModuleWidget::onChangeTheme(ChangedItem item) // override
+{
+    auto itheme = getITheme();
+
+    switch (item) {
+    case ChangedItem::Theme:
+        applyTheme(GetPreferredTheme(itheme));
+        break;
+    case ChangedItem::FollowDark:
+    case ChangedItem::DarkTheme:
+        if (itheme->getFollowRack()) {
+            applyTheme(GetPreferredTheme(itheme));
+        }
+        break;
+    case ChangedItem::MainColor:
+        SetChildrenThemeColor(this, itheme->getMainColor());
+        break;
+    case ChangedItem::Screws:
+        applyScrews(itheme->hasScrews());
+        break;
+    }
+}
+
 void BlankModuleWidget::step()
 {
+    auto itheme = getITheme();
+    bool changed = itheme->pollRackDarkChanged();
+
     if (my_module) {
         box.size.x = my_module->width * RACK_GRID_WIDTH;
         logo_port->invisible = !my_module->is_branding();
@@ -327,27 +322,18 @@ void BlankModuleWidget::step()
             panel->theme_holder->setMainColor(color);
         }
         // sync with module for change from presets
-        if (my_module->isDirty()) {
-            setScrews(my_module->hasScrews());
-            setTheme(my_module->getTheme());
-            my_module->setClean();
+        if (!changed && my_module->isDirty()) {
+            applyScrews(itheme->hasScrews());
+            applyTheme(GetPreferredTheme(itheme));
         }
+        my_module->setClean();
     }
 
     panel->box.size = box.size;
-    if (topRightScrew) {
-        topRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
-    }
-    if (bottomRightScrew) {
-        bottomRightScrew->box.pos.x = box.size.x - RACK_GRID_WIDTH;
-    }
-    if (rightHandle)
-    {
-        rightHandle->box.pos.x = box.size.x - rightHandle->box.size.x;
-    }
+
     if (logo_port) {
         logo_port->box.pos.x = box.size.x/2. - 7.5f;
-        bool skinny = hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);
+        bool skinny = getITheme()->hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);
         logo_port->box.pos.y = skinny ? RACK_GRID_HEIGHT - 2.0f *RACK_GRID_WIDTH : RACK_GRID_HEIGHT - RACK_GRID_WIDTH;
     }
     ModuleWidget::step();
@@ -357,14 +343,14 @@ void AddColorItem(BlankModuleWidget* self, Menu* menu, const char * name, Packed
     menu->addChild(createColorMenuItem(
         color, name, "",
         [=]() { return current == color; },
-        [=]() { self->setMainColor(fromPacked(color)); }
+        [=]() { self->getITheme()->setMainColor(fromPacked(color)); }
         ));
 }
 
 void BlankModuleWidget::appendContextMenu(Menu *menu)
 {
     if (!my_module) return;
-    AddThemeMenu(menu, this, true, true);
+    AddThemeMenu(menu, getITheme(), true, true);
     menu->addChild(createSubmenuItem("Palette color", "",
         [=](Menu *menu)
         {

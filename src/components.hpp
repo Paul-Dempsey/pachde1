@@ -21,64 +21,89 @@ inline float PixToHp(float pix) { return pix / 15.0; }
 inline float ClampBipolar(float v) { return rack::math::clamp(v, -5.0f, 5.0f); }
 inline float ClampUnipolar(float v) { return rack::math::clamp(v, 0.0f, 10.0f); }
 
-enum ScrewAlign {
+enum ScrewAlign : uint8_t {
     TL_INSET = 0x01,
     TR_INSET = 0x02,
     BL_INSET = 0x04,
     BR_INSET = 0x08,
-    SCREWS_OUTSIDE = 0,
-    SCREWS_INSET = TL_INSET|TR_INSET|BL_INSET|BR_INSET,
-    TOP_SCREWS_INSET = TL_INSET|TR_INSET,
+    UNKNOWN_ALIGNMENT = 0x80,
+    SCREWS_OUTSIDE      = 0,
+    SCREWS_INSET        = TL_INSET|TR_INSET|BL_INSET|BR_INSET,
+    TOP_SCREWS_INSET    = TL_INSET|TR_INSET,
     BOTTOM_SCREWS_INSET = BL_INSET|BR_INSET,
 };
 
-enum WhichScrew {
+enum WhichScrew : uint8_t {
     TL = 0x01,
     TR = 0x02,
     BL = 0x04,
     BR = 0x08,
-    UNKNOWN = 0x80,
-    TOP_SCREWS = TL|TR,
-    BOTTOM_SCREWS = BL|BR,
-    UP_SCREWS = TR|BL,
-    DOWN_SCREWS = TL|BR,
-    ALL_SCREWS = TL|TR|BL|BR,
+    UNKNOWN_WHICH = 0x80,
+    TOP_SCREWS      = TL|TR,
+    BOTTOM_SCREWS   = BL|BR,
+    UP_SCREWS       = TR|BL,  // [/]
+    DOWN_SCREWS     = TL|BR,  // [\]
+    ALL_SCREWS      = TL|TR|BL|BR,
+    RIGHT_SCREWS    = TR|BR,
+    LEFT_SCREWS     = TL|BL,
 };
-inline bool isUnknown(WhichScrew which) { return which & WhichScrew::UNKNOWN; }
+
+inline bool isUnknown(WhichScrew which) { return which & WhichScrew::UNKNOWN_WHICH; }
 inline bool isApplicable(WhichScrew which_screw, WhichScrew mask) { return mask & which_screw; }
-inline float tl_screw_inset(ScrewAlign pos) { return ONE_HP * static_cast<bool>(pos & ScrewAlign::TL_INSET); }
-inline float tr_screw_inset(ScrewAlign pos) { return ONE_HP * static_cast<bool>(pos & ScrewAlign::TR_INSET); }
-inline float bl_screw_inset(ScrewAlign pos) { return ONE_HP * static_cast<bool>(pos & ScrewAlign::BL_INSET); }
-inline float br_screw_inset(ScrewAlign pos) { return ONE_HP * static_cast<bool>(pos & ScrewAlign::BR_INSET); }
+inline float tl_screw_inset(ScrewAlign align) { return ONE_HP * static_cast<bool>(align & ScrewAlign::TL_INSET); }
+inline float tr_screw_inset(ScrewAlign align) { return ONE_HP * static_cast<bool>(align & ScrewAlign::TR_INSET); }
+inline float bl_screw_inset(ScrewAlign align) { return ONE_HP * static_cast<bool>(align & ScrewAlign::BL_INSET); }
+inline float br_screw_inset(ScrewAlign align) { return ONE_HP * static_cast<bool>(align & ScrewAlign::BR_INSET); }
 
 void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewAlign positions = ScrewAlign::SCREWS_INSET, WhichScrew which = WhichScrew::ALL_SCREWS);
 void RemoveScrewCaps(Widget* widget, WhichScrew which = WhichScrew::ALL_SCREWS);
 void SetScrewColors(Widget* widget, NVGcolor color, WhichScrew which = WhichScrew::ALL_SCREWS);
 
-struct ScrewCap : rack::TransparentWidget, ThemeLite
+struct ScrewCap : rack::TransparentWidget, IBasicTheme
 {
-    NVGcolor color = COLOR_NONE;
-    WhichScrew which = WhichScrew::UNKNOWN;
+    WhichScrew which;
+    ScrewAlign align;
 
-    ScrewCap(Theme theme) {
-        box.size.x = box.size.y = 15.f;
+    ScrewCap (Theme theme, WhichScrew position, ScrewAlign alignment)
+    : which(position), align(alignment)
+    {
         setTheme(theme);
-    }
-
-    void setMainColor(NVGcolor color) override {
-        this->color = color;
+        box.size.x = box.size.y = 15.f;
     }
 
     void draw(const DrawArgs &args) override {
         rack::TransparentWidget::draw(args);
-        DrawScrewCap(args.vg, 0, 0, getTheme(), color);
+        DrawScrewCap(args.vg, 0, 0, getTheme(), getMainColor());
+    }
+
+    void step() override {
+        rack::TransparentWidget::step();
+        if (align & ScrewAlign::UNKNOWN_ALIGNMENT) return;
+        if (parent) {
+            switch (which) {
+            default: break;
+            case WhichScrew::TL:
+                box.pos = Vec(tl_screw_inset(align), 0);
+                break;
+            case WhichScrew::TR:
+                box.pos = Vec(parent->box.size.x - ONE_HP - tr_screw_inset(align), 0);
+                break;
+            case WhichScrew::BL:
+                box.pos = Vec(bl_screw_inset(align), RACK_GRID_HEIGHT - ONE_HP);
+                break;
+            case WhichScrew::BR:
+                box.pos = Vec(parent->box.size.x - ONE_HP - br_screw_inset(align), RACK_GRID_HEIGHT - ONE_HP);
+                break;
+            }
+        }
     }
 };
 
 WhichScrew GetScrewPosition(const ScrewCap* screw);
 WhichScrew SetScrewPosition(ScrewCap* screw, WhichScrew which);
 
-struct LogoWidget : rack::OpaqueWidget, ThemeLite {
+struct LogoWidget : rack::OpaqueWidget, IBasicTheme
+{
     LogoWidget(Theme theme) {
         setTheme(theme);
         box.size.x = box.size.y = 15.0f;
@@ -89,7 +114,8 @@ struct LogoWidget : rack::OpaqueWidget, ThemeLite {
     }
 };
 
-struct LogoOverlayWidget : rack::OpaqueWidget, ThemeLite {
+struct LogoOverlayWidget : rack::OpaqueWidget, IBasicTheme
+{
     LogoOverlayWidget(Theme theme) {
         setTheme(theme);
         box.size.x = box.size.y = 15.0f;
@@ -105,7 +131,7 @@ struct LogoOverlayWidget : rack::OpaqueWidget, ThemeLite {
 };
 
 template<typename T>
-struct TKnob: rack::RoundKnob, ThemeLite 
+struct TKnob: rack::RoundKnob, IBasicTheme 
 {
     bool clickStepValue = true;
     float stepIncrementBy = 1.f;
@@ -167,7 +193,7 @@ struct TKnob: rack::RoundKnob, ThemeLite
 
     void setTheme(Theme theme) override {
         if (theme == getTheme() && bg && bg->svg) return;
-        ThemeLite::setTheme(theme);
+        IBasicTheme::setTheme(theme);
         setSvg(Svg::load(asset::plugin(pluginInstance, T::knob(theme))));
         bg->setSvg(Svg::load(asset::plugin(pluginInstance, T::background(theme))));
         if (fb) {
@@ -260,7 +286,7 @@ using SmallKnob = TKnob<SmallKnobSvg>;
 // };
 // ```
 template <typename TSvgProvider>
-struct SvgThemePanel : SvgPanel, ThemeLite
+struct SvgThemePanel : SvgPanel, IBasicTheme
 {
     SvgThemePanel(Theme theme) {
         setTheme(theme);
@@ -318,7 +344,7 @@ struct PushButtonBase: rack::SvgSwitch {
     }
 };
 
-struct Switch : rack::Switch, ThemeLite {
+struct Switch : rack::Switch, IBasicTheme {
     int value = 0;
     int units = 2;
     NVGcolor background, frame, thumb, thumb_top, thumb_bottom;
@@ -333,7 +359,15 @@ struct Switch : rack::Switch, ThemeLite {
 
 void SetChildrenTheme(Widget * widget, Theme theme, bool top = true);
 void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top = true);
-void AddThemeMenu(rack::ui::Menu* menu, ITheme* change, bool isChangeColor = false, bool isChangeScrews = false);
+
+class IDirty {
+    bool _dirty = false;
+public:
+    bool dirty() { return _dirty; }
+    void clean() { _dirty = false; }
+    void touch() { _dirty = true; }
+};
+void AddThemeMenu(rack::ui::Menu* menu, ITheme* itheme, bool isChangeColor = false, bool isChangeScrews = false);
 
 inline bool HaveScrewChildren(Widget* widget)
 {
@@ -353,11 +387,11 @@ struct ThemeModule : Module, ThemeBase
 
 inline Theme ModuleTheme(ThemeModule* module)
 {
-    return module ? module->getTheme() : DefaultTheme;
+    return GetPreferredTheme(module);
 }
 inline NVGcolor ModuleColor(ThemeModule* module)
 {
-    return module ? module->main_color : COLOR_NONE;
+    return module ? module->getMainColor() : COLOR_NONE;
 }
 inline bool ModuleColorOverride(ThemeModule* module)
 {
@@ -373,7 +407,7 @@ struct ThemePanel : Widget
     ITheme* theme_holder;
     ThemePanel(ITheme* it) : theme_holder(it) {}
 
-    Theme getTheme() { return theme_holder->getTheme(); }
+    Theme getTheme() { return GetPreferredTheme(theme_holder); }
     NVGcolor getColor() { return theme_holder->getMainColor(); }
     void draw(const DrawArgs &args) override;
 };

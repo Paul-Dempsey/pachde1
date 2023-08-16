@@ -14,8 +14,8 @@ namespace fs = ghc::filesystem;
 
 namespace pachde {
 
-using namespace rack;
-using namespace traversal;
+using namespace ::rack;
+using namespace ::traversal;
 
 enum VRange {
     UNIPOLAR = 0,
@@ -202,25 +202,33 @@ struct ImaginePanel : Widget
     void draw(const DrawArgs &args) override;
 };
 
-struct ImagineUi : ModuleWidget, ThemeBase
+struct ImagineUi : ModuleWidget, IThemeChange
 {
     ImaginePanel *panel = nullptr;
     Imagine* imagine = nullptr;
+    ThemeBase* itheme = nullptr;
     PlayPauseButton * playButton = nullptr;
 
     ImagineUi(Imagine *module);
+    virtual ~ImagineUi() {
+        if (itheme) {
+            delete itheme;
+        }
+    }
     void resetHeadPosition(bool ctrl, bool shift);
-    void makeUi(Imagine* module, Theme theme);
-    void setTheme(Theme theme) override;
-    void setScrews(bool screws) override;
-    Theme getTheme() override {
-        if (imagine) return imagine->getTheme();
-        return ThemeBase::getTheme();
+    void makeUi(Theme theme);
+    void applyTheme(Theme theme);
+    void applyScrews(bool screws);
+    ThemeBase* getITheme() {
+        auto result = imagine ? imagine : itheme;
+        if (!result) {
+            result = itheme = new ThemeBase();
+            itheme->setNotify(this);
+        }
+        return result;
     }
-    bool hasScrews() override {
-        if (imagine) return imagine->hasScrews();
-        return ThemeBase::hasScrews();
-    }
+    
+    void onChangeTheme(ChangedItem item) override;
     void step() override;
     void appendContextMenu(rack::ui::Menu* menu) override;
 };

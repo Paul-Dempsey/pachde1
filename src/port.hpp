@@ -4,7 +4,7 @@
 
 namespace pachde {
 
-struct ColorPort : PortWidget, ThemeLite
+struct ColorPort : PortWidget, IBasicTheme
 {
     NVGcolor ring = PORT_DEFAULT;
     NVGcolor collar1, collar2, bezel, tube, bevel1, bevel2, sleeve;
@@ -15,6 +15,8 @@ struct ColorPort : PortWidget, ThemeLite
         setTheme(theme);
     }
 	void draw(const DrawArgs& args) override;
+
+    void applyTheme(Theme theme);
     void setTheme(Theme theme) override;
     void setMainColor(NVGcolor color) override
     {

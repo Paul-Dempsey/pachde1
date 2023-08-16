@@ -7,7 +7,7 @@ namespace pachde {
 
 // static NVGcolor screen = nvgRGBAf(0.95f, 0.95f, 0.95f, 0.4f);
 // static NVGcolor shade = nvgRGBAf(0.,0.,0.,0.4f);
-struct PlayPauseButton: Switch, ThemeLite
+struct PlayPauseButton: Switch, IBasicTheme
 {
     NVGcolor collar, edge, face, face2, symbol;
     bool pressed = false;
@@ -25,6 +25,7 @@ struct PlayPauseButton: Switch, ThemeLite
         }
     }
 
+    void applyTheme(Theme theme);
     void setTheme(Theme theme) override;
 
     void center(Vec pos) {

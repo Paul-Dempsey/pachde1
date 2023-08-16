@@ -298,7 +298,9 @@ CopperUi::CopperUi(CopperModule * module)
 {
     copper_module = module;
     setModule(module);
-    setTheme(ModuleTheme(module));
+    theme_holder = module ? module : new ThemeBase();
+    theme_holder->setNotify(this);
+    applyTheme(GetPreferredTheme(theme_holder));
 }
 
 float CopperUi::getHue()
@@ -348,7 +350,11 @@ void CopperUi::setAlpha(float alpha) {
 }
 NVGcolor CopperUi::getColor() {
     if (copper_module) {
-        return nvgHSLAf(copper_module->getHue(), copper_module->getSaturation(), copper_module->getLightness(), copper_module->getAlpha());
+        return nvgHSLAf(
+            copper_module->getHue(),
+            copper_module->getSaturation(),
+            copper_module->getLightness(),
+            copper_module->getAlpha());
     } else {
         return COPPER;
     }
@@ -374,7 +380,8 @@ void CopperUi::makeUi(Theme theme)
     assert(children.empty());
 
     setPanel(createSvgThemePanel<CopperSvg>(theme));
-    if (hasScrews()) {
+
+    if (theme_holder->hasScrews()) {
         AddScrewCaps(this, theme, COPPER, SCREWS_OUTSIDE, WhichScrew::TOP_SCREWS);
         AddScrewCaps(this, theme, COLOR_NONE, SCREWS_OUTSIDE, WhichScrew::BOTTOM_SCREWS);
     }
@@ -464,7 +471,7 @@ void CopperUi::draw(const DrawArgs& args)
         FillRect(vg, sample_x, sample_y, sample_w, sample_full_h, opaque_color);
     }
 
-    auto theme = getTheme();
+    auto theme = GetPreferredTheme(theme_holder);
     auto textColor = ThemeTextColor(theme);
     auto font = GetPluginFontSemiBold();
     if (FontOk(font))
@@ -493,19 +500,8 @@ void CopperUi::draw(const DrawArgs& args)
     }
 }
 
-Theme CopperUi::getTheme()
+void CopperUi::applyTheme(Theme theme)
 {
-    return copper_module ? copper_module->getTheme() : ThemeBase::getTheme();
-}
-
-void CopperUi::setTheme(Theme theme)
-{
-    if (copper_module) {
-        copper_module->setTheme(theme);
-        ThemeBase::setTheme(theme);
-    } else {
-        ThemeBase::setTheme(theme);
-    }
     if (children.empty()) {
         makeUi(theme);
     } else {
@@ -513,17 +509,11 @@ void CopperUi::setTheme(Theme theme)
     }        
 }
 
-bool CopperUi::hasScrews()
+void CopperUi::applyScrews(bool screws)
 {
-    return copper_module ? copper_module->hasScrews() : ThemeBase::hasScrews();
-}
-
-void CopperUi::setScrews(bool screws)
-{
-    copper_module ? copper_module->setScrews(screws) : ThemeBase::setScrews(screws);
     if (screws) {
         if (HaveScrewChildren(this)) return;
-        auto theme = getTheme();
+        auto theme = GetPreferredTheme(theme_holder);
         AddScrewCaps(this, theme, COPPER, SCREWS_OUTSIDE, WhichScrew::TOP_SCREWS);
         AddScrewCaps(this, theme, COLOR_NONE, SCREWS_OUTSIDE, WhichScrew::BOTTOM_SCREWS);
     } else {
@@ -531,14 +521,36 @@ void CopperUi::setScrews(bool screws)
     }
 }
 
+void CopperUi::onChangeTheme(ChangedItem item)
+{
+    switch (item) {
+    case ChangedItem::Theme:
+        applyTheme(GetPreferredTheme(theme_holder));
+        break;
+    case ChangedItem::DarkTheme:
+    case ChangedItem::FollowDark:
+        if (theme_holder->getFollowRack()) {
+            applyTheme(GetPreferredTheme(theme_holder));
+        }
+        break;
+    case ChangedItem::MainColor:
+        break;
+    case ChangedItem::Screws:
+        applyScrews(theme_holder->hasScrews());
+        break;
+    }
+}
+
 void CopperUi::step()
 {
-    ModuleWidget::step();
+   bool changed = theme_holder->pollRackDarkChanged();
 
-    // sync with module for change from presets
-    if (copper_module && copper_module->isDirty()) {
-        setTheme(copper_module->getTheme());
-        setScrews(copper_module->hasScrews());
+    if (copper_module) {
+        // sync with module for change from presets
+        if (!changed && copper_module->isDirty()) {
+            applyScrews(theme_holder->hasScrews());
+            applyTheme(GetPreferredTheme(theme_holder));
+        }
         copper_module->setClean();
     }
 
@@ -554,10 +566,13 @@ void CopperUi::step()
             sl_picker->setLightness(getLightness());
             sl_picker->setHue(h);
         }
+
     }
+    ModuleWidget::step();
 }
 
-void AddColorItem(CopperUi* self, Menu* menu, const char * name, PackedColor color, PackedColor current) {
+void AddColorItem(CopperUi* self, Menu* menu, const char * name, PackedColor color, PackedColor current)
+{
     menu->addChild(createColorMenuItem(
         color, name, "",
         [=]() { return current == color; },
@@ -574,7 +589,7 @@ void AddColorItem(CopperUi* self, Menu* menu, const char * name, PackedColor col
 void CopperUi::appendContextMenu(rack::ui::Menu* menu)
 {
     if (!this->module) return;
-    AddThemeMenu(menu, this, false, true);
+    AddThemeMenu(menu, theme_holder, false, true);
     menu->addChild(createSubmenuItem("Palette color", "",
         [=](Menu *menu)
         {

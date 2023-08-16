@@ -2,8 +2,14 @@
 
 namespace pachde {
 
-void SmallPush::setTheme(Theme theme) {
-    ThemeLite::setTheme(theme);
+void SmallPush::setTheme(Theme theme)
+{
+    IBasicTheme::setTheme(theme);
+    applyTheme(theme);
+}
+
+void SmallPush::applyTheme(Theme theme)
+{
     switch (theme) {
         default:
         case Theme::Unset:

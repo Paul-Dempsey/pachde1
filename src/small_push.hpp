@@ -6,7 +6,7 @@
 
 namespace pachde {
 
-struct SmallPush: OpaqueWidget, ThemeLite
+struct SmallPush: OpaqueWidget, IBasicTheme
 {
     bool pressed = false;
     bool ctrl = false;
@@ -89,6 +89,7 @@ struct SmallPush: OpaqueWidget, ThemeLite
         }
     }
 
+    void applyTheme(Theme theme);
     void setTheme(Theme theme) override;
 
     void setMainColor(NVGcolor color) override
