@@ -12,6 +12,7 @@
   "sourceUrl": "https://github.com/Paul-Dempsey/pachde1",
   "donateUrl": "https://venmo.com/u/pcdempsey",
   "changelogUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/CHANGELOG.md",
+  "minRackVersion": "2.4.0",
   "modules": [
     {
       "slug": "pachde-null",
