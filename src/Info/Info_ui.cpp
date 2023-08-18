@@ -17,7 +17,7 @@ InfoModuleWidget::InfoModuleWidget(InfoModule* module)
     }
     info_theme->setNotify(this);
     setModule(module);
-    applyTheme(info_theme->getTheme());
+    applyTheme(GetPreferredTheme(info_theme));
 }
 
 void InfoModuleWidget::addResizeHandles()
@@ -75,6 +75,7 @@ void InfoModuleWidget::addScrews()
 void InfoModuleWidget::applyTheme(Theme theme)
 {
     if (children.empty()) {
+        info_theme->applyTheme(theme);
         panel = new InfoPanel(my_module, info_theme, box.size);
         setPanel(panel);
         addResizeHandles();
