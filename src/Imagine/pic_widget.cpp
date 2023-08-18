@@ -56,7 +56,7 @@ void PicWidget::updateClient()
 {
     if (!module) return;
     float pwidth, pheight, scale, width, height, left, top, px, py;
-    auto pic = module->getImage();
+    const Pic* pic = module->getImage();
     bool havePic = pic && pic->ok();
 
     pwidth = havePic ? pic->width() : PANEL_IMAGE_WIDTH;
@@ -118,7 +118,7 @@ void PicWidget::drawPic(const DrawArgs &args)
     if (FontOk(font))
     {
         auto color = RampGray(G_85);
-        std::string text = !pic || (pic && pic->reason().empty()) ? "[no image]" : pic->reason();
+        std::string text = !pic || pic->reason().empty() ? "[no image]" : pic->reason();
 
         if (module && module->isXYPad()) {
             text = "[ xy pad ]";

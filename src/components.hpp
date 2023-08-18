@@ -104,8 +104,7 @@ WhichScrew SetScrewPosition(ScrewCap* screw, WhichScrew which);
 
 struct LogoWidget : rack::OpaqueWidget, IBasicTheme
 {
-    LogoWidget(Theme theme) {
-        setTheme(theme);
+    LogoWidget() {
         box.size.x = box.size.y = 15.0f;
     }
     void draw(const DrawArgs &args) override {
@@ -116,8 +115,7 @@ struct LogoWidget : rack::OpaqueWidget, IBasicTheme
 
 struct LogoOverlayWidget : rack::OpaqueWidget, IBasicTheme
 {
-    LogoOverlayWidget(Theme theme) {
-        setTheme(theme);
+    LogoOverlayWidget() {
         box.size.x = box.size.y = 15.0f;
     }
     void draw(const DrawArgs &args) override {
@@ -137,10 +135,6 @@ struct TKnob: rack::RoundKnob, IBasicTheme
     float stepIncrementBy = 1.f;
     bool key_modified = false;
     bool key_modified2 = false;
-
-    TKnob(Theme theme) {
-        setTheme(theme);
-    }
 
     std::function<void(void)> clickHandler;
     void onClick(std::function<void(void)> callback)
@@ -288,9 +282,6 @@ using SmallKnob = TKnob<SmallKnobSvg>;
 template <typename TSvgProvider>
 struct SvgThemePanel : SvgPanel, IBasicTheme
 {
-    SvgThemePanel(Theme theme) {
-        setTheme(theme);
-    }
     void setTheme(Theme theme) override
     {
         SvgPanel::setBackground(window::Svg::load(TSvgProvider::background(theme)));
@@ -299,7 +290,9 @@ struct SvgThemePanel : SvgPanel, IBasicTheme
 
 template <class TSvgProvider>
 inline SvgThemePanel<TSvgProvider>* createSvgThemePanel(Theme theme) {
-	return new SvgThemePanel<TSvgProvider>(theme);
+	auto tp = new SvgThemePanel<TSvgProvider>();
+    tp->setTheme(theme);
+    return tp;
 }
 
 struct PushButtonBase: rack::SvgSwitch {
@@ -349,7 +342,7 @@ struct Switch : rack::Switch, IBasicTheme {
     int units = 2;
     NVGcolor background, frame, thumb, thumb_top, thumb_bottom;
 
-    Switch(Theme theme);
+    Switch();
 
 	void initParamQuantity() override;
     void draw(const DrawArgs &args) override;
@@ -407,7 +400,7 @@ inline bool ModuleHasScrews(ThemeModule* module)
 struct ThemePanel : Widget
 {
     ITheme* theme_holder;
-    ThemePanel(ITheme* it) : theme_holder(it) {}
+    explicit ThemePanel(ITheme* it) : theme_holder(it) {}
 
     Theme getTheme() { return GetPreferredTheme(theme_holder); }
     NVGcolor getColor() { return theme_holder->getMainColor(); }
@@ -423,7 +416,7 @@ struct MenuTextField : ui::TextField {
         APP->event->setSelectedWidget(this);
         TextField::step();
     }
-    void setText(std::string text) {
+    void setText(const std::string& text) {
         this->text = text;
         selectAll();
     }
@@ -457,7 +450,7 @@ struct PickerTextField : ui::TextField {
         APP->event->setSelectedWidget(this);
         TextField::step();
     }
-    void setText(std::string text) {
+    void setText(const std::string& text) {
         this->text = text;
         selectAll();
     }

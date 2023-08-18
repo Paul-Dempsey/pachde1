@@ -26,7 +26,7 @@ struct ModuleResizeHandle : OpaqueWidget
     Rect originalBox;
     ResizableModule* module;
 
-    ModuleResizeHandle();
+    explicit ModuleResizeHandle(ResizableModule* resizable_module);
 
     float HandleWidth() { return 10.f; }
     NVGcolor HandleOverlay();

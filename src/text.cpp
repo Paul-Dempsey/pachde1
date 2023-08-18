@@ -19,6 +19,7 @@ std::string format_string(const char *fmt, ...)
     va_list args;
     va_start(args, fmt);
     auto r = std::vsnprintf(&(*s.begin()), len + 1, fmt, args);
+    va_end(args);
     return r < 0 ? "??" : s;
 }
 

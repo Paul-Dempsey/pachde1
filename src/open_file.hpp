@@ -5,7 +5,7 @@
 
 namespace pachde {
 
-bool openFileDialog(std::string folder, std::string filters, std::string filename, std::string& result);
+bool openFileDialog(const std::string& folder, const std::string& filters, const std::string& filename, std::string& result);
 
 }
 #endif

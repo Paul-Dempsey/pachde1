@@ -259,7 +259,7 @@ struct CopperSvg {
 struct CopperColor : OpaqueWidget {
     CopperModule* module;
 
-    CopperColor(CopperModule* module) {
+    explicit CopperColor(CopperModule* module) {
         this->module = module;
     }
 

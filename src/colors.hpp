@@ -75,7 +75,7 @@ inline const NVGcolor RampGray(Ramp g)
 #define PORT_LIGHT_VIOLET  nvgHSL(270.f/360.f, 0.75f, 0.75f)
 
 #define IS_SAME_COLOR(p,q) (((p).r == (q).r) && ((p).g == (q).g) && ((p).b == (q).b) && ((p).a == (q).a))
-inline NVGcolor Overlay(NVGcolor color) { return nvgTransRGBAf(color, 0.2f); }
+inline NVGcolor Overlay(const NVGcolor &color) { return nvgTransRGBAf(color, 0.2f); }
 inline NVGcolor Gray(float L) {
     NVGcolor color;
     color.r = color.b = color.g = L;
@@ -90,15 +90,15 @@ inline NVGcolor nvgHSLAf(float h, float s, float l, float a)
     return color;
 }
 
-// 8-bit (0-255) abgr packed into an unsigned int.
-typedef unsigned int PackedColor;
+// 8-bit (0-255) abgr packed into a uint32_t.
+typedef uint32_t PackedColor;
 
-inline PackedColor PackRGB(unsigned int r, unsigned int g, unsigned int b) {
-    return r | (g << 8) | (b << 16) | (255 << 24);
+inline PackedColor PackRGBA(uint32_t r, uint32_t g, uint32_t b, uint32_t a) {
+    return r | (g << 8u) | (b << 16u) | (a << 24u);
 }
 
-inline PackedColor PackRGBA(unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
-    return r | (g << 8) | (b << 16) | (a << 24);
+inline PackedColor PackRGB(uint32_t r, uint32_t g, uint32_t b) {
+    return PackRGBA(r, g, b, 255u);
 }
 
 inline NVGcolor fromPacked(PackedColor co)
@@ -108,10 +108,10 @@ inline NVGcolor fromPacked(PackedColor co)
 
 inline PackedColor toPacked(NVGcolor co) {
     return PackRGBA(
-        static_cast<unsigned int>(co.r * 255), 
-        static_cast<unsigned int>(co.g * 255),
-        static_cast<unsigned int>(co.b * 255),
-        static_cast<unsigned int>(co.a * 255));
+        static_cast<uint32_t>(co.r * 255), 
+        static_cast<uint32_t>(co.g * 255),
+        static_cast<uint32_t>(co.b * 255),
+        static_cast<uint32_t>(co.a * 255));
 }
 
 struct NamedColor {
@@ -184,8 +184,8 @@ inline float Hue(const NVGcolor& color) {
     return (rack::simd::atan2(SQRT3 * (color.g - color.b), 2 * color.r - color.g - color.b) + PI) / TWO_PI;
 }
 
-inline bool isColorTransparent(NVGcolor& color) { return color.a < 0.001f; }
-inline bool isColorVisible(NVGcolor& color) { return color.a > 0.001f; }
+inline bool isColorTransparent(const NVGcolor& color) { return color.a < 0.001f; }
+inline bool isColorVisible(const NVGcolor& color) { return color.a > 0.001f; }
 
 inline NVGcolor RandomColor() { return nvgRGBAf(random::uniform(), random::uniform(), random::uniform(), random::uniform()); }
 inline NVGcolor RandomOpaqueColor() { return nvgRGBAf(random::uniform(), random::uniform(), random::uniform(), 1.0f); }

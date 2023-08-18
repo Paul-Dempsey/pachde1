@@ -41,7 +41,7 @@ struct CopperModule: ThemeModule {
     float saturation = .5f;
     float lightness = .5f;
     float alpha = 1.0f;
-    bool h_uni, s_uni, l_uni, a_uni;
+    bool h_uni = true, s_uni = true, l_uni = true, a_uni = true;
     ControlRateTrigger control_rate;
 
     CopperModule();
@@ -83,7 +83,7 @@ struct CopperUi : ModuleWidget, IThemeChange
     NVGcolor last_color = COLOR_NONE;
     ThemeBase* theme_holder = nullptr;
     
-    CopperUi(CopperModule * module);
+    explicit CopperUi(CopperModule * module);
     virtual ~CopperUi() {
         if (theme_holder && !module) {
             delete theme_holder;

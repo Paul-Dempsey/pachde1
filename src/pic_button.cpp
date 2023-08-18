@@ -3,12 +3,10 @@
 namespace pachde {
 
 
-PicButton::PicButton(Theme theme)
+PicButton::PicButton()
 {
-    tip = nullptr;
     box.size.x = box.size.y = 24.f;
     line.a = 0.f; // force theme init
-    setTheme(theme);
 }
 
 void PicButton::applyTheme(Theme theme)

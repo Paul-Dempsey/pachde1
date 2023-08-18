@@ -141,7 +141,13 @@ struct Vinyl : TraversalBase {
 
 struct Bounce : TraversalBase {
     float angle;
-    Bounce() { reset(); }
+    
+    Bounce()
+    { 
+        position.x = image_size.x/2.0f;
+        position.y = image_size.y/2.0f;
+        angle = random::uniform()*TWO_PI;
+    }
     void process() override;
     void reset() override;
 };

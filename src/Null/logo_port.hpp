@@ -11,9 +11,8 @@ struct LogoPort : PortWidget, IBasicTheme
     NVGcolor logo;
     bool invisible = false;
 
-    LogoPort(Theme theme) { 
+    LogoPort() { 
         box.size.x = box.size.y = 15.f;
-        setTheme(theme);
     }
     void setTheme(Theme theme) override {
         IBasicTheme::setTheme(theme);

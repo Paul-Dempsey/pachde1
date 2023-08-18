@@ -10,7 +10,7 @@ struct PicWidget : OpaqueWidget {
     Vec mousepos;
     cachePic cpic;
 
-    PicWidget(Imagine *module);
+    explicit PicWidget(Imagine *module);
 
     void onContextCreate(const ContextCreateEvent& e) override
     {

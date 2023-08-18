@@ -9,20 +9,20 @@ namespace pachde {
 struct PicButton: OpaqueWidget, IBasicTheme
 {
     NVGcolor line, sky1, sky2, mountain, moon;
-    float gradient_stop_x;
-    float gradient_stop_y;
-    Tooltip* tip = nullptr;
+    float gradient_stop_x{17.5};
+    float gradient_stop_y{10.f};
+    Tooltip* tip {nullptr};
 
-    bool pressed = false;
-    bool ctrl = false;
-    bool shift = false;
-    std::function<void(bool,bool)> clickHandler;
+    bool pressed {false};
+    bool ctrl {false};
+    bool shift {false};
+    std::function<void(bool,bool)> clickHandler {nullptr};
 
     virtual ~PicButton() {
         if (tip) delete tip;
     }
 
-    PicButton(Theme theme);
+    PicButton();
 
     void applyTheme(Theme theme);
     void setTheme(Theme theme) override;

@@ -6,7 +6,7 @@ using namespace ::rack;
 
 namespace pachde {
     
-bool openFileDialog(std::string folder, std::string filters, std::string filename, std::string& result)
+bool openFileDialog(const std::string& folder, const std::string& filters, const std::string& filename, std::string& result)
 {
     osdialog_filters* osd_filters = osdialog_filters_parse(filters.c_str());
     DEFER({osdialog_filters_free(osd_filters);});

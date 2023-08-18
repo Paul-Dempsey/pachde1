@@ -15,7 +15,7 @@ Pic* Pic::CreateRaw(int width, int height) {
     return p;
 }
 
-bool Pic::open(std::string filename)
+bool Pic::open(const std::string& filename)
 {
     close();
     _path = filename;
@@ -45,7 +45,7 @@ unsigned char * Pic::pixel_address(int x, int y) const
     return row + (x * 4);
 }
 
-Point Pic::position(unsigned char * location) const
+Point Pic::position(const unsigned char * location) const
 {
     if (!_data || !location || location < _data || location >= end()) {
         return Point(0,0);

@@ -7,7 +7,8 @@ namespace pachde
 template <class TParamWidget>
 TParamWidget *createThemeParam(Theme theme, math::Vec pos, engine::Module *module, int paramId)
 {
-    TParamWidget *o = new TParamWidget(theme);
+    TParamWidget *o = new TParamWidget();
+    o->setTheme(theme);
     o->box.pos = pos;
     o->app::ParamWidget::module = module;
     o->app::ParamWidget::paramId = paramId;
@@ -26,7 +27,8 @@ TParamWidget *createThemeParamCentered(Theme theme, math::Vec pos, engine::Modul
 template <class TPortWidget>
 TPortWidget *createThemeInput(Theme theme, math::Vec pos, engine::Module *module, int inputId)
 {
-    TPortWidget *o = new TPortWidget(theme);
+    TPortWidget *o = new TPortWidget();
+    o->setTheme(theme);
     o->box.pos = pos;
     o->app::PortWidget::module = module;
     o->app::PortWidget::type = engine::Port::INPUT;
@@ -45,7 +47,8 @@ TPortWidget *createThemeInputCentered(Theme theme, math::Vec pos, engine::Module
 template <class TColorPortWidget>
 TColorPortWidget *createColorInput(Theme theme, NVGcolor color, math::Vec pos, engine::Module *module, int id)
 {
-    TColorPortWidget *o = new TColorPortWidget(theme);
+    TColorPortWidget *o = new TColorPortWidget();
+    o->setTheme(theme);
     o->setMainColor(color);
     o->box.pos = pos;
     o->app::PortWidget::module = module;
@@ -65,7 +68,8 @@ TColorPortWidget *createColorInputCentered(Theme theme, NVGcolor color, math::Ve
 template <class TPortWidget>
 TPortWidget *createThemeOutput(Theme theme, math::Vec pos, engine::Module *module, int outputId)
 {
-    TPortWidget *o = new TPortWidget(theme);
+    TPortWidget *o = new TPortWidget();
+    o->setTheme(theme);
     o->box.pos = pos;
     o->app::PortWidget::module = module;
     o->app::PortWidget::type = engine::Port::OUTPUT;
@@ -84,7 +88,8 @@ TPortWidget *createThemeOutputCentered(Theme theme, math::Vec pos, engine::Modul
 template <class TColorPortWidget>
 TColorPortWidget *createColorOutput(Theme theme, NVGcolor color, math::Vec pos, engine::Module *module, int outputId)
 {
-    TColorPortWidget *o = new TColorPortWidget(theme);
+    TColorPortWidget *o = new TColorPortWidget();
+    o->setTheme(theme);
     o->setMainColor(color);
     o->box.pos = pos;
     o->app::PortWidget::module = module;
@@ -104,7 +109,8 @@ TColorPortWidget *createColorOutputCentered(Theme theme, NVGcolor color, math::V
 template <class TWidget>
 TWidget *createThemeWidget(Theme theme, math::Vec pos)
 {
-    TWidget *o = new TWidget(theme);
+    TWidget *o = new TWidget();
+    o->setTheme(theme);
     o->box.pos = pos;
     return o;
 }

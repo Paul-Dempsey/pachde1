@@ -81,7 +81,7 @@ struct BlankModuleWidget : ModuleWidget, IThemeChange
         return my_module ? my_module->is_branding() : true;
     }
 
-    BlankModuleWidget(BlankModule* module);
+    explicit BlankModuleWidget(BlankModule* module);
 
     void applyTheme(Theme theme);
     void applyScrews(bool screws);

@@ -2,11 +2,10 @@
 
 namespace pachde {
 
-PlayPauseButton::PlayPauseButton(Theme theme)
+PlayPauseButton::PlayPauseButton()
 {
     pressed = false;
     box.size.x = box.size.y = 24.f;
-    setTheme(theme);
 }
 
 void PlayPauseButton::applyTheme(Theme theme)

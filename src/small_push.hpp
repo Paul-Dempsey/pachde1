@@ -21,10 +21,9 @@ struct SmallPush: OpaqueWidget, IBasicTheme
         tip = nullptr;
     }
 
-    SmallPush(Theme theme)
+    SmallPush()
     { 
         box.size.x = box.size.y = 20.f;
-        setTheme(theme);
     }
 
     void describe(std::string description) {

@@ -46,16 +46,16 @@ void SmallPush::applyTheme(Theme theme)
 void SmallPush::draw(const DrawArgs& args)
 {
     auto vg = args.vg;
-    float center = 10.f;
-    CircleGradient(vg, center, center, 10.f, collar1, collar2);
-    Circle(vg, center, center, 9.5f, bezel);
-    Circle(vg, center, center, 6.75f, ring);
+    float cx = 10.f;
+    CircleGradient(vg, cx, cx, 10.f, collar1, collar2);
+    Circle(vg, cx, cx, 9.5f, bezel);
+    Circle(vg, cx, cx, 6.75f, ring);
     if (pressed) {
-        CircleGradient(vg, center, center, 5.5f, bevel2, bevel1);
-        CircleGradient(vg, center, center, 5.f, face2, face1);
+        CircleGradient(vg, cx, cx, 5.5f, bevel2, bevel1);
+        CircleGradient(vg, cx, cx, 5.f, face2, face1);
     } else {
-        CircleGradient(vg, center, center, 5.5f, bevel1, bevel2);
-        CircleGradient(vg, center, center, 5.f, face1, face2);
+        CircleGradient(vg, cx, cx, 5.5f, bevel1, bevel2);
+        CircleGradient(vg, cx, cx, 5.f, face1, face2);
     }
 }
 

@@ -18,7 +18,7 @@ struct SLWidget : OpaqueWidget
     std::function<void(float, float)> clickHandler;
 
     SLWidget() { }
-    SLWidget(float hue) { this->hue = hue; }
+    explicit SLWidget(float hue) { this->hue = hue; }
 
     virtual ~SLWidget() {
         if (ramp) {

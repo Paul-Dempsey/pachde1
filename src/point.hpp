@@ -9,7 +9,7 @@ struct Point {
 	int y = 0;
 
 	Point() {}
-	Point(int xy) : x(xy), y(xy) {}
+	Point(int xy) : x(xy), y(xy) {} // cppcheck-suppress[noExplicitConstructor]
 	Point(int x, int y) : x(x), y(y) {}
 
 	int& operator[](int i) {

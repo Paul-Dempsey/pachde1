@@ -24,13 +24,11 @@ void InfoModuleWidget::addResizeHandles()
 {
     if (!my_module) return;
 
-    auto handle = new ModuleResizeHandle;
-    handle->module = my_module;
+    auto handle = new ModuleResizeHandle(my_module);
     addChild(handle);
 
-    handle = new ModuleResizeHandle;
+    handle = new ModuleResizeHandle(my_module);
     handle->right = true;
-    handle->module = my_module;
     addChild(handle);
 }
 
@@ -120,9 +118,10 @@ void InfoModuleWidget::step()
 
 // ----  Menu  --------------------------------------------------------------
 
-struct FontSizeQuantity : Quantity {
+struct FontSizeQuantity : Quantity
+{
     InfoTheme* info_theme;
-    FontSizeQuantity(InfoTheme* it) {
+    explicit FontSizeQuantity(InfoTheme* it) {
         info_theme = it;
     }
     void setValue(float value) override { info_theme->setFontSize(value); }
@@ -135,8 +134,9 @@ struct FontSizeQuantity : Quantity {
     std::string getUnit() override { return "px"; }
 };
 
-struct FontSizeSlider : ui::Slider {
-    FontSizeSlider(InfoTheme* info_theme) {
+struct FontSizeSlider : ui::Slider
+{
+    explicit FontSizeSlider(InfoTheme* info_theme) {
         quantity = new FontSizeQuantity(info_theme);
     }
     ~FontSizeSlider() {

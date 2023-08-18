@@ -26,7 +26,7 @@ struct Pic {
     bool ok() const { return nullptr != _data; }
     unsigned char * data() const { return _data; }
     unsigned char * end() const;
-    Point position(unsigned char * location) const;
+    Point position(const unsigned char * location) const;
     unsigned char * pixel_address(int x, int y) const;
     unsigned char * pixel_address(const Point& point) const { return pixel_address(point.x, point.y); }
     NVGcolor pixel(int x, int y) const;
@@ -36,7 +36,7 @@ struct Pic {
 
     std::string name() const { return _path; }
     std::string reason() const { return _reason; }
-    bool open(std::string filename);
+    bool open(const std::string& filename);
     void close();
 
     ~Pic() {
@@ -63,7 +63,7 @@ struct cachePic
     }
 
     cachePic() { }
-    cachePic(Pic * pic) { setPic(pic); }
+    explicit cachePic(Pic * pic) { setPic(pic); }
 
 //#define TRUST_RACK_CONTEXT // depends on a fixed Rack post 2.3
 #ifndef TRUST_RACK_CONTEXT

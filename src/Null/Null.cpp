@@ -117,13 +117,11 @@ void BlankModuleWidget::addResizeHandles()
 {
     if (!my_module) return;
 
-    auto handle = new ModuleResizeHandle;
-    handle->module = my_module;
+    auto handle = new ModuleResizeHandle(my_module);
     addChild(handle);
 
-    handle = new ModuleResizeHandle;
+    handle = new ModuleResizeHandle(my_module);
     handle->right = true;
-    handle->module = my_module;
     addChild(handle);
 }
 
@@ -304,7 +302,7 @@ void BlankModuleWidget::applyTheme(Theme theme)
         }
     }
 
-    auto resize = dynamic_cast<ResizableModule*>(this->module);
+    auto resize = dynamic_cast<const ResizableModule*>(this->module);
     if (resize)
     {
         box.size.x = resize->width * RACK_GRID_WIDTH;

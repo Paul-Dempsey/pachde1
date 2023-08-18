@@ -2,10 +2,9 @@
 
 namespace pachde {
 
-Switch::Switch(Theme theme)
+Switch::Switch()
 {
     box.size.x = box.size.y = 15.f;
-    setTheme(theme);
 }
 
 void Switch::setTheme(Theme theme)

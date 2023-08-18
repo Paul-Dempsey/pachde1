@@ -18,7 +18,7 @@ struct ColorPicker: OpaqueWidget
     Pic * sl_ramp;
     float hue, saturation, light;
 
-    ColorPicker(const NVGcolor& color)
+    explicit ColorPicker(const NVGcolor& color)
     {
         text_field.setSize(Vec(100, 16));
         text_field.changeHandler = [this](std::string text) {

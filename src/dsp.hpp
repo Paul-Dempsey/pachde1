@@ -6,7 +6,7 @@ struct SlewLimiter {
 	float _delta;
 	float _last = 0.0f;
 
-	SlewLimiter(float sampleRate = 1000.0f, float milliseconds = 1.0f, float range = 10.0f) {
+	explicit SlewLimiter(float sampleRate = 1000.0f, float milliseconds = 1.0f, float range = 10.0f) {
 		configure(sampleRate, milliseconds, range);
 	}
 
@@ -24,7 +24,7 @@ struct ControlRateTrigger
     int steps;
     int trigger = -1;
 
-    ControlRateTrigger(float rate = 2.5f)
+    explicit ControlRateTrigger(float rate = 2.5f)
     {
         configure(rate);
         assert(trigger >= 1);

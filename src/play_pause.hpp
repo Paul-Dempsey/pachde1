@@ -13,7 +13,7 @@ struct PlayPauseButton: Switch, IBasicTheme
     bool pressed = false;
     std::function<void(void)> clickHandler;
 
-    PlayPauseButton(Theme theme);
+    explicit PlayPauseButton();
 
     void draw(const DrawArgs &args) override;
     void onDragEnd(const DragEndEvent & e) override;

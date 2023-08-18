@@ -104,7 +104,8 @@ void ImagineUi::makeUi(Theme theme)
     addChild(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_LIME, Vec(245.f, CONTROL_ROW_2), module, Imagine::RESET_POS_INPUT));
     addChild(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_VIOLET, Vec(275.f, CONTROL_ROW_2), module, Imagine::PLAY_INPUT));
 
-    auto picButton = new PicButton(theme);
+    auto picButton = new PicButton();
+    picButton->setTheme(theme);
     picButton->center(Vec (PANEL_CENTER - 15, CONTROL_ROW_2));
     if (imagine) {
         picButton->onClick([this](bool ctrl, bool shift) {

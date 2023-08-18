@@ -34,7 +34,8 @@ struct InfoTheme : ThemeBase
 
     virtual ~InfoTheme() {}
 
-    InfoTheme(ThemeBase *module_theme) : module_theme(module_theme) {
+    explicit InfoTheme(ThemeBase *module_theme) : module_theme(module_theme)
+    {
         if (!module_theme) {
             ThemeBase::setScrews(true);
         }
@@ -151,7 +152,7 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
 
     virtual ~InfoModuleWidget() { if (!module) { delete info_theme; } }
 
-    InfoModuleWidget(InfoModule* module);
+    explicit InfoModuleWidget(InfoModule* module);
     void addResizeHandles();
     void applyScrews(bool screws);
     void addScrews() ;

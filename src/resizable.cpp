@@ -27,7 +27,8 @@ void ResizableModule::setWidth(int newWidth) {
 }
 
 
-ModuleResizeHandle::ModuleResizeHandle()
+ModuleResizeHandle::ModuleResizeHandle(ResizableModule* resizable_module)
+: module(resizable_module)
 {
     box.pos = Vec(0, ONE_HP);
     box.size = Vec(HandleWidth(), RACK_GRID_HEIGHT - 2 * ONE_HP);

@@ -124,7 +124,7 @@ void RemoveScrewCaps(Widget* widget, WhichScrew which)
 
     std::vector<Widget*> remove;
     for (Widget * child: widget->children) {
-        auto screw = dynamic_cast<ScrewCap*>(child);
+        auto screw = dynamic_cast<const ScrewCap*>(child);
         if (screw && isApplicable(GetScrewPosition(screw), which)) {
             remove.push_back(child);
         }

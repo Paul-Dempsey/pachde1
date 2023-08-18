@@ -207,13 +207,13 @@ struct ImagineUi : ModuleWidget, IThemeChange
 {
     ImaginePanel *panel = nullptr;
     Imagine* imagine = nullptr;
-    ThemeBase* itheme = nullptr;
+    ThemeBase* my_theme = nullptr;
     PlayPauseButton * playButton = nullptr;
 
-    ImagineUi(Imagine *module);
+    explicit ImagineUi(Imagine *module);
     virtual ~ImagineUi() {
-        if (itheme) {
-            delete itheme;
+        if (my_theme) {
+            delete my_theme;
         }
     }
     void resetHeadPosition(bool ctrl, bool shift);
@@ -221,10 +221,10 @@ struct ImagineUi : ModuleWidget, IThemeChange
     void applyTheme(Theme theme);
     void applyScrews(bool screws);
     ThemeBase* getITheme() {
-        auto result = imagine ? imagine : itheme;
+        auto result = imagine ? imagine : my_theme;
         if (!result) {
-            result = itheme = new ThemeBase();
-            itheme->setNotify(this);
+            result = my_theme = new ThemeBase();
+            my_theme->setNotify(this);
         }
         return result;
     }

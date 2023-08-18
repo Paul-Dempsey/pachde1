@@ -9,9 +9,8 @@ namespace pachde {
 struct InfoSymbol: OpaqueWidget, IBasicTheme
 {
     NVGcolor color;
-    InfoSymbol(Theme theme) {
+    InfoSymbol() {
         box.size.x = box.size.y = 15.f;
-        setTheme(theme);
     }
     void setTheme(Theme theme) override;
     void draw(const DrawArgs& args) override;
