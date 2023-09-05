@@ -1,6 +1,6 @@
 #include "Null.hpp"
 #include "../theme_helpers.hpp"
-#include "../Copper/Copper.hpp"
+#include "../IHaveColor.hpp"
 
 namespace pachde {
 
@@ -60,10 +60,10 @@ void BlankModule::onRandomize(const RandomizeEvent& e) //override
 
 NVGcolor expanderColor(rack::engine::Module::Expander& expander)
 {
-    if (expander.module && expander.module->model == modelCopper) {
-        CopperModule* copper = dynamic_cast<CopperModule*>(expander.module);
+    if (expander.module && (expander.module->model == modelCopper || expander.module->model == modelCopperMini)) {
+        auto copper = dynamic_cast<IHaveColor*>(expander.module);
         if (copper) {
-            return copper->getModulatedColor();
+            return copper->getColor(1);
         }
     }
     return COLOR_NONE;

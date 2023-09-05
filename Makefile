@@ -30,6 +30,8 @@ SOURCES += src/Info/text_align.cpp
 
 # Copper module
 SOURCES += src/Copper/Copper.cpp
+SOURCES += src/Copper/CopperUI.cpp
+SOURCES += src/Copper/CopperMini.cpp
 
 # Imagine module
 SOURCES += src/Imagine/Imagine.cpp

@@ -35,8 +35,8 @@ struct SLWidget : OpaqueWidget
     void setHue(float new_hue) {
         if (new_hue == hue) return;
         hue = new_hue;
-        SetSLSpectrum(ramp->getPic(), hue);
-        ramp->invalidateImage();
+        SetSLSpectrum(getRamp()->getPic(), hue);
+        getRamp()->invalidateImage();
     }
     cachePic* getRamp() {
         if (nullptr == ramp) {

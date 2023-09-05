@@ -34,9 +34,9 @@ struct BlankModule : ResizableModule
 
     float getFlicker()
     {
-        return inputs[0].isConnected() ? inputs[0].getVoltage(0) : 0.f;
+        return getInput(0).isConnected() ? getInput(0).getVoltage(0) : 0.f;
     }
-    bool flickering() { return inputs[0].isConnected(); }
+    bool flickering() { return getInput(0).isConnected(); }
 
     NVGcolor externalcolor();
 

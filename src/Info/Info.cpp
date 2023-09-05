@@ -1,6 +1,6 @@
 #include "Info.hpp"
 #include "../text.hpp"
-#include "../Copper/Copper.hpp" // expander
+#include "../IHaveColor.hpp" // expander
 #include "info_symbol.hpp"
 
 namespace pachde {
@@ -58,10 +58,10 @@ InfoTheme* InfoModule::getInfoTheme() {
 
 NVGcolor InfoModule::expanderColor(rack::engine::Module::Expander& expander)
 {
-    if (expander.module && expander.module->model == modelCopper) {
-        CopperModule* copper = dynamic_cast<CopperModule*>(expander.module);
+    if (expander.module && (expander.module->model == modelCopper || expander.module->model == modelCopperMini)) {
+        auto copper = dynamic_cast<IHaveColor*>(expander.module);
         if (copper) {
-            return copper->getModulatedColor();
+            return copper->getColor(1);
         }
     }
     return COLOR_NONE;

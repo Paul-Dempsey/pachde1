@@ -1,6 +1,6 @@
 # Copper
 
-A color picker with modulation and outputs
+Color picker with modulation and outputs.
 
 **See also:** [All pachde-One modules](index.md)
 
@@ -12,7 +12,7 @@ Click on the Hue selector on the left or twist the H knob to select the color's 
 
 Click in the Lightness/Saturation gradient to set the lightness (vertical) and saturation (horizontal) of the color. Or, twist the S and L buttons to select the corresponding color component.
 
-In addition to draggin to twist a knob, all the knobs are clicky. Click any knob to advance the value by increments. Ctrl+Click (Cmd+Click on Mac) to decrement.
+In addition to dragging to twist a knob, all the knobs are clicky. Click any knob to advance the value by increments. Ctrl+Click (Cmd+Click on Mac) to decrement.
 
 Below the colored pickers, the selected color is displayed opaquely on the left half, as if alpha is 1. On the right side it is laid over a white to black gradient with 50% gray texture, so you can see how it overlays with transparency. If you don't see a gradient or texture, the color has little to no transparency -- it has an alpha close to 1.
 
@@ -21,9 +21,13 @@ If the color is modulated by CV inputs, the color bar is split, with the unmodul
 The selected, unmodulated hex color text is shown in the outputs section.
 Right click to find a menu option to copy that value for use in another module.
 
+## Copper vs Copper-mini
+
+Copper and Copper-mini share the same underlying color module. They present a slightly different UI and selection of output ports, but otherwise behave the same, including as extenders fror Null and Info.
+
 ## As extender
 
-Copper works as an extender to [Null](Null.md) for choosing its panel color -- even live modulating it for some excitement.
+Both Copper and Copper-mini work as extenders to [Null](Null.md) for choosing its panel color -- even live modulating it for some excitement.
 See [Null](Null.md) for more details on the entertainment value of this configuration.
 
 Copper is also an extender for [Info](Info.md) for choosing its colors, configured in the module menu.
@@ -54,9 +58,9 @@ All output ports represent the modulated color when any input ports are connecte
 | Option | Description |
 | -- | -- |
 | Screws | Add or remove the screw caps. |
-| Theme | Choose Light, Dark, or High Contrast theme. |
-| Glow in the dark. | The panel stays bright in a darkened room, with a glow that follows VCV Rack's Light bloom setting. |
+| Theme | Choose Light, Dark, or High Contrast theme, and options for following the Rack dark panels setting, and the theme to use when doing so. |
 | Palette color | Choose the color from a palette of named colors. |
 | Copy hex color | Copies the hex code of the selected color to the clipboard. You can use this to paste into most color inputs of other Rack modules (including all of pachde-One). |
+| Paste hex color | If the clipboard contains a hex color, changes the chosen color. |
 
 ![pachde (#d) Logo](Logo.svg)

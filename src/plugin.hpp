@@ -10,6 +10,7 @@ extern ::rack::Plugin* pluginInstance;
 extern ::rack::Model* modelBlank;
 extern ::rack::Model* modelInfo;
 extern ::rack::Model* modelCopper;
+extern ::rack::Model* modelCopperMini;
 extern ::rack::Model* modelImagine;
 
 namespace pachde {

@@ -1,5 +1,11 @@
 # Pachde One Change Log
 
+## Version 2.2
+
+- ***New*** [Copper-mini](docs/Copper-mini.md).
+
+- **Copper** Fix flawed S input.
+
 ## Version 2.1
 
 - Add **Follow Rack - Use dark panels** option to all modules. This is enabled by default, using the Dark theme. You may want to consider switching to the High Contrast theme for an even darker look.
