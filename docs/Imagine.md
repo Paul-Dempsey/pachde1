@@ -34,7 +34,7 @@ Hold down Shift for 10x the un-shifted amount.
   While there is a lot of room to go very fast, some of the best results may be obtained by slowing it down to speeds less than one.
   Right click to enter precise small values.
 
-- If the output is too janky for you, smooth it out with a higher **slew** rate.
+- If the **v** output is too janky for you, smooth it out with a higher **slew** rate.
 
 - Choose the color component from the read head to output to **v**oltage and analyze for **g**ates and **t**riggers.
   The knob has a dynamic label that shows the selected color component:
@@ -58,7 +58,7 @@ Hold down Shift for 10x the un-shifted amount.
   everything else will ouput a steady maximum voltage for Alpha.
 
 - Set the threshhold for gates and triggers with the **g/t** knob. Low values are very sensitive.
-  If you're getting too many too fast, set a higher threshhold or slow the read head down.
+  If you're getting too many too fast, set a higher threshhold, slow the read head down, or increase the **minT** time.
 
 - Choose a **path** to move through the image:
 
@@ -91,30 +91,31 @@ Also sets the coordinate system for the XY Pad.
 
 | Input | Description |
 | -- | -- |
-| speed | The left violet-colored port controls the speed of the read head. |
-| x/y | The peach-colored ports are unipolar CV control of read head position overrides the path, speed, and multiplier knobs. Both inputs must be connected to control the read head. |
-| r | The lime-colored port is a unipolar trigger for read head reset to its default starting position. |
-| pp | The right violet-colored port is a unipolar trigger that toggles Play/Pause of the read head. |
+| **speed** | The left violet-colored port controls the speed of the read head. |
+| **x/y** | The peach-colored ports are unipolar CV control of read head position overrides the path, speed, and multiplier knobs. Both inputs must be connected to control the read head. |
+| **r** | The lime-colored port is a unipolar trigger for read head reset to its default starting position. |
+| **pp** | The right violet-colored port is a unipolar trigger that toggles Play/Pause of the read head. |
+| **minT** | The pink colored port modulates the minT setting for minimum gate/trigger time.
 
 ## Outputs
 
 | Output | Description |
 | -- | -- |
-| x/y | x/y coordinates of the read head. Follows the polarity of the Polarity switch. |
-| R, G, B | Raw Red, Green, and Blue components at the read head. |
-| v | Voltage of the selected color component. |
-| g | Gate based on analyzing v. Use g/t to adjust sensitivity. |
-| t | Trigger based on analyzing v. Use g/t to adjust sensitivity. |
+| **x/y** | x/y coordinates of the read head. Follows the polarity of the Polarity switch. |
+| **R**, **G**, **B** | Raw Red, Green, and Blue components at the read head. |
+| **v** | Voltage of the selected color component. |
+| **g** | Gate based on analyzing v. Use g/t to adjust sensitivity. |
+| **t** | Trigger based on analyzing v. Use g/t to adjust sensitivity. |
 
 ## Menu options
 
 | Option | Description |
 | -- | -- |
-| Screws | Add or remove the screw caps. |
-| Theme | Choose Light, Dark, or High Contrast theme. Choose whether to follow the Rack **Use dark panels** option, and which theme is applied when the option is selected. You can even be a rebel (or silly) and choose **Light** as the theme used when **Use dark panels** is selected. Who am I to judge? |
-| Labels | Show labels on controls and jacks, or hide all text for a clean look. |
-| Gold medallion | Show the gold **#d** brand medallion, or hide it if it's a bit too bold for you.   |
-| Bright image in a dark room | Keep the image bright when it's dark. |
+| **Screws** | Add or remove the screw caps. |
+| **Theme** | Choose Light, Dark, or High Contrast theme. Choose whether to follow the Rack **Use dark panels** option, and which theme is applied when the option is selected. You can even be a rebel (or silly) and choose **Light** as the theme used when **Use dark panels** is selected. Who am I to judge? |
+| **Labels** | Show labels on controls and jacks, or hide all text for a clean look. |
+| **Gold medallion** | Show the gold **#d** brand medallion, or hide it if it's a bit too bold for you.   |
+| **Bright image in a dark room** | Keep the image bright when it's dark. |
 
 ## Factory presets
 
@@ -139,7 +140,9 @@ Imagine includes a few sample image presets to try things out with.
 | **Monkey** | A digital painting | ![image title: Monkey](../presets/images/monkey.jpg) |
 | **Sandstone** | Chuckanut sandstone erosion texture from Waldron island. This one is manipulated to have both smooth transitions (at low speeds) and sudden jumps. | ![image title: Sandstone](../presets/images/sandstone.jpg) |
 | **Seaweed** | Photo from the beach. | ![image title: Seaweed on a log](../presets/images/seaweed-on-log.jpg) |
+| **Seaweed-Frame** | Black-framed seaweed on the beach. The full-scanning traversals **Scanline**, **Tabalar**, and **Ralabat** are nice with this one to fade in and out at the edges. | ![image title: Seaweed Frame](../presets/images/seaweed-frame.jpg) |
 | **Stratus** | Eroded bluff face on a US Pacific beach. | ![image title: Stratus](../presets/images/stratus.jpg) |
+| **Corset** | A Steam-punk Corset | ![image title: Steam-punk corset ](../presets/images/corset.jpg) |
 
 The images are free for use with Imagine: [Check the license](../presets/images/LICENSE.txt).
 

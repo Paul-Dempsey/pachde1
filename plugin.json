@@ -46,7 +46,7 @@
       "slug": "pachde-copper-mini",
       "name": "Copper-mini",
       "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Copper-mini.md",
-      "description": "A color picker and extender with modulation and outputs",
+      "description": "A mini version of the Copper color picker and extender with modulation and outputs",
       "tags": [ "Visual", "Controller", "Utility" ]
     }
   ]

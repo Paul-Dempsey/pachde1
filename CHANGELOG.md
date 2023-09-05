@@ -2,15 +2,16 @@
 
 ## Version 2.2
 
-- ***New*** [Copper-mini](docs/Copper-mini.md).
+- ***New*** [Copper-mini](docs/Copper-mini.md) module.
 
 - **Imagine**
-  - Add **minT** knob and input for setting the minimum time before the next gate/trigger transition can happen.
+  - ***new*** **minT** knob and input for setting the minimum time before the next gate/trigger transition can happen.
+  - ***new*** *Seaweed-frame* and *Corset* factory preset images.
 
 - **Null**
-  - Add Brand logo option.
+  - ***new*** Brand logo option.
 
-- **Copper** Fix flawed S input.
+- **Copper** Fix flawed Sat CV.
 
 ## Version 2.1
 
