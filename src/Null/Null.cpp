@@ -54,6 +54,7 @@ void BlankModule::onRandomize(const RandomizeEvent& e) //override
     bright = random::get<bool>();
     glow = random::get<bool>();
     branding = random::get<bool>();
+    brand_logo = random::get<bool>();
     copper = random::get<bool>();
     RandomizeTheme(this, false);
 }
@@ -85,6 +86,7 @@ json_t* BlankModule::dataToJson()
     json_object_set_new(root, "glow", json_boolean(glow));
     json_object_set_new(root, "bright", json_boolean(bright));
     json_object_set_new(root, "branding", json_boolean(branding));
+    json_object_set_new(root, "brand-logo", json_boolean(brand_logo));
     json_object_set_new(root, "copper", json_boolean(copper));
     return root;
 
@@ -95,6 +97,7 @@ void BlankModule::dataFromJson(json_t* root)
     glow = GetBool(root, "glow", glow);
     bright = GetBool(root, "bright", bright);
     branding = GetBool(root, "branding", branding);
+    brand_logo = GetBool(root, "brand-logo", branding);
     copper = GetBool(root, "copper", copper);
     dirty_settings = true;
 }
@@ -263,9 +266,10 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
         auto y = skinny ? RACK_GRID_WIDTH : 0.0f;
         DrawNull(args.vg, (box.size.x/2.0f) - 7.5f, y, ring, slash);
 
-        if (!module) {
-            DrawLogo(args.vg, 0, box.size.y / 2.0f - 40, Overlay(COLOR_BRAND), 4.0);
-        }
+    }
+    if (brand_logo()) {
+        auto cx = (std::min(box.size.x, box.size.y) - 2.f);
+        DrawLogo(args.vg, (box.size.x - cx) * .5f, (box.size.y - cx) * .25f, Overlay(COLOR_BRAND), cx / 15.f);
     }
 }
 
@@ -391,6 +395,10 @@ void BlankModuleWidget::appendContextMenu(Menu *menu)
         "Show branding", "",
         [=]() { return my_module->is_branding(); },
         [=]() { my_module->set_branding(!my_module->is_branding()); }));
+    menu->addChild(createCheckMenuItem(
+        "Brand logo", "",
+        [=]() { return my_module->is_brand_logo(); },
+        [=]() { my_module->set_brand_logo(!my_module->is_brand_logo()); }));
     menu->addChild(createCheckMenuItem(
         "Glow in the dark", "",
         [=]() { return my_module->glow_setting(); },

@@ -84,91 +84,118 @@ void ImagineUi::makeUi(Theme theme)
         AddScrewCaps(this, theme, COLOR_NONE, SCREWS_OUTSIDE);
     }
 
-    auto image = new PicWidget(imagine);
-    image->box.pos = Vec((PANEL_WIDTH - PANEL_IMAGE_WIDTH)/2.f, PANEL_IMAGE_TOP);
-    image->box.size = Vec(PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT);
-    addChild(image);
-
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_VIOLET, Vec(25.f, CONTROL_ROW_2), module, Imagine::SPEED_INPUT));
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(55.f, CONTROL_ROW_2), module, Imagine::X_INPUT));
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(80.f, CONTROL_ROW_2), module, Imagine::Y_INPUT));
-
-    auto reset = createThemeWidgetCentered<SmallPush>(theme, Vec(215.f, CONTROL_ROW_2));
-    if (imagine) {
-        reset->describe("Reset head position\n(Shift to save new position)");
-        reset->onClick([this](bool ctrl, bool shift) {
-            resetHeadPosition(ctrl, shift);
-        });
+    {
+        auto image = new PicWidget(imagine);
+        image->box.pos = Vec((PANEL_WIDTH - PANEL_IMAGE_WIDTH)/2.f, PANEL_IMAGE_TOP);
+        image->box.size = Vec(PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT);
+        addChild(image);
     }
-    addChild(reset);
-    addChild(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_LIME, Vec(245.f, CONTROL_ROW_2), module, Imagine::RESET_POS_INPUT));
-    addChild(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_VIOLET, Vec(275.f, CONTROL_ROW_2), module, Imagine::PLAY_INPUT));
 
-    auto picButton = new PicButton();
-    picButton->setTheme(theme);
-    picButton->center(Vec (PANEL_CENTER - 15, CONTROL_ROW_2));
-    if (imagine) {
-        picButton->onClick([this](bool ctrl, bool shift) {
-            if (shift) {
-                if (ctrl) {
-                    imagine->closeImage();
+    auto x = CONTROL_START;
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_VIOLET, Vec(x, CONTROL_ROW_2), module, Imagine::SPEED_INPUT));
+    x += CONTROL_SPACING;
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(x, CONTROL_ROW_2), module, Imagine::X_INPUT));
+    x += CONTROL_SPACING - TIGHT;
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(x, CONTROL_ROW_2), module, Imagine::Y_INPUT));
+
+    {
+        auto picButton = new PicButton();
+        picButton->setTheme(theme);
+        picButton->center(Vec(PANEL_CENTER - CONTROL_SPACING * .5f, CONTROL_ROW_2));
+        if (imagine) {
+            picButton->onClick([this](bool ctrl, bool shift) {
+                if (shift) {
+                    if (ctrl) {
+                        imagine->closeImage();
+                    } else {
+                        imagine->reloadImage();
+                    }
                 } else {
-                    imagine->reloadImage();
+                    imagine->loadImageDialog();
                 }
-            } else {
-                imagine->loadImageDialog();
-            }
-        });
+            });
+        }
+        addChild(picButton);
     }
-    addChild(picButton);
 
-    playButton = createThemeParamCentered<PlayPauseButton>(theme, Vec(PANEL_CENTER + 15, CONTROL_ROW_2), imagine, Imagine::RUN_PARAM);
+    playButton = createThemeParamCentered<PlayPauseButton>(theme, Vec(PANEL_CENTER + CONTROL_SPACING * .5f, CONTROL_ROW_2), imagine, Imagine::RUN_PARAM);
     if (imagine) { playButton->onClick([this]() { imagine->setPlaying(!imagine->isPlaying()); }); }
     addParam(playButton);
 
+    x = box.size.x - CONTROL_START - 3.f * CONTROL_SPACING;
+    {
+        auto reset = createThemeWidgetCentered<SmallPush>(theme, Vec(x, CONTROL_ROW_2));
+        if (imagine) {
+            reset->describe("Reset head position\n(Shift to save new position)");
+            reset->onClick([this](bool ctrl, bool shift) {
+                resetHeadPosition(ctrl, shift);
+            });
+        }
+        addChild(reset);
+    }
+    x += CONTROL_SPACING;
+    addChild(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_LIME, Vec(x, CONTROL_ROW_2), module, Imagine::RESET_POS_INPUT));
+    x += CONTROL_SPACING;
+    addChild(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_VIOLET, Vec(x, CONTROL_ROW_2), module, Imagine::PLAY_INPUT));
+    x += CONTROL_SPACING;
+    addChild(createColorInputCentered<ColorPort>(theme, PORT_PINK, Vec(x, CONTROL_ROW_2), module, Imagine::MIN_TRIGGER_INPUT));
 
-    auto speed = createThemeParamCentered<SmallKnob>(theme, Vec(25.f, CONTROL_ROW), imagine, Imagine::SPEED_PARAM);
-    speed->stepIncrementBy = 0.1;
-    addParam(speed);
+    x = CONTROL_START;
+    {
+        auto speed = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::SPEED_PARAM);
+        speed->stepIncrementBy = 0.1;
+        addParam(speed);
+    }
 
-    auto knob = createThemeParamCentered<SmallKnob>(theme, Vec(55.f, CONTROL_ROW), imagine, Imagine::SPEED_MULT_PARAM);
+    x += CONTROL_SPACING;
+    auto knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::SPEED_MULT_PARAM);
     knob->snap = true;
     addParam(knob);
 
-    knob = createThemeParamCentered<SmallKnob>(theme, Vec(85.f, CONTROL_ROW), imagine, Imagine::PATH_PARAM);
+    x += CONTROL_SPACING;
+    knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::PATH_PARAM);
     knob->minAngle = -1.75;
     knob->maxAngle = 1.75;
     knob->snap = true;
     knob->forceLinear = true;
     addParam(knob);
 
-    knob = createThemeParamCentered<SmallKnob>(theme, Vec(215.f, CONTROL_ROW), imagine, Imagine::SLEW_PARAM);
+    x = box.size.x - CONTROL_START - 3.f * CONTROL_SPACING;
+    knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::SLEW_PARAM);
     knob->stepIncrementBy = 0.01f;
     addParam(knob);
 
-    knob = createThemeParamCentered<SmallKnob>(theme, Vec(245.f, CONTROL_ROW), imagine, Imagine::COMP_PARAM);
+    x += CONTROL_SPACING;
+    knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::COMP_PARAM);
     knob->snap = true;
     addParam(knob);
 
-    knob = createThemeParamCentered<SmallKnob>(theme, Vec(275.f, CONTROL_ROW), imagine, Imagine::GT_PARAM);
+    x += CONTROL_SPACING;
+    knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::GT_PARAM);
     knob->stepIncrementBy = 0.05f;
     addParam(knob);
 
+    x += CONTROL_SPACING;
+    {
+        auto gtrate = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::MIN_TRIGGER_PARAM);
+        gtrate->stepIncrementBy = .01f;
+        addChild(gtrate);
+    }
+    
     addOutput(createThemeOutput<ColorPort>(theme, Vec(21.f, OUTPUT_ROW), imagine, Imagine::X_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(46.f, OUTPUT_ROW), imagine, Imagine::Y_OUT));
     addOutput(createColorOutput<ColorPort>(theme, PORT_RED,   Vec(71.f, OUTPUT_ROW - 12.f), imagine, Imagine::RED_OUT));
     addOutput(createColorOutput<ColorPort>(theme, PORT_GREEN, Vec(71.f, OUTPUT_ROW + 13.f), imagine, Imagine::GREEN_OUT));
     addOutput(createColorOutput<ColorPort>(theme, PORT_BLUE,  Vec(95.f, OUTPUT_ROW), imagine, Imagine::BLUE_OUT));
-
-    auto p = createThemeParam<Switch>(theme, Vec(190.f, OUTPUT_ROW + 1.5f), imagine, Imagine::POLARITY_PARAM);
-    p->box.size.y = 18.f;
-    addParam(p);
-    addOutput(createThemeOutput<ColorPort>(theme, Vec(210.f, OUTPUT_ROW), imagine, Imagine::VOLTAGE_OUT));
-    addOutput(createThemeOutput<ColorPort>(theme, Vec(240.f, OUTPUT_ROW), imagine, Imagine::GATE_OUT));
-    addOutput(createThemeOutput<ColorPort>(theme, Vec(265.f, OUTPUT_ROW), imagine, Imagine::TRIGGER_OUT));
-
-    //addOutput(createColorOutput<ColorPort>(theme, PORT_LIME, Vec(280.f, OUTPUT_ROW), imagine, Imagine::TEST_OUT));
-
+    {
+        auto p = createThemeParam<Switch>(theme, Vec(190.f, OUTPUT_ROW + 1.5f), imagine, Imagine::POLARITY_PARAM);
+        p->box.size.y = 18.f;
+        addParam(p);
+        addOutput(createThemeOutput<ColorPort>(theme, Vec(210.f, OUTPUT_ROW), imagine, Imagine::VOLTAGE_OUT));
+        addOutput(createThemeOutput<ColorPort>(theme, Vec(240.f, OUTPUT_ROW), imagine, Imagine::GATE_OUT));
+        addOutput(createThemeOutput<ColorPort>(theme, Vec(265.f, OUTPUT_ROW), imagine, Imagine::TRIGGER_OUT));
+    }
+    // addOutput(createColorOutput<ColorPort>(theme, PORT_LIME, Vec(280.f, OUTPUT_ROW), imagine, Imagine::TEST_OUT));
 }
 
 void ImagineUi::applyTheme(Theme theme)

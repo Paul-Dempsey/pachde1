@@ -13,7 +13,8 @@ ImaginePanel::ImaginePanel(Imagine *mod, Vec size)
 void ImaginePanel::drawTraversal(const DrawArgs &args, TraversalDrawOptions options)
 {
     auto vg = args.vg;
-    auto x = 85.f + 20.f;
+    auto x = CONTROL_START + 2.6f * CONTROL_SPACING;
+    auto w = 80.f;
     auto y = CONTROL_ROW - 8.5f;
     bool dim = rack::settings::rackBrightness <= .9f;
     auto color = (dim || (IsDarker(ModuleTheme(module))))
@@ -22,17 +23,16 @@ void ImaginePanel::drawTraversal(const DrawArgs &args, TraversalDrawOptions opti
 
     if (options & TraversalDrawOptions::Text) {
         if (dim) {
-            FillRect(vg, x + 1.f, y + 1.f, 88.f, 16.f, RampGray(G_05));
+            FillRect(vg, x + 1.f, y + 1.f, w, 16.f, RampGray(G_05));
         }
         auto font = GetPluginFontSemiBold();
         if (FontOk(font)) {
             SetTextStyle(vg, font, color, 14.f);
-            //nvgTextAlign(vg, NVG_ALIGN_LEFT);
-            CenterText(vg, PANEL_CENTER, CONTROL_ROW + 5.f, TraversalName(module ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
+            CenterText(vg, x + w * .5f, CONTROL_ROW + 5.f, TraversalName(module ? module->traversal_id : Traversal::SCANLINE).c_str(), nullptr);
         }
     }
     if (options & TraversalDrawOptions::Frame) {
-        BoxRect(vg, x, y, 90.f, 18.f, color, 0.5f);
+        BoxRect(vg, x, y-.5f, w + 2.f, 18.f, color, 0.5f);
     }
 }
 
@@ -69,25 +69,41 @@ void ImaginePanel::draw(const DrawArgs &args)
             SetTextStyle(vg, font, textColor);
             CenterText(vg, PANEL_CENTER, ONE_HP - 2.5, "imagine", nullptr);
 
-            CenterText(vg, 25.f, CONTROL_ROW_TEXT, "speed", nullptr);
+            float x = CONTROL_START;
+            CenterText(vg, x, CONTROL_ROW_TEXT, "speed", nullptr);
+
+            x += CONTROL_SPACING;
             if (module) {
                 auto p = module->getParamQuantity(Imagine::SPEED_MULT_PARAM);
-                CenterText(vg, 55.f, CONTROL_ROW_TEXT, p->getDisplayValueString().c_str(), nullptr);
+                CenterText(vg, x, CONTROL_ROW_TEXT, p->getDisplayValueString().c_str(), nullptr);
             } else {
-                CenterText(vg, 55.f, CONTROL_ROW_TEXT, "1x", nullptr);
+                CenterText(vg, x, CONTROL_ROW_TEXT, "1x", nullptr);
             }
-            CenterText(vg, 85.f, CONTROL_ROW_TEXT, "path", nullptr);
+            x += CONTROL_SPACING;
+            CenterText(vg, x, CONTROL_ROW_TEXT, "path", nullptr);
 
-            CenterText(vg, 215.f, CONTROL_ROW_TEXT, "slew", nullptr);
-            CenterText(vg, 245.f, CONTROL_ROW_TEXT, ComponentShortName(module? module->color_component : ColorComponent::LUMINANCE) , nullptr);
-            CenterText(vg, 275.f, CONTROL_ROW_TEXT, "g/t", nullptr);
+            x = box.size.x - CONTROL_START - 3.f * CONTROL_SPACING;
+            CenterText(vg, x, CONTROL_ROW_TEXT, "slew", nullptr);
+            x += CONTROL_SPACING;
+            CenterText(vg, x, CONTROL_ROW_TEXT, ComponentShortName(module? module->color_component : ColorComponent::LUMINANCE) , nullptr);
+            x += CONTROL_SPACING;
+            CenterText(vg, x, CONTROL_ROW_TEXT, "g/t", nullptr);
+            x += CONTROL_SPACING;
+            CenterText(vg, x, CONTROL_ROW_TEXT, "minT", nullptr);
 
-            CenterText(vg, 25.f, CONTROL_ROW_2_TEXT, "speed", nullptr);
-            CenterText(vg, 67.75f, CONTROL_ROW_2_TEXT, "x/y", nullptr);
+            x = CONTROL_START;
+            CenterText(vg, x, CONTROL_ROW_2_TEXT, "speed", nullptr);
+            x += CONTROL_SPACING + (CONTROL_SPACING - TIGHT) * .5f;
+            CenterText(vg, x, CONTROL_ROW_2_TEXT, "x/y", nullptr);
 
-            CenterText(vg, 215.f, CONTROL_ROW_2_TEXT, "reset", nullptr);
-            CenterText(vg, 245.f, CONTROL_ROW_2_TEXT, "r", nullptr);
-            CenterText(vg, 275.f, CONTROL_ROW_2_TEXT, "pp", nullptr);
+            x = box.size.x - CONTROL_START - 3.f * CONTROL_SPACING;
+            CenterText(vg, x, CONTROL_ROW_2_TEXT, "reset", nullptr);
+            x += CONTROL_SPACING;
+            CenterText(vg, x, CONTROL_ROW_2_TEXT, "r", nullptr);
+            x += CONTROL_SPACING;
+            CenterText(vg, x, CONTROL_ROW_2_TEXT, "pp", nullptr);
+            x += CONTROL_SPACING;
+            CenterText(vg, x, CONTROL_ROW_2_TEXT, "minT", nullptr);
 
             // rotated "raw"
             nvgSave(vg);
@@ -124,7 +140,6 @@ void ImaginePanel::draw(const DrawArgs &args)
         1.5);
 
     Widget::draw(args);
-    // nvgResetScissor(args.vg);
 }
 
 }

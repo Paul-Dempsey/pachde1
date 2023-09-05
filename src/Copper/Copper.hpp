@@ -46,7 +46,7 @@ struct CopperModule: ThemeModule, IHaveColor {
     float lightness = .5f;
     float alpha = 1.0f;
     bool h_uni = true, s_uni = true, l_uni = true, a_uni = true;
-    ControlRateTrigger control_rate;
+    RateTrigger control_rate;
     bool is_copper_input[NUM_INPUTS] = {false};
     bool ports_changed = false;
 
@@ -133,14 +133,11 @@ struct CopperUi : ModuleWidget, IThemeChange
     void appendContextMenu(rack::ui::Menu* menu) override;
 };
 
-struct CopperMini : CopperModule {
-};
-
 struct CopperMiniUI  : ModuleWidget, IThemeChange {
-    CopperMini* copper_module = nullptr;
+    CopperModule* copper_module = nullptr;
     ThemeBase* theme_holder = nullptr;
 
-    explicit CopperMiniUI(CopperMini * module);
+    explicit CopperMiniUI(CopperModule * module);
     virtual ~CopperMiniUI() {
         if (theme_holder && !module) {
             delete theme_holder;

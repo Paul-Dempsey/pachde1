@@ -1,5 +1,4 @@
 #include "Imagine.hpp"
-//#include <osdialog.h>
 #include "imagine_layout.hpp"
 #include "../components.hpp"
 #include "../dsp.hpp"
@@ -38,7 +37,9 @@ std::string MakeUnPluginPath(std::string path)
 
 namespace pachde {
 
-Imagine::Imagine() {
+Imagine::Imagine()
+:   min_retrigger(0.f)
+{
     setPlaying(false);
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, 0);
 
@@ -47,6 +48,9 @@ Imagine::Imagine() {
 
     configParam(GT_PARAM, 0.f, 1.f, .3f,
         "Gate/Trigger spread threshhold");
+
+    configParam(MIN_TRIGGER_PARAM, 0.f, 1000.f, 0.f,
+        "Minimum t/g time", "ms");
 
     configSwitch(POLARITY_PARAM, 0.f, 1.0f, 0.0f,
         "Polarity", { "Unipolar (0 - 10v)", "Bipolar (-5 - 5v)" });
@@ -59,6 +63,7 @@ Imagine::Imagine() {
     configInput(X_INPUT, "Read head X position");
     configInput(Y_INPUT, "Read head Y position");
     configInput(SPEED_INPUT, "Read head speed");
+    configInput(MIN_TRIGGER_INPUT, "Minimum g/t time");
 
     configParam(SPEED_PARAM, 0.f, 100.f, 10.f,
         "Speed");
@@ -238,6 +243,16 @@ void Imagine::updateParams()
     }
     gt = getParam(GT_PARAM).getValue();
 
+    if (getInput(MIN_TRIGGER_INPUT).isConnected()) {
+        float v = getInput(MIN_TRIGGER_INPUT).getVoltage();
+        auto pq = getParamQuantity(MIN_TRIGGER_PARAM);
+        v = v * (pq->getMaxValue() / 10.f);
+        v = getParam(MIN_TRIGGER_PARAM).getValue() + v * .5f;
+        min_retrigger.configure(v);
+    } else {
+        min_retrigger.configure(getParam(MIN_TRIGGER_PARAM).getValue());
+    }
+
     float slew = getParam(SLEW_PARAM).getValue();
     float sample_rate = APP->engine->getSampleRate();
 #ifdef XYSLEW
@@ -266,24 +281,23 @@ void Imagine::updateParams()
         traversal_id = id;
     }
 
-    if (inputs[SPEED_INPUT].isConnected() && !isXYInput()) {
-        getParam(SPEED_PARAM).setValue(clamp(inputs[SPEED_INPUT].getVoltage() * 100.f, 0.f, 100.f));
+    if (getInput(SPEED_INPUT).isConnected() && !isXYInput()) {
+        getParam(SPEED_PARAM).setValue(clamp(getInput(SPEED_INPUT).getVoltage() * 100.f, 0.f, 100.f));
     }
     traversal->configure_rate(getSpeed(), sample_rate);
-
     color_component = getColorComponent();
 }
 
 void Imagine::processBypass(const ProcessArgs& args)
 {
-    outputs[VOLTAGE_OUT].setVoltage(0.0f);
-    outputs[X_OUT].setVoltage(0.0f);
-    outputs[Y_OUT].setVoltage(0.0f);
-    outputs[GATE_OUT].setVoltage(0.0f);
-    outputs[TRIGGER_OUT].setVoltage(0.0f);
-    outputs[RED_OUT].setVoltage(0.0f);
-    outputs[GREEN_OUT].setVoltage(0.0f);
-    outputs[BLUE_OUT].setVoltage(0.0f);
+    getOutput(VOLTAGE_OUT).setVoltage(0.0f);
+    getOutput(X_OUT).setVoltage(0.0f);
+    getOutput(Y_OUT).setVoltage(0.0f);
+    getOutput(GATE_OUT).setVoltage(0.0f);
+    getOutput(TRIGGER_OUT).setVoltage(0.0f);
+    getOutput(RED_OUT).setVoltage(0.0f);
+    getOutput(GREEN_OUT).setVoltage(0.0f);
+    getOutput(BLUE_OUT).setVoltage(0.0f);
 }
 
 void Imagine::process(const ProcessArgs& args)
@@ -294,16 +308,16 @@ void Imagine::process(const ProcessArgs& args)
         updateParams();
     }
 
-    if (inputs[PLAY_INPUT].isConnected()) {
-        auto v = inputs[PLAY_INPUT].getVoltage();
+    if (getInput(PLAY_INPUT).isConnected()) {
+        auto v = getInput(PLAY_INPUT).getVoltage();
         if (play_trigger.process(v, 0.1f, 5.f)) {
             setPlaying(!isPlaying());
         }
     }
 
-    if (inputs[RESET_POS_INPUT].isConnected())
+    if (getInput(RESET_POS_INPUT).isConnected())
     {
-        auto v = inputs[RESET_POS_INPUT].getVoltage();
+        auto v = getInput(RESET_POS_INPUT).getVoltage();
         if (resetpos_trigger.process(v, 0.1f, 5.f)) {
             resetpos_trigger.reset();
             traversal->reset();
@@ -325,14 +339,14 @@ void Imagine::process(const ProcessArgs& args)
 
     if (running) {
         if (isXYInput()) {
-            traversal->set_position(Vec(width * (inputs[X_INPUT].getVoltage() / 10.f), height * (inputs[Y_INPUT].getVoltage() / 10.f)));
+            traversal->set_position(Vec(width * (getInput(X_INPUT).getVoltage() / 10.f), height * (getInput(Y_INPUT).getVoltage() / 10.f)));
         } else {
             traversal->process();
         }
     }
     Vec pos = traversal->get_position();
 
-    if (outputs[X_OUT].isConnected()) {
+    if (getOutput(X_OUT).isConnected()) {
         float v;
         if (isBipolar()) {
             v = (pos.x - width/2.f) / width * 10.f;
@@ -340,13 +354,13 @@ void Imagine::process(const ProcessArgs& args)
             v = pos.x / width * 10.0f;
         }
 #ifdef XYSLEW
-        outputs[X_OUT].setVoltage(x_slew.next(v));
+        getOutput(X_OUT).setVoltage(x_slew.next(v));
 #else
-        outputs[X_OUT].setVoltage(v);
+        getOutput(X_OUT).setVoltage(v);
 #endif
     }
 
-    if (outputs[Y_OUT].isConnected()) {
+    if (getOutput(Y_OUT).isConnected()) {
         float v;
         if (isBipolar()) {
             v =  -(pos.y - height/2.f) / height * 10.f;
@@ -355,9 +369,9 @@ void Imagine::process(const ProcessArgs& args)
         }
 
 #ifdef XYSLEW
-        outputs[Y_OUT].setVoltage(y_slew.next(v));
+        getOutput(Y_OUT).setVoltage(y_slew.next(v));
 #else
-        outputs[Y_OUT].setVoltage(v);
+        getOutput(Y_OUT).setVoltage(v);
 #endif
     }
 
@@ -374,28 +388,27 @@ void Imagine::process(const ProcessArgs& args)
         }
 
         // RGB outputs are unipolar 0-10v
-        outputs[RED_OUT].setVoltage(pix.r * 10.f);
-        outputs[GREEN_OUT].setVoltage(pix.g * 10.f);
-        outputs[BLUE_OUT].setVoltage(pix.b * 10.f);
+        getOutput(RED_OUT).setVoltage(pix.r * 10.f);
+        getOutput(GREEN_OUT).setVoltage(pix.g * 10.f);
+        getOutput(BLUE_OUT).setVoltage(pix.b * 10.f);
 
         auto v = ComponentValue(pix) * 10.0f;
         lookback.push(v);
         auto spread = lookback.spread();
         if (spread > gt) {
-            trigger_pulse.trigger();
-            if (lookback.isFilled()) {
-                gate_high = !gate_high;
+            if (min_retrigger.process()) {
+                trigger_pulse.trigger();
+                if (lookback.isFilled()) {
+                    gate_high = !gate_high;
+                }
             }
         }
-        //outputs[TEST_OUT].setVoltage(spread);
+        //getOutput(TEST_OUT).setVoltage(spread);
 
-        if (isBipolar()) {
-            v -= 5.f;
-        }
-        outputs[VOLTAGE_OUT].setVoltage(voltage_slew.next(v));
+        getOutput(VOLTAGE_OUT).setVoltage(voltage_slew.next(isBipolar() ? v - .5f : v));
 
-        outputs[GATE_OUT].setVoltage(gate_high * 10.f);
-        outputs[TRIGGER_OUT].setVoltage(trigger_pulse.process(args.sampleTime) * 10.f);
+        getOutput(GATE_OUT).setVoltage(gate_high * 10.f);
+        getOutput(TRIGGER_OUT).setVoltage(trigger_pulse.process(args.sampleTime) * 10.f);
     }
 }
 

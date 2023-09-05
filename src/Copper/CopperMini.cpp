@@ -25,7 +25,7 @@ struct CopperMiniSvg {
 };
 
 // ----------------------------------------------------------------------------
-CopperMiniUI::CopperMiniUI(CopperMini * module)
+CopperMiniUI::CopperMiniUI(CopperModule * module)
 {
     copper_module = module;
     setModule(module);
@@ -92,7 +92,7 @@ NVGcolor CopperMiniUI::getColor() {
 }
 
 constexpr const float KNOB_SPACING = 27.5f;
-constexpr const float PORT_SPACING = 26.f;
+constexpr const float CONTROL_SPACING = 26.f;
 constexpr const float GAP1 = 33.f;
 constexpr const float GAP2 = 36.f;
 constexpr const float LABEL_XOFFSET = 11.f;
@@ -106,41 +106,41 @@ void CopperMiniUI::makeUi(Theme theme)
 
     float center = box.size.x * .5f;
     float y = 30.f;
-    auto p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperMini::H_PARAM);
+    auto p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperModule::H_PARAM);
     p->stepIncrementBy = 1.f/360.f;
     addParam(p);
     y += KNOB_SPACING;
-    p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperMini::S_PARAM);
+    p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperModule::S_PARAM);
     p->stepIncrementBy = .1f;
     addParam(p);
     y += KNOB_SPACING;
-    p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperMini::L_PARAM);
+    p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperModule::L_PARAM);
     p->stepIncrementBy = .01f;
     addParam(p);
     y += KNOB_SPACING;
-    p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperMini::A_PARAM);
+    p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperModule::A_PARAM);
     p->stepIncrementBy = .1f;
     addParam(p);
 
     y += GAP1;
 
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_BLUE, Vec(center,y), module, CopperMini::H_INPUT));
-    y += PORT_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_ORANGE, Vec(center,y), module, CopperMini::S_INPUT));
-    y += PORT_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_YELLOW, Vec(center,y), module, CopperMini::L_INPUT));
-    y += PORT_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_PINK, Vec(center,y), module, CopperMini::A_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_BLUE, Vec(center,y), module, CopperModule::H_INPUT));
+    y += CONTROL_SPACING;
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_ORANGE, Vec(center,y), module, CopperModule::S_INPUT));
+    y += CONTROL_SPACING;
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_YELLOW, Vec(center,y), module, CopperModule::L_INPUT));
+    y += CONTROL_SPACING;
+    addInput(createColorInputCentered<ColorPort>(theme, PORT_PINK, Vec(center,y), module, CopperModule::A_INPUT));
 
     y += GAP2;
 
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_BLUE, Vec(center,y), module, CopperMini::H_OUT));
-    y += PORT_SPACING;
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_ORANGE, Vec(center,y), module, CopperMini::S_OUT));
-    y += PORT_SPACING;
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_YELLOW, Vec(center,y), module, CopperMini::L_OUT));
-    y += PORT_SPACING;
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_PINK, Vec(center,y), module, CopperMini::A_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_BLUE, Vec(center,y), module, CopperModule::H_OUT));
+    y += CONTROL_SPACING;
+    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_ORANGE, Vec(center,y), module, CopperModule::S_OUT));
+    y += CONTROL_SPACING;
+    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_YELLOW, Vec(center,y), module, CopperModule::L_OUT));
+    y += CONTROL_SPACING;
+    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_PINK, Vec(center,y), module, CopperModule::A_OUT));
 
 }
 
@@ -288,4 +288,4 @@ void CopperMiniUI::appendContextMenu(rack::ui::Menu* menu)
 
 
 }
-Model *modelCopperMini = createModel<pachde::CopperMini, pachde::CopperMiniUI>("pachde-copper-mini");
+Model *modelCopperMini = createModel<pachde::CopperModule, pachde::CopperMiniUI>("pachde-copper-mini");

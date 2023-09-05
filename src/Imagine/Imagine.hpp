@@ -54,6 +54,7 @@ struct Imagine : ThemeModule
         SPEED_MULT_PARAM,
         COMP_PARAM,
         GT_PARAM,
+        MIN_TRIGGER_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
@@ -62,6 +63,7 @@ struct Imagine : ThemeModule
         X_INPUT,
         Y_INPUT,
         SPEED_INPUT,
+        MIN_TRIGGER_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
@@ -89,7 +91,7 @@ struct Imagine : ThemeModule
 #ifdef XYSLEW
     SlewLimiter x_slew, y_slew;
 #endif
-    ControlRateTrigger control_rate;
+    RateTrigger control_rate;
 
     rack::dsp::SchmittTrigger play_trigger;
     rack::dsp::SchmittTrigger resetpos_trigger;
@@ -97,6 +99,7 @@ struct Imagine : ThemeModule
     LookbackBuffer<float, 6> lookback;
     bool gate_high = false;
     float gt = 0;
+    RateTrigger min_retrigger;
 
     bool medallion_fill = true;
     bool labels = true;

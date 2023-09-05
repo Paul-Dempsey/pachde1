@@ -4,6 +4,12 @@
 
 - ***New*** [Copper-mini](docs/Copper-mini.md).
 
+- **Imagine**
+  - Add **minT** knob and input for setting the minimum time before the next gate/trigger transition can happen.
+
+- **Null**
+  - Add Brand logo option.
+
 - **Copper** Fix flawed S input.
 
 ## Version 2.1

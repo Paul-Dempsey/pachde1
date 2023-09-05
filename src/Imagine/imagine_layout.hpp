@@ -27,4 +27,8 @@ constexpr const float CONTROL_ROW_2_TEXT = CONTROL_ROW_2 + 22.f;
 constexpr const float OUTPUT_ROW = 340.f;
 constexpr const float OUTPUT_ROW_TEXT = 373.f;
 
+constexpr const float CONTROL_START = 22.f;
+constexpr const float CONTROL_SPACING = 28.f;
+constexpr const float TIGHT = 2.f;
+
 }

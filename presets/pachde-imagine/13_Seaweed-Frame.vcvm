@@ -1,0 +1,8 @@
+{
+  "plugin": "pachde-one",
+  "model": "pachde-imagine",
+  "version": "2.0.0",
+  "data": {
+    "image": "{plug}/presets/images/seaweed-frame.jpg"
+  }
+}

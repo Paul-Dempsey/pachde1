@@ -18,40 +18,36 @@ struct SlewLimiter {
 	float next(float sample, float last);
 };
 
-struct ControlRateTrigger
+struct RateTrigger
 {
     float rate_ms;
     int steps;
-    int trigger = -1;
+    int step_trigger;
 
-    explicit ControlRateTrigger(float rate = 2.5f)
+    explicit RateTrigger(float rate = 2.5f)
     {
         configure(rate);
-        assert(trigger >= 1);
-        reset();
+        steps = 0;
     }
 
     void configure(float rate) {
-        assert(rate >= 0.0);
         rate_ms = rate;
         onSampleRateChanged();
     }
 
     // after reset, fires on next step
-    void reset() { steps = trigger; }
+    void reset() { steps = step_trigger; }
+    void start() { steps = 0; }
 
     void onSampleRateChanged()
     {
-        trigger = APP->engine->getSampleRate() * (rate_ms / 1000.0f);
+        step_trigger = APP->engine->getSampleRate() * (rate_ms / 1000.0f);
     }
 
     bool process()
     {
-        // rate of 0 means sample rate
-        if (rate_ms <= 0.0) return true;
-
         ++steps;
-        if (steps >= trigger)
+        if (steps >= step_trigger)
         {
             steps = 0;
             return true;
