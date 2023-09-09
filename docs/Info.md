@@ -26,7 +26,7 @@ Here are some samples with Light, Dark and High Contrast themes, and selected op
 | Text alignment | Choose **Left**, **Center**, or **Right**-aligned layout. |
 | Text color  | A standard Rack #_hex_ code for the color of the text. |
 | Text background color  | A standard Rack #_hex_ code for the color of the text|
-| Copper | Choose which colors the Copper extender module sets. Choose from **None**, **Panel** or **Interior**. When set to **None**, the module is not affected by Copper. When set to **Interior**, it gets Background color from a Copper on the left, and Text color from a Copper on the right. |
+| Copper | Choose which colors the Copper expander module sets. Choose from **None**, **Panel** or **Interior**. When set to **None**, the module is not affected by Copper. When set to **Interior**, it gets Background color from a Copper on the left, and Text color from a Copper on the right. |
 
 ## Fonts
 
@@ -39,9 +39,9 @@ You can get to the actual file path you need from a regular Windows command prom
 Start a command prompt and type `dir /S /B c:\windows\fonts\*.ttf`, copy the full path of file,
 then paste it into the Font chooser dialog.
 
-## Extender
+## Expander
 
-[Copper](Copper.md) extends Info to set it's panel, background, and text colors.
+[Copper](Copper.md) expands Info to set it's panel, background, and text colors.
 By default Copper sets the panel color.
 In the menu, choose **Interior** for Copper, and now Copper changes the text background when it's on the left, and the text color when it's on the right.
 Two Coppers can work simultaneously in this configuration.

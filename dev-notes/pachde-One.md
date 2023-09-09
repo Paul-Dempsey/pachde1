@@ -1,7 +1,7 @@
 # Dev notes for pachde-One (et al.) plugin(s)
 
 - Contemplate designing a standard for color interchange using CV, if there isn't one already.
-Might be a nicer way to connect Copper than as an extender.
+Might be a nicer way to connect Copper than as an expander.
 I thought I had seen one on the forums, but I can't find it now.
 
   Packing a full RGBA color into a float doesn't work,
@@ -13,4 +13,4 @@ I thought I had seen one on the forums, but I can't find it now.
 
   I see that it is possible for modules to use MIDI (which, with some effort can send arbitrary data), but these connections aren't visible - just configuration of the Midi ports.
 
-- Contemplate a design for inter-module communication that isn't a cable (CV) or adjacency (extender).
+- Contemplate a design for inter-module communication that isn't a cable (CV) or adjacency (expander).

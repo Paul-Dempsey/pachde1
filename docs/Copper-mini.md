@@ -21,16 +21,16 @@ Right click to find a menu option to copy that value for use in another module.
 
 ## Copper vs Copper-mini
 
-Copper and Copper-mini share the same underlying color module. They present a slightly different UI and selection of output ports, but optherwise behave the same, including as extenders fror Null and Info.
+Copper and Copper-mini share the same underlying color module. They present a slightly different UI and selection of output ports, but optherwise behave the same, including as expander for Null and Info.
 
-## As extender
+## As expander
 
-Both Copper and Copper-mini work as extenders to [Null](Null.md) for choosing its panel color -- even live-modulating it for some excitement.
+Both Copper and Copper-mini work as expanders to [Null](Null.md) for choosing its panel color -- even live-modulating it for some excitement.
 See [Null](Null.md) for more details on the entertainment value of this configuration.
 
-Copper is also an extender for [Info](Info.md) for choosing its colors, configured in the module menu.
+Copper is also an expander for [Info](Info.md) for choosing its colors, configured in the module menu.
 
-Null and Info both allow you to turn off using Copper as an extender.
+Null and Info both allow you to turn off using Copper as an expander.
 
 ## Inputs
 

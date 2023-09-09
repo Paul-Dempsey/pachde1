@@ -25,7 +25,7 @@ Here's a sampling of Null in Light, Dark, and High Contrast themes and various c
 Null has one secret input port.
 Plug a signal into the **FLicker** port hidden behind the **#d** logo to add flickering to the panel, like a neon sign going bad or a defective flourescent light.
 
-## Extender
+## Expander
 
 **[Copper](copper)** extends Null, setting the panel color to the color chosen.
 If you haven't memorized the hex codes for colors you want to use, drop a Copper next to Null and pick a color.
