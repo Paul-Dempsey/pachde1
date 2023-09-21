@@ -14,6 +14,8 @@ fs::file_time_type LastWriteTime(std::string path)
     }
 }
 
+namespace pachde {
+
 // Make a fake path if under plugin folder, so that presets are portable
 std::string MakePluginPath(std::string path)
 {
@@ -34,8 +36,6 @@ std::string MakeUnPluginPath(std::string path)
     }
     return system::getCanonical(path);
 }
-
-namespace pachde {
 
 Imagine::Imagine()
 :   min_retrigger(0.f)
@@ -311,6 +311,7 @@ void Imagine::process(const ProcessArgs& args)
     if (getInput(PLAY_INPUT).isConnected()) {
         auto v = getInput(PLAY_INPUT).getVoltage();
         if (play_trigger.process(v, 0.1f, 5.f)) {
+            play_trigger.reset();
             setPlaying(!isPlaying());
         }
     }

@@ -13,6 +13,9 @@ ImagineUi::ImagineUi(Imagine *module)
     setModule(module);
     if (imagine) {
         imagine->setNotify(this);
+        image_source = imagine;
+    } else {
+        image_source = this;
     }
     applyTheme(GetPreferredTheme(getITheme()));
 }
@@ -72,6 +75,16 @@ void ImagineUi::resetHeadPosition(bool ctrl, bool shift)
     }
 }
 
+Pic * ImagineUi::getImage() 
+{
+    if (!preview_image) {
+        preview_image = new(Pic);
+        std::string path = MakeUnPluginPath("{plug}/presets/images/guitar-shirt.jpg");
+        preview_image->open(path);
+    }
+    return preview_image;
+}
+
 void ImagineUi::makeUi(Theme theme)
 {
     assert(children.empty());
@@ -85,10 +98,13 @@ void ImagineUi::makeUi(Theme theme)
     }
 
     {
-        auto image = new PicWidget(imagine);
-        image->box.pos = Vec((PANEL_WIDTH - PANEL_IMAGE_WIDTH)/2.f, PANEL_IMAGE_TOP);
-        image->box.size = Vec(PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT);
-        addChild(image);
+        auto pic_widget = new PicWidget(imagine);
+        pic_widget->box.pos = Vec((PANEL_WIDTH - PANEL_IMAGE_WIDTH)/2.f, PANEL_IMAGE_TOP);
+        pic_widget->box.size = Vec(PANEL_IMAGE_WIDTH, PANEL_IMAGE_HEIGHT);
+        addChild(pic_widget);
+        if (!imagine) {
+            pic_widget->setImageSource(this);
+        }
     }
 
     auto x = CONTROL_START;

@@ -5,12 +5,18 @@
 using namespace rack;
 namespace pachde {
 
+
 struct PicWidget : OpaqueWidget {
-    Imagine *module = nullptr;
+    Imagine * module = nullptr;
     Vec mousepos;
     cachePic cpic;
+    IProvideImage* image_source = nullptr;
 
     explicit PicWidget(Imagine *module);
+
+    void setImageSource(IProvideImage* source) {
+        image_source = source;
+    }
 
     void onContextCreate(const ContextCreateEvent& e) override
     {

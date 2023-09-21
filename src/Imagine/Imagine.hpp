@@ -17,6 +17,12 @@ namespace pachde {
 using namespace ::rack;
 using namespace ::traversal;
 
+std::string MakeUnPluginPath(std::string path);
+
+struct IProvideImage {
+     virtual Pic* getImage() = 0;
+};
+
 enum VRange {
     UNIPOLAR = 0,
     BIPOLAR = 1
@@ -43,7 +49,7 @@ inline const char * ComponentShortName(ColorComponent co) {
     }
 }
 
-struct Imagine : ThemeModule
+struct Imagine : ThemeModule, IProvideImage
 {
     enum ParamIds {
         SLEW_PARAM,
@@ -110,7 +116,7 @@ struct Imagine : ThemeModule
     uint64_t image_size = 0.f;
     fs::file_time_type image_time;
 
-    Pic* getImage() { return &image; }
+    Pic* getImage() override { return &image; }
 
     void play() { running = true;}
     void pause() { running = false; }
@@ -206,15 +212,20 @@ struct ImaginePanel : Widget
     void draw(const DrawArgs &args) override;
 };
 
-struct ImagineUi : ModuleWidget, IThemeChange
+struct ImagineUi : ModuleWidget, IThemeChange, IProvideImage
 {
     ImaginePanel *panel = nullptr;
     Imagine* imagine = nullptr;
     ThemeBase* my_theme = nullptr;
     PlayPauseButton * playButton = nullptr;
+    Pic* preview_image = nullptr;
+    IProvideImage * image_source = nullptr;
 
     explicit ImagineUi(Imagine *module);
     virtual ~ImagineUi() {
+        if (preview_image) {
+            delete preview_image;
+        }
         if (my_theme) {
             delete my_theme;
         }
@@ -231,7 +242,7 @@ struct ImagineUi : ModuleWidget, IThemeChange
         }
         return result;
     }
-    
+    Pic * getImage() override;
     void onChangeTheme(ChangedItem item) override;
     void step() override;
     void appendContextMenu(rack::ui::Menu* menu) override;

@@ -76,7 +76,7 @@ void PicWidget::updateClient()
 void PicWidget::drawPic(const DrawArgs &args)
 {
     auto vg = args.vg;
-    auto pic = module ? module->getImage() : nullptr;
+    auto pic = image_source ? image_source->getImage() : nullptr;
     if (pic && !pic->ok()) {
         pic = nullptr;
     }
