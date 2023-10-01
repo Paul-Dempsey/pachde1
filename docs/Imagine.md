@@ -1,7 +1,7 @@
 # Imagine
 
-An unique and perhaps eccentric source of volage, gates, and triggers using an image.
-You can think of it as a sequencer or image sampler.
+An unique and eccentric source of voltage, gates, and triggers using an image.
+You can think of it as a sequencer or an image sampler.
 
 **See also:** [All pachde-One modules](index.md)
 
@@ -11,10 +11,14 @@ Load an image and generate voltages, gates, and triggers as the image is scanned
 Click on the image to set the position of the read head.
 Drag to scrub.
 
-Try out the images available with the factory presets.
-Or download the [Imagine-Demo-1](https://patchstorage.com/imagine-demo-1/) patch from **patchstorage**.
+To get started, try out the images available with the factory presets.
+Or, download the [Imagine-Demo-1](https://patchstorage.com/imagine-demo-1/) patch from **patchstorage**.
+
+See what others are doing for [=== vcp challenge #77: imagine ===](https://community.vcvrack.com/t/vcp-challenge-77-imagine/20695). (thanks, ablaut!)
 
 ## Features
+
+- Theme options and UI tweaking in the module menu.
 
 - All knobs are clicky knobs.
 Click on a knob to increment the value by a useful unit.
@@ -23,7 +27,7 @@ Hold down Shift for 10x the un-shifted amount.
 
 - Select an image using the **Picture** button, or drag and drop the image file onto the image area.
 
-- Start and stop the read head with the **Play/Pause** button, or send a trigger to the violet **pp** input port.
+- Start and stop the read head with the **Play/Pause** button, or send a trigger to the lavender **pp** input port.
 
 - Press the **reset** button, or send a triggger to the **r** input port to reset the read head to it's default position.
   Shift+Click to set the default psoition to the current position.
