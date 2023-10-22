@@ -2,6 +2,7 @@
 #ifndef PACHDE_TEXT_HPP_INCLUDED
 #define PACHDE_TEXT_HPP_INCLUDED
 #include <rack.hpp>
+#include <string>
 #include "colors.hpp"
 using namespace ::rack;
 

@@ -14,13 +14,15 @@ std::shared_ptr<window::Font> GetPluginFontRegular(const char * path)
 
 std::string format_string(const char *fmt, ...)
 {
-    const int len = 256;
+    const int len = 512;
     std::string s(len, '\0');
     va_list args;
     va_start(args, fmt);
-    auto r = std::vsnprintf(&(*s.begin()), len + 1, fmt, args);
+    auto r = std::vsnprintf(&(*s.begin()), len, fmt, args);
     va_end(args);
-    return r < 0 ? "??" : s;
+    if (r < 0) return "??";
+    s.resize(std::min(r, len));
+    return s;
 }
 
 void SetTextStyle(NVGcontext *vg, std::shared_ptr<window::Font> font, NVGcolor color, float height)

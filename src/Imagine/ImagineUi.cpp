@@ -104,6 +104,8 @@ void ImagineUi::makeUi(Theme theme)
         addChild(pic_widget);
         if (!imagine) {
             pic_widget->setImageSource(this);
+        } else {
+            pic_widget->setImageSource(imagine);
         }
     }
 
