@@ -120,12 +120,7 @@ struct Imagine : ThemeModule, IProvideImage
 
     void play() { running = true;}
     void pause() { running = false; }
-    bool setPlaying(bool play) {
-        play_trigger.reset();
-        bool previous = running;
-        running = play;
-        return previous;
-    }
+    bool setPlaying(bool play);
     bool isPlaying() { return running; }
 
     const Vec & getResetPos() { return reset_pos; }

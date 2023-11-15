@@ -40,14 +40,13 @@ std::string MakeUnPluginPath(std::string path)
 Imagine::Imagine()
 :   min_retrigger(0.f)
 {
-    setPlaying(false);
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, 0);
 
     configParam(SLEW_PARAM, 0.f, 1.f, 0.f,
         "Slew", "%", 0.f, 100.f);
 
     configParam(GT_PARAM, 0.f, 1.f, .3f,
-        "Gate/Trigger spread threshhold");
+        "Gate/Trigger spread threshold");
 
     configParam(MIN_TRIGGER_PARAM, 0.f, 1000.f, 0.f,
         "Minimum t/g time", "ms");
@@ -104,8 +103,19 @@ Imagine::Imagine()
     configOutput(GATE_OUT,    "Gate");
     configOutput(TRIGGER_OUT, "Trigger");
     //configOutput(TEST_OUT, "Test");
+    setPlaying(false);
     updateParams();
 }
+
+bool Imagine::setPlaying(bool play)
+{
+    play_trigger.reset();
+    bool previous = running;
+    running = play;
+    getParamQuantity(RUN_PARAM)->setValue(running);
+    return previous;
+}
+
 
 void Imagine::closeImage() {
     setPlaying(false);
@@ -311,7 +321,6 @@ void Imagine::process(const ProcessArgs& args)
     if (getInput(PLAY_INPUT).isConnected()) {
         auto v = getInput(PLAY_INPUT).getVoltage();
         if (play_trigger.process(v, 0.1f, 5.f)) {
-            play_trigger.reset();
             setPlaying(!isPlaying());
         }
     }
