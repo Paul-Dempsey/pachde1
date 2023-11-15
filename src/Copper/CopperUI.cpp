@@ -368,8 +368,18 @@ void AddColorItem(Self* self, Menu* menu, const char * name, PackedColor color, 
 
 void CopperUi::appendContextMenu(rack::ui::Menu* menu)
 {
-    if (!this->module) return;
+    if (!copper_module) return;
     AddThemeMenu(menu, theme_holder, false, true);
+    menu->addChild(createSubmenuItem("Poly jack order", "", [=](Menu* menu) {
+        menu->addChild(createCheckMenuItem("HSLARGB", "", 
+            [=](){ return !copper_module->poly_out_rgbahsl; },
+            [=](){ copper_module->poly_out_rgbahsl = !copper_module->poly_out_rgbahsl; }
+        ));
+        menu->addChild(createCheckMenuItem("RGBAHSL", "", 
+            [=](){ return copper_module->poly_out_rgbahsl; },
+            [=](){ copper_module->poly_out_rgbahsl = !copper_module->poly_out_rgbahsl; }
+        ));
+    }));
     menu->addChild(createSubmenuItem("Palette color", "",
         [=](Menu *menu)
         {

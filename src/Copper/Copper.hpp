@@ -49,6 +49,7 @@ struct CopperModule: ThemeModule, IHaveColor {
     RateTrigger control_rate;
     bool is_copper_input[NUM_INPUTS] = {false};
     bool ports_changed = false;
+    bool poly_out_rgbahsl = false;
 
     CopperModule();
 

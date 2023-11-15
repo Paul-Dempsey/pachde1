@@ -25,7 +25,7 @@ CopperModule::CopperModule()
     configOutput(S_OUT, "Saturation");
     configOutput(L_OUT, "Lightness");
     configOutput(A_OUT, "Alpha (transparency)");
-    configOutput(POLY_OUT, "Polyphonic hsla,rgb");
+    configOutput(POLY_OUT, "Polyphonic color component");
 
     configBypass(H_INPUT, H_OUT);
     configBypass(S_INPUT, S_OUT);
@@ -253,14 +253,24 @@ void CopperModule::process(const ProcessArgs& args)
             rgb = nvgHSLAf(h,s,l,a);
         }
         auto out = getOutput(POLY_OUT);
-        out.voltages[0] = h * 10.f;
-        out.voltages[1] = s * 10.f;
-        out.voltages[2] = l * 10.f;
-        out.voltages[3] = a * 10.f;
-        out.voltages[4] = rgb.r * 10.f;
-        out.voltages[5] = rgb.g * 10.f;
-        out.voltages[6] = rgb.b * 10.f;
         out.setChannels(7);
+        if (poly_out_rgbahsl) {
+            out.voltages[0] = rgb.r * 10.f;
+            out.voltages[1] = rgb.g * 10.f;
+            out.voltages[2] = rgb.b * 10.f;
+            out.voltages[3] = a * 10.f;
+            out.voltages[4] = h * 10.f;
+            out.voltages[5] = s * 10.f;
+            out.voltages[6] = l * 10.f;
+        } else {
+            out.voltages[0] = h * 10.f;
+            out.voltages[1] = s * 10.f;
+            out.voltages[2] = l * 10.f;
+            out.voltages[3] = a * 10.f;
+            out.voltages[4] = rgb.r * 10.f;
+            out.voltages[5] = rgb.g * 10.f;
+            out.voltages[6] = rgb.b * 10.f;
+        }
     }
     // if (inputs_connected) {
     //     hue = h;
