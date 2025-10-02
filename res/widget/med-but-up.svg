@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24" height="24" viewBox="0 0 24 24"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rim" x1="12" y1="0" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d9d9d9" />
+      <stop offset="1" stop-color="#444" />
+    </linearGradient>
+    <linearGradient id="face" x1="12" y1="1" x2="12" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#efefef" />
+      <stop offset="1" stop-color="#777" />
+    </linearGradient>
+  </defs>
+  <g>
+    <circle fill="#888" cx="12" cy="12" r="12" />
+    <circle fill="url(#rim)" cx="12" cy="12" r="11" />
+    <circle fill="url(#face)" cx="12" cy="12" r="10" />
+    <circle opacity="0" cx="12" cy="12" r="2" />
+  </g>
+</svg>

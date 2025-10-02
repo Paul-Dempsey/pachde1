@@ -5,8 +5,10 @@
 #include "../dsp.hpp"
 #include "../pic.hpp"
 #include "traversal.hpp"
+#include "play_pause.hpp"
 
 namespace fs = ghc::filesystem;
+//using namespace widgetry;
 
 // feature flags
 // Slew XY: apply slew to X/Y outputs

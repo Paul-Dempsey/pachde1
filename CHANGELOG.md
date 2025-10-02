@@ -1,8 +1,12 @@
 # Pachde One Change Log
 
+## Version 2.3
+
+- ***New*** [Skiff](docs/Skiff.md#skiff) module.
+
 ## Version 2.2
 
-- ***New*** [Copper-mini](docs/Copper-mini.md) module.
+- ***New*** [Copper-mini](docs/Copper-mini.md#copper-mini) module.
 
 - **Imagine**
   - ***new*** **minT** knob and input for setting the minimum time before the next gate/trigger transition can happen.

@@ -4,6 +4,7 @@
 #include "../dsp.hpp"
 #include "../open_file.hpp"
 #include "../text.hpp"
+#include "../services/json-help.hpp"
 
 fs::file_time_type LastWriteTime(std::string path)
 {
@@ -68,7 +69,7 @@ Imagine::Imagine()
         "Speed");
 
     configSwitch(SPEED_MULT_PARAM, 1.f, 10.f, 1.f,
-        "Multiplier", 
+        "Multiplier",
         { "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10" });
 
     configSwitch(PATH_PARAM, 0.0f, static_cast<int>(Traversal::NUM_TRAVERSAL)-1, 0.0f, "Path", {
@@ -196,30 +197,27 @@ json_t *Imagine::dataToJson()
     auto name = image.name();
     if (!name.empty()) {
         auto persist_name = MakePluginPath(name);
-        json_object_set_new(root, IMAGE_KEY, json_stringn(persist_name.c_str(), persist_name.size()));
+        set_json(root, IMAGE_KEY, persist_name);
     }
     if ((reset_pos.x >= 0.f) && (reset_pos.y >= 0.f)) {
-        json_object_set_new(root, POSX_KEY, json_real(reset_pos.x));
-        json_object_set_new(root, POSY_KEY, json_real(reset_pos.y));
+        set_json(root, POSX_KEY, reset_pos.x);
+        set_json(root, POSY_KEY, reset_pos.y);
     }
-    json_object_set_new(root, BRIGHT_IMAGE_KEY, json_boolean(bright_image));
-    json_object_set_new(root, MEDALLION_KEY, json_boolean(medallion_fill));
-    json_object_set_new(root, LABELS_KEY, json_boolean(labels));
+    set_json(root, BRIGHT_IMAGE_KEY, bright_image);
+    set_json(root, MEDALLION_KEY, medallion_fill);
+    set_json(root, LABELS_KEY, labels);
 
     if (!pic_folder.empty()) {
-        json_object_set_new(root, IMAGE_FOLDER_KEY, json_stringn(pic_folder.c_str(), pic_folder.size()));
+        set_json(root, IMAGE_FOLDER_KEY, pic_folder);
     }
     return root;
 }
 
 void Imagine::dataFromJson(json_t *root)
 {
-    auto j = json_object_get(root, IMAGE_FOLDER_KEY);
-    if (j) {
-        pic_folder = json_string_value(j);
-    }
+    pic_folder = get_json_string(root, IMAGE_FOLDER_KEY, pic_folder);
 
-    j = json_object_get(root, IMAGE_KEY);
+    json_t* j = json_object_get(root, IMAGE_KEY);
     if (j) {
         std::string path = MakeUnPluginPath(json_string_value(j));
         loadImage(path);
@@ -236,9 +234,9 @@ void Imagine::dataFromJson(json_t *root)
         }
     }
 
-    medallion_fill = GetBool(root, MEDALLION_KEY, medallion_fill);
-    bright_image = GetBool(root, BRIGHT_IMAGE_KEY, bright_image);
-    labels = GetBool(root, LABELS_KEY, labels);
+    medallion_fill = get_json_bool(root, MEDALLION_KEY, medallion_fill);
+    bright_image = get_json_bool(root, BRIGHT_IMAGE_KEY, bright_image);
+    labels = get_json_bool(root, LABELS_KEY, labels);
 
     ThemeModule::dataFromJson(root);
     dirty_settings = true;
@@ -313,7 +311,7 @@ void Imagine::processBypass(const ProcessArgs& args)
 void Imagine::process(const ProcessArgs& args)
 {
     assert(!isBypassed());
-    
+
     if (control_rate.process()) {
         updateParams();
     }

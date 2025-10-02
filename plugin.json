@@ -1,7 +1,7 @@
 {
   "slug": "pachde-one",
   "name": "pachde One",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "license": "GPL-3.0-or-later",
   "brand": "pachde",
   "author": "pachde",
@@ -17,37 +17,44 @@
     {
       "slug": "pachde-null",
       "name": "Null",
-      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Null.md",
+      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Null.md#null",
       "description": "A discreet resizable blank panel with themes, colors, and animation",
       "tags": [ "Visual", "Blank", "Utility" ]
     },
     {
       "slug": "pachde-info",
       "name": "Info",
-      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Info.md",
+      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Info.md#info",
       "description": "Resizable text notes with themes, colors, and animation",
       "tags": [ "Visual", "Blank", "Utility" ]
     },
     {
       "slug": "pachde-imagine",
       "name": "Imagine",
-      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Imagine.md",
+      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Imagine.md#imagine",
       "description": "An eccentric source of voltage, gates, and triggers from an image",
       "tags": [ "Visual", "Sampler", "Sequencer", "Controller" ]
     },
     {
       "slug": "pachde-copper",
       "name": "Copper",
-      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Copper.md",
+      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Copper.md#copper",
       "description": "A color picker and expander with modulation and outputs",
       "tags": [ "Visual", "Controller", "Polyphonic", "Utility", "Expander" ]
     },
     {
       "slug": "pachde-copper-mini",
       "name": "Copper-mini",
-      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Copper-mini.md",
+      "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Copper-mini.md#copper-mini",
       "description": "A mini version of the Copper color picker and expander with modulation and outputs",
       "tags": [ "Visual", "Controller", "Utility", "Expander" ]
+    },
+    {
+        "slug": "pachde-skiff",
+        "name": "Skiff",
+        "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Skiff.md#skiff",
+        "description": "Customize the skiff",
+        "tags": [ "Visual", "Utility" ]
     }
   ]
 }

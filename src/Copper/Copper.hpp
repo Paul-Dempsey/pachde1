@@ -3,12 +3,13 @@
 #include "../components.hpp"
 #include "../dsp.hpp"
 #include "../IHaveColor.hpp"
-#include "../port.hpp"
+#include "../widgets/port.hpp"
 #include "../text.hpp"
 #include "hue_widget.hpp"
 #include "sl_widget.hpp"
 
 using namespace ::rack;
+using namespace widgetry;
 
 namespace pachde {
 
@@ -40,7 +41,7 @@ struct CopperModule: ThemeModule, IHaveColor {
         POLY_OUT,
         NUM_OUTPUTS
     };
-   
+
     float hue = .5f;
     float saturation = .5f;
     float lightness = .5f;
@@ -103,10 +104,10 @@ struct CopperUi : ModuleWidget, IThemeChange
 {
     CopperModule* copper_module = nullptr;
     HueWidget* hue_picker = nullptr;
-    SLWidget* sl_picker = nullptr; 
+    SLWidget* sl_picker = nullptr;
     NVGcolor last_color = COLOR_NONE;
     ThemeBase* theme_holder = nullptr;
-    
+
     explicit CopperUi(CopperModule * module);
     virtual ~CopperUi() {
         if (theme_holder && !module) {

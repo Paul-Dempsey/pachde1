@@ -24,23 +24,33 @@ See [CHANGELOG](CHANGELOG.md)
 ### Null
 
 A truly blank, blank panel with some fun features (for a blank panel).\
-[Null user guide](docs/Null.md)
+[Null user guide](docs/Null.md#null)
 
 ### Info
 
 A Minimalist resizable patch notes panel.\
-[Info user guide](docs/Info.md)
+[Info user guide](docs/Info.md#info)
 
 ### Imagine
 
 A unique and eccentric source of voltage, gates, and triggers using an image.
 You can think of it as a sequencer or image sampler.\
-[Imagine user guide](docs/Imagine.md)
+[Imagine user guide](docs/Imagine.md#imagine)
 
 ### Copper
 
 A color picker with modulation and color component outputs. Extends Null and Info.\
-[Copper user guide](docs/Copper.md)
+[Copper user guide](docs/Copper.md#copper)
+
+### Copper Mini
+
+A 2U version of Copper. Extends Null and Info.\
+[Copper user guide](docs/Copper-mini.md#copper-mini)
+
+### Skiff
+
+Customize your skiff.\
+[Skiff user guide](docs/Skiff.md#skiff)
 
 ## Building
 

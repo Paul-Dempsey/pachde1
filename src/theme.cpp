@@ -1,20 +1,51 @@
 #include "plugin.hpp"
 #include "theme.hpp"
+#include "services/json-help.hpp"
 
 namespace pachde {
 
 void DarkToJson(ITheme * itheme, json_t* root)
 {
     std::string value = ToString(itheme->getDarkTheme());
-    json_object_set_new(root, "dark-theme", json_stringn(value.c_str(), value.size()));
-    json_object_set_new(root, "rack-dark", json_boolean(itheme->getFollowRack()));
+    set_json(root, "dark-theme", value);
+    set_json(root, "rack-dark", itheme->getFollowRack());
 }
 
 void DarkFromJson(ITheme * itheme, json_t* root)
 {
     itheme->setDarkTheme(DarkThemeFromJson(root));
-    itheme->setFollowRack(GetBool(root, "rack-dark", itheme->getFollowRack()));
+    itheme->setFollowRack(get_json_bool(root, "rack-dark", itheme->getFollowRack()));
 }
+
+Theme ParseTheme(std::string text) {
+    if (text.empty()) return DefaultTheme;
+    switch (text[0]) {
+        case 'l': case 'L': return Theme::Light;
+        case 'd': case 'D': return Theme::Dark;
+        case 'h': case 'H': return Theme::HighContrast;
+    }
+    return DefaultTheme;
+}
+
+std::string ToString(Theme t) {
+    switch (t) {
+        default:
+        case Theme::Light: return "light";
+        case Theme::Dark: return "dark";
+        case Theme::HighContrast: return "highcontrast";
+    }
+}
+
+Theme ThemeFromJson(json_t * root) {
+    json_t* j = json_object_get(root, "theme");
+    return j ? ParseTheme(json_string_value(j)) : DefaultTheme;
+}
+
+Theme DarkThemeFromJson(json_t * root) {
+    json_t* j = json_object_get(root, "dark-theme");
+    return j ? ParseTheme(json_string_value(j)) : Theme::Dark;
+}
+
 
 void ThemeBase::reset()
 {
@@ -27,14 +58,14 @@ void ThemeBase::reset()
 
 json_t* ThemeBase::save(json_t* root) {
     std::string value = ToString(theme);
-    json_object_set_new(root, "theme", json_stringn(value.c_str(), value.size()));
+    set_json(root, "theme", value);
 
     if (isColorOverride()) {
         auto color_string = rack::color::toHexString(main_color);
-        json_object_set_new(root, "main-color", json_stringn(color_string.c_str(), color_string.size()));
+        set_json(root, "main-color", color_string);
     }
 
-    json_object_set_new(root, "screws", json_boolean(screws));
+    set_json(root, "screws", screws);
     DarkToJson(this, root);
     return root;
 }
@@ -49,7 +80,7 @@ void ThemeBase::load(json_t* root)
         main_color = rack::color::fromHexString(color_string);
     }
 
-    screws = GetBool(root, "screws", screws);
+    screws = get_json_bool(root, "screws", screws);
     DarkFromJson(this, root);
 };
 

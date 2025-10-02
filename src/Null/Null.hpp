@@ -1,10 +1,9 @@
 #pragma once
-#ifndef NULL_HPP_INCLUDED
-#define NULL_HPP_INCLUDED
 #include <rack.hpp>
 #include "../colors.hpp"
 #include "../resizable.hpp"
 #include "logo_port.hpp"
+using namespace widgetry;
 
 namespace pachde {
 
@@ -53,6 +52,7 @@ struct BlankModuleWidget : ModuleWidget, IThemeChange
     ThemePanel* panel = nullptr;
     BlankModule* my_module = nullptr;
     LogoPort* logo_port = nullptr;
+
     bool flicker_unipolar = true;
 
     virtual ~BlankModuleWidget() {
@@ -105,4 +105,3 @@ struct BlankModuleWidget : ModuleWidget, IThemeChange
 };
 
 }
-#endif

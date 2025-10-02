@@ -1,5 +1,7 @@
 #include "Info.hpp"
 #include "../text.hpp"
+#include "../widgets/draw-logo.hpp"
+using namespace widgetry;
 
 namespace pachde {
 
@@ -51,7 +53,7 @@ void InfoPanel::fetchColors()
         }
     }
 }
-    
+
 void InfoPanel::step()
 {
     fetchColors();
@@ -81,7 +83,7 @@ void InfoPanel::drawError(const DrawArgs &args)
     nvgStroke(args.vg);
 }
 
-void InfoPanel::drawText(const DrawArgs &args) 
+void InfoPanel::drawText(const DrawArgs &args)
 {
     nvgBeginPath(args.vg);
     nvgRect(args.vg, 5.0, ONE_HP, box.size.x - 10.f, box.size.y - RACK_GRID_WIDTH * 2.f);

@@ -22,7 +22,7 @@ struct SmallPush: OpaqueWidget, IBasicTheme
     }
 
     SmallPush()
-    { 
+    {
         box.size.x = box.size.y = 20.f;
     }
 

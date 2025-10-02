@@ -1,6 +1,4 @@
 #pragma once
-#if !defined IHAVECOLOR_HPP_INCLUDED
-#define IHAVECOLOR_HPP_INCLUDED
 #include <rack.hpp>
 using namespace ::rack;
 
@@ -11,4 +9,3 @@ struct IHaveColor {
 };
 
 }
-#endif

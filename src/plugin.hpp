@@ -1,7 +1,7 @@
 #pragma once
-#ifndef PACHDE_PLUGIN_HPP_INCLUDED
-#define PACHDE_PLUGIN_HPP_INCLUDED
 #include <rack.hpp>
+#include "services/svg-query.hpp"
+using namespace svg_query;
 
 // Declare the Plugin, defined in plugin.cpp
 extern ::rack::Plugin* pluginInstance;
@@ -12,18 +12,5 @@ extern ::rack::Model* modelInfo;
 extern ::rack::Model* modelCopper;
 extern ::rack::Model* modelCopperMini;
 extern ::rack::Model* modelImagine;
+extern ::rack::Model* modelSkiff;
 
-namespace pachde {
-
-inline bool GetBool(json_t* root, const char* key, bool default_value) {
-    auto j = json_object_get(root, key);
-    return j ? json_is_true(j) : default_value;
-}
-
-inline float GetFloat(json_t* root, const char* key, float default_value) {
-    auto j = json_object_get(root, key);
-    return j ? json_real_value(j) : default_value;
-}
-
-}
-#endif

@@ -1,10 +1,15 @@
 #include "Imagine.hpp"
 #include "imagine_layout.hpp"
+#include "../theme.hpp"
+#include "../create-theme-widget.hpp"
 #include "../pic_button.hpp"
-#include "../port.hpp"
+#include "../widgets/logo-widget.hpp"
+#include "../widgets/port.hpp"
+#include "../widgets/screws.hpp"
+#include "../widgets/switch.hpp"
 #include "../small_push.hpp"
 #include "pic_widget.hpp"
-
+using namespace widgetry;
 namespace pachde {
 
 ImagineUi::ImagineUi(Imagine *module)
@@ -75,7 +80,7 @@ void ImagineUi::resetHeadPosition(bool ctrl, bool shift)
     }
 }
 
-Pic * ImagineUi::getImage() 
+Pic * ImagineUi::getImage()
 {
     if (!preview_image) {
         preview_image = new(Pic);
@@ -199,14 +204,14 @@ void ImagineUi::makeUi(Theme theme)
         gtrate->stepIncrementBy = .01f;
         addChild(gtrate);
     }
-    
+
     addOutput(createThemeOutput<ColorPort>(theme, Vec(21.f, OUTPUT_ROW), imagine, Imagine::X_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(46.f, OUTPUT_ROW), imagine, Imagine::Y_OUT));
     addOutput(createColorOutput<ColorPort>(theme, PORT_RED,   Vec(71.f, OUTPUT_ROW - 12.f), imagine, Imagine::RED_OUT));
     addOutput(createColorOutput<ColorPort>(theme, PORT_GREEN, Vec(71.f, OUTPUT_ROW + 13.f), imagine, Imagine::GREEN_OUT));
     addOutput(createColorOutput<ColorPort>(theme, PORT_BLUE,  Vec(95.f, OUTPUT_ROW), imagine, Imagine::BLUE_OUT));
     {
-        auto p = createThemeParam<Switch>(theme, Vec(190.f, OUTPUT_ROW + 1.5f), imagine, Imagine::POLARITY_PARAM);
+        auto p = createThemeParam<widgetry::Switch>(theme, Vec(190.f, OUTPUT_ROW + 1.5f), imagine, Imagine::POLARITY_PARAM);
         p->box.size.y = 18.f;
         addParam(p);
         addOutput(createThemeOutput<ColorPort>(theme, Vec(210.f, OUTPUT_ROW), imagine, Imagine::VOLTAGE_OUT));
@@ -214,6 +219,12 @@ void ImagineUi::makeUi(Theme theme)
         addOutput(createThemeOutput<ColorPort>(theme, Vec(265.f, OUTPUT_ROW), imagine, Imagine::TRIGGER_OUT));
     }
     // addOutput(createColorOutput<ColorPort>(theme, PORT_LIME, Vec(280.f, OUTPUT_ROW), imagine, Imagine::TEST_OUT));
+
+    auto logo = new LogoWidget(Theme::Light, .18f);
+    logo->box.pos = Vec(box.size.x*.5f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 3.5f);
+    logo->ignore_theme = true;
+    addChild(widgetry::Center(logo));
+
 }
 
 void ImagineUi::applyTheme(Theme theme)

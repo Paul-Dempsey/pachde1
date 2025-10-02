@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.0" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
+width="304" height="380" viewBox="0 0 304 380">
+<linearGradient id="g" x1="0" x2="0" y1="0" y2="100%">
+    <stop offset="0" stop-color="#383838" />
+    <stop offset="1" stop-color="#181818" />
+</linearGradient>
+<rect id="panel" fill="url(#g)" width="304" height="380" />
+</svg>

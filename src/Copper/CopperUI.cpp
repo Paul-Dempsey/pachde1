@@ -1,7 +1,8 @@
 #include "Copper.hpp"
+#include "../widgets/screws.hpp"
+using namespace widgetry;
 
 namespace pachde {
-using namespace rack;
 
 // ----------------------------------------------------------------------------
 struct CopperSvg {
@@ -141,7 +142,7 @@ NVGcolor CopperUi::getColor() {
 const float col1_center = 25.5f;
 const float col2_center = 68.f;
 const float col3_center = 109.f;
-const float col4_center = 153.f;      
+const float col4_center = 153.f;
 const float row1_middle = 273.f;
 const float row2_middle = 300.f;
 const float knob_baseline = 290.f;
@@ -284,7 +285,7 @@ void CopperUi::applyTheme(Theme theme)
         makeUi(theme);
     } else {
         SetChildrenTheme(this, theme);
-    }        
+    }
 }
 
 void CopperUi::applyScrews(bool screws)
@@ -356,7 +357,7 @@ void AddColorItem(Self* self, Menu* menu, const char * name, PackedColor color, 
     menu->addChild(createColorMenuItem(
         color, name, "",
         [=]() { return current == color; },
-        [=]() { 
+        [=]() {
             auto new_color = fromPacked(color);
             self->setHue(Hue1(new_color));
             self->setSaturation(Saturation(new_color));
@@ -371,11 +372,11 @@ void CopperUi::appendContextMenu(rack::ui::Menu* menu)
     if (!copper_module) return;
     AddThemeMenu(menu, theme_holder, false, true);
     menu->addChild(createSubmenuItem("Poly jack order", "", [=](Menu* menu) {
-        menu->addChild(createCheckMenuItem("HSLARGB", "", 
+        menu->addChild(createCheckMenuItem("HSLARGB", "",
             [=](){ return !copper_module->poly_out_rgbahsl; },
             [=](){ copper_module->poly_out_rgbahsl = !copper_module->poly_out_rgbahsl; }
         ));
-        menu->addChild(createCheckMenuItem("RGBAHSL", "", 
+        menu->addChild(createCheckMenuItem("RGBAHSL", "",
             [=](){ return copper_module->poly_out_rgbahsl; },
             [=](){ copper_module->poly_out_rgbahsl = !copper_module->poly_out_rgbahsl; }
         ));
@@ -387,7 +388,7 @@ void CopperUi::appendContextMenu(rack::ui::Menu* menu)
             for (auto pco = stock_colors; nullptr != pco->name; ++pco) {
                 AddColorItem<CopperUi>(this, menu, pco->name, pco->color, current);
             }
-        })); 
+        }));
     menu->addChild(createMenuItem("Copy hex color", "", [=]() {
         auto hex = rack::color::toHexString(getColor());
         glfwSetClipboardString(nullptr, hex.c_str());

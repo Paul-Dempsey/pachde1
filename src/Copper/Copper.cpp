@@ -1,4 +1,5 @@
 #include "Copper.hpp"
+#include "../services/json-help.hpp"
 
 namespace pachde {
 using namespace rack;
@@ -90,19 +91,19 @@ void CopperModule::onRandomize(const RandomizeEvent& e) //override
 json_t* CopperModule::dataToJson()
 {
     json_t *root = ThemeModule::dataToJson();
-    json_object_set_new(root, "hue", json_real(hue));
-    json_object_set_new(root, "sat", json_real(saturation));
-    json_object_set_new(root, "light", json_real(lightness));
-    json_object_set_new(root, "alpha", json_real(alpha));
+    set_json(root, "hue", hue);
+    set_json(root, "sat", saturation);
+    set_json(root, "light", lightness);
+    set_json(root, "alpha", alpha);
     return root;
 }
 
 void CopperModule::dataFromJson(json_t* root)
 {
-    hue = GetFloat(root, "hue", hue);
-    saturation = GetFloat(root, "sat", saturation);
-    lightness = GetFloat(root, "light", lightness);
-    alpha = GetFloat(root, "alpha", alpha);
+    hue = get_json_float(root, "hue", hue);
+    saturation = get_json_float(root, "sat", saturation);
+    lightness = get_json_float(root, "light", lightness);
+    alpha = get_json_float(root, "alpha", alpha);
     ThemeModule::dataFromJson(root);
     dirty_settings = true;
 }

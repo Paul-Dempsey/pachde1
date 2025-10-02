@@ -1,6 +1,7 @@
 #include "Info.hpp"
 #include "../text.hpp"
 #include "../IHaveColor.hpp" // expander
+#include "../services/json-help.hpp"
 #include "info_symbol.hpp"
 
 namespace pachde {
@@ -29,8 +30,8 @@ json_t* InfoModule::dataToJson() //override
 {
     json_t* root = ResizableModule::dataToJson();
     root = info_theme->save(root);
-    json_object_set_new(root, "text", json_stringn(text.c_str(), text.size()));
-    json_object_set_new(root, "copper-target", json_integer(static_cast<int>(copper_target)));
+    set_json(root, "text", text);
+    set_json_int(root, "copper-target", static_cast<int>(copper_target));
     return root;
 }
 
@@ -39,15 +40,9 @@ void InfoModule::dataFromJson(json_t *root) //override
     ResizableModule::dataFromJson(root);
     info_theme->load(root);
 
-    json_t *j = json_object_get(root, "text");
-    if (j) {
-        text = json_string_value(j);
-    }
-    j = json_object_get(root, "copper-target");
-    if (j) {
-        copper_target = static_cast<CopperTarget>(clamp(json_integer_value(j), CopperTarget::First, CopperTarget::Last));
-    }
-
+    text = get_json_string(root, "text");
+    int i = get_json_int(root, "copper-target", static_cast<int>(CopperTarget::Panel));
+    copper_target = static_cast<CopperTarget>(clamp(i, CopperTarget::First, CopperTarget::Last));
     dirty_settings = true;
 }
 

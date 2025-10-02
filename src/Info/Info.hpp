@@ -1,12 +1,12 @@
 #pragma once
-#ifndef INFO_HPP_INCLUDED
-#define INFO_HPP_INCLUDED
 #include <rack.hpp>
 #include "text_align.hpp"
 #include "../components.hpp"
 #include "../resizable.hpp"
+#include "../widgets/logo-widget.hpp"
 
 using namespace ::rack;
+//using namespace widgetry;
 namespace pachde {
 
 enum CopperTarget { Panel, Interior, None, First = Panel, Last = None };
@@ -89,7 +89,6 @@ struct InfoModule : ResizableModule
     std::string text;
     CopperTarget copper_target = CopperTarget::Panel;
     InfoTheme * info_theme = nullptr;
-    IDirty dirt;
 
     virtual ~InfoModule()
     {
@@ -122,15 +121,14 @@ struct InfoModule : ResizableModule
 
 struct InfoPanel : Widget
 {
-    InfoModule* module = nullptr;
-    InfoTheme* info_theme = nullptr;
-    bool preview = false;
+    InfoModule* module{nullptr};;
+    InfoTheme* info_theme{nullptr};;
+    bool preview{false};
     NVGcolor panel = RampGray(G_80);
     NVGcolor background = RampGray(G_90);
     NVGcolor text_color = RampGray(G_20);
 
     InfoPanel(InfoModule* module, InfoTheme* info, Vec size);
-
 
     void fetchColors();
     void showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, std::string text);
@@ -144,11 +142,11 @@ struct InfoPanel : Widget
 
 struct InfoModuleWidget : ModuleWidget, IThemeChange
 {
-    InfoModule * my_module = nullptr;
-    Widget* title = nullptr;
-    Widget* logo = nullptr;
-    InfoPanel* panel = nullptr;
-    InfoTheme* info_theme = nullptr;
+    InfoModule* my_module{nullptr};
+    Widget* title{nullptr};
+    InfoPanel* panel{nullptr};
+    InfoTheme* info_theme{nullptr};
+    widgetry::LogoWidget* logo{nullptr};
 
     virtual ~InfoModuleWidget() { if (!module) { delete info_theme; } }
 
@@ -163,4 +161,3 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
 };
 
 }
-#endif

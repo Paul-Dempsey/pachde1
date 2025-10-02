@@ -1,5 +1,11 @@
 #include "Info.hpp"
 #include "info_symbol.hpp"
+#include "../widgets/screws.hpp"
+#include "../widgets/logo-widget.hpp"
+#include "../widgets/draw-logo.hpp"
+#include "../create-theme-widget.hpp"
+
+using namespace widgetry;
 
 namespace pachde {
 
@@ -83,11 +89,12 @@ void InfoModuleWidget::applyTheme(Theme theme)
             addScrews();
         }
 
-        title = createThemeWidgetCentered<InfoSymbol>(theme, Vec(box.size.x / 2, 7.5f));
+        title = createThemeWidgetCentered<InfoSymbol>(theme, Vec(box.size.x*.5f, 7.5f));
         addChild(title);
 
-        logo = createThemeWidgetCentered<LogoOverlayWidget>(theme, Vec(box.size.x / 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f));
-        addChild(logo);
+        logo = new LogoWidget(theme, .18f);
+        logo->box.pos = Vec(box.size.x*.5f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f);
+        addChild(widgetry::Center(logo));
 
     } else {
         info_theme->applyTheme(theme);
@@ -112,8 +119,8 @@ void InfoModuleWidget::step()
     }
 
     panel->box.size = box.size;
-    title->box.pos.x = box.size.x / 2 - title->box.size.x / 2;
-    logo->box.pos.x = box.size.x / 2 - logo->box.size.x / 2;
+    title->box.pos.x = box.size.x*.5f - title->box.size.x*.5f;
+    logo->box.pos.x = box.size.x*.5f - logo->box.size.x*.5f;
     ModuleWidget::step();
 }
 

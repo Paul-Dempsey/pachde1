@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.0" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
+    width="304px" height="380px" viewBox="0 0 304 380">
+
+      <linearGradient id="gpanel" x1="0" y1="0" x2="28" y2="380" xlink:href="#panel-stops" gradientUnits="userSpaceOnUse" >
+         <stop offset="0" stop-color="#383838" />
+         <stop offset="1" stop-color="#181818" />
+      </linearGradient>
+
+    <rect fill="url(#gpanel)" width="304" height="380" />
+    <xrect fill="#444" width="304" height="15" />
+    <rect fill="#555" width="304" height="1" />
+    <g fill="#444" >
+        <rect x="7.5"   y=".5" height="378.5" width="1"/>
+        <rect x="22.5"  y=".5" height="378.5" width="1"/>
+        <rect x="37.5"  y=".5" height="378.5" width="1"/>
+        <rect x="52.5"  y=".5" height="378.5" width="1"/>
+        <rect x="67.5"  y=".5" height="378.5" width="1"/>
+        <rect x="82.5"  y=".5" height="378.5" width="1"/>
+        <rect x="97.5"  y=".5" height="378.5" width="1"/>
+        <rect x="112.5" y=".5" height="378.5" width="1"/>
+        <rect x="127.5" y=".5" height="378.5" width="1"/>
+        <rect x="142.5" y=".5" height="378.5" width="1"/>
+        <rect x="157.5" y=".5" height="378.5" width="1"/>
+        <rect x="172.5" y=".5" height="378.5" width="1"/>
+        <rect x="187.5" y=".5" height="378.5" width="1"/>
+        <rect x="202.5" y=".5" height="378.5" width="1"/>
+        <rect x="217.5" y=".5" height="378.5" width="1"/>
+        <rect x="232.5" y=".5" height="378.5" width="1"/>
+        <rect x="247.5" y=".5" height="378.5" width="1"/>
+        <rect x="262.5" y=".5" height="378.5" width="1"/>
+        <rect x="277.5" y=".5" height="378.5" width="1"/>
+        <rect x="292.5" y=".5" height="378.5" width="1"/>
+    </g>
+    <xrect fill="#444" y="365" width="304" height="15" />
+    <rect fill="#333" y="379" width="304" height="1" />
+
+</svg>

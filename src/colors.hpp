@@ -108,7 +108,7 @@ inline NVGcolor fromPacked(PackedColor co)
 
 inline PackedColor toPacked(NVGcolor co) {
     return PackRGBA(
-        static_cast<uint32_t>(co.r * 255), 
+        static_cast<uint32_t>(co.r * 255),
         static_cast<uint32_t>(co.g * 255),
         static_cast<uint32_t>(co.b * 255),
         static_cast<uint32_t>(co.a * 255));
@@ -119,22 +119,6 @@ struct NamedColor {
     PackedColor color;
 };
 extern NamedColor stock_colors[];
-
-enum class Theme {
-    Unset = 0,
-    Light = 1,
-    Dark = 2,
-    HighContrast = 3
-};
-inline bool IsDarker(Theme theme) { return theme > Theme::Light; }
-inline bool IsLighter(Theme theme) { return theme <= Theme::Light; }
-
-const Theme DefaultTheme = Theme::Light;
-inline Theme ConcreteTheme(Theme theme) { return Theme::Unset == theme ? DefaultTheme : theme; }
-NVGcolor PanelBackground(Theme theme);
-NVGcolor ThemeTextColor(Theme theme);
-NVGcolor OutputBackground(Theme theme);
-NVGcolor LogoColor(Theme theme);
 
 // https://en.wikipedia.org/wiki/HSL_and_HSV
 // https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
@@ -150,7 +134,7 @@ NVGcolor LogoColor(Theme theme);
 
 constexpr const float PI = 3.14159265358979323846;
 constexpr const float TWO_PI = 2.0f * PI;
-constexpr const float SQRT3 = 1.732050807568877f; 
+constexpr const float SQRT3 = 1.732050807568877f;
 
 // stb linearizes on load so we don't have to gamma/correct
 inline float LuminanceLinear(const NVGcolor& color) {
@@ -189,11 +173,6 @@ inline bool isColorVisible(const NVGcolor& color) { return color.a > 0.001f; }
 
 inline NVGcolor RandomColor() { return nvgRGBAf(random::uniform(), random::uniform(), random::uniform(), random::uniform()); }
 inline NVGcolor RandomOpaqueColor() { return nvgRGBAf(random::uniform(), random::uniform(), random::uniform(), 1.0f); }
-
-std::string ToString(Theme theme);
-Theme ParseTheme(std::string text);
-Theme ThemeFromJson(json_t * root);
-Theme DarkThemeFromJson(json_t * root);
 
 void FillRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color);
 void RoundRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float radius);
@@ -240,7 +219,7 @@ rack::ui::MenuEntry* createColorMenuItem(
     child->box.pos.x = 12.f;
     item->addChild(child);
     item->check_menu = child;
-   
+
 	return item;
 }
 

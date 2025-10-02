@@ -1,6 +1,6 @@
 #include "port.hpp"
 
-namespace pachde {
+namespace widgetry {
 
 void ColorPort::applyTheme(Theme theme)
 {

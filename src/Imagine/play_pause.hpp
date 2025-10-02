@@ -1,6 +1,6 @@
 #pragma once
 #include <rack.hpp>
-#include "theme.hpp"
+#include "../theme.hpp"
 
 using namespace rack;
 namespace pachde {

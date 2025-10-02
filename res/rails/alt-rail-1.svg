@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.0" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
+    width="304px" height="380px" viewBox="0 0 304 380">
+    <rect fill="#222" width="304" height="380" />
+    <g fill="#555">
+        <rect width="304" height="15" />
+        <rect y="365" width="304" height="15" />
+    </g>
+    <g fill="#000">
+        <circle cx="7.5" cy="7.7" r="1.75" />
+        <circle cx="7.5" cy="372.6" r="1.75" />
+        <circle cx="22.5" cy="7.7" r="1.75" />
+        <circle cx="22.5" cy="372.6" r="1.75" />
+        <circle cx="37.5" cy="7.7" r="1.75" />
+        <circle cx="37.5" cy="372.6" r="1.75" />
+        <circle cx="52.5" cy="7.7" r="1.75" />
+        <circle cx="52.5" cy="372.6" r="1.75" />
+        <circle cx="67.5" cy="7.7" r="1.75" />
+        <circle cx="67.5" cy="372.6" r="1.75" />
+        <circle cx="82.5" cy="7.7" r="1.75" />
+        <circle cx="82.5" cy="372.6" r="1.75" />
+        <circle cx="97.5" cy="7.7" r="1.75" />
+        <circle cx="97.5" cy="372.6" r="1.75" />
+        <circle cx="112.5" cy="7.7" r="1.75" />
+        <circle cx="112.5" cy="372.6" r="1.75" />
+        <circle cx="127.5" cy="7.7" r="1.75" />
+        <circle cx="127.5" cy="372.6" r="1.75" />
+        <circle cx="142.5" cy="7.7" r="1.75" />
+        <circle cx="142.5" cy="372.6" r="1.75" />
+        <circle cx="157.5" cy="7.7" r="1.75" />
+        <circle cx="157.5" cy="372.6" r="1.75" />
+        <circle cx="172.5" cy="7.7" r="1.75" />
+        <circle cx="172.5" cy="372.6" r="1.75" />
+        <circle cx="187.5" cy="7.7" r="1.75" />
+        <circle cx="187.5" cy="372.6" r="1.75" />
+        <circle cx="202.5" cy="7.7" r="1.75" />
+        <circle cx="202.5" cy="372.6" r="1.75" />
+        <circle cx="217.5" cy="7.7" r="1.75" />
+        <circle cx="217.5" cy="372.6" r="1.75" />
+        <circle cx="232.5" cy="7.7" r="1.75" />
+        <circle cx="232.5" cy="372.6" r="1.75" />
+        <circle cx="247.5" cy="7.7" r="1.75" />
+        <circle cx="247.5" cy="372.6" r="1.75" />
+        <circle cx="262.5" cy="7.7" r="1.75" />
+        <circle cx="262.5" cy="372.6" r="1.75" />
+        <circle cx="277.5" cy="7.7" r="1.75" />
+        <circle cx="277.5" cy="372.6" r="1.75" />
+        <circle cx="292.5" cy="7.7" r="1.75" />
+        <circle cx="292.5" cy="372.6" r="1.75" />
+    </g>
+</svg>

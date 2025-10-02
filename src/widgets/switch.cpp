@@ -1,6 +1,6 @@
-#include "components.hpp"
+#include "switch.hpp"
 
-namespace pachde {
+namespace widgetry {
 
 Switch::Switch()
 {
@@ -10,7 +10,7 @@ Switch::Switch()
 void Switch::setTheme(Theme theme)
 {
     IBasicTheme::setTheme(theme);
-    
+
     switch (theme) {
         default:
         case Theme::Unset:
@@ -61,15 +61,15 @@ void Switch::draw(const DrawArgs &args)
 {
     bool vertical = box.size.y >= box.size.x;
     auto vg = args.vg;
- 
+
     FillRect(vg, 0.f, 0.f, box.size.x, box.size.y, background);
     BoxRect(vg, 0.f, 0.f, box.size.x, box.size.y, frame);
- 
+
     auto w = vertical ? box.size.x : box.size.x / units;
     auto h = vertical ? box.size.y / units : box.size.y;
     auto x = vertical ? 0.f : w * value;
     auto y = vertical ? (box.size.y - h) - (h * value) : 0.f;
- 
+
     FillRect(vg, x, y, w, h, thumb);
 
     auto bevel = 3.f;

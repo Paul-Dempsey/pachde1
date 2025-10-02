@@ -1,8 +1,9 @@
 #pragma once
-#include "colors.hpp"
-#include "theme.hpp"
+#include "../colors.hpp"
+#include "../theme.hpp"
+using namespace pachde;
 
-namespace pachde {
+namespace widgetry {
 
 struct ColorPort : PortWidget, IBasicTheme
 {
@@ -10,7 +11,7 @@ struct ColorPort : PortWidget, IBasicTheme
     NVGcolor collar1, collar2, bezel, tube, bevel1, bevel2, sleeve;
 
     ColorPort()
-    { 
+    {
         box.size.x = box.size.y = 22.f;
     }
 	void draw(const DrawArgs& args) override;

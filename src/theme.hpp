@@ -1,11 +1,29 @@
 #pragma once
-#ifndef THEME_HPP_INCLUDED
-#define THEME_HPP_INCLUDED
 #include <rack.hpp>
 #include "colors.hpp"
-
 using namespace ::rack;
 namespace pachde {
+
+enum class Theme {
+    Unset = 0,
+    Light = 1,
+    Dark = 2,
+    HighContrast = 3
+};
+inline bool IsDarker(Theme theme) { return theme > Theme::Light; }
+inline bool IsLighter(Theme theme) { return theme <= Theme::Light; }
+
+const Theme DefaultTheme = Theme::Light;
+inline Theme ConcreteTheme(Theme theme) { return Theme::Unset == theme ? DefaultTheme : theme; }
+NVGcolor PanelBackground(Theme theme);
+NVGcolor ThemeTextColor(Theme theme);
+NVGcolor OutputBackground(Theme theme);
+NVGcolor LogoColor(Theme theme);
+
+std::string ToString(Theme theme);
+Theme ParseTheme(std::string text);
+Theme ThemeFromJson(json_t * root);
+Theme DarkThemeFromJson(json_t * root);
 
 // theme + main color for widgets
 struct IBasicTheme
@@ -130,11 +148,9 @@ void DarkToJson(ITheme * itheme, json_t* root);
 void DarkFromJson(ITheme * itheme, json_t* root);
 
 inline Theme RandomTheme() {
-    //return static_cast<Theme>(clamp(std::floor(random::uniform() * 3), 1.f, 3.f));
     return static_cast<Theme>(1 + random::get<uint32_t>() % 3);
 }
 
 void RandomizeTheme(ITheme* itheme, bool opaque = true);
 
 }
-#endif

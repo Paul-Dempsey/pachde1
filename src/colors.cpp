@@ -1,5 +1,6 @@
 #include <rack.hpp>
 #include "colors.hpp"
+#include "theme.hpp"
 
 namespace pachde {
 
@@ -197,34 +198,6 @@ NamedColor stock_colors[] = {
 
 
 
-Theme ParseTheme(std::string text) {
-    if (text.empty()) return DefaultTheme;
-    switch (text[0]) {
-        case 'l': case 'L': return Theme::Light;
-        case 'd': case 'D': return Theme::Dark;
-        case 'h': case 'H': return Theme::HighContrast;
-    }
-    return DefaultTheme;
-}
-
-std::string ToString(Theme t) {
-    switch (t) {
-        default:
-        case Theme::Light: return "light";
-        case Theme::Dark: return "dark";
-        case Theme::HighContrast: return "highcontrast";
-    }
-}
-
-Theme ThemeFromJson(json_t * root) {
-    json_t* j = json_object_get(root, "theme");
-    return j ? ParseTheme(json_string_value(j)) : DefaultTheme;
-}
-Theme DarkThemeFromJson(json_t * root) {
-    json_t* j = json_object_get(root, "dark-theme");
-    return j ? ParseTheme(json_string_value(j)) : Theme::Dark;
-}
-
 NVGcolor PanelBackground(Theme theme)
 {
     switch (theme) {
@@ -272,7 +245,7 @@ NVGcolor OutputBackground(Theme theme)
 NVGcolor LogoColor(Theme theme)
 {
     switch (theme) {
-        default: 
+        default:
         case Theme::Unset:
         case Theme::Light:
             return GrayRamp[G_BLACK];

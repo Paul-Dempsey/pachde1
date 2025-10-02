@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="36" height="36" viewBox="0 0 36 36"
+  version="1.1" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"  >
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="4" y2="100%" gradientUnits="userSpaceOnUse" >
+      <stop offset="0" stop-color="#7f7e79" />
+      <stop offset="1" stop-color="#0a0b0b" />
+    <linearGradient>
+  </defs>
+  <circle fill="url(#g)" cx="18" cy="18" r="18" />
+</svg>

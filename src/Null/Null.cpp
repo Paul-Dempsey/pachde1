@@ -1,6 +1,9 @@
 #include "Null.hpp"
-#include "../theme_helpers.hpp"
+#include "../create-theme-widget.hpp"
 #include "../IHaveColor.hpp"
+#include "../widgets/screws.hpp"
+#include "../services/json-help.hpp"
+using namespace widgetry;
 
 namespace pachde {
 
@@ -77,28 +80,28 @@ NVGcolor BlankModule::externalcolor()
     if (isColorTransparent(color)) {
         color = expanderColor(getLeftExpander());
     }
-    return color;        
-} 
+    return color;
+}
 
 json_t* BlankModule::dataToJson()
 {
     auto root = ResizableModule::dataToJson();
-    json_object_set_new(root, "glow", json_boolean(glow));
-    json_object_set_new(root, "bright", json_boolean(bright));
-    json_object_set_new(root, "branding", json_boolean(branding));
-    json_object_set_new(root, "brand-logo", json_boolean(brand_logo));
-    json_object_set_new(root, "copper", json_boolean(copper));
+    set_json(root, "glow", glow);
+    set_json(root, "bright", bright);
+    set_json(root, "branding", branding);
+    set_json(root, "brand-logo", brand_logo);
+    set_json(root, "copper", copper);
     return root;
 
 }
 void BlankModule::dataFromJson(json_t* root)
 {
     ResizableModule::dataFromJson(root);
-    glow = GetBool(root, "glow", glow);
-    bright = GetBool(root, "bright", bright);
-    branding = GetBool(root, "branding", branding);
-    brand_logo = GetBool(root, "brand-logo", branding);
-    copper = GetBool(root, "copper", copper);
+    glow = get_json_bool(root, "glow", glow);
+    bright = get_json_bool(root, "bright", bright);
+    branding = get_json_bool(root, "branding", branding);
+    brand_logo = get_json_bool(root, "brand-logo", branding);
+    copper = get_json_bool(root, "copper", copper);
     dirty_settings = true;
 }
 
@@ -152,7 +155,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
     NVGcolor logo = LogoColor(theme);
     NVGcolor ring, slash;
     switch (theme) {
-        default: 
+        default:
         case Theme::Unset:
         case Theme::Light:
             slash = RampGray(G_25);
@@ -173,7 +176,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
     if (isColorTransparent(panel_color)) {
         panel_color = getITheme()->getMainColor();
     }
-    
+
     if (isColorVisible(panel_color)) {
         auto lum = LuminanceLinear(panel_color);
         if (lum <= 0.5f) {
@@ -257,7 +260,6 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
         NVGpaint paint = nvgRadialGradient(vg, box.size.x/2.f, box.size.y/2.f, innr, outr, panel_color, ocol);
         nvgFillPaint(vg, paint);
         nvgFill(vg);
-        //logo_port->draw(args);
     }
 
     if (!my_module || my_module->is_branding()) {
@@ -265,11 +267,6 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
 
         auto y = skinny ? RACK_GRID_WIDTH : 0.0f;
         DrawNull(args.vg, (box.size.x/2.0f) - 7.5f, y, ring, slash);
-
-    }
-    if (brand_logo()) {
-        auto cx = (std::min(box.size.x, box.size.y) - 2.f);
-        DrawLogo(args.vg, (box.size.x - cx) * .5f, (box.size.y - cx) * .25f, Overlay(COLOR_BRAND), cx / 15.f);
     }
 }
 
@@ -343,7 +340,7 @@ void BlankModuleWidget::step()
 
     if (my_module) {
         box.size.x = my_module->width * RACK_GRID_WIDTH;
-        logo_port->invisible = !my_module->is_branding();
+        logo_port->setVisible(branding() && brand_logo());
         auto color = my_module->externalcolor();
         if (isColorVisible(color) && panel->theme_holder)
         {
@@ -360,7 +357,7 @@ void BlankModuleWidget::step()
     panel->box.size = box.size;
 
     if (logo_port) {
-        logo_port->box.pos.x = box.size.x/2. - 7.5f;
+        logo_port->box.pos.x = box.size.x*.5f - 7.5f;
         bool skinny = getITheme()->hasScrews() && (3 * RACK_GRID_WIDTH > box.size.x);
         logo_port->box.pos.y = skinny ? RACK_GRID_HEIGHT - 2.0f *RACK_GRID_WIDTH : RACK_GRID_HEIGHT - RACK_GRID_WIDTH;
     }
@@ -386,7 +383,7 @@ void BlankModuleWidget::appendContextMenu(Menu *menu)
             for (auto pco = stock_colors; nullptr != pco->name; ++pco) {
                 AddColorItem(this, menu, pco->name, pco->color, current);
             }
-        })); 
+        }));
     menu->addChild(createCheckMenuItem(
         "Copper sets panel color", "",
         [=]() { return my_module->copper; },
