@@ -1,6 +1,5 @@
 # pachde1 TODO
 
-- Replace DrawLogo with logo widget
 - Refactor colors
   - separate packedcolor/nvgcolor
   - packedcolor parsers
@@ -15,3 +14,11 @@
 
 - on-panel edit
 - vertical text
+
+## Skiff
+
+- Apply settings when loading a preset.
+  A preset is any dataFromJson that isn't the first one, except for a newly inserted module.
+
+- Offer button to restore previous patch settings.
+  Cache settings from first dataFromJson.

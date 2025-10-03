@@ -222,7 +222,7 @@ void ImagineUi::makeUi(Theme theme)
 
     auto logo = new LogoWidget(Theme::Light, .18f);
     logo->box.pos = Vec(box.size.x*.5f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 3.5f);
-    logo->ignore_theme = true;
+    logo->ignore_theme_changes = true;
     addChild(widgetry::Center(logo));
 
 }

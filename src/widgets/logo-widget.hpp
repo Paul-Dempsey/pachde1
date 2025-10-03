@@ -8,7 +8,7 @@ struct TSymbolWidget: OpaqueWidget, IBasicTheme
 {
     using Base = OpaqueWidget;
 
-    bool ignore_theme{false};
+    bool ignore_theme_changes{false};
     bool bright{false};
     float scale;
     widget::FramebufferWidget* fb{nullptr};
@@ -38,7 +38,7 @@ struct TSymbolWidget: OpaqueWidget, IBasicTheme
     }
 
     void setTheme(Theme theme) override {
-        if (ignore_theme) return;
+        if (ignore_theme_changes) return;
 
         switch (theme) {
         case Theme::Dark:

@@ -95,8 +95,6 @@ constexpr const float KNOB_SPACING = 27.5f;
 constexpr const float CONTROL_SPACING = 26.f;
 constexpr const float GAP1 = 33.f;
 constexpr const float GAP2 = 36.f;
-constexpr const float LABEL_XOFFSET = 11.f;
-constexpr const float LABEL_YOFFSET = 5.25f;
 
 void CopperMiniUI::makeUi(Theme theme)
 {
@@ -144,7 +142,7 @@ void CopperMiniUI::makeUi(Theme theme)
 
 }
 
-void CopperMiniUI::drawLayer(const DrawArgs& args, int layer) 
+void CopperMiniUI::drawLayer(const DrawArgs& args, int layer)
 {
     if (layer != 1) return;
     auto setcolor = getColor();
@@ -156,7 +154,7 @@ void CopperMiniUI::drawLayer(const DrawArgs& args, int layer)
 void CopperMiniUI::draw(const DrawArgs& args)
 {
     ModuleWidget::draw(args);
-  
+
     auto vg = args.vg;
     auto color = copper_module ? copper_module->getModulatedColor() : getColor();
     auto textColor = RampGray(G_WHITE);
@@ -167,7 +165,7 @@ void CopperMiniUI::draw(const DrawArgs& args)
     default: break;
     }
     auto font = GetPluginFontRegular();
-  
+
     nvgSave(vg);
     nvgScissor(vg, 0, 0, box.size.x, box.size.y);
     SetTextStyle(vg, font, textColor, 9.5f);
@@ -182,7 +180,7 @@ void CopperMiniUI::applyTheme(Theme theme)
         makeUi(theme);
     } else {
         SetChildrenTheme(this, theme);
-    }        
+    }
 }
 
 void CopperMiniUI::onChangeTheme(ChangedItem item)
@@ -225,7 +223,7 @@ void AddColorItem(Self* self, Menu* menu, const char * name, PackedColor color, 
     menu->addChild(createColorMenuItem(
         color, name, "",
         [=]() { return current == color; },
-        [=]() { 
+        [=]() {
             auto new_color = fromPacked(color);
             self->setHue(Hue1(new_color));
             self->setSaturation(Saturation(new_color));
@@ -246,7 +244,7 @@ void CopperMiniUI::appendContextMenu(rack::ui::Menu* menu)
             for (auto pco = stock_colors; nullptr != pco->name; ++pco) {
                 AddColorItem<CopperMiniUI>(this, menu, pco->name, pco->color, current);
             }
-        })); 
+        }));
     menu->addChild(createMenuItem("Copy hex color", "", [=]() {
         auto hex = rack::color::toHexString(getColor());
         glfwSetClipboardString(nullptr, hex.c_str());

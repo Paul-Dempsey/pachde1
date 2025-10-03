@@ -118,7 +118,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
 
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:unrail-btn"].getCenter());
         if (module) {
-            button->describe("Derail (toggle)");
+            button->describe("Derail");
             button->setHandler([](bool ctrl, bool shift) { derail(); });
         }
         addChild(button);
@@ -133,7 +133,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         unscrew_button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:screw-btn"].getCenter());
         unscrew_button->set_sticky(true);
         if (module) {
-            unscrew_button->describe("Unscrew (toggle)");
+            unscrew_button->describe("Unscrew");
             unscrew_button->setHandler([this](bool ctrl, bool shift) { toggle_screws(); });
         }
         addChild(unscrew_button);
@@ -170,6 +170,21 @@ struct SkiffUi : ModuleWidget, IThemeChange
         case ChangedItem::Screws:
             break;
         }
+    }
+
+    void zoom_selected() {
+        auto rack = APP->scene->rack;
+        if (!rack->hasSelection()) return;
+        auto sel = rack->getSelected();
+
+        math::Vec min = math::Vec(INFINITY, INFINITY);
+        math::Vec max = math::Vec(-INFINITY, -INFINITY);
+        for (auto mw: sel) {
+            if (!mw->isVisible()) continue;
+            min = min.min(mw->box.getTopLeft());
+            max = max.max(mw->box.getBottomRight());
+        }
+        APP->scene->rackScroll->zoomToBound(math::Rect::fromMinMax(min, max));
     }
 
     void replace_svg(const char * rack, const char *alt)
@@ -331,6 +346,20 @@ struct SkiffUi : ModuleWidget, IThemeChange
             nvgStrokeColor(vg, nvgRGB(0xff, 0x20, 0x20));
             nvgStroke(vg);
         }
+    }
+
+    void onHoverKey(const HoverKeyEvent& e) override
+    {
+        auto mods = e.mods & RACK_MOD_MASK;
+        switch (e.key) {
+        case GLFW_KEY_F6: {
+            if (e.action == GLFW_PRESS && (0 == mods)) {
+                e.consume(this);
+                zoom_selected();
+            }
+        } break;
+        }
+        Base::onHoverKey(e);
     }
 
     void appendContextMenu(Menu* menu) override {
