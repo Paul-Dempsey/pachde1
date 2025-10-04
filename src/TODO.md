@@ -7,7 +7,6 @@
 - Replace pallette menu with the CHEM color picker
   - Add alpha
 - Move widgets under widgets folder
-- Incorporate svg-help
 - Symbol Widget
 
 ## Info

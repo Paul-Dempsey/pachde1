@@ -18,10 +18,29 @@ void screw_visibility(::rack::widget::Widget* widget, bool visible)
     }
 }
 
-void derail()
+bool toggle_rail()
 {
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
-    if (rail) rail->setVisible(!rail->isVisible());
+    if (rail) {
+        bool state = !rail->isVisible();
+        rail->setVisible(state);
+        return state;
+    } else {
+        return false;
+    }
+}
+
+bool is_rail_visible()
+{
+    auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
+    return rail ? rail->isVisible() : false;
+}
+
+void set_rail_visible(bool visible) {
+    auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
+    if (rail && (visible != rail->isVisible())) {
+        rail->setVisible(visible);
+    }
 }
 
 void packModules()
@@ -66,3 +85,18 @@ void packModules()
     }
 }
 
+void zoom_selected()
+{
+    auto rack = APP->scene->rack;
+    if (!rack->hasSelection()) return;
+    auto sel = rack->getSelected();
+
+    math::Vec min = math::Vec(INFINITY, INFINITY);
+    math::Vec max = math::Vec(-INFINITY, -INFINITY);
+    for (auto mw: sel) {
+        if (!mw->isVisible()) continue;
+        min = min.min(mw->box.getTopLeft());
+        max = max.max(mw->box.getBottomRight());
+    }
+    APP->scene->rackScroll->zoomToBound(math::Rect::fromMinMax(min, max));
+}

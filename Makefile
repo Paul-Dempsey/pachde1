@@ -2,6 +2,7 @@ RACK_DIR ?= ../..
 
 ifdef DEV_BUILD
 FLAGS += -O0
+FLAGS += -DHOT_SVG
 else
 FLAGS += -O3
 FLAGS += -DNDEBUG

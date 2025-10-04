@@ -101,7 +101,6 @@ struct TButton : ::rack::app::SvgButton, IBasicTheme
         }
         if (sticky) {
             latched = !latched;
-            sync_frame();
         } else {
             Base::onAction(e);
         }
@@ -161,6 +160,10 @@ struct TButton : ::rack::app::SvgButton, IBasicTheme
     void setTheme(Theme theme) override {
         IBasicTheme::setTheme(theme);
         applyTheme(theme);
+    }
+
+    void step() override {
+        if (sticky) sync_frame();
     }
 
     void appendContextMenu(ui::Menu* menu) {}

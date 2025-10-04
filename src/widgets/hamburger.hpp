@@ -7,23 +7,16 @@ using namespace ::rack;
 
 namespace widgetry {
 
-struct HamData : IBasicTheme
+struct HamData
 {
-    uint8_t patties;
-    float patty_width;
-    NVGcolor patty_color;
-    NVGcolor hover_color;
-    bool hovered;
+    uint8_t patties{3};
+    float patty_width{1.5f};
+    NVGcolor patty_color{RampGray(G_90)};
+    NVGcolor hover_color{RampGray(G_65)};
+    bool hovered{false};
 
-    HamData()
-    :   patties(3),
-        patty_width(1.5f),
-        patty_color(RampGray(G_90)),
-        hover_color(RampGray(G_65)),
-        hovered(false)
-        {}
-
-    void applyTheme(Theme theme) {
+    void applyTheme(Theme theme)
+    {
         switch (theme) {
         case Theme::Dark:
             patty_color = RampGray(G_90);
@@ -142,8 +135,9 @@ struct Hamburger : TipWidget, IBasicTheme
         Base::onButton(e);
     }
 
-    void applyTheme(Theme theme) {
-        data.applyTheme(theme);
+    void setTheme(Theme new_theme) override {
+        IBasicTheme::setTheme(new_theme);
+        data.applyTheme(new_theme);
     }
 
     void onHoverKey(const HoverKeyEvent& e) override

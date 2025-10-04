@@ -23,15 +23,15 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#404040"
      inkscape:document-units="px"
-     inkscape:zoom="75.494737"
-     inkscape:cx="15.252719"
-     inkscape:cy="6.3249442"
+     inkscape:zoom="37.747369"
+     inkscape:cx="17.365449"
+     inkscape:cy="15.140128"
      inkscape:window-width="3840"
      inkscape:window-height="2054"
      inkscape:window-x="2869"
      inkscape:window-y="-11"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g2"
+     inkscape:current-layer="g10"
      showguides="true"
      showgrid="false" />
   <defs
@@ -62,7 +62,7 @@
        style="fill-opacity:1" />
     <g
        id="g3"
-       transform="translate(0,0)">
+       transform="translate(0,80)">
       <rect
          id="mast"
          width="30"
@@ -80,9 +80,19 @@
          d="m 5.3953154,18.012058 c 0.8332082,-0.619758 6.9512636,-2.95927 9.3258286,-3.673511 3.241892,-0.975123 7.792522,-1.419076 9.744982,-0.05941 3.592263,2.501601 1.136958,4.967614 0.816374,4.772868 -0.320584,-0.194746 0.218242,-2.099404 -2.785865,-3.477631 C 21.04146,14.906764 17.151582,15.187165 15,15.594309 12.652306,16.038563 4.0124605,19.040655 5.3953154,18.012058 Z"
          id="path1" />
     </g>
-    <g stroke="#f22" >
-        <circle stroke-width="2.5" cx="15" cy="118.5" r="10"/>
-        <path stroke-width="2" d="M 10,114 l 10,10 M 20,114 l -10,10"/>
+    <g
+       stroke="#f22"
+       id="g2">
+      <circle
+         stroke-width="2.5"
+         cx="15"
+         cy="118.5"
+         r="10"
+         id="circle1"
+         style="display:inline" />
+      <path
+         stroke-width="2"
+         d="M 10,114 l 10,10 M 20,114 l -10,10"
+         id="path2" />
     </g>
-  </g>
 </svg>

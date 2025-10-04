@@ -10,7 +10,7 @@ namespace svg_query {
             return ::rack::math::Rect(*r, r[1], r[2] - *r, r[3] - r[1]);
         }
     }
-    return ::rack::math::Rect();
+    return ::rack::math::Rect(INFINITY, INFINITY, 0, 0);
 }
 
 void boundsIndex(std::shared_ptr<::rack::window::Svg> svg, const char *prefix, std::map<std::string, ::rack::math::Rect> &map, bool hide)

@@ -4,7 +4,7 @@
 namespace svg_query {
 
 // itemBounds returns the bounds of the element with the given id.
-// If id isn't found, returns Rect(0,0,0,0).
+// If id isn't found, returns Rect(Infinity,Infinity,0,0).
 // Bounds are 4 floats [left, top, right, bottom]
 ::rack::math::Rect elementBounds(std::shared_ptr<::rack::window::Svg> svg, const char* id);
 void boundsIndex(std::shared_ptr<::rack::window::Svg> svg, const char * prefix, std::map<std::string, ::rack::math::Rect>& map, bool hide);

@@ -12,21 +12,46 @@ using namespace widgetry;
 
 namespace pachde {
 
+void replace_system_svg(const char * sys_asset, const char *alt)
+{
+    window::Svg::load(asset::system(sys_asset))->loadFile(asset::plugin(pluginInstance, alt));
+}
+
+void original_system_svg(const char * sys_asset)
+{
+    auto f = asset::system(sys_asset);
+    window::Svg::load(f)->loadFile(f);
+}
+
 struct SkiffModule : ThemeModule
 {
     using Base = ThemeModule;
+
     std::string custom_rail_file = asset::user("");
+    int rail_item{-1};
+    bool screws{false};
+    bool calm{false};
+    bool derailed{false};
 
     json_t* dataToJson() override
     {
-        auto root = json_object();
+        auto root = Base::dataToJson();
         set_json(root, "rail-file", custom_rail_file);
+        set_json_int(root, "alt-rail", rail_item);
+        set_json(root, "screws", screws);
+        set_json(root, "calm", calm);
+        set_json(root, "derailed", derailed);
         return root;
     }
 
     void dataFromJson(json_t* root) override
     {
+        Base::dataFromJson(root);
         custom_rail_file = get_json_string(root, "rail-file", custom_rail_file);
+        rail_item = get_json_int(root, "alt-rail", rail_item);
+        screws = get_json_bool(root, "screws", screws);
+        calm = get_json_bool(root, "calm", calm);
+        derailed = get_json_bool(root, "derailed", derailed);
     };
 };
 
@@ -48,7 +73,6 @@ struct SkiffSvg
 };
 
 struct SkiffUi;
-
 struct RailMenu : Hamburger
 {
     SkiffUi* ui{nullptr};
@@ -62,12 +86,17 @@ struct SkiffUi : ModuleWidget, IThemeChange
 
     SkiffModule* my_module;
     ThemeBase* theme_holder{nullptr};
-    SmallButton* unscrew_button{nullptr};
-    bool screws{true};
+
     bool request_custom_rail{false};
     bool other_skiff{false};
-    bool calm{false};
     int rail_item{-1};
+    bool screws{false};
+    bool calm{false};
+    bool derailed{false};
+
+#ifdef HOT_SVG
+    std::map<const char *, Widget*> positioned_widgets;
+#endif
 
     virtual ~SkiffUi()
     {
@@ -79,6 +108,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
     SkiffUi(SkiffModule* module) : my_module(module)
     {
         setModule(module);
+        derailed = is_rail_visible();
         theme_holder = module ? module : new ThemeBase();
         theme_holder->setNotify(this);
         applyTheme(GetPreferredTheme(theme_holder));
@@ -108,48 +138,81 @@ struct SkiffUi : ModuleWidget, IThemeChange
 
         SmallButton* button;
         auto layout = window::Svg::load(SkiffSvg::background(Theme::Light));
+
         std::map<std::string, ::math::Rect> bounds;
         svg_query::boundsIndex(layout, "k:", bounds, true);
 
         auto menu = createThemeWidgetCentered<RailMenu>(theme, bounds["k:rail-menu"].getCenter());
+#ifdef HOT_SVG
+        positioned_widgets["k:rail-menu"] = menu;
+#endif
         menu->setUi(this);
         menu->describe("Change Rails");
         addChild(menu);
 
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:unrail-btn"].getCenter());
+#ifdef HOT_SVG
+        positioned_widgets["k:unrail-btn"] = button;
+#endif
+        button->set_sticky(true);
+        button->latched = derailed;
         if (module) {
             button->describe("Derail");
-            button->setHandler([](bool ctrl, bool shift) { derail(); });
+            button->setHandler([this](bool ctrl, bool shift) { derail(); });
         }
         addChild(button);
 
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:calm-btn"].getCenter());
+#ifdef HOT_SVG
+        positioned_widgets["k:calm-btn"] = button;
+#endif
         if (module) {
             button->describe("Calm knobs and ports");
             button->setHandler([this](bool ctrl, bool shift) { calm_rack(); });
         }
         addChild(button);
 
-        unscrew_button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:screw-btn"].getCenter());
-        unscrew_button->set_sticky(true);
+        button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:screw-btn"].getCenter());
+#ifdef HOT_SVG
+        positioned_widgets["k:screw-btn"] = button;
+#endif
+        button->set_sticky(true);
         if (module) {
-            unscrew_button->describe("Unscrew");
-            unscrew_button->setHandler([this](bool ctrl, bool shift) { toggle_screws(); });
+            button->describe("Unscrew");
+            button->setHandler([this](bool ctrl, bool shift) { toggle_screws(); });
         }
-        addChild(unscrew_button);
+        addChild(button);
 
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:pack-btn"].getCenter());
+#ifdef HOT_SVG
+        positioned_widgets["k:pack-btn"] = button;
+#endif
         if (module) {
             button->describe("Pack modules");
             button->setHandler([](bool ctrl, bool shift) { packModules(); });
         }
         addChild(button);
+
+        button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:from-patch-btn"].getCenter());
+#ifdef HOT_SVG
+        positioned_widgets["k:from-patch-btn"] = button;
+#endif
+        if (module) {
+            button->describe("Apply last saved skiff");
+            button->setHandler([this](bool ctrl, bool shift) { from_patch(); });
+        }
+        addChild(button);
+
     }
 
     void applyTheme(Theme theme) {
         if (children.empty()) {
             makeUi(theme);
         } else {
+            if (Theme::Light == theme) {
+                auto layout = window::Svg::load(SkiffSvg::background(Theme::Light));
+                svg_query::hideElements(layout, "k:");
+            }
             SetChildrenTheme(this, theme);
         }
     }
@@ -172,77 +235,77 @@ struct SkiffUi : ModuleWidget, IThemeChange
         }
     }
 
-    void zoom_selected() {
-        auto rack = APP->scene->rack;
-        if (!rack->hasSelection()) return;
-        auto sel = rack->getSelected();
-
-        math::Vec min = math::Vec(INFINITY, INFINITY);
-        math::Vec max = math::Vec(-INFINITY, -INFINITY);
-        for (auto mw: sel) {
-            if (!mw->isVisible()) continue;
-            min = min.min(mw->box.getTopLeft());
-            max = max.max(mw->box.getBottomRight());
+    void from_patch() {
+        if (!my_module) return;
+        if (screws != my_module->screws) {
+            screws = my_module->screws;
+            screw_visibility(APP->scene->rack, screws);
         }
-        APP->scene->rackScroll->zoomToBound(math::Rect::fromMinMax(min, max));
+        if (calm != my_module->calm) {
+            calm = !my_module->calm; // invert because calm_rack() toggles
+            calm_rack();
+        }
+        if (my_module->derailed) {
+            auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
+            if (rail) rail->setVisible(my_module->derailed);
+        }
     }
 
-    void replace_svg(const char * rack, const char *alt)
-    {
-        window::Svg::load(asset::system(rack))->loadFile(asset::plugin(pluginInstance, alt));
-    }
+    void derail() {
 
-    void rack_svg(const char * rack)
-    {
-        auto f = asset::system(rack);
-        window::Svg::load(f)->loadFile(f);
     }
 
     void calm_rack() {
         calm = !calm;
         if (calm) {
-            replace_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg", "res/calm/alt-RoundBlackKnob_bg.svg");
-            replace_svg("res/ComponentLibrary/RoundBlackKnob.svg", "res/calm/alt-RoundBlackKnob.svg");
-            replace_svg("res/ComponentLibrary/RoundBigBlackKnob_bg.svg", "res/calm/alt-RoundBigBlackKnob_bg.svg");
-            replace_svg("res/ComponentLibrary/RoundBigBlackKnob.svg", "res/calm/alt-RoundBigBlackKnob.svg");
-            replace_svg("res/ComponentLibrary/RoundHugeBlackKnob_bg.svg", "res/calm/alt-RoundHugeBlackKnob_bg.svg");
-            replace_svg("res/ComponentLibrary/RoundHugeBlackKnob.svg", "res/calm/alt-RoundHugeBlackKnob.svg");
-            replace_svg("res/ComponentLibrary/RoundLargeBlackKnob_bg.svg", "res/calm/alt-RoundLargeBlackKnob_bg.svg");
-            replace_svg("res/ComponentLibrary/RoundLargeBlackKnob.svg", "res/calm/alt-RoundLargeBlackKnob.svg");
-            replace_svg("res/ComponentLibrary/RoundSmallBlackKnob_bg.svg", "res/calm/alt-RoundSmallBlackKnob_bg.svg");
-            replace_svg("res/ComponentLibrary/RoundSmallBlackKnob.svg", "res/calm/alt-RoundSmallBlackKnob.svg");
-            replace_svg("res/ComponentLibrary/Trimpot_bg.svg", "res/calm/alt-Trimpot_bg.svg");
-            replace_svg("res/ComponentLibrary/Trimpot.svg", "res/calm/alt-Trimpot.svg");
+            replace_system_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg", "res/calm/alt-RoundBlackKnob_bg.svg");
+            replace_system_svg("res/ComponentLibrary/RoundBlackKnob.svg", "res/calm/alt-RoundBlackKnob.svg");
+            replace_system_svg("res/ComponentLibrary/RoundBigBlackKnob_bg.svg", "res/calm/alt-RoundBigBlackKnob_bg.svg");
+            replace_system_svg("res/ComponentLibrary/RoundBigBlackKnob.svg", "res/calm/alt-RoundBigBlackKnob.svg");
+            replace_system_svg("res/ComponentLibrary/RoundHugeBlackKnob_bg.svg", "res/calm/alt-RoundHugeBlackKnob_bg.svg");
+            replace_system_svg("res/ComponentLibrary/RoundHugeBlackKnob.svg", "res/calm/alt-RoundHugeBlackKnob.svg");
+            replace_system_svg("res/ComponentLibrary/RoundLargeBlackKnob_bg.svg", "res/calm/alt-RoundLargeBlackKnob_bg.svg");
+            replace_system_svg("res/ComponentLibrary/RoundLargeBlackKnob.svg", "res/calm/alt-RoundLargeBlackKnob.svg");
+            replace_system_svg("res/ComponentLibrary/RoundSmallBlackKnob_bg.svg", "res/calm/alt-RoundSmallBlackKnob_bg.svg");
+            replace_system_svg("res/ComponentLibrary/RoundSmallBlackKnob.svg", "res/calm/alt-RoundSmallBlackKnob.svg");
+            replace_system_svg("res/ComponentLibrary/Trimpot_bg.svg", "res/calm/alt-Trimpot_bg.svg");
+            replace_system_svg("res/ComponentLibrary/Trimpot.svg", "res/calm/alt-Trimpot.svg");
             // ports
-            replace_svg("res/ComponentLibrary/CL1362.svg", "res/calm/alt-CL1362.svg");
-            replace_svg("res/ComponentLibrary/PJ301M-dark.svg", "res/calm/alt-PJ301M-dark.svg");
-            replace_svg("res/ComponentLibrary/PJ301M.svg", "res/calm/alt-PJ301M.svg");
-            replace_svg("res/ComponentLibrary/PJ3410.svg", "res/calm/alt-PJ3410.svg");
+            replace_system_svg("res/ComponentLibrary/CL1362.svg", "res/calm/alt-CL1362.svg");
+            replace_system_svg("res/ComponentLibrary/PJ301M-dark.svg", "res/calm/alt-PJ301M-dark.svg");
+            replace_system_svg("res/ComponentLibrary/PJ301M.svg", "res/calm/alt-PJ301M.svg");
+            replace_system_svg("res/ComponentLibrary/PJ3410.svg", "res/calm/alt-PJ3410.svg");
         } else {
-            rack_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg");
-            rack_svg("res/ComponentLibrary/RoundBlackKnob.svg");
-            rack_svg("res/ComponentLibrary/RoundBigBlackKnob_bg.svg");
-            rack_svg("res/ComponentLibrary/RoundBigBlackKnob.svg");
-            rack_svg("res/ComponentLibrary/RoundHugeBlackKnob_bg.svg");
-            rack_svg("res/ComponentLibrary/RoundHugeBlackKnob.svg");
-            rack_svg("res/ComponentLibrary/RoundLargeBlackKnob_bg.svg");
-            rack_svg("res/ComponentLibrary/RoundLargeBlackKnob.svg");
-            rack_svg("res/ComponentLibrary/RoundSmallBlackKnob_bg.svg");
-            rack_svg("res/ComponentLibrary/RoundSmallBlackKnob.svg");
-            rack_svg("res/ComponentLibrary/Trimpot_bg.svg");
-            rack_svg("res/ComponentLibrary/Trimpot.svg");
+            original_system_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg");
+            original_system_svg("res/ComponentLibrary/RoundBlackKnob.svg");
+            original_system_svg("res/ComponentLibrary/RoundBigBlackKnob_bg.svg");
+            original_system_svg("res/ComponentLibrary/RoundBigBlackKnob.svg");
+            original_system_svg("res/ComponentLibrary/RoundHugeBlackKnob_bg.svg");
+            original_system_svg("res/ComponentLibrary/RoundHugeBlackKnob.svg");
+            original_system_svg("res/ComponentLibrary/RoundLargeBlackKnob_bg.svg");
+            original_system_svg("res/ComponentLibrary/RoundLargeBlackKnob.svg");
+            original_system_svg("res/ComponentLibrary/RoundSmallBlackKnob_bg.svg");
+            original_system_svg("res/ComponentLibrary/RoundSmallBlackKnob.svg");
+            original_system_svg("res/ComponentLibrary/Trimpot_bg.svg");
+            original_system_svg("res/ComponentLibrary/Trimpot.svg");
             // ports
-            rack_svg("res/ComponentLibrary/CL1362.svg");
-            rack_svg("res/ComponentLibrary/PJ301M-dark.svg");
-            rack_svg("res/ComponentLibrary/PJ301M.svg");
-            rack_svg("res/ComponentLibrary/PJ3410.svg");
+            original_system_svg("res/ComponentLibrary/CL1362.svg");
+            original_system_svg("res/ComponentLibrary/PJ301M-dark.svg");
+            original_system_svg("res/ComponentLibrary/PJ301M.svg");
+            original_system_svg("res/ComponentLibrary/PJ3410.svg");
         }
         APP->scene->onDirty(DirtyEvent{});
+        if (my_module) {
+            my_module->calm = calm;
+        }
     }
 
     void toggle_screws() {
         screws = !screws;
         screw_visibility(APP->scene->rack, screws);
+        if (my_module) {
+            my_module->screws = screws;
+        }
     }
 
     std::string get_rack_rail_filename() {
@@ -276,6 +339,9 @@ struct SkiffUi : ModuleWidget, IThemeChange
             rail_item = -1;
         }
         rail->onDirty(DirtyEvent{});
+        if (my_module) {
+            my_module->rail_item = rail_item;
+        }
     }
 
     void pend_custom_rail() {
@@ -327,8 +393,8 @@ struct SkiffUi : ModuleWidget, IThemeChange
             case Theme::HighContrast: co1 = nvgRGB(0,0,0); co2 = co1; break;
             }
             nvgBeginPath(vg);
-            nvgRect(vg, 0.f, 20.f, 30.f, 360.f);
-            auto p = nvgLinearGradient(vg, 0.f, 20.f, 30.f, 360.f, co1, co2);
+            nvgRect(vg, 0.f, 20.f, 30.f, 340.f);
+            auto p = nvgLinearGradient(vg, 0.f, 20.f, 30.f, 340.f, co1, co2);
             nvgFillPaint(vg, p);
             nvgFill(vg);
 
@@ -352,6 +418,26 @@ struct SkiffUi : ModuleWidget, IThemeChange
     {
         auto mods = e.mods & RACK_MOD_MASK;
         switch (e.key) {
+
+#ifdef HOT_SVG
+        case GLFW_KEY_F5: {
+            if (e.action == GLFW_RELEASE && (0 == mods)) {
+                e.consume(this);
+                auto panel = dynamic_cast<SvgThemePanel<SkiffSvg>*>(getPanel());
+                if (panel) {
+                    auto layout = window::Svg::load(SkiffSvg::background(Theme::Light));
+                    std::map<std::string, ::math::Rect> bounds;
+                    svg_query::boundsIndex(layout, "k:", bounds, true);
+                    for (auto kv: positioned_widgets) {
+                        kv.second->box.pos = bounds[kv.first].getCenter();
+                        Center(kv.second);
+                    }
+                    panel->updatePanel(theme_holder->getTheme());
+                }
+            }
+        } break;
+#endif
+
         case GLFW_KEY_F6: {
             if (e.action == GLFW_PRESS && (0 == mods)) {
                 e.consume(this);

@@ -175,6 +175,10 @@ struct SvgThemePanel : SvgPanel, IBasicTheme
     {
         SvgPanel::setBackground(window::Svg::load(TSvgProvider::background(theme)));
     }
+    void updatePanel(Theme theme) {
+        svg->loadFile(TSvgProvider::background(theme));
+        fb->dirty = true;
+    }
 };
 
 template <class TSvgProvider>
