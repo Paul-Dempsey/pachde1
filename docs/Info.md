@@ -6,7 +6,7 @@ A Minimalist resizable patch notes panel.
 
 Here are some samples with Light, Dark and High Contrast themes, and selected options.
 
-![Info panel with themes and menu](Info.png)
+![Info panel with themes and menu](./images/Info.png)
 
 - Resizable - Drag the left and right edges when the overlay appears under the cursor.
 
@@ -33,11 +33,17 @@ Here are some samples with Light, Dark and High Contrast themes, and selected op
 Any Truetype font can be used. There are thousands of free fonts available for download on the web.
 [Google Fonts](https://fonts.google.com/) has some nice ones.
 
-On Windows, it can be difficult to browse to a font in the windows font folder:
-the file browser doesn't show the actual .ttf files, but there's a trick.
+On Windows, it can be difficult to browse to a font in the Windows font folder because the file browser doesn't show the actual .ttf files.
+But there's a trick:
 You can get to the actual file path you need from a regular Windows command prompt.
-Start a command prompt and type `dir /S /B c:\windows\fonts\*.ttf`, copy the full path of file,
-then paste it into the Font chooser dialog.
+
+Start a command prompt and type:
+
+```console
+dir /S /B c:\windows\fonts\*.ttf
+```
+
+Copy the full path of file, then paste it into the Font chooser dialog.
 
 ## Expander
 
@@ -47,5 +53,7 @@ In the menu, choose **Interior** for Copper, and now Copper changes the text bac
 Two Coppers can work simultaneously in this configuration.
 
 You can have some fun turning on the **Bright text in a dark room**, setting **Copper** to **Interior**, putting a modulated Copper on either side, and turn down the lights.
+
+---
 
 ![pachde (#d) Logo](Logo.svg)

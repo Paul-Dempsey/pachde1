@@ -55,6 +55,13 @@
         "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Skiff.md#skiff",
         "description": "Customize the skiff",
         "tags": [ "Visual", "Utility" ]
+    },
+    {
+        "slug": "pachde-rui",
+        "name": "Rui",
+        "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Rui.md#rui",
+        "description": "Rack cable and light control",
+        "tags": [ "Visual", "Utility" ]
     }
   ]
 }

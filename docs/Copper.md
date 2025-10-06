@@ -6,7 +6,7 @@ Color picker with modulation and outputs.
 
 Here's a sample of the module in Light, Dark, and High Contrast themes.
 
-![Copper in Light, Dark, and High Contrast themes](Copper.png)
+![Copper in Light, Dark, and High Contrast themes](./images/Copper.png)
 
 Click on the Hue selector on the left or twist the H knob to select the color's hue.
 

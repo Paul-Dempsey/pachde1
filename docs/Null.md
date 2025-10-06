@@ -6,7 +6,7 @@ A truly blank, blank panel, with some fun features (for a blank panel).
 
 Here's a sampling of Null in Light, Dark, and High Contrast themes and various colors, widths, and options:
 
-![Null module with themes, colors, and menu](Null.png)
+![Null module with themes, colors, and menu](./images/Null.png)
 
 - Resizable - Drag the left and right edges when the overlay appears under the cursor.
 
@@ -22,8 +22,8 @@ Here's a sampling of Null in Light, Dark, and High Contrast themes and various c
 
 ## Inputs
 
-Null has one secret input port.
-Plug a signal into the **FLicker** port hidden behind the **#d** logo to add flickering to the panel, like a neon sign going bad or a defective flourescent light.
+Null has a secret input port.
+Plug a signal into the **Flicker** port hidden behind the **#d** logo to add flickering to the panel, like a neon sign going bad or a defective flourescent light.
 
 ## Expander
 
@@ -33,5 +33,7 @@ Null remembers that color, so you can remove Copper from the patch after you're 
 Or, leave Copper in the patch, and modulate it to animate the Null color.
 
 The most exciting visual for Null is to turn on **Glow in the dark**, animate the color using Copper, and plug a signal into the **Flicker** port.
+
+---
 
 ![pachde (#d) Logo](Logo.svg)

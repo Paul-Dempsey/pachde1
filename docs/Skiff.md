@@ -1,8 +1,15 @@
 # Skiff
 
+**Skiff** provides some neat ways to customize the look of your rack.
+It comes in three themes: Light, Dark, and High-Contrast:
+
+| Light | Dark| High |
+|:-: | :-: | :-: |
+|![The pachde One Skiff module](./images/Skiff.png) | ![The pachde One Skiff module (dark)](./images/Skiff-dark.png)| ![The pachde One Skiff module (high contrast)](./images/Skiff-hc.png)|
+
 1. **Change rail** hamburger menu contains a selection of alternate rails for your rack, or choose a custom rail SVG of your own.
   Some SVGs don't work, but most will display fine.
-  The provided alternate rail SVGs have the identical size of Rack's rail SVGs, but that isn't required.
+  The provided alternate rail SVGs have the identical size of Rack's rail SVGs, but that isn't required for a custom one.
 
 1. **Derail** Toggles between Rack's rails visible and invisible (black).
 
@@ -12,11 +19,22 @@
 1. **Unscrew** Unscrew all modules in the Rack.
   If modules start falling out, you can click it again to restore the screws.
   Only standard Rack screws are affected.
-  I don't have the right screwdriver for the custom screws that some modules use. #d One comes with its own screwdriver in the module menu.
+  I don't have the right screwdriver for the custom screws that some modules use.
+  Other #d One come with their own screwdriver in the module menu.
 
-1. **Pack modules** Pack your modules together in neat, left-aligned rows. Any vacant rows are filled. Modules in a given row are kept together in the same row to avoid breaking extenders.
+1. **Pack modules (F7)** Pack your modules together in neat, left-aligned rows.
+  Works on just the selection if you have one.
+  Any vacant rows are filled.
+  Modules in a given row are kept together in the same row to avoid breaking extenders.
 
-1. **Zoom to selection** (no button). Press F6 with the mouse over **Skiff** to Zoom just the selected modules.
+1. **Zoom to selection** (no button). Press **F6** with the mouse over **Skiff** to zoom the selected modules.
+
+## The One and only
+
+Skiff makes changes that are global to rack, so it makes sense to only have one instance in your Rack.
+If you add a second instance, it will be a nonfunctional one that looks something like this (varies by theme):
+
+![A disabled pachde One Skiff module](./images/no-Skiff.png)
 
 ---
 

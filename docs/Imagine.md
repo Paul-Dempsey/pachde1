@@ -5,7 +5,7 @@ You can think of it as a sequencer or an image sampler.
 
 **See also:** [All pachde-One modules](index.md)
 
-![Imagine with 3 variations of theme and settings](Imagine-sample.png)
+![Imagine with 3 variations of theme and settings](./images/Imagine-sample.png)
 
 Load an image and generate voltages, gates, and triggers as the image is scanned by a read head.
 Click on the image to set the position of the read head.
