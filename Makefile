@@ -29,6 +29,7 @@ SOURCES += src/widgets/widgetry.cpp
 
 # services
 SOURCES += src/services/json-help.cpp
+SOURCES += src/services/rack-help.cpp
 SOURCES += src/services/svg-query.cpp
 
 # Null module
@@ -58,6 +59,9 @@ SOURCES += src/Imagine/traversal.cpp
 # Skiff module
 SOURCES += src/Skiff/Skiff.cpp
 SOURCES += src/Skiff/skiff-help.cpp
+
+# Rui module
+SOURCES += src/Rui/Rui.cpp
 
 DISTRIBUTABLES += res
 DISTRIBUTABLES += $(wildcard LICENSE*)

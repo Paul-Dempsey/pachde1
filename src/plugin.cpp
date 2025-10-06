@@ -13,6 +13,7 @@ void init(Plugin* p) {
 	p->addModel(modelInfo);
 	p->addModel(modelBlank);
 	p->addModel(modelSkiff);
+	p->addModel(modelRui);
 
 	// Any other plugin initialization may go here.
 	// As an alternative, consider lazy-loading assets and lookup tables when your module is created to reduce startup times of Rack.

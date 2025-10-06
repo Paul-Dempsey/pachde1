@@ -25,6 +25,9 @@ inline std::shared_ptr<::rack::window::Svg> panelSvg(::rack::app::ThemedSvgPanel
 // Can also use the Dark Svg of a themed panel
 inline std::shared_ptr<::rack::window::Svg> panelDarkSvg(::rack::app::ThemedSvgPanel* panel) { return panel->darkSvg; }
 
+// works with the result of getPanel() when using either SvgPanel or ThemedSvgPanel
+std::shared_ptr<::rack::window::Svg> panelWidgetSvg(::rack::widget::Widget* panel);
+
 }
 
 /*

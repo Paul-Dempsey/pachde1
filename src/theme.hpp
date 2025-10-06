@@ -28,12 +28,12 @@ Theme DarkThemeFromJson(json_t * root);
 // theme + main color for widgets
 struct IBasicTheme
 {
-    Theme theme = DefaultTheme;
+    Theme my_theme = DefaultTheme;
     NVGcolor main_color = COLOR_NONE;
 
     virtual ~IBasicTheme() {}
-    virtual void setTheme(Theme new_theme) { theme = new_theme; }
-    virtual Theme getTheme() { return theme; };
+    virtual void setTheme(Theme new_theme) { my_theme = new_theme; }
+    virtual Theme getTheme() { return my_theme; };
     virtual void setMainColor(NVGcolor color) { main_color = color; }
     virtual NVGcolor getMainColor() { return main_color; }
 };
@@ -109,7 +109,7 @@ struct ThemeBase: ITheme
         notify = callback;
     }
     void setTheme(Theme theme) override {
-        this->theme = theme;
+        this->my_theme = theme;
         if (notify) { notify->onChangeTheme(ChangedItem::Theme); }
     };
     void setDarkTheme(Theme theme) override {
@@ -129,7 +129,7 @@ struct ThemeBase: ITheme
         if (notify) { notify->onChangeTheme(ChangedItem::MainColor); }
     }
 
-    Theme getTheme() override { return ConcreteTheme(theme); };
+    Theme getTheme() override { return ConcreteTheme(my_theme); };
     bool hasScrews() override { return screws; }
     bool getFollowRack() override { return follow_rack; }
     Theme getDarkTheme() override { return dark_theme; }

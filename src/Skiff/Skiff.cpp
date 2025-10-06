@@ -6,24 +6,16 @@ using namespace ::rack;
 #include "../widgets/hamburger.hpp"
 #include "../widgets/screws.hpp"
 #include "../services/json-help.hpp"
+#include "../services/rack-help.hpp"
 #include "skiff-help.hpp"
 
 using namespace widgetry;
 
 namespace pachde {
 
-void replace_system_svg(const char * sys_asset, const char *alt)
-{
-    window::Svg::load(asset::system(sys_asset))->loadFile(asset::plugin(pluginInstance, alt));
-}
+struct SkiffUi;
 
-void original_system_svg(const char * sys_asset)
-{
-    auto f = asset::system(sys_asset);
-    window::Svg::load(f)->loadFile(f);
-}
-
-struct SkiffModule : ThemeModule
+struct Skiff : ThemeModule
 {
     using Base = ThemeModule;
 
@@ -32,6 +24,9 @@ struct SkiffModule : ThemeModule
     bool screws{false};
     bool calm{false};
     bool derailed{false};
+    bool running{false};
+
+    SkiffUi* ui;
 
     json_t* dataToJson() override
     {
@@ -52,7 +47,15 @@ struct SkiffModule : ThemeModule
         screws = get_json_bool(root, "screws", screws);
         calm = get_json_bool(root, "calm", calm);
         derailed = get_json_bool(root, "derailed", derailed);
+
+        apply_settings();
     };
+
+    void apply_settings();
+
+    void process(const ProcessArgs& args) override {
+        running = true;
+    }
 };
 
 struct SkiffSvg
@@ -72,7 +75,6 @@ struct SkiffSvg
     }
 };
 
-struct SkiffUi;
 struct RailMenu : Hamburger
 {
     SkiffUi* ui{nullptr};
@@ -84,7 +86,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
 {
     using Base = ModuleWidget;
 
-    SkiffModule* my_module;
+    Skiff* my_module;
     ThemeBase* theme_holder{nullptr};
 
     bool request_custom_rail{false};
@@ -105,35 +107,30 @@ struct SkiffUi : ModuleWidget, IThemeChange
         }
     }
 
-    SkiffUi(SkiffModule* module) : my_module(module)
+    SkiffUi(Skiff* module) : my_module(module)
     {
         setModule(module);
+        if (my_module) {
+            my_module->ui = this;
+        }
+
         derailed = is_rail_visible();
         theme_holder = module ? module : new ThemeBase();
         theme_holder->setNotify(this);
         applyTheme(GetPreferredTheme(theme_holder));
     }
 
-    bool is_singleton()
-    {
-        if (my_module) {
-            auto mws = APP->scene->rack->getModules();
-            if (mws.size() > 1) {
-                for (auto mw: mws) {
-                    if ((mw != this) && (mw->getModel() == my_module->getModel())) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
+#ifdef HOT_SVG
+#define HOT_POSITION(name,widget) positioned_widgets[name] = widget
+#else
+#define HOT_POSITION(name,widget) void
+#endif
 
     void makeUi(Theme theme) {
         assert(children.empty());
         setPanel(createSvgThemePanel<SkiffSvg>(theme));
 
-        other_skiff = !is_singleton();
+        other_skiff = !is_singleton(my_module, this);
         if (other_skiff) return;
 
         SmallButton* button;
@@ -143,17 +140,13 @@ struct SkiffUi : ModuleWidget, IThemeChange
         svg_query::boundsIndex(layout, "k:", bounds, true);
 
         auto menu = createThemeWidgetCentered<RailMenu>(theme, bounds["k:rail-menu"].getCenter());
-#ifdef HOT_SVG
-        positioned_widgets["k:rail-menu"] = menu;
-#endif
+        HOT_POSITION("k:rail-menu", menu);
         menu->setUi(this);
         menu->describe("Change Rails");
         addChild(menu);
 
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:unrail-btn"].getCenter());
-#ifdef HOT_SVG
-        positioned_widgets["k:unrail-btn"] = button;
-#endif
+        HOT_POSITION("k:unrail-btn", button);
         button->set_sticky(true);
         button->latched = derailed;
         if (module) {
@@ -163,9 +156,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         addChild(button);
 
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:calm-btn"].getCenter());
-#ifdef HOT_SVG
-        positioned_widgets["k:calm-btn"] = button;
-#endif
+        HOT_POSITION("k:calm-btn", button);
         if (module) {
             button->describe("Calm knobs and ports");
             button->setHandler([this](bool ctrl, bool shift) { calm_rack(); });
@@ -173,9 +164,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         addChild(button);
 
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:screw-btn"].getCenter());
-#ifdef HOT_SVG
-        positioned_widgets["k:screw-btn"] = button;
-#endif
+        HOT_POSITION("k:screw-btn", button);
         button->set_sticky(true);
         if (module) {
             button->describe("Unscrew");
@@ -184,25 +173,20 @@ struct SkiffUi : ModuleWidget, IThemeChange
         addChild(button);
 
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:pack-btn"].getCenter());
-#ifdef HOT_SVG
-        positioned_widgets["k:pack-btn"] = button;
-#endif
+        HOT_POSITION("k:pack-btn", button);
         if (module) {
-            button->describe("Pack modules");
-            button->setHandler([](bool ctrl, bool shift) { packModules(); });
+            button->describe("Pack modules (F7)");
+            button->setHandler([](bool ctrl, bool shift) { pack_modules(); });
         }
         addChild(button);
 
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:from-patch-btn"].getCenter());
-#ifdef HOT_SVG
-        positioned_widgets["k:from-patch-btn"] = button;
-#endif
+        HOT_POSITION("k:from-patch-btn", button);
         if (module) {
             button->describe("Apply last saved skiff");
             button->setHandler([this](bool ctrl, bool shift) { from_patch(); });
         }
         addChild(button);
-
     }
 
     void applyTheme(Theme theme) {
@@ -223,6 +207,8 @@ struct SkiffUi : ModuleWidget, IThemeChange
             applyTheme(GetPreferredTheme(theme_holder));
             break;
         case ChangedItem::DarkTheme:
+            applyTheme(GetPreferredTheme(theme_holder));
+            break;
         case ChangedItem::FollowDark:
             if (theme_holder->getFollowRack()) {
                 applyTheme(GetPreferredTheme(theme_holder));
@@ -237,22 +223,59 @@ struct SkiffUi : ModuleWidget, IThemeChange
 
     void from_patch() {
         if (!my_module) return;
-        if (screws != my_module->screws) {
-            screws = my_module->screws;
-            screw_visibility(APP->scene->rack, screws);
+
+        screws = my_module->screws;
+        screw_visibility(APP->scene->rack, screws);
+
+        calm = !my_module->calm; // invert because calm_rack() toggles
+        calm_rack();
+
+        bool altered = is_alt_rail();
+        rail_item = my_module->rail_item;
+        if (rail_item < 0) {
+            if (altered) {
+                std::string rail_file = get_rack_rail_filename();
+                std::shared_ptr<window::Svg> railSvg = window::Svg::load(rail_file);
+                railSvg->loadFile(rail_file);
+            }
+        } else {
+            if (!altered) {
+                if (rail_item < 6) {
+                    alt_rail(rail_item);
+                } else {
+                    std::string rail_file = get_rack_rail_filename();
+                    std::shared_ptr<window::Svg> railSvg = window::Svg::load(rail_file);
+                    if (system::isFile(my_module->custom_rail_file)) {
+                        railSvg->loadFile(my_module->custom_rail_file);
+                        if (!railSvg->handle) {
+                            railSvg->loadFile(rail_file);
+                            my_module->rail_item = rail_item = -1;
+                        }
+                    } else {
+                        railSvg->loadFile(rail_file);
+                        my_module->rail_item = rail_item = -1;
+                    }
+                }
+            }
         }
-        if (calm != my_module->calm) {
-            calm = !my_module->calm; // invert because calm_rack() toggles
-            calm_rack();
-        }
-        if (my_module->derailed) {
-            auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
-            if (rail) rail->setVisible(my_module->derailed);
+        auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
+        if (rail) {
+            rail->setVisible(my_module->derailed);
+            derailed = my_module->derailed;
         }
     }
 
-    void derail() {
+    bool is_alt_rail() {
+        auto railSvg = window::Svg::load(get_rack_rail_filename());
+        return is_marked_svg(railSvg);
+    }
 
+    void derail() {
+        derailed = !derailed;
+        set_rail_visible(derailed);
+        if (my_module) {
+            my_module->derailed = derailed;
+        }
     }
 
     void calm_rack() {
@@ -309,7 +332,8 @@ struct SkiffUi : ModuleWidget, IThemeChange
     }
 
     std::string get_rack_rail_filename() {
-        return asset::system((settings::uiTheme == "light") ? "res/ComponentLibrary/Rail-light.svg" :
+        return asset::system(
+            (settings::uiTheme == "light") ? "res/ComponentLibrary/Rail-light.svg" :
             (settings::uiTheme == "hcdark") ? "res/ComponentLibrary/Rail-hcdark.svg" :
             "res/ComponentLibrary/Rail.svg");
     }
@@ -366,6 +390,8 @@ struct SkiffUi : ModuleWidget, IThemeChange
                 if (!railSvg->handle) {
                     railSvg->loadFile(rail_file);
                     rail_item = -1;
+                } else {
+                    add_marker(railSvg);
                 }
                 rail->onDirty(DirtyEvent{});
             }
@@ -378,40 +404,6 @@ struct SkiffUi : ModuleWidget, IThemeChange
             custom_rail();
         }
         theme_holder->pollRackDarkChanged();
-    }
-
-    void draw(const DrawArgs& args) override {
-        Base::draw(args);
-        if (my_module && other_skiff) {
-            auto vg = args.vg;
-            NVGcolor co1, co2;
-
-            switch (theme_holder->getTheme()) {
-            default:
-            case Theme::Light: co1 = nvgRGB(0x80, 0x80, 0x80); co2 = nvgRGB(0x40, 0x40, 0x40); break;
-            case Theme::Dark: co1 = nvgRGB(0x50, 0x50, 0x50);  co2 = nvgRGB(0x28, 0x28, 0x28); break;
-            case Theme::HighContrast: co1 = nvgRGB(0,0,0); co2 = co1; break;
-            }
-            nvgBeginPath(vg);
-            nvgRect(vg, 0.f, 20.f, 30.f, 340.f);
-            auto p = nvgLinearGradient(vg, 0.f, 20.f, 30.f, 340.f, co1, co2);
-            nvgFillPaint(vg, p);
-            nvgFill(vg);
-
-            nvgBeginPath(vg);
-            nvgCircle(vg, 15.f, 118.5f, 10.f);
-            nvgStrokeWidth(vg, 2.5f);
-            nvgStrokeColor(vg, nvgRGB(0xff, 0x20, 0x20));
-            nvgStroke(vg);
-
-            nvgBeginPath(vg);
-            nvgMoveTo(vg, 10.f,114.f);
-            nvgLineTo(vg, 20.f,124.f);
-            nvgMoveTo(vg, 20.f,114.f);
-            nvgLineTo(vg, 10.f,124.f);
-            nvgStrokeColor(vg, nvgRGB(0xff, 0x20, 0x20));
-            nvgStroke(vg);
-        }
     }
 
     void onHoverKey(const HoverKeyEvent& e) override
@@ -444,16 +436,38 @@ struct SkiffUi : ModuleWidget, IThemeChange
                 zoom_selected();
             }
         } break;
+        case GLFW_KEY_F7: {
+            if (e.action == GLFW_PRESS && (0 == mods)) {
+                e.consume(this);
+                pack_modules();
+            }
+        } break;
         }
         Base::onHoverKey(e);
     }
 
+    void draw(const DrawArgs& args) override {
+        Base::draw(args);
+        if (my_module && other_skiff) {
+            draw_disabled_panel(this, GetPreferredTheme(theme_holder), args, 20.f, 20.f);
+        }
+    }
+
     void appendContextMenu(Menu* menu) override {
         if (!module) return;
+
+        menu->addChild(createMenuLabel<HamburgerTitle>("Skiff"));
         AddThemeMenu(menu, theme_holder, false, false);
     }
 
 };
+
+void Skiff::apply_settings()
+{
+    if (running && ui) {
+        ui->from_patch();
+    }
+}
 
 void RailMenu::appendContextMenu(ui::Menu* menu)
 {
@@ -471,4 +485,4 @@ void RailMenu::appendContextMenu(ui::Menu* menu)
 }
 
 }
-Model* modelSkiff = createModel<pachde::SkiffModule, pachde::SkiffUi>("pachde-skiff");
+Model* modelSkiff = createModel<pachde::Skiff, pachde::SkiffUi>("pachde-skiff");

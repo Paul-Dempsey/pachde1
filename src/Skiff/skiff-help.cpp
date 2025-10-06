@@ -1,4 +1,16 @@
 #include "skiff-help.hpp"
+#include "../plugin.hpp"
+
+void replace_system_svg(const char * sys_asset, const char *alt)
+{
+    window::Svg::load(asset::system(sys_asset))->loadFile(asset::plugin(pluginInstance, alt));
+}
+
+void original_system_svg(const char * sys_asset)
+{
+    auto f = asset::system(sys_asset);
+    window::Svg::load(f)->loadFile(f);
+}
 
 bool widget_order_lrtb(const Widget* a, const Widget* b) {
     if (a->box.pos.y < b->box.pos.y) return true;
@@ -43,9 +55,18 @@ void set_rail_visible(bool visible) {
     }
 }
 
-void packModules()
+void pack_modules()
 {
-    std::vector<ModuleWidget*> module_widgets = APP->scene->rack->getModules();
+    ::rack::app::RackWidget* rack = APP->scene->rack;
+    std::vector<::rack::app::ModuleWidget*> module_widgets;
+    if (rack->hasSelection()) {
+        auto sel = rack->getSelected();
+        for (auto m : sel) {
+            module_widgets.push_back(m);
+        }
+    } else {
+        module_widgets = rack->getModules();
+    }
     if (module_widgets.size() <= 1) return;
     std::sort(module_widgets.begin(), module_widgets.end(), widget_order_lrtb);
 
@@ -99,4 +120,30 @@ void zoom_selected()
         max = max.max(mw->box.getBottomRight());
     }
     APP->scene->rackScroll->zoomToBound(math::Rect::fromMinMax(min, max));
+}
+
+NSVGshape* marker_shape()
+{
+    Svg svg;
+    svg.loadString("<svg width=\"1\"><circle id=\"%skiff%marker%\" r=\"1\" opacity=\"0\"/></svg>");
+    NSVGshape* marker = svg.handle->shapes;
+    svg.handle->shapes = nullptr;
+    assert(nullptr == marker->next);
+    return marker;
+}
+
+void add_marker(std::shared_ptr<Svg> svg)
+{
+    if (!svg || !svg->handle || !svg->handle->shapes) return;
+    auto marker = marker_shape();
+    marker->next = svg->handle->shapes;
+    svg->handle->shapes = marker;
+}
+
+bool is_marked_svg(std::shared_ptr<Svg> svg)
+{
+    if (!svg || !svg->handle || !svg->handle->shapes) return false;
+    const char * id = &svg->handle->shapes->id[0];
+    if (!*id) return false;
+    return 0 == strncmp(id, "%skiff%marker%", 9);
 }

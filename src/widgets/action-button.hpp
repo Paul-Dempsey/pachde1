@@ -157,9 +157,9 @@ struct TButton : ::rack::app::SvgButton, IBasicTheme
         fb->setDirty();
     }
 
-    void setTheme(Theme theme) override {
-        IBasicTheme::setTheme(theme);
-        applyTheme(theme);
+    void setTheme(Theme new_theme) override {
+        IBasicTheme::setTheme(new_theme);
+        applyTheme(new_theme);
     }
 
     void step() override {
@@ -179,6 +179,7 @@ struct MediumButtonSvg {
     static std::string up() { return "res/widget/med-but-up.svg"; }
     static std::string up_dark() { return "res/widget/med-but-up.svg"; }
     static std::string up_hc() { return "res/widget/med-but-up.svg"; }
+
     static std::string down() { return "res/widget/med-but-dn.svg"; }
     static std::string down_dark() { return "res/widget/med-but-dn.svg"; }
     static std::string down_hc() { return "res/widget/med-but-dn.svg"; }
@@ -189,10 +190,22 @@ struct SmallButtonSvg {
     static std::string up() { return "res/widget/sm-but-up.svg"; }
     static std::string up_dark() { return "res/widget/sm-but-up-dark.svg"; }
     static std::string up_hc() { return "res/widget/sm-but-up-hc.svg"; }
+
     static std::string down() { return "res/widget/sm-but-dn.svg"; }
     static std::string down_dark() { return "res/widget/sm-but-dn-dark.svg"; }
     static std::string down_hc() { return "res/widget/sm-but-dn-hc.svg"; }
 };
 using SmallButton = TButton<SmallButtonSvg>;
+
+struct PlayButtonSvg {
+    static std::string up() { return "res/widget/play-btn.svg"; }
+    static std::string up_dark() { return "res/widget/play-btn.svg"; }
+    static std::string up_hc() { return "res/widget/play-btn.svg"; }
+
+    static std::string down() { return "res/widget/pause-btn.svg"; }
+    static std::string down_dark() { return "res/widget/pause-btn.svg"; }
+    static std::string down_hc() { return "res/widget/pause-btn.svg"; }
+};
+using PlayButton = TButton<PlayButtonSvg>;
 
 }

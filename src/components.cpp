@@ -52,7 +52,6 @@ void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top)
 void AddThemeMenu(rack::ui::Menu *menu, ITheme* it, bool isChangeColor, bool isChangeScrews)
 {
     assert(it);
-    menu->addChild(new MenuSeparator);
     if (isChangeScrews) {
         menu->addChild(createCheckMenuItem("Screws", "",
             [=]() { return it->hasScrews(); },

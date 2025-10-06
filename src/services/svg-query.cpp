@@ -75,6 +75,19 @@ void showElements(std::shared_ptr<::rack::window::Svg> svg, const char *prefix)
     }
 }
 
+std::shared_ptr<::rack::window::Svg> panelWidgetSvg(::rack::widget::Widget* panel)
+{
+    if (!panel) return nullptr;
+
+    auto themed = dynamic_cast<::rack::app::ThemedSvgPanel*>(panel);
+    if (themed) return themed->lightSvg;
+
+    auto unthemed = dynamic_cast<::rack::app::SvgPanel*>(panel);
+    if (unthemed) return unthemed->svg;
+
+    return nullptr;
+}
+
 }
 
 /*

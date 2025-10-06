@@ -13,4 +13,5 @@ extern ::rack::Model* modelCopper;
 extern ::rack::Model* modelCopperMini;
 extern ::rack::Model* modelImagine;
 extern ::rack::Model* modelSkiff;
+extern ::rack::Model* modelRui;
 

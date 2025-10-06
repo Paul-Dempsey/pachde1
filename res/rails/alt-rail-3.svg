@@ -7,6 +7,7 @@
          <stop offset="1" stop-color="#181818" />
       </linearGradient>
 
+    <rect id="%skiff%marker%" width="1" height="1"/>
     <rect fill="url(#gpanel)" width="304" height="380" />
     <xrect fill="#444" width="304" height="15" />
     <rect fill="#555" width="304" height="1" />

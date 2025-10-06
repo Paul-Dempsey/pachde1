@@ -16,8 +16,8 @@
 
 ## Skiff
 
-- Apply settings when loading a preset.
-  A preset is any dataFromJson that isn't the first one, except for a newly inserted module.
+- Undo for PackModules
 
-- Offer button to restore previous patch settings.
-  Cache settings from first dataFromJson.
+## Rui
+
+- discreet panel (show/hide fluff)

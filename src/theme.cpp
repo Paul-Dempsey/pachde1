@@ -57,7 +57,7 @@ void ThemeBase::reset()
 }
 
 json_t* ThemeBase::save(json_t* root) {
-    std::string value = ToString(theme);
+    std::string value = ToString(my_theme);
     set_json(root, "theme", value);
 
     if (isColorOverride()) {
@@ -72,7 +72,7 @@ json_t* ThemeBase::save(json_t* root) {
 
 void ThemeBase::load(json_t* root)
 {
-    theme = ThemeFromJson(root);
+    my_theme = ThemeFromJson(root);
 
     auto j = json_object_get(root, "main-color");
     if (j) {

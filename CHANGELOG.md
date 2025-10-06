@@ -4,6 +4,10 @@
 
 - ***New*** [Skiff](docs/Skiff.md#skiff) module.
 
+- ***New*** [Rui](docs/Rui.md#rui) module.
+
+- Use Svgs to improve the #d brand on lower res screens.
+
 ## Version 2.2
 
 - ***New*** [Copper-mini](docs/Copper-mini.md#copper-mini) module.

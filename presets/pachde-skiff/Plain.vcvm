@@ -1,0 +1,12 @@
+{
+  "plugin": "pachde-one",
+  "model": "pachde-skiff",
+  "version": "2.3.0",
+  "params": [],
+  "data": {
+    "immediate": true,
+    "screws": false,
+    "alt-rail": 5,
+    "calm": true
+  }
+}
