@@ -7,50 +7,18 @@ Right click to choose a theme.
 They also come with caps on the screws for an elegant look.
 All screws are removable if you're more relaxed about your Rack and not worried about the panels falling out.
 
-- [Documentation](docs/index.md)
+- [Documentation](docs/index.md#pachde-one-modules-for-vcv-rack)
 
 - [Demo Patches on patchstorage](https://patchstorage.com/platform/vcv-rack/?search_query=pachde-One)
 
 - [Buy me a coffee](https://venmo.com/u/pcdempsey). *Thank you!*
 
   Donations go to helping fund continued development and hardware for testing and development. (I have a wish list :-). Venmo takes the smallest cut out of the payment systems I've found.\
-  ![Buy pachde a coffee with VenMo](docs/VenMo.png)
+  ![Buy pachde a coffee with VenMo](docs/images/VenMo.png)
 
 ## Change log
 
 See [CHANGELOG](CHANGELOG.md)
-
-## Modules
-### Null
-
-A truly blank, blank panel with some fun features (for a blank panel).\
-[Null user guide](docs/Null.md#null)
-
-### Info
-
-A Minimalist resizable patch notes panel.\
-[Info user guide](docs/Info.md#info)
-
-### Imagine
-
-A unique and eccentric source of voltage, gates, and triggers using an image.
-You can think of it as a sequencer or image sampler.\
-[Imagine user guide](docs/Imagine.md#imagine)
-
-### Copper
-
-A color picker with modulation and color component outputs. Extends Null and Info.\
-[Copper user guide](docs/Copper.md#copper)
-
-### Copper Mini
-
-A 2U version of Copper. Extends Null and Info.\
-[Copper user guide](docs/Copper-mini.md#copper-mini)
-
-### Skiff
-
-Customize your skiff.\
-[Skiff user guide](docs/Skiff.md#skiff)
 
 ## Building
 
@@ -94,6 +62,10 @@ I have a couple of other repos for VCV Rack-related projects you may be interest
 
 - **[Generic Blank](https://github.com/Paul-Dempsey/GenericBlank)**
   This is a great place to get started making a VCV Rack plugin. It's a good alternative to the VCV Rack tutorial. While it's a generic blanking plate out of the box, the code is well-commented with what you need to do to build out a functional module.
+
+- [Rack dev notes (by pachde #d)](https://github.com/Paul-Dempsey/rack-dev-notes/blob/main/doc/index.md#dev-notes-for-vcv-rack).
+  A growing set of tech notes for creating and maintaining VCV Rack plugins.
+
 
 - **[svg_theme](https://github.com/Paul-Dempsey/svg_theme)** For plugin developers: Lean in-memory SVG theming for VCV Rack plugins, using a json configuration. This allows you to maintain a single SVG for your rack, and theme it as needed. Includes a simple demo module to show you how it works.
 
