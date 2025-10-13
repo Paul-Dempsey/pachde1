@@ -16,6 +16,7 @@ struct SLWidget : OpaqueWidget
     float light = .5f;
     cachePic* ramp = nullptr;
     std::function<void(float, float)> clickHandler;
+    Vec drag_pos;
 
     SLWidget() { }
     explicit SLWidget(float hue) { this->hue = hue; }
@@ -76,6 +77,18 @@ struct SLWidget : OpaqueWidget
         glfwSetCursor(APP->window->win, NULL);
     }
 
+    void onDragMove(const DragMoveEvent& e) override
+    {
+        OpaqueWidget::onDragMove(e);
+        drag_pos = drag_pos.plus(e.mouseDelta.div(getAbsoluteZoom()));
+
+        sat = drag_pos.x / box.size.x;
+        light = 1.f - (drag_pos.y / box.size.y);
+        if (clickHandler) {
+            clickHandler(sat, light);
+        }
+    }
+
     void onButton(const ButtonEvent& e) override
     {
      	OpaqueWidget::onButton(e);
@@ -83,11 +96,7 @@ struct SLWidget : OpaqueWidget
             return;
         }
         e.consume(this);
-        sat = e.pos.x / box.size.x;
-        light = 1.f - (e.pos.y / box.size.y);
-        if (clickHandler) {
-            clickHandler(sat, light);
-        }
+        drag_pos = e.pos;
     }
 
     void draw(const DrawArgs& args) override

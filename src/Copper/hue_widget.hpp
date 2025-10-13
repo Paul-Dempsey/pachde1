@@ -12,6 +12,7 @@ struct HueWidget : OpaqueWidget
     
     float hue = 0.f;
     cachePic* ramp = nullptr;
+    Vec drag_pos;
 
     virtual ~HueWidget() {
         if (ramp) {
@@ -60,6 +61,16 @@ struct HueWidget : OpaqueWidget
         OpaqueWidget::onLeave(e);
         glfwSetCursor(APP->window->win, NULL);
     }
+    
+    void onDragMove(const DragMoveEvent& e) override
+    {
+        OpaqueWidget::onDragMove(e);
+        drag_pos = drag_pos.plus(e.mouseDelta.div(getAbsoluteZoom()));
+
+        hue = vertical() ? drag_pos.y / box.size.y : drag_pos.x / box.size.x;
+        if (clickHandler)
+            clickHandler(hue);
+    }
 
     void onButton(const ButtonEvent& e) override
     {
@@ -68,12 +79,8 @@ struct HueWidget : OpaqueWidget
             return;
         }
         e.consume(this);
-        hue = vertical() ? e.pos.y / box.size.y : e.pos.x / box.size.x;
-        if (clickHandler)
-            clickHandler(hue);
+        drag_pos = e.pos;
     }
-
-    // TODO: Dragging
 
     void draw(const DrawArgs & args) override
     {
