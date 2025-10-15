@@ -82,15 +82,6 @@ void PicWidget::drawPic(const DrawArgs &args)
     }
     cpic.setPic(pic);
 
-    // experiment
-    // if (pic && !pic->ok()) {
-    //     if (!spectrum)
-    //     {
-    //         spectrum = CreateHSLSpectrum(.6f);
-    //     }
-    //     pic = spectrum;
-    // }
-
     if (pic) {
         auto image_handle = cpic.getHandle(vg);
         if (image_handle) {

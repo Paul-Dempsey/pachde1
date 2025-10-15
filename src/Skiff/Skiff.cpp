@@ -8,6 +8,7 @@ using namespace ::rack;
 #include "../services/json-help.hpp"
 #include "../services/rack-help.hpp"
 #include "skiff-help.hpp"
+#include "cloak.hpp"
 
 using namespace widgetry;
 
@@ -155,6 +156,17 @@ struct SkiffUi : ModuleWidget, IThemeChange
         }
         addChild(button);
 
+
+        button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:bg-btn"].getCenter());
+        HOT_POSITION("k:bg-btn", button);
+        button->set_sticky(true);
+        button->latched = derailed;
+        if (module) {
+            button->describe("Fancy background");
+            button->setHandler([this](bool ctrl, bool shift) { fancy_background(); });
+        }
+        addChild(button);
+
         button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:calm-btn"].getCenter());
         HOT_POSITION("k:calm-btn", button);
         if (module) {
@@ -219,6 +231,12 @@ struct SkiffUi : ModuleWidget, IThemeChange
         case ChangedItem::Screws:
             break;
         }
+    }
+
+    void fancy_background()
+    {
+        if (!my_module) return;
+        toggleCloakWidget();
     }
 
     void from_patch() {

@@ -1,10 +1,10 @@
 #include <rack.hpp>
 #include "stb_image.h"
 #include "pic.hpp"
-#include "colors.hpp"
+#include "../colors.hpp"
 
 using namespace ::rack;
-namespace pachde {
+namespace widgetry {
 
 Pic* Pic::CreateRaw(int width, int height) {
     auto p = new Pic();

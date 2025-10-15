@@ -284,10 +284,10 @@ struct RuiUi : ModuleWidget, IThemeChange
 
         play_button = createThemeWidgetCentered<PlayButton>(theme, bounds["k:pause"].getCenter());
         play_button->set_sticky(true);
-        play_button->latched = my_module->stopped;
-        play_button->describe(my_module->stopped ? "Play (F2)" : "Pause (F2)");
         HOT_POSITION("k:pause", play_button);
-        if (module) {
+        if (my_module) {
+            play_button->describe(my_module->stopped ? "Play (F2)" : "Pause (F2)");
+            play_button->latched = my_module->stopped;
             play_button->setHandler([this](bool ctrl, bool shift) {
                 my_module->stopped = !my_module->stopped;
                 play_button->describe(my_module->stopped ? "Play (F2)" : "Pause (F2)");

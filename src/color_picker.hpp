@@ -82,27 +82,27 @@ struct ColorPicker: OpaqueWidget
 
     //std::function<void(void)> changeHandler;
 
-    void onButton(const event::Button& e) override
-    {
-        OpaqueWidget::onButton(e);
-    }
-    void onDragStart(const DragStartEvent &e) override
-    {
-        OpaqueWidget::onDragStart(e);
-    }
-    void onDragMove(const DragMoveEvent &e) override
-    {
-        OpaqueWidget::onDragMove(e);
-    }
-    void onDragEnd(const DragEndEvent &e) override
-    {
-        OpaqueWidget::onDragEnd(e);
-    }
+    // void onButton(const event::Button& e) override
+    // {
+    //     OpaqueWidget::onButton(e);
+    // }
+    // void onDragStart(const DragStartEvent &e) override
+    // {
+    //     OpaqueWidget::onDragStart(e);
+    // }
+    // void onDragMove(const DragMoveEvent &e) override
+    // {
+    //     OpaqueWidget::onDragMove(e);
+    // }
+    // void onDragEnd(const DragEndEvent &e) override
+    // {
+    //     OpaqueWidget::onDragEnd(e);
+    // }
 
-    void draw(const DrawArgs& args) override
-    {
-        OpaqueWidget::draw(args);
-    }
+    // void draw(const DrawArgs& args) override
+    // {
+    //     OpaqueWidget::draw(args);
+    // }
 
 }
 

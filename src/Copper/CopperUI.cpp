@@ -30,9 +30,7 @@ struct CopperSvg {
 struct CopperColor : OpaqueWidget {
     CopperModule* module;
 
-    explicit CopperColor(CopperModule* module) {
-        this->module = module;
-    }
+    explicit CopperColor(CopperModule* module) : module(module) {}
 
     void onEnter(const EnterEvent &e) override
     {
@@ -167,8 +165,8 @@ void CopperUi::makeUi(Theme theme)
 
     if (copper_module) {
         auto cc = new CopperColor(copper_module);
-        cc->box.pos = Vec(100.f, 373.f);
-        cc->box.size = Vec(1.5f, 1.5f);
+        cc->box.pos = Vec(101.75f, 373.f);
+        cc->box.size = Vec(2.5f, 2.5f);
         addChild(cc);
     }
 

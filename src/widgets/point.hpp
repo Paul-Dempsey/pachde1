@@ -1,7 +1,7 @@
 #pragma once
 #include <rack.hpp>
 
-namespace pachde {
+namespace widgetry {
 
 // int version of Rack Vec
 struct Point {

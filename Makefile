@@ -13,7 +13,6 @@ SOURCES += src/components.cpp
 SOURCES += src/dsp.cpp
 SOURCES += src/open_file.cpp
 SOURCES += src/pic_button.cpp
-SOURCES += src/pic.cpp
 SOURCES += src/plugin.cpp
 SOURCES += src/resizable.cpp
 SOURCES += src/small_push.cpp
@@ -22,6 +21,7 @@ SOURCES += src/theme.cpp
 
 # widgets
 SOURCES += src/widgets/draw-logo.cpp
+SOURCES += src/widgets/pic.cpp
 SOURCES += src/widgets/port.cpp
 SOURCES += src/widgets/screws.cpp
 SOURCES += src/widgets/switch.cpp
@@ -59,6 +59,7 @@ SOURCES += src/Imagine/traversal.cpp
 # Skiff module
 SOURCES += src/Skiff/Skiff.cpp
 SOURCES += src/Skiff/skiff-help.cpp
+SOURCES += src/Skiff/cloak.cpp
 
 # Rui module
 SOURCES += src/Rui/Rui.cpp

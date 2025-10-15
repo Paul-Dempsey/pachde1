@@ -5,8 +5,8 @@
 #include "../IHaveColor.hpp"
 #include "../widgets/port.hpp"
 #include "../text.hpp"
-#include "hue_widget.hpp"
-#include "sl_widget.hpp"
+#include "../widgets/hue_widget.hpp"
+#include "../widgets/sl_widget.hpp"
 
 using namespace ::rack;
 using namespace widgetry;

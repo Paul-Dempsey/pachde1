@@ -3,7 +3,7 @@
 #include "../components.hpp"
 #include "../plugin.hpp"
 #include "../dsp.hpp"
-#include "../pic.hpp"
+#include "../widgets/pic.hpp"
 #include "traversal.hpp"
 #include "play_pause.hpp"
 

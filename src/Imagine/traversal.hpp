@@ -1,7 +1,7 @@
 #pragma once
 #include <rack.hpp>
 #include "../colors.hpp"
-#include "../pic.hpp"
+#include "../widgets/pic.hpp"
 #include "imagine_layout.hpp"
 
 #if defined ARCH_MAC
@@ -10,6 +10,7 @@
 
 using namespace ::rack;
 using namespace ::pachde;
+using namespace ::widgetry;
 
 namespace traversal {
 

@@ -2,7 +2,7 @@
 #include <rack.hpp>
 #include "point.hpp"
 
-namespace pachde {
+namespace widgetry {
 constexpr const float PIC_EPSILON = 0.00001f;
 
 struct Pic {

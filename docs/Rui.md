@@ -1,19 +1,19 @@
 # Rui
 
-**Rui** provides nice knobs with control voltage inputs for:
+**Rui** (short for Rack User Interface) provides nice knobs with control voltage inputs for some of the Rack visuals. I like turning a knob better than dragging a slider in a menu.
 
 1. Cable opacity (cyan)
 1. Cable tension (green)
 1. Room brightness (magenta)
 1. Light bloom (yellowish-green)
 
-The Pause/Play button at the botttom lets you pause the Rack changes.
-
 Add some gentle LFO modulation for a pulsing rack.
 By default, modulation amount is zero.
 Turn up the trim pot to increase the amount of CV modulation.
 
-**Rui** comes in thre themes: Light, Dark, and High-contrast.
+The Pause/Play button at the botttom lets you pause CV-driven Rack changes without bypassing or unplugging the CV.
+
+**Rui** comes in three themes: Light, Dark, and High-contrast.
 
 | Light | Dark| High |
 | :-: | :-: | :-: |

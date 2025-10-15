@@ -147,3 +147,4 @@ bool is_marked_svg(std::shared_ptr<Svg> svg)
     if (!*id) return false;
     return 0 == strncmp(id, "%skiff%marker%", 9);
 }
+
