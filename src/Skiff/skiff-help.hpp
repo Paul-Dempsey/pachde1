@@ -15,4 +15,3 @@ void zoom_selected();
 
 void add_marker(std::shared_ptr<Svg> svg);
 bool is_marked_svg(std::shared_ptr<Svg> svg);
-
