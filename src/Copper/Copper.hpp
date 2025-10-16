@@ -1,10 +1,10 @@
 #pragma once
 #include <rack.hpp>
-#include "../components.hpp"
-#include "../dsp.hpp"
+#include "../widgets/components.hpp"
+#include "../services/dsp.hpp"
 #include "../IHaveColor.hpp"
 #include "../widgets/port.hpp"
-#include "../text.hpp"
+#include "../services/text.hpp"
 #include "../widgets/hue_widget.hpp"
 #include "../widgets/sl_widget.hpp"
 

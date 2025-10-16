@@ -1,6 +1,6 @@
 #include <rack.hpp>
 using namespace ::rack;
-#include "../components.hpp"
+#include "../widgets/components.hpp"
 #include "../services/json-help.hpp"
 #include "../widgets/action-button.hpp"
 #include "../widgets/hamburger.hpp"
@@ -199,7 +199,7 @@ struct RuiUi : ModuleWidget, IThemeChange
 #ifdef HOT_SVG
 #define HOT_POSITION(name,widget) positioned_widgets[name] = widget
 #else
-#define HOT_POSITION(name,widget) void
+#define HOT_POSITION(name,widget)
 #endif
 
     void show_fluff(bool visible)

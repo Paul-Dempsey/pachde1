@@ -1,6 +1,6 @@
 #include "Imagine.hpp"
 #include "imagine_layout.hpp"
-#include "../text.hpp"
+#include "../services/text.hpp"
 
 namespace pachde {
 

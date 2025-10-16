@@ -1,5 +1,5 @@
 #include "components.hpp"
-#include "widgets/widgetry.hpp"
+#include "widgetry.hpp"
 namespace pachde {
 
 void ThemePanel::draw(const DrawArgs &args)

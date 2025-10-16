@@ -1,8 +1,8 @@
 #pragma once
 #include <ghc/filesystem.hpp>
-#include "../components.hpp"
 #include "../plugin.hpp"
-#include "../dsp.hpp"
+#include "../services/dsp.hpp"
+#include "../widgets/components.hpp"
 #include "../widgets/pic.hpp"
 #include "traversal.hpp"
 #include "play_pause.hpp"

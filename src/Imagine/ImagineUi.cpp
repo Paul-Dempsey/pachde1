@@ -1,13 +1,13 @@
 #include "Imagine.hpp"
 #include "imagine_layout.hpp"
-#include "../theme.hpp"
-#include "../create-theme-widget.hpp"
-#include "../pic_button.hpp"
+#include "../services/theme.hpp"
+#include "../widgets/create-theme-widget.hpp"
 #include "../widgets/logo-widget.hpp"
+#include "../widgets/pic_button.hpp"
 #include "../widgets/port.hpp"
 #include "../widgets/screws.hpp"
+#include "../widgets/small_push.hpp"
 #include "../widgets/switch.hpp"
-#include "../small_push.hpp"
 #include "pic_widget.hpp"
 using namespace widgetry;
 namespace pachde {

@@ -1,11 +1,11 @@
-#include "open_file.hpp"
 #include <rack.hpp>
 #include <osdialog.h>
+#include "open-file.hpp"
 
 using namespace ::rack;
 
 namespace pachde {
-    
+
 bool openFileDialog(const std::string& folder, const std::string& filters, const std::string& filename, std::string& result)
 {
     osdialog_filters* osd_filters = osdialog_filters_parse(filters.c_str());

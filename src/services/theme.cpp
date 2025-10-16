@@ -1,6 +1,6 @@
 #include "plugin.hpp"
 #include "theme.hpp"
-#include "services/json-help.hpp"
+#include "json-help.hpp"
 
 namespace pachde {
 

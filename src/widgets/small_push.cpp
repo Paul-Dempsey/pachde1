@@ -1,6 +1,6 @@
 #include "small_push.hpp"
 
-namespace pachde {
+namespace widgetry {
 
 void SmallPush::setTheme(Theme theme)
 {
@@ -19,8 +19,8 @@ void SmallPush::applyTheme(Theme theme)
             bezel   = RampGray(G_85);
             bevel1  = RampGray(G_100);
             bevel2  = RampGray(G_50);
-            face1   = RampGray(G_90); 
-            face2   = RampGray(G_60); 
+            face1   = RampGray(G_90);
+            face2   = RampGray(G_60);
             break;
         case Theme::Dark:
             collar1 = RampGray(G_60);
@@ -28,8 +28,8 @@ void SmallPush::applyTheme(Theme theme)
             bezel   = RampGray(G_25);
             bevel1  = RampGray(G_75);
             bevel2  = RampGray(G_25);
-            face1   = RampGray(G_65); 
-            face2   = RampGray(G_15); 
+            face1   = RampGray(G_65);
+            face2   = RampGray(G_15);
             break;
         case Theme::HighContrast:
             collar1 = RampGray(G_80);
@@ -37,8 +37,8 @@ void SmallPush::applyTheme(Theme theme)
             bezel   = RampGray(G_20);
             bevel1  = RampGray(G_75);
             bevel2  = RampGray(G_25);
-            face1   = RampGray(G_80); 
-            face2   = RampGray(G_10); 
+            face1   = RampGray(G_80);
+            face2   = RampGray(G_10);
             break;
     }
 }

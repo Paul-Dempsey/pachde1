@@ -1,5 +1,5 @@
 #pragma once
-#include "../theme.hpp"
+#include "../services/theme.hpp"
 #include "../widgets/logo-widget.hpp"
 using namespace widgetry;
 

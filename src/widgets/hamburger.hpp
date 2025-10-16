@@ -1,8 +1,8 @@
 #pragma once
 #include <rack.hpp>
 using namespace ::rack;
-#include "../colors.hpp"
-#include "../text.hpp"
+#include "../services/colors.hpp"
+#include "../services/text.hpp"
 #include "tip-widget.hpp"
 
 namespace widgetry {

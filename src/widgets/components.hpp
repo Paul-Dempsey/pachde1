@@ -1,7 +1,7 @@
 #pragma once
-#include "plugin.hpp"
-#include "colors.hpp"
-#include "theme.hpp"
+#include "../plugin.hpp"
+#include "../services/colors.hpp"
+#include "../services/theme.hpp"
 #include "create-theme-widget.hpp"
 
 using namespace ::rack;

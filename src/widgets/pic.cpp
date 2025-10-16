@@ -1,7 +1,7 @@
 #include <rack.hpp>
 #include "stb_image.h"
 #include "pic.hpp"
-#include "../colors.hpp"
+#include "../services/colors.hpp"
 
 using namespace ::rack;
 namespace widgetry {
@@ -31,7 +31,7 @@ bool Pic::open(const std::string& filename)
 }
 
 unsigned char * Pic::end() const
-{ 
+{
     assert(_data);
     return _data + 4 * (_height * _width);
 }
@@ -69,7 +69,7 @@ NVGcolor Pic::pixel(int x, int y) const
         // switch (_components) {
         //     case 1:
         //         return nvgRGB(value, value, value);
-        //     case 2: 
+        //     case 2:
         //         return nvgRGBA(value, value, value, pixel[1]);
         //     case 3:
         //         return nvgRGB(value, pixel[1], pixel[2]);
@@ -291,7 +291,7 @@ Pic * CreateHueRamp(int width, int height, bool vertical)
     return p;
 }
 
-// init a saturation-lightness spectrum 
+// init a saturation-lightness spectrum
 // for a given hue on a 256x256 image
 void SetSLSpectrum(Pic* pic, float hue) {
     unsigned char* data = pic->_data;

@@ -1,9 +1,8 @@
-#include "components.hpp"
 #include "resizable.hpp"
 
 namespace pachde {
 
-json_t* ResizableModule::dataToJson() 
+json_t* ResizableModule::dataToJson()
 {
     auto root = ThemeModule::dataToJson();
     json_object_set_new(root, "width", json_integer(width));
@@ -129,7 +128,7 @@ void ModuleResizeHandle::step() {
 void ModuleResizeHandle::draw(const DrawArgs &args)
 {
     OpaqueWidget::draw(args);
- 
+
     if (!hovered)
         return;
     assert(module);

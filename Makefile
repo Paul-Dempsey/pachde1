@@ -8,29 +8,29 @@ FLAGS += -O3
 FLAGS += -DNDEBUG
 endif
 
-SOURCES += src/colors.cpp
-SOURCES += src/components.cpp
-SOURCES += src/dsp.cpp
-SOURCES += src/open_file.cpp
-SOURCES += src/pic_button.cpp
 SOURCES += src/plugin.cpp
 SOURCES += src/resizable.cpp
-SOURCES += src/small_push.cpp
-SOURCES += src/text.cpp
-SOURCES += src/theme.cpp
 
 # widgets
 SOURCES += src/widgets/draw-logo.cpp
 SOURCES += src/widgets/pic.cpp
+SOURCES += src/widgets/pic_button.cpp
+SOURCES += src/widgets/components.cpp
 SOURCES += src/widgets/port.cpp
 SOURCES += src/widgets/screws.cpp
+SOURCES += src/widgets/small_push.cpp
 SOURCES += src/widgets/switch.cpp
 SOURCES += src/widgets/widgetry.cpp
 
 # services
+SOURCES += src/services/colors.cpp
+SOURCES += src/services/dsp.cpp
 SOURCES += src/services/json-help.cpp
+SOURCES += src/services/open-file.cpp
 SOURCES += src/services/rack-help.cpp
 SOURCES += src/services/svg-query.cpp
+SOURCES += src/services/text.cpp
+SOURCES += src/services/theme.cpp
 
 # Null module
 SOURCES += src/Null/Null.cpp

@@ -1,6 +1,6 @@
 #pragma once
 #include <rack.hpp>
-#include "../colors.hpp"
+#include "../services/colors.hpp"
 #include "pic.hpp"
 
 using namespace rack;
@@ -9,7 +9,7 @@ namespace widgetry {
 struct HueWidget : OpaqueWidget
 {
     std::function<void(float)> clickHandler;
-    
+
     float hue = 0.f;
     cachePic* ramp = nullptr;
     Vec drag_pos;
@@ -49,7 +49,7 @@ struct HueWidget : OpaqueWidget
         }
         OpaqueWidget::onContextDestroy(e);
     }
-    
+
     void onEnter(const EnterEvent &e) override
     {
         OpaqueWidget::onEnter(e);

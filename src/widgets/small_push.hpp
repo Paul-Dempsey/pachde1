@@ -1,10 +1,9 @@
 #pragma once
 #include "plugin.hpp"
-#include "colors.hpp"
-#include "theme.hpp"
 #include "components.hpp"
 
-namespace pachde {
+using namespace pachde;
+namespace widgetry {
 
 struct SmallPush: OpaqueWidget, IBasicTheme
 {

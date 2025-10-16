@@ -1,12 +1,12 @@
 #include <rack.hpp>
 using namespace ::rack;
-#include "../components.hpp"
-#include "../open_file.hpp"
+#include "../services/json-help.hpp"
+#include "../services/open-file.hpp"
+#include "../services/rack-help.hpp"
 #include "../widgets/action-button.hpp"
+#include "../widgets/components.hpp"
 #include "../widgets/hamburger.hpp"
 #include "../widgets/screws.hpp"
-#include "../services/json-help.hpp"
-#include "../services/rack-help.hpp"
 #include "skiff-help.hpp"
 #include "cloak.hpp"
 
@@ -124,7 +124,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
 #ifdef HOT_SVG
 #define HOT_POSITION(name,widget) positioned_widgets[name] = widget
 #else
-#define HOT_POSITION(name,widget) void
+#define HOT_POSITION(name,widget)
 #endif
 
     void makeUi(Theme theme) {

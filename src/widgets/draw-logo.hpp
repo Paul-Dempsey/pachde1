@@ -1,6 +1,6 @@
 #pragma once
 #include "widgetry.hpp"
-
+using namespace pachde;
 namespace widgetry {
 
 void DrawLogo(NVGcontext * vg, float x, float y, NVGcolor fill, float scale = 1.0f);

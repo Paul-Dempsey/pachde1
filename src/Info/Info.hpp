@@ -1,9 +1,9 @@
 #pragma once
 #include <rack.hpp>
 #include "text_align.hpp"
-#include "../components.hpp"
-#include "../resizable.hpp"
+#include "../widgets/components.hpp"
 #include "../widgets/logo-widget.hpp"
+#include "../resizable.hpp"
 
 using namespace ::rack;
 //using namespace widgetry;

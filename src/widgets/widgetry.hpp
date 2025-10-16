@@ -1,7 +1,6 @@
 #pragma once
 #include "../plugin.hpp"
-#include "../components.hpp"
-using namespace pachde;
+#include "components.hpp"
 
 namespace widgetry {
 
@@ -14,7 +13,6 @@ TWidget* Center(TWidget * widget) {
 }
 
 // dispatch a Dirty event to the widget
-void dirtyWidget(Widget* widget);
-
+void dirtyWidget(::rack::widget::Widget* widget);
 
 }

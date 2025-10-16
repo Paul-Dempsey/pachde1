@@ -1,6 +1,6 @@
 #pragma once
 #include <rack.hpp>
-#include "components.hpp"
+#include "widgets/components.hpp"
 using namespace ::rack;
 namespace pachde {
 

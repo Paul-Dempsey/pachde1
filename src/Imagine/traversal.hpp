@@ -1,6 +1,6 @@
 #pragma once
 #include <rack.hpp>
-#include "../colors.hpp"
+#include "../services/colors.hpp"
 #include "../widgets/pic.hpp"
 #include "imagine_layout.hpp"
 
@@ -57,7 +57,7 @@ struct TraversalBase : ITraversal
 
     void reset() override {
         position = Vec(0.f, 0.f);
-    }    
+    }
 
     void set_position(Vec pos) override
     {
@@ -142,9 +142,9 @@ struct Vinyl : TraversalBase {
 
 struct Bounce : TraversalBase {
     float angle;
-    
+
     Bounce()
-    { 
+    {
         position.x = image_size.x/2.0f;
         position.y = image_size.y/2.0f;
         angle = random::uniform()*TWO_PI;
