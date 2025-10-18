@@ -3,6 +3,7 @@ using namespace ::rack;
 #include "../services/json-help.hpp"
 #include "../services/open-file.hpp"
 #include "../services/rack-help.hpp"
+#include "../services/svg-theme-2.hpp"
 #include "../widgets/action-button.hpp"
 #include "../widgets/components.hpp"
 #include "../widgets/hamburger.hpp"
@@ -115,10 +116,13 @@ struct SkiffUi : ModuleWidget, IThemeChange
             my_module->ui = this;
         }
 
+        auto th = svg_theme_2::loadFile(asset::plugin(pluginInstance, "res/test.vgt"));
+
         derailed = is_rail_visible();
         theme_holder = module ? module : new ThemeBase();
         theme_holder->setNotify(this);
         applyTheme(GetPreferredTheme(theme_holder));
+
     }
 
 #ifdef HOT_SVG

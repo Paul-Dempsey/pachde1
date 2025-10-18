@@ -27,8 +27,10 @@ SOURCES += src/services/colors.cpp
 SOURCES += src/services/dsp.cpp
 SOURCES += src/services/json-help.cpp
 SOURCES += src/services/open-file.cpp
+SOURCES += src/services/packed-color.cpp
 SOURCES += src/services/rack-help.cpp
 SOURCES += src/services/svg-query.cpp
+SOURCES += src/services/svg-theme-2.cpp
 SOURCES += src/services/text.cpp
 SOURCES += src/services/theme.cpp
 

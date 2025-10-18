@@ -1,4 +1,4 @@
-#include "plugin.hpp"
+#include "../plugin.hpp"
 #include "theme.hpp"
 #include "json-help.hpp"
 

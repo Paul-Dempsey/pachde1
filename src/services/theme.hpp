@@ -1,6 +1,6 @@
 #pragma once
 #include <rack.hpp>
-#include "colors.hpp"
+#include "./colors.hpp"
 using namespace ::rack;
 namespace pachde {
 

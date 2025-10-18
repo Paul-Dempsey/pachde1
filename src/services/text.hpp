@@ -3,7 +3,7 @@
 #define PACHDE_TEXT_HPP_INCLUDED
 #include <rack.hpp>
 #include <string>
-#include "colors.hpp"
+#include "./colors.hpp"
 using namespace ::rack;
 
 namespace pachde {
@@ -29,7 +29,7 @@ enum class BaselineCorrection {
     Baseline
 };
 
-// The y coordinate is the baseline (BaselineCorrection::none) 
+// The y coordinate is the baseline (BaselineCorrection::none)
 // or the bottom of text box (BaselineCorrection::Baseline).
 // Text style must have been previously set.
 void RightAlignText(NVGcontext *vg, float x, float y, const char * text, const char * end, BaselineCorrection correction = BaselineCorrection::None);

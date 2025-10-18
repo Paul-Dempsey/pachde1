@@ -1,6 +1,8 @@
 #pragma once
 #include <rack.hpp>
 using namespace ::rack;
+#include "packed-color.hpp"
+using namespace packed_color;
 
 namespace pachde {
 
@@ -90,24 +92,13 @@ inline NVGcolor nvgHSLAf(float h, float s, float l, float a)
     return color;
 }
 
-// 8-bit (0-255) abgr packed into a uint32_t.
-typedef uint32_t PackedColor;
-
-inline PackedColor PackRGBA(uint32_t r, uint32_t g, uint32_t b, uint32_t a) {
-    return r | (g << 8u) | (b << 16u) | (a << 24u);
-}
-
-inline PackedColor PackRGB(uint32_t r, uint32_t g, uint32_t b) {
-    return PackRGBA(r, g, b, 255u);
-}
-
 inline NVGcolor fromPacked(PackedColor co)
 {
     return nvgRGBA(co & 0xff, (co >> 8) & 0xff, (co >> 16) & 0xff, (co >> 24) & 0xff);
 }
 
 inline PackedColor toPacked(NVGcolor co) {
-    return PackRGBA(
+    return packRgba(
         static_cast<uint32_t>(co.r * 255),
         static_cast<uint32_t>(co.g * 255),
         static_cast<uint32_t>(co.b * 255),
