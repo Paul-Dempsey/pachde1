@@ -324,7 +324,7 @@ bool parse_stop(const char *scan, GradientStop& stop, const char **end, ErrorCon
             case StyleKey::Offset: {
                 scan = skip_space(token_end);
                 float f = parse_float(scan, end);
-                if (_isnanf(f)) {
+                if (std::isnan(f)) {
                     if (error_context) {
                         error_context->setErrorText(ErrorCode::ExpectedFloat, scan);
                     }
@@ -618,7 +618,7 @@ const char* parse_style(const char *scan, std::shared_ptr<Style>& result, ErrorC
             case StyleKey::Opacity: {
                 scan = end;
                 float f = parse_float(scan, &end);
-                if (_isnanf(f)) {
+                if (std::isnan(f)) {
                     if (error_context) {
                         error_context->setErrorText(ErrorCode::ExpectedFloat, scan);
                     }
@@ -645,7 +645,7 @@ const char* parse_style(const char *scan, std::shared_ptr<Style>& result, ErrorC
             case StyleKey::Width: {
                 scan = end;
                 float f = parse_float(scan, &end);
-                if (_isnanf(f)) {
+                if (std::isnan(f)) {
                     if (error_context) {
                         error_context->setErrorText(ErrorCode::ExpectedFloat, scan);
                     }

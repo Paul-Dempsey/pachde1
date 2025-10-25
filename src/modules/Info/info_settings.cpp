@@ -1,5 +1,5 @@
 #include "info_settings.hpp"
-#include "info.hpp"
+#include "Info.hpp"
 #include "services/open-file.hpp"
 #include "services/json-help.hpp"
 
