@@ -9,9 +9,9 @@ PicButton::PicButton()
     line.a = 0.f; // force theme init
 }
 
-void PicButton::setTheme(Theme theme)
+void PicButton::setTheme(Theme new_theme)
 {
-    theme = theme;
+    theme = new_theme;
     gradient_stop_y = 17.5;
     gradient_stop_x = 10.f;
     switch (theme) {
