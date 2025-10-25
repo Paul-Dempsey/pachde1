@@ -18,7 +18,7 @@ struct GradientStop {
 
     void reset() { index = -1; color = colors::NoColor; offset = NoOffset; }
     bool hasIndex() const { return index >= 0; }
-    bool hasOffset() const { return !_isnanf(offset); }
+    bool hasOffset() const { return !std::isnan(offset); }
 };
 
 struct Gradient {

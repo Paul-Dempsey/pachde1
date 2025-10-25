@@ -208,7 +208,7 @@ bool parse_hsla_part(float &result, const char *pos, const char **stop)
     while (is_number_sep(*pos)) pos++;
     const char * end;
     float f = parse_float(pos, &end);
-    if ((pos == end) || _isnanf(f)) {
+    if ((pos == end) || std::isnan(f)) {
         result = f;
         *stop = pos;
         return false;
