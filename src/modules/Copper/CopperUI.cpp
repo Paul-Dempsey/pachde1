@@ -142,7 +142,7 @@ void CopperUi::makeUi(Theme theme)
     ThemeCache& themes = getThemeCache();
     auto svg_theme = themes.getTheme(ThemeName(theme));
 
-    setPanel(createSvgThemePanel<CopperSvg>(getRackSvgs(), svg_theme));
+    setPanel(createSvgThemePanel<CopperSvg>(&my_svgs, svg_theme));
 
     if (theme_holder->hasScrews()) {
         AddScrewCaps(this, theme, COPPER_PACKED, SCREWS_OUTSIDE, WhichScrew::TOP_SCREWS);

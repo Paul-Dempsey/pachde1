@@ -102,6 +102,7 @@ struct Rui : ThemeModule
     }
 
     void dataFromJson(json_t* root) override {
+        Base::dataFromJson(root);
         stopped = get_json_bool(root, "stopped", false);
         theme_name = get_json_string(root, "theme", "Light");
     }

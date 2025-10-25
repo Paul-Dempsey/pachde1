@@ -5,18 +5,19 @@ using namespace widgetry;
 
 namespace pachde {
 
-InfoPanel::InfoPanel(InfoModule* module, InfoTheme* info, Vec size)
+InfoPanel::InfoPanel(InfoModule* module, InfoSettings* info, ThemeBase* theme, Vec size)
 {
     this->module = module;
     preview = !module;
-    info_theme = info;
+    settings = info;
+    theme_holder = theme;
     box.size = size;
 }
 
 void InfoPanel::fetchColors()
 {
-    panel = info_theme->getDisplayMainColor();
-    text_color = info_theme->getDisplayTextColor();
+    panel = settings->getDisplayMainColor();
+    text_color = settings->getDisplayTextColor();
     if (module && module->getCopperTarget() != CopperTarget::None) {
         auto left = toPacked(module->leftExpanderColor());
         auto right = toPacked(module->rightExpanderColor());
@@ -24,11 +25,11 @@ void InfoPanel::fetchColors()
             case CopperTarget::Text: {
                 if (packed_color::visible(left)) {
                     text_color = left;
-                    info_theme->setUserTextColor(text_color);
+                    settings->setUserTextColor(text_color);
                 }
                 if (packed_color::visible(right)) {
                     text_color = right;
-                    info_theme->setUserTextColor(text_color);
+                    settings->setUserTextColor(text_color);
                 }
             } break;
 
@@ -43,7 +44,7 @@ void InfoPanel::fetchColors()
                     panel = right;
                 }
                 if (set_panel) {
-                    info_theme->setMainColor(panel);
+                    theme_holder->setMainColor(panel);
                 }
             } break;
 
@@ -62,9 +63,9 @@ void InfoPanel::step()
 void InfoPanel::showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, std::string text)
 {
     nvgScissor(args.vg, RECT_ARGS(args.clipBox));
-    auto font_size = info_theme->getFontSize();
+    auto font_size = settings->getFontSize();
     SetTextStyle(args.vg, font, fromPacked(text_color), font_size);
-    nvgTextAlign(args.vg, nvgAlignFromHAlign(info_theme->getHorizontalAlignment()));
+    nvgTextAlign(args.vg, nvgAlignFromHAlign(settings->getHorizontalAlignment()));
     nvgTextBox(args.vg, box.pos.x + 10.f, box.pos.y + ONE_HP + font_size, box.size.x - 15.f, text.c_str(), nullptr);
     nvgResetScissor(args.vg);
 }
@@ -86,12 +87,12 @@ void InfoPanel::drawText(const DrawArgs &args)
 {
     std::string text = module ? module->text : "<sample text>";
     if (!text.empty()) {
-        auto font = APP->window->loadFont(info_theme->font_file);
+        auto font = APP->window->loadFont(settings->font_file);
         if (FontOk(font)) {
             showText(args, font, text);
         } else {
-            info_theme->resetFont();
-            font = APP->window->loadFont(info_theme->font_file);
+            settings->resetFont();
+            font = APP->window->loadFont(settings->font_file);
             if (FontOk(font)) {
                 showText(args, font, text);
             } else {
@@ -104,7 +105,7 @@ void InfoPanel::drawText(const DrawArgs &args)
 
 void InfoPanel::drawLayer(const DrawArgs &args, int layer)
 {
-    if (layer == 1 && info_theme->getBrilliant()) {
+    if (layer == 1 && settings->getBrilliant()) {
         drawText(args);
     }
 }
@@ -116,7 +117,7 @@ void InfoPanel::draw(const DrawArgs &args)
     nvgFillColor(args.vg, fromPacked(panel));
     nvgFill(args.vg);
 
-    if (!info_theme->getBrilliant()) {
+    if (!settings->getBrilliant()) {
         drawText(args);
     }
 

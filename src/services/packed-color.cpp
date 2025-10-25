@@ -219,6 +219,8 @@ bool parse_hsla_part(float &result, const char *pos, const char **stop)
         result = (f > 100.f) ? 1.f : f * .01;
     } else if (f > 1.0) {
         result = 1.f;
+    } else {
+        result = f;
     }
     *stop = pos;
     return true;
@@ -239,7 +241,7 @@ bool parseHslaColor(PackedColor& result, PackedColor default_value, const char *
     bool is_alpha = ('a' == *pos++);
     if (is_alpha) pos++;
 
-    float h, s, l, a;
+    float h{0.f}, s{1.f}, l{1.f}, a{1.f};
     const char * end;
 
     uint64_t number = parse_uint64(pos, &end);
@@ -296,7 +298,7 @@ bool parseHexColor(PackedColor& result, PackedColor default_value, const char *p
         case 3: break;
         case 4: is_alpha = true; break;
         case 6: short_hex = false; break;
-        case 8: is_alpha = true; short_hex = false; break;
+        case 8: short_hex = false; is_alpha = true; break;
         default:
             *stop = scan;
             result = default_value;
@@ -305,11 +307,11 @@ bool parseHexColor(PackedColor& result, PackedColor default_value, const char *p
     int r,g,b,a;
     a = 0xff;
     if (short_hex) {
-        r = hex_value(*pos++);
-        g = hex_value(*pos++);
-        b = hex_value(*pos++);
+        r = hex_value(*pos++) << 4;
+        g = hex_value(*pos++) << 4;
+        b = hex_value(*pos++) << 4;
         if (is_alpha) {
-            a = hex_value(*pos++);
+            a = hex_value(*pos++) << 4;
         }
     } else {
         auto hi = hex_value(*pos++);
@@ -323,7 +325,7 @@ bool parseHexColor(PackedColor& result, PackedColor default_value, const char *p
 
         if (is_alpha) {
             hi = hex_value(*pos++);
-            a = hex_value(*pos++);
+            a = (hi << 4) | hex_value(*pos++);
         }
     }
     assert(pos == scan);

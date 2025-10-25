@@ -1,6 +1,5 @@
 # pachde1 TODO
 
-- Module svg cache for widgets because theme is local to module.
 - Symbol button widget
 - Replace pallette menu with the CHEM color picker
   - Add alpha to picker
@@ -12,7 +11,7 @@
 
 ## Skiff
 
-- Undo for PackModules
+- Undo for PackModules?
 
 ## Fancy background
 

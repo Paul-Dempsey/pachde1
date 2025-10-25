@@ -20,7 +20,7 @@ struct SkiffUi;
 
 struct Skiff : ThemeModule
 {
-    using Base = Module;
+    using Base = ThemeModule;
 
     std::string custom_rail_file = asset::user("");
     int rail_item{-1};
@@ -34,7 +34,7 @@ struct Skiff : ThemeModule
 
     json_t* dataToJson() override
     {
-        auto root = json_object();
+        json_t *root = Base::dataToJson();
         set_json(root, "rail-file", custom_rail_file);
         set_json_int(root, "alt-rail", rail_item);
         set_json(root, "rack-screws", screws);
@@ -83,9 +83,10 @@ struct SkiffUi : ModuleWidget, IThemeChange
 {
     using Base = ModuleWidget;
 
-    Skiff* my_module;
-    ThemeBase* theme_holder;
+    Skiff* my_module{nullptr};
+    ThemeBase* theme_holder{nullptr};
     SvgCache my_svgs;
+    RailMenu* ham{nullptr};
 
     bool request_custom_rail{false};
     bool other_skiff{false};
@@ -115,6 +116,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         if (ChangedItem::Theme == item) {
             auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
             my_svgs.changeTheme(svg_theme);
+            ham->applyTheme(svg_theme);
             sendDirty(this);
         }
     }
@@ -142,12 +144,12 @@ struct SkiffUi : ModuleWidget, IThemeChange
         std::map<std::string, ::math::Rect> bounds;
         svg_query::boundsIndex(layout, "k:", bounds, true);
 
-        auto menu = Center(createWidget<RailMenu>(bounds["k:rail-menu"].getCenter()));
-        HOT_POSITION("k:rail-menu", menu);
-        menu->setUi(this);
-        menu->describe("Change Rails");
-        menu->applyTheme(svg_theme);
-        addChild(menu);
+        ham= Center(createWidget<RailMenu>(bounds["k:rail-menu"].getCenter()));
+        HOT_POSITION("k:rail-menu", ham);
+        ham->setUi(this);
+        ham->describe("Change Rails");
+        ham->applyTheme(svg_theme);
+        addChild(ham);
 
         button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:unrail-btn"].getCenter()));
         HOT_POSITION("k:unrail-btn", button);
@@ -427,9 +429,8 @@ struct SkiffUi : ModuleWidget, IThemeChange
                 e.consume(this);
                 my_svgs.reloadAll();
                 reloadThemeCache();
+                onChangeTheme(ChangedItem::Theme);
                 auto panel = dynamic_cast<SvgThemePanel<SkiffSvg>*>(getPanel());
-                auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
-                panel->updatePanel(svg_theme);
                 std::map<std::string, ::math::Rect> bounds;
                 svg_query::boundsIndex(panel->svg, "k:", bounds, true);
                 for (auto kv: positioned_widgets) {

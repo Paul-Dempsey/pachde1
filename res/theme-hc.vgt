@@ -7,22 +7,9 @@
        logo = #fafafa
         sep = #888
      symbol = #dedede
- jack-glyph = #dedede stroke #ccc
       patty = hsl(0,0,1)
 patty-hover = hsl(0,0,.5)
  info-glyph = hsl(0,0%,95%)
-
-// Copper
-medallion = none stroke #f9a54b
-picker-bg = none
-   out-bg = #000 stroke #ffffff
-// Copper mini
-minilabel = #bfbfbf
-mini-out-bg = #cc8800
-    i-sep = #cccccc
-    o-sep = #cccccc
-   lab-in = #bfbfbf
-  lab-out = #bfbfbf
 
 // knobs
 k-bg = [ #737373, #0d0d0d]
@@ -32,13 +19,27 @@ k-pin = stroke #202020
 k-pointer = #cedcf2
 k-ring = stroke #d9d9d9
 
+// Coppers
+copper-title = #f9a806
+medallion = none stroke #f9a54b
+picker-bg = none
+   out-bg = #000 stroke #ffffff
+// Copper mini
+minilabel = #bfbfbf
+mini-out-bg = #cc8800
+    i-sep = #888
+    o-sep = none
+   lab-in = #bfbfbf
+  lab-out = #202020
+
 // Skiff
+jack-glyph = #dedede stroke #ccc
 unscrew = #e6e6e6 stroke #000
 unscrew-slot = #000 stroke none
-unrail-slash = none stroke #dedede80
+unrail-slash = none stroke #dedededd
 
 // Rui
-fluff-co = none stroke #50aeca width .35
-fluff-ct = none stroke #50ca77 width .35
-fluff-b  = none stroke #ca50b8 width .35
-fluff-h  = none stroke #b1da29 width .35
+fluff-co = none stroke #50aeca width .65
+fluff-ct = none stroke #50ca77 width .65
+fluff-b  = none stroke #ca50b8 width .65
+fluff-h  = none stroke #b1da29 width .65

@@ -1,16 +1,14 @@
-#include "info_theme.hpp"
+#include "info_settings.hpp"
+#include "info.hpp"
 #include "services/open-file.hpp"
 #include "services/json-help.hpp"
 
 namespace pachde {
 
-void InfoTheme::reset()
+void InfoSettings::reset()
 {
     theme_panel_color = info_constant::PANEL_DEFAULT;
     theme_text_color = info_constant::TEXT_DEFAULT;
-    setScrews(true);
-    setMainColor(colors::NoColor);
-    setThemeSetting(DefaultThemeSetting);
     setUserPanelBackground(colors::NoColor);
     setUserTextColor(colors::NoColor);
     setHorizontalAlignment(HAlign::Left);
@@ -19,39 +17,37 @@ void InfoTheme::reset()
     resetFont();
 }
 
-void InfoTheme::randomize()
+void InfoSettings::randomize()
 {
-    RandomizeTheme(this, false);
-
     setUserPanelBackground(random::u32());
     setUserTextColor(packed_color::opaque(random::u32()));
     setHorizontalAlignment(static_cast<HAlign>(random::get<uint32_t>() % 3));
     setBrilliant(random::get<bool>());
 }
 
-float InfoTheme::getFontSize() { return font_size; }
-void InfoTheme::setFontSize(float size) { font_size = clamp(size, info_constant::MIN_FONT_SIZE, info_constant::MAX_FONT_SIZE); }
-HAlign InfoTheme::getHorizontalAlignment() { return horizontal_alignment; }
-void InfoTheme::setHorizontalAlignment(HAlign h) { horizontal_alignment = h; }
+float InfoSettings::getFontSize() { return font_size; }
+void InfoSettings::setFontSize(float size) { font_size = clamp(size, info_constant::MIN_FONT_SIZE, info_constant::MAX_FONT_SIZE); }
+HAlign InfoSettings::getHorizontalAlignment() { return horizontal_alignment; }
+void InfoSettings::setHorizontalAlignment(HAlign h) { horizontal_alignment = h; }
 
-PackedColor InfoTheme::getDisplayMainColor() {
+PackedColor InfoSettings::getDisplayMainColor() {
     return visible(main_color) ? main_color : theme_panel_color;
 }
-PackedColor InfoTheme::getDisplayTextColor() {
+PackedColor InfoSettings::getDisplayTextColor() {
     return visible(user_text_color) ? user_text_color : theme_text_color;
 }
 
-void InfoTheme::setUserPanelBackground(PackedColor color) { user_panel_color = color; }
-PackedColor InfoTheme::getUserPanelBackground() { return user_panel_color; }
+void InfoSettings::setUserPanelBackground(PackedColor color) { user_panel_color = color; }
+PackedColor InfoSettings::getUserPanelBackground() { return user_panel_color; }
 
-void InfoTheme::setUserTextColor(PackedColor color) { user_text_color = color; }
-PackedColor InfoTheme::getUserTextColor() {return user_text_color; }
+void InfoSettings::setUserTextColor(PackedColor color) { user_text_color = color; }
+PackedColor InfoSettings::getUserTextColor() {return user_text_color; }
 
-void InfoTheme::setBrilliant(bool brilliantness) { brilliant = brilliantness; }
-bool InfoTheme::getBrilliant() { return brilliant; }
-void InfoTheme::toggleBrilliant() { brilliant = !brilliant; }
+void InfoSettings::setBrilliant(bool brilliantness) { brilliant = brilliantness; }
+bool InfoSettings::getBrilliant() { return brilliant; }
+void InfoSettings::toggleBrilliant() { brilliant = !brilliant; }
 
-json_t* InfoTheme::save(json_t* root)
+json_t* InfoSettings::save(json_t* root)
 {
     char hex[10];
     if (visible(user_panel_color)) {
@@ -73,8 +69,7 @@ json_t* InfoTheme::save(json_t* root)
     return root;
 }
 
-void InfoTheme::load(json_t* root) {
-    ThemeBase::load(root);
+void InfoSettings::load(json_t* root) {
     using namespace info_constant;
     auto color_string = get_json_string(root, "text-background");
     if (!color_string.empty()) {
@@ -99,7 +94,7 @@ void InfoTheme::load(json_t* root) {
 }
 
 
-void InfoTheme::setTheme(Theme theme) {
+void InfoSettings::setTheme(Theme theme) {
     using namespace colors;
     switch (theme) {
         default:
@@ -119,7 +114,7 @@ void InfoTheme::setTheme(Theme theme) {
     };
 }
 
-bool InfoTheme::fontDialog()
+bool InfoSettings::fontDialog()
 {
     std::string path;
     bool ok = openFileDialog(font_folder, "Fonts (.ttf):ttf;Any (*):*", font_file, path);

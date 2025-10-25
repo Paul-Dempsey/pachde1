@@ -7,9 +7,8 @@
        logo = #000
         sep = #888
      symbol = #000
- jack-glyph = #dedede stroke #000
-      patty = #444
-patty-hover = hsl(0,0%,55%)
+      patty = #222
+patty-hover = hsl(216, .5, .5)
  info-glyph = hsl(0,0%,25%)
 
 // knobs
@@ -21,6 +20,7 @@ k-pointer = #457aa6
 k-ring    = stroke #457aa6
 
 // Coppers
+copper-title = #000
   medallion = #f9a54b stroke #f9a54b
   picker-bg = #888
      out-bg = #888 stroke none
@@ -33,7 +33,13 @@ k-ring    = stroke #457aa6
 mini-out-bg = none
 
 // Skiff
+jack-glyph = #dedede stroke #000
 //unscrew = #dedede stroke #000
 //unscrew-slot = #000 stroke none
 unrail-slash = none stroke #00000080
 
+// Rui
+//fluff-co = none stroke #50aeca width .35
+//fluff-ct = none stroke #50ca77 width .35
+//fluff-b  = none stroke #ca50b8 width .35
+//fluff-h  = none stroke #b1da29 width .35

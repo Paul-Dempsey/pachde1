@@ -17,14 +17,16 @@ InfoModuleWidget::InfoModuleWidget(InfoModule* module)
     my_module = module;
     if (module) {
         box.size = Vec(module->width * RACK_GRID_WIDTH, RACK_GRID_HEIGHT);
-        info_theme = module->getInfoTheme();
+        settings = module->getSettings();
+        theme_holder = my_module;
     } else {
         box.size = Vec(RACK_GRID_WIDTH * 8, RACK_GRID_HEIGHT);
-        info_theme = new InfoTheme();
+        settings = new InfoSettings();
+        theme_holder = new ThemeBase();
     }
-    info_theme->setNotify(this);
     setModule(module);
-    applyThemeSetting(info_theme->getThemeSetting());
+    applyThemeSetting(theme_holder->getThemeSetting());
+    theme_holder->setNotify(this);
 }
 
 void InfoModuleWidget::addResizeHandles()
@@ -44,10 +46,11 @@ void InfoModuleWidget::onChangeTheme(ChangedItem item) // override
     switch (item) {
     case ChangedItem::Theme:
     case ChangedItem::MainColor:
-        sendChildrenThemeColor(this, info_theme->getTheme(), info_theme->getMainColor());
+        settings->setTheme(theme_holder->getTheme());
+        sendChildrenThemeColor(this, theme_holder->getTheme(), theme_holder->getMainColor());
         break;
     case ChangedItem::Screws:
-        applyScrews(info_theme->hasScrews());
+        applyScrews(theme_holder->hasScrews());
         break;
     }
 }
@@ -66,43 +69,44 @@ void InfoModuleWidget::addScrews()
 {
     if (HaveScrewChildren(this)) return;
 
-    AddScrewCaps(this, info_theme->getTheme(), info_theme->getMainColor(), ScrewAlign::SCREWS_OUTSIDE, WhichScrew::ALL_SCREWS);
+    AddScrewCaps(this, theme_holder->getTheme(), theme_holder->getMainColor(), ScrewAlign::SCREWS_OUTSIDE, WhichScrew::ALL_SCREWS);
 }
 
 void InfoModuleWidget::applyThemeSetting(ThemeSetting setting)
 {
-    info_theme->setThemeSetting(setting);
+    theme_holder->setThemeSetting(setting);
+    settings->setTheme(theme_holder->getTheme());
     if (children.empty()) {
-        panel = new InfoPanel(my_module, info_theme, box.size);
+        panel = new InfoPanel(my_module, settings, theme_holder, box.size);
         setPanel(panel);
         addResizeHandles();
-        if (info_theme->hasScrews()) {
+        if (theme_holder->hasScrews()) {
             addScrews();
         }
 
-        title = createThemeWidgetCentered<InfoSymbol>(info_theme->getTheme(), Vec(box.size.x*.5f, 7.5f));
+        title = createThemeWidgetCentered<InfoSymbol>(theme_holder->getTheme(), Vec(box.size.x*.5f, 7.5f));
         addChild(title);
 
-        logo = new LogoWidget(info_theme->getTheme(), .18f);
+        logo = new LogoWidget(theme_holder->getTheme(), .18f);
         logo->box.pos = Vec(box.size.x*.5f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f);
         addChild(widgetry::Center(logo));
 
     } else {
-        sendChildrenThemeColor(this, info_theme->getTheme(), info_theme->getMainColor());
+        sendChildrenThemeColor(this, theme_holder->getTheme(), theme_holder->getMainColor());
     }
 }
 
 void InfoModuleWidget::step()
 {
-    bool changed = info_theme->pollRackThemeChanged();
+    bool changed = theme_holder->pollRackThemeChanged();
 
     if (my_module)
     {
         box.size.x = my_module->width * RACK_GRID_WIDTH;
         // sync with module for change from presets
         if (!changed && my_module->isDirty()) {
-            applyThemeSetting(info_theme->getThemeSetting());
-            applyScrews(info_theme->hasScrews());
+            applyThemeSetting(theme_holder->getThemeSetting());
+            applyScrews(theme_holder->hasScrews());
         }
         my_module->setClean();
     }
@@ -117,12 +121,10 @@ void InfoModuleWidget::step()
 
 struct FontSizeQuantity : Quantity
 {
-    InfoTheme* info_theme;
-    explicit FontSizeQuantity(InfoTheme* it) {
-        info_theme = it;
-    }
-    void setValue(float value) override { info_theme->setFontSize(value); }
-    float getValue() override { return info_theme->getFontSize(); }
+    InfoSettings* settings{nullptr};
+    explicit FontSizeQuantity(InfoSettings* settings) : settings(settings) {}
+    void setValue(float value) override { settings->setFontSize(value); }
+    float getValue() override { return settings->getFontSize(); }
     float getMinValue() override { return info_constant::MIN_FONT_SIZE; }
     float getMaxValue() override { return info_constant::MAX_FONT_SIZE; }
     float getDefaultValue() override { return info_constant::DEFAULT_FONT_SIZE; }
@@ -133,14 +135,13 @@ struct FontSizeQuantity : Quantity
 
 struct FontSizeSlider : ui::Slider
 {
-    explicit FontSizeSlider(InfoTheme* info_theme) {
-        quantity = new FontSizeQuantity(info_theme);
+    explicit FontSizeSlider(InfoSettings* settings) {
+        quantity = new FontSizeQuantity(settings);
     }
     ~FontSizeSlider() {
         delete quantity;
     }
 };
-
 
 void InfoModuleWidget::appendContextMenu(Menu *menu)
 {
@@ -148,11 +149,11 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
         return;
 
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Info"));
-    AddThemeMenu(menu, info_theme, true, true);
+    AddThemeMenu(menu, theme_holder, true, true);
 
     menu->addChild(createCheckMenuItem("Bright text in a dark room", "",
-        [=]() { return info_theme->getBrilliant(); },
-        [=]() { info_theme->toggleBrilliant(); }));
+        [=]() { return settings->getBrilliant(); },
+        [=]() { settings->toggleBrilliant(); }));
 
     menu->addChild(new MenuSeparator);
 
@@ -181,13 +182,13 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
 
     menu->addChild(new MenuSeparator);
 
-    auto name = system::getStem(info_theme->font_file);
+    auto name = system::getStem(settings->font_file);
     menu->addChild(construct<MenuLabel>(&MenuLabel::text, name));
     menu->addChild(createMenuItem("Font...", "", [=]() {
-        info_theme->fontDialog();
+        settings->fontDialog();
     }));
 
-    FontSizeSlider* slider = new FontSizeSlider(info_theme);
+    FontSizeSlider* slider = new FontSizeSlider(settings);
     slider->box.size.x = 250.0;
     menu->addChild(slider);
 
@@ -195,18 +196,18 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
         [=](Menu *menu) {
             menu->addChild(createCheckMenuItem(
                 "Left", "",
-                [=]() { return info_theme->getHorizontalAlignment() == HAlign::Left; },
-                [=]() { info_theme->setHorizontalAlignment(HAlign::Left); }
+                [=]() { return settings->getHorizontalAlignment() == HAlign::Left; },
+                [=]() { settings->setHorizontalAlignment(HAlign::Left); }
                 ));
             menu->addChild(createCheckMenuItem(
                 "Center", "",
-                [=]() { return info_theme->getHorizontalAlignment() == HAlign::Center; },
-                [=]() { info_theme->setHorizontalAlignment(HAlign::Center); }
+                [=]() { return settings->getHorizontalAlignment() == HAlign::Center; },
+                [=]() { settings->setHorizontalAlignment(HAlign::Center); }
                 ));
             menu->addChild(createCheckMenuItem(
                 "Right", "",
-                [=]() { return info_theme->getHorizontalAlignment() == HAlign::Right; },
-                [=]() { info_theme->setHorizontalAlignment(HAlign::Right); }
+                [=]() { return settings->getHorizontalAlignment() == HAlign::Right; },
+                [=]() { settings->setHorizontalAlignment(HAlign::Right); }
                 ));
         }));
 
@@ -214,9 +215,9 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
         [=](Menu *menu) {
             MenuTextField *editField = new MenuTextField();
             editField->box.size.x = 100;
-            if (packed_color::visible(info_theme->user_text_color)) {
+            if (packed_color::visible(settings->user_text_color)) {
                 char hex[10];
-                hexFormat(info_theme->user_text_color, sizeof(hex), hex);
+                hexFormat(settings->user_text_color, sizeof(hex), hex);
                 editField->setText(hex);
             } else {
                 editField->setText(HEXPLACEHOLDER);
@@ -226,7 +227,7 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
                 if (!text.empty()) {
                     parseColor(color, colors::Black, text.c_str());
                 }
-                info_theme->setUserTextColor(color);
+                settings->setUserTextColor(color);
             };
             menu->addChild(editField);
         }));

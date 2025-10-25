@@ -6,7 +6,8 @@ std::string get_json_string(const json_t* root, const char* key, const std::stri
     if (!j) return default_value;
     auto s = json_string_value(j);
     if (!s) return default_value;
-    return s;}
+    return s;
+}
 
 std::string get_json_string(const json_t* root, const char* key)
 {

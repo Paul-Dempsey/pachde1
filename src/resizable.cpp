@@ -1,22 +1,19 @@
 #include "resizable.hpp"
+#include "services/json-help.hpp"
 
 namespace pachde {
 
 json_t* ResizableModule::dataToJson()
 {
     auto root = ThemeModule::dataToJson();
-    json_object_set_new(root, "width", json_integer(width));
+    set_json_int(root, "width", width);
     return root;
 }
 
 void ResizableModule::dataFromJson(json_t *root)
 {
     ThemeModule::dataFromJson(root);
-
-    auto j = json_object_get(root, "width");
-    if (j) {
-        width = json_integer_value(j);
-    }
+    width = get_json_int(root, "width", width);
 }
 
 void ResizableModule::setWidth(int newWidth) {

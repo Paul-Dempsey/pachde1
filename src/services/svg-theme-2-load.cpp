@@ -187,20 +187,11 @@ const char* parse_theme_name(const char *scan, std::string& name)
         return scan + 1;
     }
     auto start = scan;
-    while (is_name_char(*scan)) scan++;
-    if (scan == start) return scan;
-    name = std::string(start, scan);
-    while (true) {
-        char ch = *scan;
-        if (ch) {
-            if ('\n' == ch) {
-                return scan + 1;
-            }
-            scan++;
-        } else {
-            return scan;
-        }
-    }
+    while (*scan && '\n' != *scan) scan++;
+    const char * end = scan - 1;
+    while ((end > start) && (' ' == *end)) end--;
+    name = (end == start) ? "" : std::string(start, ++end);
+    return scan;
 }
 
 // @theme=Dark

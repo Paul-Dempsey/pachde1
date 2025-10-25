@@ -4,7 +4,7 @@
 #include "widgets/logo-widget.hpp"
 #include "resizable.hpp"
 #include "text_align.hpp"
-#include "info_theme.hpp"
+#include "info_settings.hpp"
 
 using namespace ::rack;
 namespace pachde {
@@ -13,13 +13,14 @@ enum CopperTarget { Panel, Text, None, First = Panel, Last = None };
 
 struct InfoModule : ResizableModule
 {
+    using Base = ResizableModule;
     std::string text;
-    CopperTarget copper_target = CopperTarget::Panel;
-    InfoTheme * info_theme = nullptr;
+    CopperTarget copper_target{CopperTarget::Panel};
+    InfoSettings * settings{nullptr};
 
     virtual ~InfoModule()
     {
-        if (info_theme) { delete info_theme; }
+        if (settings) { delete settings; }
     }
 
     InfoModule();
@@ -33,7 +34,7 @@ struct InfoModule : ResizableModule
     json_t* dataToJson() override;
     void dataFromJson(json_t *root) override;
 
-    InfoTheme* getInfoTheme();
+    InfoSettings* getSettings();
     NVGcolor expanderColor(rack::engine::Module::Expander& expander);
 
     NVGcolor leftExpanderColor() {
@@ -49,12 +50,13 @@ struct InfoModule : ResizableModule
 struct InfoPanel : Widget
 {
     InfoModule* module{nullptr};;
-    InfoTheme* info_theme{nullptr};;
+    InfoSettings* settings{nullptr};;
+    ThemeBase* theme_holder{nullptr};
     bool preview{false};
     PackedColor panel{colors::G80};
     PackedColor text_color{colors::G20};
 
-    InfoPanel(InfoModule* module, InfoTheme* info, Vec size);
+    InfoPanel(InfoModule* module, InfoSettings* settings, ThemeBase* theme, Vec size);
 
     void fetchColors();
     void showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, std::string text);
@@ -71,10 +73,16 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
     InfoModule* my_module{nullptr};
     Widget* title{nullptr};
     InfoPanel* panel{nullptr};
-    InfoTheme* info_theme{nullptr};
+    ThemeBase* theme_holder{nullptr};
+    InfoSettings* settings{nullptr};
     widgetry::LogoWidget* logo{nullptr};
 
-    virtual ~InfoModuleWidget() { if (!module) { delete info_theme; } }
+    virtual ~InfoModuleWidget() {
+        if (!module) {
+            delete settings;
+            delete theme_holder;
+        }
+    }
 
     explicit InfoModuleWidget(InfoModule* module);
     void addResizeHandles();

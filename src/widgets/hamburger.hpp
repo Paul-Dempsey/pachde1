@@ -13,19 +13,25 @@ struct HamData
 {
     uint8_t patties{3};
     float patty_width{1.5f};
-    NVGcolor patty_color{RampGray(G_90)};
+    NVGcolor patty_color{RampGray(G_50)};
     NVGcolor hover_color{RampGray(G_65)};
     bool hovered{false};
 
     bool applyTheme(std::shared_ptr<SvgTheme> theme) {
         if (theme) {
             PackedColor color;
-            if (!theme->getFillColor(color, "patty", true))
-                patty_color = RampGray(G_90);
-            if (!theme->getFillColor(color, "patty-hover", true))
-                patty_color = RampGray(G_65);
+            if (theme->getFillColor(color, "patty", true)) {
+                patty_color = fromPacked(color);
+            } else {
+                patty_color = RampGray(G_50);
+            }
+            if (theme->getFillColor(color, "patty-hover", true)) {
+                hover_color = fromPacked(color);
+            } else {
+                hover_color = RampGray(G_65);
+            }
         } else {
-            patty_color = RampGray(G_90);
+            patty_color = RampGray(G_50);
             hover_color = RampGray(G_65);
         }
         return false;

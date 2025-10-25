@@ -45,7 +45,7 @@ SOURCES += src/modules/Null/Null.cpp
 # Info module
 SOURCES += src/modules/Info/Info_panel.cpp
 SOURCES += src/modules/Info/info_symbol.cpp
-SOURCES += src/modules/Info/info_theme.cpp
+SOURCES += src/modules/Info/info_settings.cpp
 SOURCES += src/modules/Info/Info_ui.cpp
 SOURCES += src/modules/Info/Info.cpp
 SOURCES += src/modules/Info/text_align.cpp

@@ -8,7 +8,7 @@ namespace pachde {
 
 InfoModule::InfoModule()
 {
-    info_theme = new InfoTheme;
+    settings = new InfoSettings();
     minWidth = 4;
 }
 
@@ -16,20 +16,20 @@ void InfoModule::onReset(const ResetEvent& e) //override
 {
     dirty_settings = true;
     setCopperTarget(CopperTarget::Panel);
-    if (info_theme) { info_theme->reset(); }
+    if (settings) { settings->reset(); }
 }
 
 void InfoModule::onRandomize(const RandomizeEvent& e) //override
 {
     setCopperTarget(static_cast<CopperTarget>(random::get<uint32_t>() % 3));
-    if (info_theme) { info_theme->randomize(); }
+    if (settings) { settings->randomize(); }
     dirty_settings = true;
 }
 
 json_t* InfoModule::dataToJson() //override
 {
-    json_t* root = ResizableModule::dataToJson();
-    root = info_theme->save(root);
+    json_t* root = Base::dataToJson();
+    settings->save(root);
     set_json(root, "text", text);
     set_json_int(root, "copper-target", static_cast<int>(copper_target));
     return root;
@@ -37,18 +37,17 @@ json_t* InfoModule::dataToJson() //override
 
 void InfoModule::dataFromJson(json_t *root) //override
 {
-    ResizableModule::dataFromJson(root);
-    info_theme->load(root);
-
+    Base::dataFromJson(root);
+    settings->load(root);
     text = get_json_string(root, "text");
     int i = get_json_int(root, "copper-target", static_cast<int>(CopperTarget::Panel));
     copper_target = static_cast<CopperTarget>(clamp(i, CopperTarget::First, CopperTarget::Last));
     dirty_settings = true;
 }
 
-InfoTheme* InfoModule::getInfoTheme() {
-    assert(info_theme);
-    return info_theme;
+InfoSettings* InfoModule::getSettings() {
+    assert(settings);
+    return settings;
 }
 
 NVGcolor InfoModule::expanderColor(rack::engine::Module::Expander& expander)

@@ -1,3 +1,4 @@
+#pragma once
 #include "myplugin.hpp"
 #include "services/theme.hpp"
 #include "text_align.hpp"
@@ -14,7 +15,7 @@ namespace info_constant {
     constexpr const float MAX_FONT_SIZE{60.f};
 }
 
-struct InfoTheme : ThemeBase
+struct InfoSettings
 {
     // computed from theme
     PackedColor theme_panel_color{info_constant::PANEL_DEFAULT};
@@ -35,8 +36,8 @@ struct InfoTheme : ThemeBase
     void reset();
     void randomize();
 
-    json_t* save(json_t* root) override;
-    void load(json_t* root) override;
+    json_t* save(json_t* root);
+    void load(json_t* root);
 
     float getFontSize();
     void setFontSize(float size);

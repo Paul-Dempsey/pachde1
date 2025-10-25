@@ -89,7 +89,7 @@ void CopperMiniUI::makeUi(Theme theme)
     assert(children.empty());
     auto svg_theme = getThemeCache().getTheme(ThemeName(theme));
 
-    setPanel(createSvgThemePanel<CopperMiniSvg>(getRackSvgs(), svg_theme));
+    setPanel(createSvgThemePanel<CopperMiniSvg>(&my_svgs, svg_theme));
 
     float center = box.size.x * .5f;
     float y = 30.f;

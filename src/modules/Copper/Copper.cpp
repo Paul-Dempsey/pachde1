@@ -101,11 +101,11 @@ json_t* CopperModule::dataToJson()
 
 void CopperModule::dataFromJson(json_t* root)
 {
+    ThemeModule::dataFromJson(root);
     hue = get_json_float(root, "hue", hue);
     saturation = get_json_float(root, "sat", saturation);
     lightness = get_json_float(root, "light", lightness);
     alpha = get_json_float(root, "alpha", alpha);
-    ThemeModule::dataFromJson(root);
     dirty_settings = true;
 }
 
