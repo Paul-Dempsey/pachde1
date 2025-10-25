@@ -1,10 +1,10 @@
 #pragma once
 #include <ghc/filesystem.hpp>
-#include "../myplugin.hpp"
-#include "../services/dsp.hpp"
-#include "../services/theme-module.hpp"
-#include "../widgets/components.hpp"
-#include "../widgets/pic.hpp"
+#include "myplugin.hpp"
+#include "services/dsp.hpp"
+#include "services/theme-module.hpp"
+#include "widgets/components.hpp"
+#include "widgets/pic.hpp"
 #include "traversal.hpp"
 #include "play_pause.hpp"
 

@@ -9,6 +9,8 @@ FLAGS += -O3
 FLAGS += -DNDEBUG
 endif
 
+FLAGS += -Isrc -Isrc/widgets -Isrc/services
+
 SOURCES += src/myplugin.cpp
 SOURCES += src/resizable.cpp
 
@@ -38,36 +40,36 @@ SOURCES += src/services/theme.cpp
 SOURCES += src/services/theme-module.cpp
 
 # Null module
-SOURCES += src/Null/Null.cpp
+SOURCES += src/modules/Null/Null.cpp
 
 # Info module
-SOURCES += src/Info/Info_panel.cpp
-SOURCES += src/Info/info_symbol.cpp
-SOURCES += src/Info/info_theme.cpp
-SOURCES += src/Info/Info_ui.cpp
-SOURCES += src/Info/Info.cpp
-SOURCES += src/Info/text_align.cpp
+SOURCES += src/modules/Info/Info_panel.cpp
+SOURCES += src/modules/Info/info_symbol.cpp
+SOURCES += src/modules/Info/info_theme.cpp
+SOURCES += src/modules/Info/Info_ui.cpp
+SOURCES += src/modules/Info/Info.cpp
+SOURCES += src/modules/Info/text_align.cpp
 
 # Copper module
-SOURCES += src/Copper/Copper.cpp
-SOURCES += src/Copper/CopperUI.cpp
-SOURCES += src/Copper/CopperMini.cpp
+SOURCES += src/modules/Copper/Copper.cpp
+SOURCES += src/modules/Copper/CopperUI.cpp
+SOURCES += src/modules/Copper/CopperMini.cpp
 
 # Imagine module
-SOURCES += src/Imagine/Imagine.cpp
-SOURCES += src/Imagine/ImaginePanel.cpp
-SOURCES += src/Imagine/ImagineUi.cpp
-SOURCES += src/Imagine/pic_widget.cpp
-SOURCES += src/Imagine/play_pause.cpp
-SOURCES += src/Imagine/traversal.cpp
+SOURCES += src/modules/Imagine/Imagine.cpp
+SOURCES += src/modules/Imagine/ImaginePanel.cpp
+SOURCES += src/modules/Imagine/ImagineUi.cpp
+SOURCES += src/modules/Imagine/pic_widget.cpp
+SOURCES += src/modules/Imagine/play_pause.cpp
+SOURCES += src/modules/Imagine/traversal.cpp
 
 # Skiff module
-SOURCES += src/Skiff/Skiff.cpp
-SOURCES += src/Skiff/skiff-help.cpp
-SOURCES += src/Skiff/cloak.cpp
+SOURCES += src/modules/Skiff/Skiff.cpp
+SOURCES += src/modules/Skiff/skiff-help.cpp
+SOURCES += src/modules/Skiff/cloak.cpp
 
 # Rui module
-SOURCES += src/Rui/Rui.cpp
+SOURCES += src/modules/Rui/Rui.cpp
 
 DISTRIBUTABLES += res
 DISTRIBUTABLES += $(wildcard LICENSE*)

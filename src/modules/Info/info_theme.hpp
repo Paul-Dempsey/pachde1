@@ -1,6 +1,6 @@
-#include "../myplugin.hpp"
+#include "myplugin.hpp"
+#include "services/theme.hpp"
 #include "text_align.hpp"
-#include "../services/theme.hpp"
 
 namespace pachde {
 using namespace packed_color;

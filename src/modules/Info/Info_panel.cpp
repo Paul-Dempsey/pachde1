@@ -1,6 +1,6 @@
 #include "Info.hpp"
-#include "../services/text.hpp"
-#include "../widgets/draw-logo.hpp"
+#include "services/text.hpp"
+#include "widgets/draw-logo.hpp"
 using namespace widgetry;
 
 namespace pachde {

@@ -1,11 +1,11 @@
 #include <rack.hpp>
 using namespace ::rack;
-#include "../widgets/components.hpp"
-#include "../services/json-help.hpp"
-#include "../widgets/action-button.hpp"
-#include "../widgets/hamburger.hpp"
-#include "../services/rack-help.hpp"
-#include "../services/theme-module.hpp"
+#include "widgets/components.hpp"
+#include "services/json-help.hpp"
+#include "widgets/action-button.hpp"
+#include "widgets/hamburger.hpp"
+#include "services/rack-help.hpp"
+#include "services/theme-module.hpp"
 
 using namespace widgetry;
 

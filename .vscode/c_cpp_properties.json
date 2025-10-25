@@ -5,7 +5,10 @@
             "includePath": [
                 "${workspaceFolder}/../../dep/**",
                 "${workspaceFolder}/../../include/**",
-                "C:/msys64/mingw64/include"
+                "C:/msys64/mingw64/include",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/widgets",
+                "${workspaceFolder}/src/services"
             ],
             "defines": [
                 "_DEBUG",

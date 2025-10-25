@@ -1,10 +1,10 @@
 #include "Info.hpp"
 #include "info_symbol.hpp"
-#include "../widgets/create-theme-widget.hpp"
-#include "../widgets/draw-logo.hpp"
-#include "../widgets/hamburger.hpp"
-#include "../widgets/logo-widget.hpp"
-#include "../widgets/screws.hpp"
+#include "widgets/create-theme-widget.hpp"
+#include "widgets/draw-logo.hpp"
+#include "widgets/hamburger.hpp"
+#include "widgets/logo-widget.hpp"
+#include "widgets/screws.hpp"
 
 using namespace widgetry;
 

@@ -1,9 +1,9 @@
 #include "Null.hpp"
-#include "../IHaveColor.hpp"
-#include "../services/json-help.hpp"
-#include "../widgets/create-theme-widget.hpp"
-#include "../widgets/hamburger.hpp"
-#include "../widgets/screws.hpp"
+#include "IHaveColor.hpp"
+#include "services/json-help.hpp"
+#include "widgets/create-theme-widget.hpp"
+#include "widgets/hamburger.hpp"
+#include "widgets/screws.hpp"
 
 using namespace widgetry;
 

@@ -1,5 +1,5 @@
 #include "skiff-help.hpp"
-#include "../myplugin.hpp"
+#include "myplugin.hpp"
 
 void replace_system_svg(const char * sys_asset, const char *alt)
 {

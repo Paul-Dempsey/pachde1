@@ -1,10 +1,10 @@
 #include "Imagine.hpp"
 #include "imagine_layout.hpp"
-#include "../services/dsp.hpp"
-#include "../services/json-help.hpp"
-#include "../services/open-file.hpp"
-#include "../services/text.hpp"
-#include "../widgets/components.hpp"
+#include "services/dsp.hpp"
+#include "services/json-help.hpp"
+#include "services/open-file.hpp"
+#include "services/text.hpp"
+#include "widgets/components.hpp"
 
 fs::file_time_type LastWriteTime(std::string path)
 {

@@ -1,8 +1,8 @@
 #pragma once
 #include <rack.hpp>
-#include "../widgets/components.hpp"
-#include "../widgets/logo-widget.hpp"
-#include "../resizable.hpp"
+#include "widgets/components.hpp"
+#include "widgets/logo-widget.hpp"
+#include "resizable.hpp"
 #include "text_align.hpp"
 #include "info_theme.hpp"
 

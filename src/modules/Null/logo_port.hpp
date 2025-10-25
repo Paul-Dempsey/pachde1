@@ -1,6 +1,6 @@
 #pragma once
-#include "../services/theme.hpp"
-#include "../widgets/logo-widget.hpp"
+#include "services/theme.hpp"
+#include "widgets/logo-widget.hpp"
 using namespace widgetry;
 
 namespace pachde {

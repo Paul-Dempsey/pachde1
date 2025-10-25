@@ -1,6 +1,6 @@
 #include "Copper.hpp"
-#include "../widgets/hamburger.hpp"
-#include "../widgets/widgetry.hpp"
+#include "widgets/hamburger.hpp"
+#include "widgets/widgetry.hpp"
 using namespace widgetry;
 
 namespace pachde {

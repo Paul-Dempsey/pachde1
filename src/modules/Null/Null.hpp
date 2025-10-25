@@ -1,7 +1,7 @@
 #pragma once
 #include <rack.hpp>
-#include "../services/colors.hpp"
-#include "../resizable.hpp"
+#include "colors.hpp"
+#include "resizable.hpp"
 #include "logo_port.hpp"
 using namespace widgetry;
 

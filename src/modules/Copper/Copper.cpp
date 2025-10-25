@@ -1,5 +1,5 @@
 #include "Copper.hpp"
-#include "../services/json-help.hpp"
+#include "services/json-help.hpp"
 
 namespace pachde {
 using namespace rack;

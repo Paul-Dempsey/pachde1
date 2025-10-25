@@ -1,7 +1,7 @@
 #pragma once
 #include <rack.hpp>
-#include "../services/colors.hpp"
-#include "../widgets/pic.hpp"
+#include "services/colors.hpp"
+#include "widgets/pic.hpp"
 #include "imagine_layout.hpp"
 
 #if defined ARCH_MAC

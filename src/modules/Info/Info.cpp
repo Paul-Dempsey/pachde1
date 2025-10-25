@@ -1,7 +1,7 @@
 #include "Info.hpp"
-#include "../services/text.hpp"
-#include "../IHaveColor.hpp" // expander
-#include "../services/json-help.hpp"
+#include "services/text.hpp"
+#include "IHaveColor.hpp" // expander
+#include "services/json-help.hpp"
 #include "info_symbol.hpp"
 
 namespace pachde {

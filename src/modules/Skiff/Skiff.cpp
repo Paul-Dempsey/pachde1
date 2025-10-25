@@ -1,13 +1,13 @@
 #include <rack.hpp>
 using namespace ::rack;
-#include "../services/json-help.hpp"
-#include "../services/open-file.hpp"
-#include "../services/rack-help.hpp"
-#include "../services/theme-module.hpp"
-#include "../widgets/action-button.hpp"
-#include "../widgets/components.hpp"
-#include "../widgets/hamburger.hpp"
-#include "../widgets/screws.hpp"
+#include "services/json-help.hpp"
+#include "services/open-file.hpp"
+#include "services/rack-help.hpp"
+#include "services/theme-module.hpp"
+#include "widgets/action-button.hpp"
+#include "widgets/components.hpp"
+#include "widgets/hamburger.hpp"
+#include "widgets/screws.hpp"
 #include "skiff-help.hpp"
 #include "cloak.hpp"
 

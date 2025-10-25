@@ -1,6 +1,6 @@
 #include "info_theme.hpp"
-#include "../services/open-file.hpp"
-#include "../services/json-help.hpp"
+#include "services/open-file.hpp"
+#include "services/json-help.hpp"
 
 namespace pachde {
 
