@@ -9,8 +9,9 @@ PicButton::PicButton()
     line.a = 0.f; // force theme init
 }
 
-void PicButton::applyTheme(Theme theme)
+void PicButton::setTheme(Theme theme)
 {
+    theme = theme;
     gradient_stop_y = 17.5;
     gradient_stop_x = 10.f;
     switch (theme) {
@@ -44,30 +45,21 @@ void PicButton::applyTheme(Theme theme)
     }
 }
 
-void PicButton::setTheme(Theme theme)
-{
-    if (isColorVisible(line) && theme == getTheme()) {
-        return;
-    }
-    IBasicTheme::setTheme(theme);
-    applyTheme(theme);
-}
-
 void PicButton::draw(const DrawArgs &args) {
     OpaqueWidget::draw(args);
 
     auto vg = args.vg;
-    auto prev_theme = getTheme();
+    auto prev_theme = theme;
     if (pressed) {
         switch (prev_theme) {
             default:
             case Theme::Unset:
             case Theme::Light:
-                applyTheme(Theme::Dark);
+                setTheme(Theme::Dark);
                 break;
             case Theme::Dark:
             case Theme::HighContrast:
-                applyTheme(Theme::Light);
+                setTheme(Theme::Light);
                 break;
         }
     }
@@ -98,8 +90,8 @@ void PicButton::draw(const DrawArgs &args) {
     nvgFillColor(vg, moon);
     nvgFill(vg);
 
-    if (prev_theme != getTheme()) {
-        applyTheme(prev_theme);
+    if (prev_theme != theme) {
+        setTheme(prev_theme);
     }
 }
 
@@ -113,7 +105,7 @@ void PicButton::onButton(const event::Button& e)
     }
     pressed = true;
 }
- 
+
 void PicButton::onDragEnd(const DragEndEvent & e)
 {
     rack::OpaqueWidget::onDragEnd(e);

@@ -1,9 +1,10 @@
 #pragma once
 #include "widgetry.hpp"
+#include "../services/theme.hpp"
 using namespace pachde;
 namespace widgetry {
 
-struct Switch : rack::Switch, IBasicTheme {
+struct Switch : rack::Switch, ISetTheme {
     int value = 0;
     int units = 2;
     NVGcolor background, frame, thumb, thumb_top, thumb_bottom;

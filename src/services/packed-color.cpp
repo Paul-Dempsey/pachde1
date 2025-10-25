@@ -1,7 +1,40 @@
 #include "packed-color.hpp"
-//#include "text.hpp" format_string
 
 namespace packed_color {
+
+const char * HEX_CHARS = "0123456789abcdef";
+inline char hex_hi(uint8_t byte) { return HEX_CHARS[(byte >> 4) & 0x0f]; }
+inline char hex_lo(uint8_t byte) { return HEX_CHARS[byte & 0x0f]; }
+
+int hexFormat(PackedColor color, int buffer_size, char * buffer) {
+    if (buffer_size < 10) {
+        return 0;
+    }
+
+    char* poke = buffer;
+    *poke++ = '#';
+    uint8_t byte;
+    // r
+    byte = color & 0xff; color >>= 8;
+    *poke++ = hex_hi(byte);
+    *poke++ = hex_lo(byte);
+    // g
+    byte = color & 0xff; color >>= 8;
+    *poke++ = hex_hi(byte);
+    *poke++ = hex_lo(byte);
+    // b
+    byte = color & 0xff; color >>= 8;
+    *poke++ = hex_hi(byte);
+    *poke++ = hex_lo(byte);
+    // a
+    byte = color & 0xff;
+    if (byte != 0xff) {
+        *poke++ = hex_hi(byte);
+        *poke++ = hex_lo(byte);
+    }
+    *poke = 0;
+    return poke-buffer;
+}
 
 float clamp(float a, float min, float max) { return a < min ? min : (a > max ? max : a); }
 
@@ -18,7 +51,7 @@ float intermediate_hue(float h, float m1, float m2)
 	return m1;
 }
 
-PackedColor packedFromHsla(float h, float s, float l, float a)
+PackedColor packHsla(float h, float s, float l, float a)
 {
 	float m1, m2;
 	h = fmodf(h, 1.0f);
@@ -65,6 +98,13 @@ bool is_hsl_prefix(const char * scan)
     return false;
 }
 
+bool parseColor(PackedColor &result, PackedColor default_value, const char *pos, const char **stop)
+{
+    if (parseHexColor(result, default_value, pos, stop)) return true;
+    if (parseHslaColor(result, default_value, pos, stop)) return true;
+    return parseRgbaColor(result, default_value, pos, stop);
+}
+
 int hex_value(char ch)
 {
     if (ch > 'f' || ch < '0') { return -1; }
@@ -100,6 +140,9 @@ inline bool is_number_sep(char ch) { return ' ' == ch || ',' == ch; }
 
 bool parse_byte(uint8_t& result, const char *pos, const char **stop)
 {
+    const char * dummy{nullptr};
+    if (!stop) stop = &dummy;
+
     while (' ' == *pos) pos++;
     uint64_t number = parse_uint64(pos, stop);
     if ((number > 255) || (pos == *stop)) {
@@ -112,7 +155,10 @@ bool parse_byte(uint8_t& result, const char *pos, const char **stop)
 
 bool parseRgbaColor(PackedColor& result, PackedColor default_value, const char *pos, const char **stop)
 {
+    const char * dummy{nullptr};
+    if (!stop) stop = &dummy;
     result = default_value;
+
     if (!is_rgb_prefix(pos)) {
         *stop = pos;
         return false;
@@ -156,6 +202,9 @@ bool parseRgbaColor(PackedColor& result, PackedColor default_value, const char *
 
 bool parse_hsla_part(float &result, const char *pos, const char **stop)
 {
+    const char * dummy{nullptr};
+    if (!stop) stop = &dummy;
+
     while (is_number_sep(*pos)) pos++;
     const char * end;
     float f = parse_float(pos, &end);
@@ -177,6 +226,8 @@ bool parse_hsla_part(float &result, const char *pos, const char **stop)
 
 bool parseHslaColor(PackedColor& result, PackedColor default_value, const char *pos, const char **stop)
 {
+    const char * dummy{nullptr};
+    if (!stop) stop = &dummy;
     result = default_value;
 
     if (!is_hsl_prefix(pos)) {
@@ -215,7 +266,7 @@ bool parseHslaColor(PackedColor& result, PackedColor default_value, const char *
         *stop = pos;
         return false;
     }
-    result = packedFromHsla(h, s, l, a);
+    result = packHsla(h, s, l, a);
     *stop = pos;
     return true;
 }
@@ -226,6 +277,9 @@ bool parseHslaColor(PackedColor& result, PackedColor default_value, const char *
 
 bool parseHexColor(PackedColor& result, PackedColor default_value, const char *pos, const char **stop)
 {
+    const char * dummy{nullptr};
+    if (!stop) stop = &dummy;
+
     while (' ' == *pos) pos++;
     if ('#' != *pos) {
         result = default_value;
@@ -276,6 +330,25 @@ bool parseHexColor(PackedColor& result, PackedColor default_value, const char *p
     result = packRgba(r,g,b,a);
     *stop = pos;
     return true;
+}
+
+namespace colors {
+    const PackedColor PortRed          {packHsla(0.f, 0.6f, 0.5f, 1.f)};
+    const PackedColor PortOrange       {packHsla(30.f/360.f, 0.80f, 0.5f, 1.f)};
+    const PackedColor PortYellow       {packHsla(60.f/360.f, 0.65f, 0.5f, 1.f)};
+    const PackedColor PortLime         {packHsla(90.f/360.f, 0.60f, 0.5f, 1.f)};
+    const PackedColor PortGreen        {packHsla(120.f/360.f, 0.5f, 0.5f, 1.f)};
+    const PackedColor PortGrass        {packHsla(150.f/360.f, 0.5f, 0.5f, 1.f)};
+    const PackedColor PortCyan         {packHsla(180.f/360.f, 0.5f, 0.5f, 1.f)};
+    const PackedColor PortCorn         {packHsla(210.f/360.f, 0.5f, 0.55f, 1.f)};
+    const PackedColor PortBlue         {packHsla(240.f/360.f, 0.5f, 0.55f, 1.f)};
+    const PackedColor PortViolet       {packHsla(270.f/360.f, 0.5f, 0.5f, 1.f)};
+    const PackedColor PortMagenta      {packHsla(300.f/360.f, 0.5f, 0.5f, 1.f)};
+    const PackedColor PortPink         {packHsla(330.f/360.f, 0.65f, 0.65f, 1.f)};
+    const PackedColor PortDefault      {packHsla(210.f/360.f, 0.5f, 0.65f, 1.f)};
+    const PackedColor PortLightOrange  {packHsla(30.f/360.f, 0.80f, 0.75f, 1.f)};
+    const PackedColor PortLightLime    {packHsla(90.f/360.f, 0.75f, 0.75f, 1.f)};
+    const PackedColor PortLightViolet  {packHsla(270.f/360.f, 0.75f, 0.75f, 1.f)};
 }
 
 } // namespace packed_color

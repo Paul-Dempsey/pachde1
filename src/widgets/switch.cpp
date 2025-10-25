@@ -9,8 +9,6 @@ Switch::Switch()
 
 void Switch::setTheme(Theme theme)
 {
-    IBasicTheme::setTheme(theme);
-
     switch (theme) {
         default:
         case Theme::Unset:
@@ -19,21 +17,21 @@ void Switch::setTheme(Theme theme)
             thumb = COLOR_BRAND;
             thumb_top = nvgRGB(0xcb, 0xdc, 0xe9);
             thumb_bottom = nvgRGB(0x2e, 0x51, 0x6b);
-            background = GrayRamp[G_75];
+            background = RampGray(G_75);
             break;
         case Theme::Dark:
             frame = RampGray(G_50);
             thumb = RampGray(G_40);
             thumb_top = RampGray(G_70);
             thumb_bottom = RampGray(G_10);
-            background = GrayRamp[G_30];
+            background = RampGray(G_30);
             break;
         case Theme::HighContrast:
             frame = RampGray(G_50);
             thumb = RampGray(G_60);
             thumb_top = RampGray(G_85);
             thumb_bottom = RampGray(G_35);
-            background = GrayRamp[G_15];
+            background = RampGray(G_15);
             break;
     }
 }

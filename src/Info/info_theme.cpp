@@ -1,4 +1,4 @@
-#include "Info.hpp"
+#include "info_theme.hpp"
 #include "../services/open-file.hpp"
 #include "../services/json-help.hpp"
 
@@ -6,87 +6,46 @@ namespace pachde {
 
 void InfoTheme::reset()
 {
-    theme_panel_color = RampGray(G_80);
-    theme_text_background = RampGray(G_90);
-    theme_text_color = RampGray(G_20);
+    theme_panel_color = info_constant::PANEL_DEFAULT;
+    theme_text_color = info_constant::TEXT_DEFAULT;
     setScrews(true);
-    setMainColor(COLOR_NONE);
-    setTheme(DefaultTheme);
-    setDarkTheme(Theme::Dark);
-    setFollowRack(true);
-    setUserTextBackground(COLOR_NONE);
-    setUserTextColor(COLOR_NONE);
+    setMainColor(colors::NoColor);
+    setThemeSetting(DefaultThemeSetting);
+    setUserPanelBackground(colors::NoColor);
+    setUserTextColor(colors::NoColor);
     setHorizontalAlignment(HAlign::Left);
     setBrilliant(false);
-    setFontSize(DEFAULT_FONT_SIZE);
+    setFontSize(info_constant::DEFAULT_FONT_SIZE);
     resetFont();
 }
 
 void InfoTheme::randomize()
 {
     RandomizeTheme(this, false);
-    theme_panel_color = RandomColor();
-    theme_text_background = RandomColor();
-    theme_text_color = RandomOpaqueColor();
 
-    setUserTextBackground(RandomColor());
-    setUserTextColor(RandomOpaqueColor());
+    setUserPanelBackground(random::u32());
+    setUserTextColor(packed_color::opaque(random::u32()));
     setHorizontalAlignment(static_cast<HAlign>(random::get<uint32_t>() % 3));
     setBrilliant(random::get<bool>());
 }
 
 float InfoTheme::getFontSize() { return font_size; }
-void InfoTheme::setFontSize(float size) { font_size = clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE); }
+void InfoTheme::setFontSize(float size) { font_size = clamp(size, info_constant::MIN_FONT_SIZE, info_constant::MAX_FONT_SIZE); }
 HAlign InfoTheme::getHorizontalAlignment() { return horizontal_alignment; }
 void InfoTheme::setHorizontalAlignment(HAlign h) { horizontal_alignment = h; }
 
-NVGcolor InfoTheme::getDisplayMainColor() {
-    return isColorTransparent(main_color) ? theme_panel_color : main_color;
+PackedColor InfoTheme::getDisplayMainColor() {
+    return visible(main_color) ? main_color : theme_panel_color;
 }
-NVGcolor InfoTheme::getDisplayTextBackground() {
-    return isColorTransparent(user_text_background) ? theme_text_background : user_text_background;
-}
-NVGcolor InfoTheme::getDisplayTextColor() {
-    return isColorTransparent(user_text_color) ? theme_text_color : user_text_color;
+PackedColor InfoTheme::getDisplayTextColor() {
+    return visible(user_text_color) ? user_text_color : theme_text_color;
 }
 
-Theme InfoTheme::getTheme() {
-    return module_theme ? module_theme->getTheme() : ThemeBase::getTheme();
-}
-Theme InfoTheme::getDarkTheme() {
-    return module_theme ? module_theme->getDarkTheme() : ThemeBase::getDarkTheme();
-}
-void InfoTheme::setDarkTheme(Theme theme) {
-    if (module_theme) { module_theme->setDarkTheme(theme); }
-    ThemeBase::setDarkTheme(theme);
-}
-bool InfoTheme::getFollowRack() {
-    return module_theme ? module_theme->getFollowRack() : ThemeBase::getFollowRack();
-}
-void InfoTheme::setFollowRack(bool follow) {
-    if (module_theme) { module_theme->setFollowRack(follow); }
-    ThemeBase::setFollowRack(follow);
-}
-NVGcolor InfoTheme::getMainColor() {
-    return module_theme ? module_theme->getMainColor() : ThemeBase::getMainColor();
-}
-void InfoTheme::setMainColor(NVGcolor color) {
-    if (module_theme) { module_theme->setMainColor(color); }
-    ThemeBase::setMainColor(color);
-}
-bool InfoTheme::hasScrews() {
-    return module_theme ? module_theme->hasScrews() : ThemeBase::hasScrews();
-}
-void InfoTheme::setScrews(bool screws) {
-    if (module_theme) { module_theme->setScrews(screws); }
-    ThemeBase::setScrews(screws);
-}
+void InfoTheme::setUserPanelBackground(PackedColor color) { user_panel_color = color; }
+PackedColor InfoTheme::getUserPanelBackground() { return user_panel_color; }
 
-void InfoTheme::setUserTextBackground(NVGcolor color) { user_text_background = color; }
-NVGcolor InfoTheme::getUserTextBackground() {return user_text_background;}
-
-void InfoTheme::setUserTextColor(NVGcolor color) { user_text_color = color; }
-NVGcolor InfoTheme::getUserTextColor() {return user_text_color; }
+void InfoTheme::setUserTextColor(PackedColor color) { user_text_color = color; }
+PackedColor InfoTheme::getUserTextColor() {return user_text_color; }
 
 void InfoTheme::setBrilliant(bool brilliantness) { brilliant = brilliantness; }
 bool InfoTheme::getBrilliant() { return brilliant; }
@@ -94,17 +53,16 @@ void InfoTheme::toggleBrilliant() { brilliant = !brilliant; }
 
 json_t* InfoTheme::save(json_t* root)
 {
-    root = ThemeBase::save(root);
-
-    if (isColorVisible(user_text_background)) {
-        auto color_string = rack::color::toHexString(user_text_background);
-        set_json(root, "text-background", color_string);
+    char hex[10];
+    if (visible(user_panel_color)) {
+        hexFormat(user_panel_color, sizeof(hex), hex);
+        set_json(root, "text-background", hex);
     }
-    if (isColorVisible(user_text_color)) {
-        auto color_string = rack::color::toHexString(user_text_color);
-        set_json(root, "text-color", color_string);
+    if (visible(user_text_color)) {
+        hexFormat(user_text_color, sizeof(hex), hex);
+        set_json(root, "text-color", hex);
     }
-    if (DEFAULT_FONT_SIZE != font_size) {
+    if (info_constant::DEFAULT_FONT_SIZE != font_size) {
         set_json(root, "text-size", font_size);
     }
     std::string align_string = { HAlignLetter(horizontal_alignment) };
@@ -115,17 +73,16 @@ json_t* InfoTheme::save(json_t* root)
     return root;
 }
 
-void InfoTheme::load(json_t* root)
-{
+void InfoTheme::load(json_t* root) {
     ThemeBase::load(root);
-
+    using namespace info_constant;
     auto color_string = get_json_string(root, "text-background");
     if (!color_string.empty()) {
-        user_text_background = rack::color::fromHexString(color_string);
+        parseHexColor(user_panel_color, PANEL_DEFAULT, color_string.c_str(), nullptr);
     }
     color_string = get_json_string(root, "text-color");
     if (!color_string.empty()) {
-        user_text_color = rack::color::fromHexString(color_string);
+        parseHexColor(user_text_color, TEXT_DEFAULT, color_string.c_str(), nullptr);
     }
 
     font_size = get_json_float(root, "text-size", DEFAULT_FONT_SIZE);
@@ -142,31 +99,24 @@ void InfoTheme::load(json_t* root)
 }
 
 
-void InfoTheme::applyTheme(Theme theme) {
+void InfoTheme::setTheme(Theme theme) {
+    using namespace colors;
     switch (theme) {
         default:
         case Theme::Unset:
         case Theme::Light:
-            theme_panel_color = RampGray(G_80);
-            theme_text_background = RampGray(G_90);
-            theme_text_color = RampGray(G_20);
+            theme_panel_color = G80;
+            theme_text_color = G20;
             break;
         case Theme::Dark:
-            theme_panel_color = RampGray(G_25);
-            theme_text_background = RampGray(G_20);
-            theme_text_color = RampGray(G_85);
+            theme_panel_color = G25;
+            theme_text_color = G85;
             break;
         case Theme::HighContrast:
-            theme_panel_color = RampGray(G_10);
-            theme_text_background = RampGray(G_BLACK);
-            theme_text_color = RampGray(G_WHITE);
+            theme_panel_color = G10;
+            theme_text_color = White;
             break;
     };
-}
-
-void InfoTheme::setTheme(Theme theme) {
-    if (module_theme) module_theme->setTheme(theme);
-    ThemeBase::setTheme(theme);
 }
 
 bool InfoTheme::fontDialog()

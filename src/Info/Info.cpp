@@ -8,7 +8,7 @@ namespace pachde {
 
 InfoModule::InfoModule()
 {
-    info_theme = new InfoTheme(this);
+    info_theme = new InfoTheme;
     minWidth = 4;
 }
 

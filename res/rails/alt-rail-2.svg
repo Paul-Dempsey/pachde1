@@ -8,6 +8,7 @@
       </linearGradient>
 
     <rect id="%skiff%marker%" width="1" height="1" opacity="0"/>
+
     <rect fill="url(#gpanel)" width="304" height="380" />
     <rect fill="#444" width="304" height="15" />
     <rect fill="#555" width="304" height="1" />

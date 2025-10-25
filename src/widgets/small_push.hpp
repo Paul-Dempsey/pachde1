@@ -1,11 +1,11 @@
 #pragma once
-#include "../plugin.hpp"
+#include "../myplugin.hpp"
 #include "components.hpp"
-
+#include "../services/theme.hpp"
 using namespace pachde;
 namespace widgetry {
 
-struct SmallPush: OpaqueWidget, IBasicTheme
+struct SmallPush: OpaqueWidget, ISetTheme, ISetColor
 {
     bool pressed = false;
     bool ctrl = false;
@@ -87,18 +87,13 @@ struct SmallPush: OpaqueWidget, IBasicTheme
         }
     }
 
-    void applyTheme(Theme theme);
     void setTheme(Theme theme) override;
 
-    void setMainColor(NVGcolor color) override
-    {
-        ring = isColorTransparent(color) ? COLOR_BRAND_MD : color;
+    void setMainColor(PackedColor color) override {
+        ring = packed_color::isVisible(color) ? fromPacked(color) : COLOR_BRAND_MD;
     }
 
-    NVGcolor getMainColor() override
-    {
-        return ring;
-    }
+    PackedColor getMainColor() override { return toPacked(ring);}
 
     void draw(const DrawArgs& args) override;
 };

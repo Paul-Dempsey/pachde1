@@ -1,10 +1,10 @@
 #pragma once
-#include "../plugin.hpp"
+#include "../myplugin.hpp"
 #include "../services/colors.hpp"
-#include "../services/theme.hpp"
+#include "../services/svg-theme-2.hpp"
 #include "create-theme-widget.hpp"
-
 using namespace ::rack;
+using namespace ::svg_theme_2;
 
 namespace pachde {
 
@@ -17,8 +17,10 @@ inline float PixToHp(float pix) { return pix / 15.0; }
 inline float ClampBipolar(float v) { return rack::math::clamp(v, -5.0f, 5.0f); }
 inline float ClampUnipolar(float v) { return rack::math::clamp(v, 0.0f, 10.0f); }
 
-template<typename T>
-struct TKnob: rack::RoundKnob, IBasicTheme
+void AddThemeMenu(rack::ui::Menu *menu, ThemeBase* it, bool isChangeColor, bool isChangeScrews);
+
+template<typename TSvg>
+struct TKnob: rack::RoundKnob
 {
     bool clickStepValue = true;
     float stepIncrementBy = 1.f;
@@ -74,11 +76,14 @@ struct TKnob: rack::RoundKnob, IBasicTheme
         }
     }
 
-    void setTheme(Theme theme) override {
-        if (theme == getTheme() && bg && bg->svg) return;
-        IBasicTheme::setTheme(theme);
-        setSvg(Svg::load(asset::plugin(pluginInstance, T::knob(theme))));
-        bg->setSvg(Svg::load(asset::plugin(pluginInstance, T::background(theme))));
+    void loadSvg(ILoadSvg* loader) {
+        setSvg(loader->loadSvg(TSvg::knob()));
+        bg->setSvg(loader->loadSvg(TSvg::background()));
+    }
+
+    void applyTheme(std::shared_ptr<SvgTheme> theme) {
+        applySvgTheme(sw->svg, theme);
+        applySvgTheme(bg->svg, theme);
         if (fb) {
             fb->setDirty(true);
         }
@@ -86,193 +91,83 @@ struct TKnob: rack::RoundKnob, IBasicTheme
 };
 
 struct LargeKnobSvg {
-    static std::string knob(Theme theme) {
-        switch (theme) {
-            default:
-            case Theme::Unset:
-            case Theme::Light:
-                return "res/widget/LargeKnob.svg";
-            case Theme::Dark:
-                return "res/widget/LargeKnobDark.svg";
-            case Theme::HighContrast:
-                return "res/widget/LargeKnobHighContrast.svg";
-        }
-
-    }
-    static std::string background(Theme theme) {
-        switch (theme) {
-            default:
-            case Theme::Unset:
-            case Theme::Light:
-                return "res/widget/LargeKnob-bg.svg";
-            case Theme::Dark:
-            case Theme::HighContrast:
-                return "res/widget/LargeKnobDark-bg.svg";
-        }
-    }
+    static std::string knob() { return asset::plugin(pluginInstance, "res/widget/LargeKnob.svg"); }
+    static std::string background() { return asset::plugin(pluginInstance, "res/widget/LargeKnob-bg.svg"); }
 };
 using LargeKnob = TKnob<LargeKnobSvg>;
 
 struct SmallKnobSvg {
-    static std::string knob(Theme theme) {
-        switch (theme) {
-            default:
-            case Theme::Unset:
-            case Theme::Light:
-                return "res/widget/SmallKnob.svg";
-            case Theme::Dark:
-                return "res/widget/SmallKnobDark.svg";
-            case Theme::HighContrast:
-                return "res/widget/SmallKnobHighContrast.svg";
-        }
-    }
-    static std::string background(Theme theme) {
-        switch (theme) {
-            default:
-            case Theme::Unset:
-            case Theme::Light:
-                return "res/widget/SmallKnob-bg.svg";
-            case Theme::Dark:
-            case Theme::HighContrast:
-                return "res/widget/SmallKnobDark-bg.svg";
-        }
-    }
+    static std::string knob() { return asset::plugin(pluginInstance,"res/widget/SmallKnob.svg"); }
+    static std::string background() { return asset::plugin(pluginInstance,"res/widget/SmallKnob-bg.svg"); }
 };
 using SmallKnob = TKnob<SmallKnobSvg>;
 
-// TSvgProvider is any class/struct with a static
-// `static std::string background(Theme theme)` method.
-// The method should return the full path of the SVG.
-//
-// For example:
-//
-// ```cpp
-// struct CopperSvg {
-//     static std::string background(Theme theme)
-//     {
-//         const char * asset;
-//         switch (theme) {
-//         default:
-//         case Theme::Unset:
-//         case Theme::Light:
-//             asset = "res/Copper.svg";
-//             break;
-//         case Theme::Dark:
-//             asset = "res/CopperDark.svg";
-//             break;
-//         case Theme::HighContrast:
-//             asset = "res/CopperHighContrast.svg";
-//             break;
-//         }
-//         return asset::plugin(pluginInstance, asset);
-//     }
-// };
-// ```
-template <typename TSvgProvider>
-struct SvgThemePanel : SvgPanel, IBasicTheme
+// template<typename TSvg>
+// void reloadThemeKnob(std::shared_ptr<SvgTheme> theme) {
+//     std::string path = TSvg::background();
+//     auto bg = window::Svg::load(path);
+//     bg->loadFile(path);
+//     applySvgTheme(theme, bg);
+
+//     path = TSvg::knob();
+//     auto knob = window::Svg::load(path);
+//     knob->loadFile(path);
+//     applySvgTheme(theme, knob);
+// }
+
+template <class TParamWidget>
+TParamWidget *createThemeSvgParam(ILoadSvg* loader, std::shared_ptr<SvgTheme> theme, math::Vec pos, engine::Module *module, int paramId)
 {
-    void setTheme(Theme theme) override
-    {
-        SvgPanel::setBackground(window::Svg::load(TSvgProvider::background(theme)));
+    TParamWidget *o = new TParamWidget();
+    o->loadSvg(loader);
+    o->applyTheme(theme);
+    o->box.pos = pos;
+    o->app::ParamWidget::module = module;
+    o->app::ParamWidget::paramId = paramId;
+    o->initParamQuantity();
+    return o;
+}
+
+template <class TParamWidget>
+TParamWidget *createThemeSvgParam(SvgCache* loader, math::Vec pos, engine::Module *module, int paramId)
+{
+    TParamWidget *o = new TParamWidget();
+    o->loadSvg(loader);
+    o->box.pos = pos;
+    o->app::ParamWidget::module = module;
+    o->app::ParamWidget::paramId = paramId;
+    o->initParamQuantity();
+    return o;
+}
+
+// TSvg is any class/struct with a static
+// `static std::string background()` method.
+// The method should return the full path of the SVG.
+template <typename TSvg>
+struct SvgThemePanel : SvgPanel
+{
+    void loadSvg(ILoadSvg* loader) {
+        setBackground(loader->loadSvg(TSvg::background()));
     }
-    void updatePanel(Theme theme) {
-        svg->loadFile(TSvgProvider::background(theme));
+
+    void applyTheme(std::shared_ptr<SvgTheme> theme) {
+        applySvgTheme(svg, theme);
+    }
+
+    void updatePanel(std::shared_ptr<SvgTheme> theme) {
+        svg->loadFile(TSvg::background());
+        applySvgTheme(svg, theme);
         fb->dirty = true;
     }
 };
 
-template <class TSvgProvider>
-inline SvgThemePanel<TSvgProvider>* createSvgThemePanel(Theme theme) {
-	auto tp = new SvgThemePanel<TSvgProvider>();
-    tp->setTheme(theme);
-    return tp;
+template <class TSvg>
+SvgThemePanel<TSvg>* createSvgThemePanel(ILoadSvg* loader, std::shared_ptr<SvgTheme> theme) {
+	auto panel = new SvgThemePanel<TSvg>();
+    panel->loadSvg(loader);
+    if (theme) panel->applyTheme(theme);
+    return panel;
 }
-
-struct PushButtonBase: rack::SvgSwitch {
-    CircularShadow* orphan_shadow = nullptr;
-
-    void noShadow() {
-        if (orphan_shadow) return;
-        orphan_shadow = this->shadow;
-        if (orphan_shadow) {
-            this->fb->removeChild(orphan_shadow);
-        }
-    }
-
-    ~PushButtonBase() {
-         if (orphan_shadow) {
-            delete orphan_shadow;
-        }
-    }
-
-    void center(Vec pos)
-    {
-        this->box.pos = pos.minus(this->box.size.div(2));
-    }
-
-    std::function<void(void)> clickHandler;
-
-    // set click handler
-    // btn->onClick([this, module]() {
-    //     this->doSomething(module);
-    // });
-    void onClick(std::function<void(void)> callback)
-    {
-        clickHandler = callback;
-    }
-
-    void onDragEnd(const DragEndEvent & e) override {
-        rack::SvgSwitch::onDragEnd(e);
-        if (e.button != GLFW_MOUSE_BUTTON_LEFT)
-            return;
-        if (clickHandler) {
-            clickHandler();
-        }
-    }
-};
-
-void SetChildrenTheme(Widget * widget, Theme theme, bool top = true);
-void SetChildrenThemeColor(Widget * widget, NVGcolor color, bool top = true);
-
-void AddThemeMenu(rack::ui::Menu* menu, ITheme* itheme, bool isChangeColor = false, bool isChangeScrews = false);
-
-struct ThemeModule : Module, ThemeBase
-{
-    void onReset(const ResetEvent& e) override
-    {
-        ThemeBase::reset();
-    }
-
-    json_t* dataToJson() override { return save(json_object()); }
-    void dataFromJson(json_t* root) override { load(root); }
-};
-
-inline Theme ModuleTheme(ThemeModule* module)
-{
-    return GetPreferredTheme(module);
-}
-inline NVGcolor ModuleColor(ThemeModule* module)
-{
-    return module ? module->getMainColor() : COLOR_NONE;
-}
-inline bool ModuleColorOverride(ThemeModule* module)
-{
-    return module && module->isColorOverride();
-}
-inline bool ModuleHasScrews(ThemeModule* module)
-{
-    return module ? module->hasScrews() : true;
-}
-
-struct ThemePanel : Widget
-{
-    ITheme* theme_holder;
-    explicit ThemePanel(ITheme* it) : theme_holder(it) {}
-
-    Theme getTheme() { return GetPreferredTheme(theme_holder); }
-    NVGcolor getColor() { return theme_holder->getMainColor(); }
-    void draw(const DrawArgs &args) override;
-};
 
 // textfield as menu item, originally adapted from SubmarineFree
 struct MenuTextField : ui::TextField {
@@ -302,39 +197,6 @@ struct MenuTextField : ui::TextField {
             }
             ui::MenuOverlay *overlay = getAncestorOfType<ui::MenuOverlay>();
             overlay->requestDelete();
-            e.consume(this);
-        }
-        if (!e.getTarget())
-            TextField::onSelectKey(e);
-    }
-};
-
-struct PickerTextField : ui::TextField
-{
-    std::function<void(std::string)> changeHandler;
-    std::function<void(std::string)> commitHandler;
-    void step() override {
-        // Keep selected
-        APP->event->setSelectedWidget(this);
-        TextField::step();
-    }
-    void setText(const std::string& text) {
-        this->text = text;
-        selectAll();
-    }
-
-    void onChange(const ChangeEvent& e) override {
-        ui::TextField::onChange(e);
-        if (changeHandler) {
-            changeHandler(text);
-        }
-    }
-
-    void onSelectKey(const event::SelectKey &e) override {
-        if (e.action == GLFW_PRESS && (e.key == GLFW_KEY_ENTER || e.key == GLFW_KEY_KP_ENTER)) {
-            if (commitHandler) {
-                commitHandler(text);
-            }
             e.consume(this);
         }
         if (!e.getTarget())

@@ -5,6 +5,7 @@ namespace pachde {
 using namespace rack;
 
 const NVGcolor COPPER = nvgHSLAf(40.f/360.f, .85f, .5f, 1.f);
+const PackedColor COPPER_PACKED = toPacked(COPPER);
 
 CopperModule::CopperModule()
 {

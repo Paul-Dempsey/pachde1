@@ -8,7 +8,7 @@ PlayPauseButton::PlayPauseButton()
     box.size.x = box.size.y = 24.f;
 }
 
-void PlayPauseButton::applyTheme(Theme theme)
+void PlayPauseButton::setTheme(Theme theme)
 {
     collar = RampGray(G_35);
     edge = RampGray(G_20);
@@ -35,12 +35,6 @@ void PlayPauseButton::applyTheme(Theme theme)
             face2 = RampGray(G_35);
             break;
     }
-}
-
-void PlayPauseButton::setTheme(Theme theme)
-{
-    IBasicTheme::setTheme(theme);
-    applyTheme(theme);
 }
 
 void PlayPauseButton::draw(const DrawArgs &args)

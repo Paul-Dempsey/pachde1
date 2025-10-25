@@ -21,7 +21,7 @@ struct CloakBackgroundWidget : Widget
 };
 
 inline CloakBackgroundWidget * getCloakWidget() {
-    return  APP->scene->rack->getFirstDescendantOfType<CloakBackgroundWidget>();;
+    return APP->scene->rack->getFirstDescendantOfType<CloakBackgroundWidget>();;
 }
 
 CloakBackgroundWidget * toggleCloakWidget();

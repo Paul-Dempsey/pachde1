@@ -2,7 +2,7 @@
 
 namespace widgetry {
 
-void ColorPort::applyTheme(Theme theme)
+void ColorPort::setTheme(Theme theme)
 {
     sleeve = RampGray(G_20);
     tube    = RampGray(G_05);
@@ -31,12 +31,6 @@ void ColorPort::applyTheme(Theme theme)
             bevel2  = RampGray(G_90);
             break;
     }
-}
-
-void ColorPort::setTheme(Theme theme)
-{
-    IBasicTheme::setTheme(theme);
-    applyTheme(theme);
 }
 
 void ColorPort::draw(const DrawArgs& args)

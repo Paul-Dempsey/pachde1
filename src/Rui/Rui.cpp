@@ -5,6 +5,8 @@ using namespace ::rack;
 #include "../widgets/action-button.hpp"
 #include "../widgets/hamburger.hpp"
 #include "../services/rack-help.hpp"
+#include "../services/theme-module.hpp"
+
 using namespace widgetry;
 
 namespace pachde {
@@ -17,6 +19,8 @@ struct Rui : ThemeModule
     bool running{false};
     bool stopped{false};
     bool fluff{true};
+
+    std::string theme_name;
 
     float initialCableOpacity;
     float initialCableTension;
@@ -93,11 +97,13 @@ struct Rui : ThemeModule
     json_t* dataToJson() override {
         json_t* root = Base::dataToJson();
         set_json(root, "stopped", stopped);
+        set_json(root, "theme", theme_name);
         return root;
     }
 
     void dataFromJson(json_t* root) override {
         stopped = get_json_bool(root, "stopped", false);
+        theme_name = get_json_string(root, "theme", "Light");
     }
 
     const int PARAM_INTERVAL = 64;
@@ -156,17 +162,8 @@ struct Rui : ThemeModule
 
 struct RuiSvg
 {
-    static std::string background(Theme theme)
-    {
-        const char * asset = "res/Rui.svg";
-        switch (theme) {
-            case Theme::Dark: asset = "res/Rui-dark.svg"; break;
-            case Theme::HighContrast: asset = "res/Rui-hc.svg"; break;
-            case Theme::Unset:
-            case Theme::Light:
-            default: break;
-        }
-        return asset::plugin(pluginInstance, asset);
+    static std::string background() {
+        return asset::plugin(pluginInstance, "res/Rui.svg");
     }
 };
 
@@ -174,26 +171,27 @@ struct RuiUi : ModuleWidget, IThemeChange
 {
     using Base = ModuleWidget;
     Rui* my_module;
+
     ThemeBase* theme_holder{nullptr};
 #ifdef HOT_SVG
     std::map<const char *, Widget*> positioned_widgets;
 #endif
     bool single{true};
-    PlayButton* play_button{nullptr};
+    PlayActionButton* play_button{nullptr};
 
-    virtual ~RuiUi()
-    {
-        if (theme_holder && !module) {
-            delete theme_holder;
-        }
-    }
+    // virtual ~RuiUi()
+    // {
+    //     if (theme_holder && !module) {
+    //         delete theme_holder;
+    //     }
+    // }
 
     RuiUi(Rui* module) : my_module(module)
     {
         setModule(module);
         theme_holder = module ? module : new ThemeBase();
+        makeUi(theme_holder->getTheme());
         theme_holder->setNotify(this);
-        applyTheme(GetPreferredTheme(theme_holder));
     }
 
 #ifdef HOT_SVG
@@ -205,19 +203,7 @@ struct RuiUi : ModuleWidget, IThemeChange
     void show_fluff(bool visible)
     {
         if (my_module) my_module->fluff = visible;
-        auto svg = window::Svg::load(RuiSvg::background(Theme::Light));
-        if (visible) {
-            svg_query::showElements(svg, "fluff-");
-        } else {
-            svg_query::hideElements(svg, "fluff-");
-        }
-        svg = window::Svg::load(RuiSvg::background(Theme::Dark));
-        if (visible) {
-            svg_query::showElements(svg, "fluff-");
-        } else {
-            svg_query::hideElements(svg, "fluff-");
-        }
-        svg = window::Svg::load(RuiSvg::background(Theme::HighContrast));
+        auto svg = window::Svg::load(RuiSvg::background());
         if (visible) {
             svg_query::showElements(svg, "fluff-");
         } else {
@@ -229,7 +215,12 @@ struct RuiUi : ModuleWidget, IThemeChange
     void makeUi(Theme theme)
     {
         assert(children.empty());
-        setPanel(createSvgThemePanel<RuiSvg>(theme));
+        auto themes = getThemeCache();
+        auto svg_theme = themes.getTheme(ThemeName(theme));
+        auto panel = createSvgThemePanel<RuiSvg>(getRackSvgs(), svg_theme);
+        setPanel(panel);
+        auto layout = panel->svg;
+
         single = is_singleton(my_module, this);
         if (my_module) my_module->single = single;
         if (!single) return;
@@ -238,7 +229,6 @@ struct RuiUi : ModuleWidget, IThemeChange
         Trimpot* pot;
         ThemedPJ301MPort* port;
 
-        auto layout = window::Svg::load(RuiSvg::background(Theme::Light));
         std::map<std::string, ::math::Rect> bounds;
         svg_query::boundsIndex(layout, "k:", bounds, true);
 
@@ -282,7 +272,7 @@ struct RuiUi : ModuleWidget, IThemeChange
         addChild(pot);
         addChild(port);
 
-        play_button = createThemeWidgetCentered<PlayButton>(theme, bounds["k:pause"].getCenter());
+        play_button = Center(createThemeSvgButton<PlayActionButton>(getSvgNoCache(), bounds["k:pause"].getCenter()));
         play_button->set_sticky(true);
         HOT_POSITION("k:pause", play_button);
         if (my_module) {
@@ -303,31 +293,29 @@ struct RuiUi : ModuleWidget, IThemeChange
         play_button->onAction(e);
     }
 
-    void applyTheme(Theme new_theme) {
+    void setTheme(Theme new_theme) {
         if (children.empty()) {
             makeUi(new_theme);
         } else {
-            if (Theme::Light == new_theme) {
-                auto layout = window::Svg::load(RuiSvg::background(Theme::Light));
-                svg_query::hideElements(layout, "k:");
+            auto panel = dynamic_cast<SvgThemePanel<RuiSvg>*>(getPanel());
+            auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
+            if (panel) {
+                panel->applyTheme(svg_theme);
             }
-            SetChildrenTheme(this, new_theme);
+            // play_button->frames.clear();
+            // play_button->loadSvg(getSvgNoCache());
+            play_button->applyTheme(svg_theme);
+            //sendChildrenTheme(this, new_theme);
+            sendDirty(this);
         }
     }
 
     void onChangeTheme(ChangedItem item) override {
         switch (item) {
         case ChangedItem::Theme:
-            applyTheme(GetPreferredTheme(theme_holder));
-            break;
-        case ChangedItem::DarkTheme:
-        case ChangedItem::FollowDark:
-            if (theme_holder->getFollowRack()) {
-                applyTheme(GetPreferredTheme(theme_holder));
-            }
+            setTheme(GetPreferredTheme(theme_holder));
             break;
         case ChangedItem::MainColor:
-            break;
         case ChangedItem::Screws:
             break;
         }
@@ -335,7 +323,7 @@ struct RuiUi : ModuleWidget, IThemeChange
 
     void step() override {
         Base::step();
-        theme_holder->pollRackDarkChanged();
+        theme_holder->pollRackThemeChanged();
     }
 
     void onHoverKey(const HoverKeyEvent& e) override
@@ -348,22 +336,29 @@ struct RuiUi : ModuleWidget, IThemeChange
                 toggle_play_pause();
             }
         } break;
+
 #ifdef HOT_SVG
         case GLFW_KEY_F5: {
             if (e.action == GLFW_PRESS && (0 == mods)) {
                 e.consume(this);
+                reloadThemeCache();
                 auto panel = dynamic_cast<SvgThemePanel<RuiSvg>*>(getPanel());
-                if (panel) {
-                    auto layout = window::Svg::load(RuiSvg::background(Theme::Light));
-                    std::map<std::string, ::math::Rect> bounds;
-                    svg_query::boundsIndex(layout, "k:", bounds, true);
-                    for (auto kv: positioned_widgets) {
-                        kv.second->box.pos = bounds[kv.first].getCenter();
-                        Center(kv.second);
-                    }
-                    panel->updatePanel(theme_holder->getTheme());
-                    if (my_module) show_fluff(my_module->fluff);
+                auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
+                panel->updatePanel(svg_theme);
+
+                play_button->frames.clear();
+                play_button->loadSvg(getSvgNoCache());
+                play_button->applyTheme(svg_theme);
+
+                std::map<std::string, ::math::Rect> bounds;
+                svg_query::boundsIndex(panel->svg, "k:", bounds, true);
+                for (auto kv: positioned_widgets) {
+                    kv.second->box.pos = bounds[kv.first].getCenter();
+                    Center(kv.second);
                 }
+
+                if (my_module) show_fluff(my_module->fluff);
+                sendDirty(this);
             }
         } break;
 #endif
@@ -380,7 +375,7 @@ struct RuiUi : ModuleWidget, IThemeChange
     void appendContextMenu(Menu* menu) override {
         if (!module) return;
 
-        menu->addChild(createMenuLabel<HamburgerTitle>("Rui"));
+        menu->addChild(createMenuLabel<HamburgerTitle>("#d Rui"));
         if (my_module) {
             menu->addChild(createMenuItem("Reset", "", [=](){
                 my_module->reset();

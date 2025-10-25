@@ -6,7 +6,7 @@ using namespace pachde;
 namespace widgetry {
 
 template<typename TSymbol>
-struct TSymbolWidget: OpaqueWidget, IBasicTheme
+struct TSymbolWidget: OpaqueWidget, ISetTheme
 {
     using Base = OpaqueWidget;
 

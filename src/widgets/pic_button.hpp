@@ -6,7 +6,7 @@
 using namespace rack;
 namespace pachde {
 
-struct PicButton: OpaqueWidget, IBasicTheme
+struct PicButton: OpaqueWidget, ISetTheme
 {
     NVGcolor line, sky1, sky2, mountain, moon;
     float gradient_stop_x{17.5};
@@ -17,6 +17,7 @@ struct PicButton: OpaqueWidget, IBasicTheme
     bool ctrl {false};
     bool shift {false};
     std::function<void(bool,bool)> clickHandler {nullptr};
+    Theme theme;
 
     virtual ~PicButton() {
         if (tip) delete tip;
@@ -24,8 +25,9 @@ struct PicButton: OpaqueWidget, IBasicTheme
 
     PicButton();
 
-    void applyTheme(Theme theme);
+    // ISetTheme
     void setTheme(Theme theme) override;
+
     void draw(const DrawArgs &args) override;
     void onHoverKey(const HoverKeyEvent& e) override {
         rack::OpaqueWidget::onHoverKey(e);

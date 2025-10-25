@@ -2,20 +2,277 @@
 
 namespace svg_theme_2 {
 
-std::string parseTag(const char * id)
+const char * scanTag(const char * id)
 {
-    if (!id || !*id) return "";
+    if (!*id) return nullptr;
     const char * scan = id;
-    while (*scan) scan++;
-    while (scan > id) {
-        if ('-' == *scan--) {
-            if ((scan >= id) && ('-' == *scan)) {
-                return std::string(scan+1);
-            }
+    const char * last_ddash{nullptr};
+    while (*scan) {
+        if (('-' == *scan) && ('-' == *(scan+1))) last_ddash = scan;
+        scan++;
+    }
+    if (last_ddash) {
+        last_ddash += 2;
+        if (*last_ddash) return last_ddash;
+    }
+    return id;
+}
+
+bool applyChildrenTheme(Widget *widget, std::shared_ptr<SvgTheme> theme, bool top)
+{
+    bool modified = false;
+
+    for (Widget* child : widget->children) {
+        if (applyChildrenTheme(child, theme, false)) {
+            modified = true;
         }
     }
-    return "";
+
+    auto themed = dynamic_cast<IThemed*>(widget);
+    if (themed && themed->applyTheme(theme)) {
+        modified = true;
+    }
+
+    if (top && modified) {
+        sendDirty(widget);
+    }
+
+    return modified;
 }
+
+void sendDirty(Widget *widget)
+{
+	EventContext cDirty;
+	Widget::DirtyEvent eDirty;
+	eDirty.context = &cDirty;
+	widget->onDirty(eDirty);
+}
+
+bool alpha_order(const std::string& a, const std::string& b)
+{
+    if (a.empty()) return false;
+    if (b.empty()) return true;
+    auto ita = a.cbegin();
+    auto itb = b.cbegin();
+    for (; (ita != a.cend()) && (itb != b.cend()); ++ita, ++itb) {
+        if (*ita == *itb) continue;
+        auto c1 = std::tolower(*ita);
+        auto c2 = std::tolower(*itb);
+        if (c1 == c2) continue;
+        if (c1 < c2) return true;
+        return false;
+    }
+    if ((ita == a.cend()) && (itb != b.cend())) {
+        return true;
+    }
+    return false;
+}
+
+//
+// Paint
+//
+Paint::~Paint() {
+    if (isGradient()) gradient.clear();
+}
+
+Paint& Paint::operator=(const Paint& source)
+{
+    switch (source.kind) {
+    case PaintKind::Unset: break;
+    case PaintKind::Color: setColor(source.color); break;
+    case PaintKind::Gradient: setGradient(source.gradient); break;
+    case PaintKind::None: setNone(); break;
+    }
+    return *this;
+}
+
+Paint::Paint(const Paint& source)
+{
+    switch (source.kind) {
+    case PaintKind::Unset: break;
+    case PaintKind::Color: setColor(source.color); break;
+    case PaintKind::Gradient: setGradient(source.gradient); break;
+    case PaintKind::None: setNone(); break;
+    }
+}
+
+void Paint::setColor(PackedColor new_color) {
+    if (isGradient()) gradient.clear();
+    kind = PaintKind::Color;
+    color = new_color;
+}
+
+void Paint::setGradient(const Gradient& g) {
+    kind = PaintKind::Gradient;
+    gradient = g;
+}
+
+void Paint::setNone() {
+    if (isGradient()) gradient.clear();
+    kind = PaintKind::None;
+}
+
+//
+// Style
+//
+
+void Style::setOpacity(float alpha) {
+    opacity = alpha;
+    apply_opacity = true;
+}
+void Style::setStrokeWidth(float width) {
+    stroke_width = width;
+    apply_stroke_width = true;
+}
+void Style::setFill(const Paint& paint) {
+    fill = paint;
+}
+void Style::setFillColor(PackedColor color) {
+    fill.setColor(color);
+}
+void Style::setFillGradient(const Gradient& gradient) {
+    fill.setGradient(gradient);
+}
+void Style::setStroke(const Paint& paint) {
+    stroke = paint;
+}
+void Style::setStrokeColor(PackedColor color) {
+    stroke.setColor(color);
+}
+void Style::setStrokeGradient(const Gradient& gradient) {
+    stroke.setGradient(gradient);
+}
+bool Style::isApplyFill() {
+    return fill.isApplicable();
+}
+bool Style::isApplyStroke() {
+    return stroke.isApplicable();
+}
+bool Style::isApplyOpacity() {
+    return apply_opacity;
+}
+bool Style::isApplyStrokeWidth() {
+    return apply_stroke_width;
+}
+PackedColor Style::fill_color() {
+    return isApplyFill() ? fill.getColor() : colors::NoColor;
+}
+PackedColor Style::stroke_color() {
+    return isApplyStroke() ? stroke.getColor() : colors::NoColor;
+}
+PackedColor Style::fillWithOpacity() {
+    if (!isApplyFill()) return colors::NoColor;
+    return (apply_opacity) ? transparent(fill.getColor(), opacity) : fill.getColor();
+}
+PackedColor Style::strokeWithOpacity() {
+    if (!isApplyStroke()) return colors::NoColor;
+    return (apply_opacity) ? transparent(stroke.getColor(), opacity) : stroke.getColor();
+}
+
+bool Style::applyPaint(NSVGpaint &target, Paint &source)
+{
+    assert(source.isApplicable());
+    switch (source.Kind()) {
+        case PaintKind::None:
+            if (target.type != NSVG_PAINT_NONE) {
+                if ((target.type == NSVG_PAINT_RADIAL_GRADIENT)
+                    || (target.type == NSVG_PAINT_LINEAR_GRADIENT)) {
+                    // make gradient transparent
+                    for (int i = 0; i < target.gradient->nstops; ++i) {
+                        target.gradient->stops[i].color = colors::NoColor;
+                    }
+                } else {
+                    target.type = NSVG_PAINT_NONE;
+                }
+                return true;
+            }
+            break;
+
+        case PaintKind::Color: {
+                auto source_color = source.getColor();
+                if ((target.type != NSVG_PAINT_COLOR) || (target.color != source_color)) {
+                    if ((target.type == NSVG_PAINT_RADIAL_GRADIENT)
+                        || (target.type == NSVG_PAINT_LINEAR_GRADIENT)) {
+                        // make gradient flat
+                        for (int i = 0; i < target.gradient->nstops; ++i) {
+                            target.gradient->stops[i].color = source_color;
+                        }
+                        return true;
+                    }
+                    target.type = NSVG_PAINT_COLOR;
+                    target.color = source_color;
+                    return true;
+                }
+            }
+            break;
+
+        case PaintKind::Gradient: {
+                const Gradient* gradient = source.getGradient();
+                if (!gradient) return false; // unexpected - defensive
+
+                if (!((target.type == NSVG_PAINT_RADIAL_GRADIENT)
+                    || (target.type == NSVG_PAINT_LINEAR_GRADIENT))) {
+                    //if (isLogging()) logWarning(ErrorCode::GradientNotPresent,
+                    //    format_string("'%s': Skipping SVG element without a gradient", tag.c_str()));
+                    return false;
+                }
+
+                bool changed = false;
+                for (const GradientStop& stop : gradient->stops) {
+                    if (stop.index < target.gradient->nstops) {
+                        NSVGgradientStop& target_stop = target.gradient->stops[stop.index];
+                        if (stop.hasOffset() && target_stop.offset != stop.offset) {
+                            target_stop.offset = stop.offset;
+                            changed = true;
+                        }
+                        if (target_stop.color != stop.color) {
+                            target_stop.color = stop.color;
+                            changed = true;
+                        }
+                    }
+                }
+                return changed;
+            }
+
+        default:
+            break;
+    }
+    return false;
+}
+
+bool Style::applyFill(NSVGshape *shape)
+{
+    if (!fill.isApplicable()) return false;
+    return applyPaint(shape->fill, fill);
+}
+
+bool Style::applyStroke(NSVGshape *shape)
+{
+    if (!stroke.isApplicable()) return false;
+    return applyPaint(shape->stroke, stroke);
+}
+
+bool Style::applyOpacity(NSVGshape *shape)
+{
+    if (isApplyOpacity() && (shape->opacity != opacity)) {
+        shape->opacity = opacity;
+        return true;
+    }
+    return false;
+}
+
+bool Style::applyStrokeWidth(NSVGshape *shape)
+{
+    if (isApplyStrokeWidth() && (shape->strokeWidth != stroke_width)) {
+        shape->strokeWidth = stroke_width;
+        return true;
+    }
+    return false;
+}
+
+//
+// SvgTheme
+//
 
 std::shared_ptr<Style> SvgTheme::getStyle(const std::string &name)
 {
@@ -55,555 +312,195 @@ bool SvgTheme::getStroke(PackedColor& result, const char *name, bool with_opacit
     return false;
 }
 
-void compact_space(char * scan) {
-    bool poke_space = true;
-    char * poke = scan;
+//
+// Theme application
+//
 
-    while (std::isspace(*scan)) scan++;
-
-    while (true) {
-        switch (*scan) {
-        case 0:
-            *poke++ = 0;
-            return;
-
-        case '/':
-            if ('/' == *(scan+1)) {
-                scan += 2;
-                while (*scan && (*scan != '\n')) {
-                    scan++;
-                }
-            } else {
-                poke_space = true;
-                *poke++ = *scan++;
-            }
-            break;
-
-        case ' ':
-        case '\t':
-        case '\r':
-            if (poke_space) {
-                *poke++ = ' ';
-                poke_space = false;
-            }
-            scan++;
-            break;
-
-        default:
-            poke_space = true;
-            *poke++ = *scan++;
-            break;
-        }
-    }
-}
-
-const char * skip_space(const char * scan)
+bool applyImageTheme(NSVGimage* svg_handle, std::shared_ptr<SvgTheme> theme)
 {
-    while (' ' == *scan) scan++;
-    return scan;
+    if (!theme || !svg_handle || !svg_handle->shapes) return false;
+    bool modified = false;
+
+    for (NSVGshape* shape = svg_handle->shapes; nullptr != shape; shape = shape->next) {
+        const char * tag = scanTag(shape->id);
+        if (!tag || !*tag) continue;
+        auto style = theme->getStyle(tag);
+        if (!style) continue;
+        if (style->applyFill(shape)) modified = true;
+        if (style->applyStroke(shape)) modified = true;
+        if (style->applyOpacity(shape)) modified = true;
+        if (style->applyStrokeWidth(shape)) modified = true;
+    }
+    return modified;
 }
 
-const char* parse_name(const char *scan, std::string& name)
+//
+// SvgNoChache
+//
+
+std::shared_ptr<::rack::window::Svg> SvgNoCache::loadSvg(const std::string &filename)
 {
-    auto start = scan;
+    auto svg = std::make_shared<::rack::window::Svg>();
+    try {
+        svg->loadFile(filename);
+    } catch (Exception& e) {
+        WARN("%s", e.what());
+        svg = nullptr;
+    }
+    return svg;
+}
 
-    while (true) {
-        switch (*scan) {
-        case 0: return scan;
-        case '\n': return scan+1;
-        case '=': {
-            const char * end = scan - 1;
-            scan++;
-            while ((end > start) && (' ' == *end)) {
-                --end;
-            }
-            name = std::string(start, 1 + end - start);
-            return scan;
-        } break;
+//
+// RackSvgCache
+//
 
-        default:
-            scan++;
-            break;
+std::shared_ptr<::rack::window::Svg> RackSvgCache::loadThemedSvg(const std::string& filename, std::shared_ptr<SvgTheme> theme) {
+    auto svg = loadSvg(filename);
+    if (svg) applySvgTheme(svg, theme);
+    return svg;
+}
+
+
+std::shared_ptr<::rack::window::Svg> RackSvgCache::reloadSvg(const std::string& filename) {
+    auto svg = loadSvg(filename);
+    if (svg) {
+        try {
+            svg->loadFile(filename);
+        } catch (Exception& e) {
+            WARN("%s", e.what());
+            return nullptr;
         }
     }
+    return svg;
 }
 
-template <typename T>
-inline bool in_range(T value, T minimum, T maximum) { return minimum <= value && value <= maximum; }
-
-bool is_name_char(char ch) {
-    if ((ch < '-') || (ch > 'z')) return false;
-    if (in_range(ch, '0', '9')) return true;
-    if (in_range(ch, 'A', 'Z')) return true;
-    if (in_range(ch, 'a', 'z')) return true;
-    if ('_' == ch) return true;
-    if ('-' == ch) return true;
-    if ('.' == ch) return true;
-    return false;
+std::shared_ptr<::rack::window::Svg> RackSvgCache::reloadThemedSvg(const std::string& filename, std::shared_ptr<SvgTheme> theme) {
+    auto svg = loadSvg(filename);
+    if (svg) {
+        try {
+            svg->loadFile(filename);
+        } catch (Exception& e) {
+            WARN("%s", e.what());
+            return nullptr;
+        }
+        applySvgTheme(svg, theme);
+    }
+    return svg;
 }
 
-const char* parse_theme_name(const char *scan, std::string& name)
+//
+// SvgCache
+//
+std::shared_ptr<::rack::window::Svg> SvgCache::loadSvg(const std::string& filename)
 {
-    while (' ' == *scan) scan++;
-    if ('\n' == *scan) {
-        name = "";
-        return scan + 1;
+	const auto& pair = svgs.find(filename);
+	if (pair != svgs.end()) {
+		return pair->second;
     }
-    auto start = scan;
-    while (is_name_char(*scan)) scan++;
-    if (scan == start) return scan;
-    name = std::string(start, scan);
-    while (true) {
-        char ch = *scan;
-        if (ch) {
-            if ('\n' == ch) {
-                return scan + 1;
-            }
-            scan++;
-        } else {
-            return scan;
+
+    // Load svg
+	try {
+		auto svg = std::make_shared<::rack::window::Svg>();
+		svg->loadFile(filename);
+        svgs.insert(std::make_pair(filename, svg));
+        return svg;
+	}
+	catch (rack::Exception& e) {
+		WARN("%s", e.what());
+		return nullptr;
+	}
+}
+
+void SvgCache::changeTheme(std::shared_ptr<SvgTheme> theme)
+{
+    applied_theme = theme;
+    if (!theme) return;
+    for (auto entry : svgs) {
+        if (entry.second) {
+            applySvgTheme(entry.second, theme);
         }
     }
 }
 
-// @theme=Dark
-// item-a= #abcdef
-// item-b= #abcdef stroke hsl(12,51%,80%) width 1.25 opacity .8
-// item-c= fill [ #abcdef89 index 0 offset 0, #efefef index 1 offset 8.5] stroke #ffe width .25
-/*
-        fill := ["fill"] color|gradient
-    gradient := '[' stop+ ']'
-        stop := (color|index|offset)
-      stroke := "stroke" (color|gradient)
-       width := "width" float
-       index := "index" integer
-      offset := "offset" float
-       color := "#" hex{3,4,6,8} | rgb | rgba | hsl | hsla
-*/
-
-enum class StyleKey : int {
-    None = -1,
-    Fill,
-    Hsl,
-    Hsla,
-    Index,
-    Offset,
-    Opacity,
-    Rgb,
-    Rgba,
-    Stroke,
-    Width,
-    Hex,
-    Gradient
-};
-const char * keyword_table = "\4fill\3hsl\4hsla\5index\6offset\7opacity\3rgb\4rgba\6stroke\5width";
-
-const char* parse_keyword(const char *scan, StyleKey& key)
+bool SvgCache::reload(const std::string &filename)
 {
-    scan = skip_space(scan);
-
-    if ('#' == *scan) {
-        key = StyleKey::Hex;
-        return scan;
-    }
-    if ('[' == *scan) {
-        key = StyleKey::Gradient;
-        return scan;
-    }
-
-    const char * kw = keyword_table;
-    int k = 0;
-    while (true) {
-        int len = *kw++;
-        if (*scan < *kw) {
-            key = StyleKey::None;
-            return scan;
-        }
-        if ((*scan == *kw) && (0 == strncmp(scan, kw, len))) {
-            auto end = scan + len;
-            if (!std::isalpha(*end)) {
-                key = StyleKey(k);
-                return end;
+	const auto& pair = svgs.find(filename);
+	if (pair == svgs.end()) {
+        WARN("SvgCache::reload: File not found: %s", filename.c_str());
+        return false;
+    } else {
+        try {
+            pair->second->loadFile(filename);
+            if (applied_theme) {
+                applySvgTheme(pair->second, applied_theme);
             }
-        }
-        kw += len;
-        if (!*kw) {
-            key = StyleKey::None;
-            return scan;
-        }
-        k++;
-        assert(k < (int)StyleKey::Hex);
-    }
-}
-
-bool parse_stop(const char *scan, GradientStop& stop, const char **end)
-{
-    StyleKey key;
-    const char * token_end;
-    while (true) {
-        switch (*scan) {
-        case ' ': scan++; break;
-
-        case ',':
-        case ']':
-            *end = scan;
-            return true;
-
-        default:
-            token_end = parse_keyword(scan, key);
-            switch (key) {
-            case StyleKey::Rgb:
-            case StyleKey::Rgba:
-                if (parseRgbaColor(stop.color, colors::G0, token_end, end)) {
-                    scan = *end;
-                } else {
-                    return false;
-                }
-                break;
-
-            case StyleKey::Hsl:
-            case StyleKey::Hsla:
-                if (parseHslaColor(stop.color, colors::G0, token_end, end)) {
-                    scan = *end;
-                } else {
-                    return false;
-                }
-                break;
-
-            case StyleKey::Offset: {
-                scan = skip_space(token_end);
-                float f = parse_float(scan, end);
-                if (_isnanf(f)) return false;
-                scan = *end;
-                stop.offset = f;
-            } break;
-
-            case StyleKey::Index: {
-                scan = skip_space(token_end);
-                auto number = parse_uint64(scan, end);
-                if ((scan == *end) || (number > 4)) return false;
-                scan = *end;
-                stop.index = (int)number;
-            } break;
-
-            case StyleKey::Hex: {
-                if (parseHexColor(stop.color, colors::G0, scan, end)) {
-                    scan = *end;
-                } else {
-                    return false;
-                }
-            } break;
-
-            default:
-                *end = scan;
-                return false;
-            }
-            break;
-        }
-    }
-
-
-}
-
-bool parse_gradient(const char *scan, Gradient& gradient, const char **end)
-{
-    GradientStop stop;
-    while (true) {
-        switch (*scan) {
-        case ' ': scan++; break;
-
-        case '[':
-        case ',':
-            scan++;
-            if (parse_stop(scan, stop, end)) {
-                gradient.stops.push_back(stop);
-                scan = *end;
-            } else {
-                *end = scan;
-                return false;
-            }
-            break;
-
-        case ']':
-            *end = scan+1;
-            return true;
-
-        default:
-            *end = scan;
+        } catch (Exception& e) {
+            WARN("%s", e.what());
             return false;
         }
     }
+    return true;
 }
 
-bool parse_fill(const char *scan, std::shared_ptr<Style>& result, const char **end)
+bool SvgCache::reloadAll()
 {
-    StyleKey key;
-    *end = parse_keyword(scan, key);
-    switch (key) {
-    case StyleKey::None:
-    case StyleKey::Fill:
-        break;
-
-    case StyleKey::Gradient: {
-        Gradient gradient;
-        scan = *end;
-        if (parse_gradient(scan, gradient, end)) {
-            if (!result) result = std::make_shared<Style>();
-            result->setFillGradient(gradient);
-            return true;
-        }
-    } break;
-
-    case StyleKey::Hsl:
-    case StyleKey::Hsla: {
-        PackedColor color;
-        if (parseHslaColor(color, colors::G0, scan, end)) {
-            if (!result) result = std::make_shared<Style>();
-            result->setFillColor(color);
-            return true;
-        }
-    } break;
-
-    case StyleKey::Index:
-    case StyleKey::Offset:
-    case StyleKey::Opacity:
-        break;
-
-    case StyleKey::Rgb:
-    case StyleKey::Rgba: {
-        PackedColor color;
-        if (parseRgbaColor(color, colors::G0, scan, end)) {
-            if (!result) result = std::make_shared<Style>();
-            result->setFillColor(color);
-            return true;
-        }
-    } break;
-
-
-    case StyleKey::Stroke:
-    case StyleKey::Width: break;
-
-    case StyleKey::Hex: {
-        PackedColor color;
-        if (parseHexColor(color, colors::G0, scan, end)) {
-            if (!result) result = std::make_shared<Style>();
-            result->setFillColor(color);
-            return true;
-        }
-    } break;
-    }
-
-    *end = scan;
-    result = nullptr;
-    return false;
-}
-
-bool parse_stroke(const char *scan, std::shared_ptr<Style>& result, const char **end)
-{
-    StyleKey key;
-    *end = parse_keyword(scan, key);
-    switch (key) {
-    case StyleKey::None:
-    case StyleKey::Fill:
-        break;
-
-    case StyleKey::Gradient: {
-        Gradient gradient;
-        scan = *end;
-        if (parse_gradient(scan, gradient, end)) {
-            if (!result) result = std::make_shared<Style>();
-            result->setStrokeGradient(gradient);
-            return true;
-        }
-    } break;
-
-    case StyleKey::Hsl:
-    case StyleKey::Hsla: {
-        PackedColor color;
-        if (parseHslaColor(color, colors::G0, scan, end)) {
-            if (!result) result = std::make_shared<Style>();
-            result->setStrokeColor(color);
-            return true;
-        }
-    } break;
-
-    case StyleKey::Index:
-    case StyleKey::Offset:
-    case StyleKey::Opacity:
-        break;
-
-    case StyleKey::Rgb:
-    case StyleKey::Rgba: {
-        PackedColor color;
-        if (parseRgbaColor(color, colors::G0, scan, end)) {
-            if (!result) result = std::make_shared<Style>();
-            result->setStrokeColor(color);
-            return true;
-        }
-    } break;
-
-
-    case StyleKey::Stroke:
-    case StyleKey::Width: break;
-
-    case StyleKey::Hex: {
-        PackedColor color;
-        if (parseHexColor(color, colors::G0, scan, end)) {
-            if (!result) result = std::make_shared<Style>();
-            result->setStrokeColor(color);
-            return true;
-        }
-    } break;
-    }
-
-    *end = scan;
-    result = nullptr;
-    return false;
-}
-
-const char* parse_style(const char *scan, std::shared_ptr<Style>& result)
-{
-    std::shared_ptr<Style> style{nullptr};
-    StyleKey key;
-    const char * end;
-    while (true) {
-        switch (*scan) {
-        case ' ': scan++; break;
-
-        case '\n':
-            result = style;
-            return scan + 1;
-
-        case 0:
-            result = style;
-            return scan;
-
-        default:
-            end = parse_keyword(scan, key);
-
-            switch (key) {
-            case StyleKey::Fill:
-                scan = end;
-                // fallthrough
-            case StyleKey::Gradient:
-            case StyleKey::Hsl:
-            case StyleKey::Hsla:
-            case StyleKey::Rgb:
-            case StyleKey::Rgba:
-            case StyleKey::Hex:
-                if (parse_fill(scan, style, &end)) {
-                    scan = end;
-                } else {
-                    result = nullptr;
-                    return scan;
-                }
-                break;
-
-            case StyleKey::Opacity: {
-                scan = end;
-                float f = parse_float(scan, &end);
-                if (_isnanf(f)) {
-                    result = nullptr;
-                    return scan;
-                }
-                if (!style) style = std::make_shared<Style>();
-                style->setOpacity(f);
-                scan = end;
-            } break;
-
-            case StyleKey::Stroke:
-                scan = end;
-                if (parse_stroke(scan, style, &end)) {
-                    scan = end;
-                } else {
-                    result = nullptr;
-                    return scan;
-                }
-                break;
-
-            case StyleKey::Width: {
-                scan = end;
-                float f = parse_float(scan, &end);
-                if (_isnanf(f)) {
-                    result = nullptr;
-                    return scan;
-                }
-                if (!style) style = std::make_shared<Style>();
-                style->setStrokeWidth(f);
-                scan = end;
-            } break;
-
-            case StyleKey::Index:
-            case StyleKey::Offset:
-            case StyleKey::None:
-            default:
-                result = nullptr;
-                return scan;
+    bool ok = true;
+    for (auto entry : svgs) {
+        try {
+            entry.second->loadFile(entry.first);
+            if (applied_theme) {
+                applySvgTheme(entry.second, applied_theme);
             }
+        } catch (Exception& e) {
+            WARN("%s", e.what());
+            ok = false;
         }
     }
-    result = style;
-    return scan;
+    return ok;
 }
 
-
-std::shared_ptr<SvgTheme> loadFile(std::string path)
+void SvgCache::showCache()
 {
-    auto size = system::getFileSize(path);
-    if (0 == size) { return nullptr; }
-
-    auto f = std::fopen(path.c_str(), "rb");
-    if (!f) return nullptr;
-    char* bytes = (char*)malloc(size+1);
-    if (!bytes) {
-        std::fclose(f);
-        return nullptr;
-    }
-    DEFER({free(bytes);});
-
-    auto red = std::fread(bytes, 1, size, f);
-    std::fclose(f);
-    if (red != size) {
-        return nullptr;
-    }
-    bytes[size] = 0;
-    compact_space(bytes);
-
-    auto theme = std::make_shared<SvgTheme>();
-    theme->file = path;
-
-    const char * scan = bytes;
-    const char * eob = scan + size;
-    bool first = true;
-    while (*scan && (scan < eob)) {
-        while (std::isspace(*scan)) scan++;
-        std::string name;
-        scan = parse_name(scan, name);
-        if (name.empty()) {
-            // error
-            return nullptr;
-        }
-        if (first && name == "@theme") {
-            scan = parse_theme_name(scan, name);
-            if (!name.empty()) {
-                theme->name = name;
-            }
-        } else {
-            std::shared_ptr<Style> style{nullptr};
-            scan = parse_style(scan, style);
-            if (style) {
-                theme->styles[name] = style;
-            } else {
-                return nullptr;
-            }
-        }
-        first = false;
-    }
-
-    if (theme->name.empty()) {
-        theme->name = system::getStem(path);
-    }
-    return theme;
+    unsigned int n = 0;
+	for (auto entry : svgs) {
+		DEBUG("%u %s %p", ++n, entry.first.c_str(), (entry.second).get());
+	}
 }
+
+void ThemeCache::addTheme(std::shared_ptr<SvgTheme> theme)
+{
+    if (!theme) return;
+    auto it = std::find_if(themes.begin(), themes.end(), [theme](const std::shared_ptr<SvgTheme> item){ return item->name == theme->name; });
+ 	if (it == themes.end()) {
+        themes.push_back(theme);
+    } else if (theme != *it) {
+        *it = theme;
+    }
+}
+
+std::shared_ptr<SvgTheme> ThemeCache::getTheme(const std::string& name)
+{
+    if (name.empty()) return nullptr;
+    auto it = std::find_if(themes.cbegin(), themes.cend(), [name](const std::shared_ptr<SvgTheme> item){ return item->name == name; });
+ 	return (it == themes.cend()) ? nullptr : *it;
+}
+
+void ThemeCache::sort()
+{
+    std::sort(themes.begin(), themes.end(), [](std::shared_ptr<SvgTheme> a, std::shared_ptr<SvgTheme> b){ return alpha_order(a->name, b->name); });
+}
+
+// void ThemeCache::appendThemeMenu(Menu *menu, IThemeHolder *holder, bool disable, void *context)
+// {
+//     for (auto theme : themes) {
+//         std::string& name = theme->name;
+//         menu->addChild(createCheckMenuItem(
+//             name, "",
+//             [name, holder, context]() { return 0 == name.compare(holder->getThemeName()); },
+//             [name, holder, context]() { holder->setThemeName(name, context); },
+//             disable
+//         ));
+//     }
+// }
 
 }

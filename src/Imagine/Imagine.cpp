@@ -215,6 +215,8 @@ json_t *Imagine::dataToJson()
 
 void Imagine::dataFromJson(json_t *root)
 {
+    ThemeModule::dataFromJson(root);
+
     pic_folder = get_json_string(root, IMAGE_FOLDER_KEY, pic_folder);
 
     json_t* j = json_object_get(root, IMAGE_KEY);
@@ -238,7 +240,6 @@ void Imagine::dataFromJson(json_t *root)
     bright_image = get_json_bool(root, BRIGHT_IMAGE_KEY, bright_image);
     labels = get_json_bool(root, LABELS_KEY, labels);
 
-    ThemeModule::dataFromJson(root);
     dirty_settings = true;
 }
 

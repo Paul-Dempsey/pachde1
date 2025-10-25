@@ -12,6 +12,10 @@ inline void set_json(json_t* root, const char* key, const std::string& value) {
     json_object_set_new(root, key, json_stringn(value.c_str(), value.size()));
 }
 
+inline void set_json(json_t* root, const char* key, const char * value) {
+    json_object_set_new(root, key, json_string(value));
+}
+
 inline void set_json_int(json_t* root, const char* key, int value) {
     json_object_set_new(root, key, json_integer(value));
 }

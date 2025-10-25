@@ -5,7 +5,7 @@ using namespace pachde;
 namespace widgetry {
 
 template<typename TSvg>
-struct TButton : ::rack::app::SvgButton, IBasicTheme
+struct TActionButton : ::rack::app::SvgButton, IBasicTheme
 {
     using Base = ::rack::app::SvgButton;
 
@@ -16,12 +16,12 @@ struct TButton : ::rack::app::SvgButton, IBasicTheme
     std::function<void(bool, bool)> handler{nullptr};
     TipHolder * tip_holder{nullptr};
 
-    TButton()
+    TActionButton()
     {
         this->shadow->hide();
     }
 
-    virtual ~TButton()
+    virtual ~TActionButton()
     {
         if (tip_holder) {
             delete tip_holder;
@@ -118,50 +118,6 @@ struct TButton : ::rack::app::SvgButton, IBasicTheme
         }
     }
 
-    void applyTheme(Theme theme) {
-        if (frames.empty()) {
-            switch (theme) {
-            case Theme::Dark:
-                addFrame(Svg::load(asset::plugin(pluginInstance, TSvg::up_dark())));
-                addFrame(Svg::load(asset::plugin(pluginInstance, TSvg::down_dark())));
-                break;
-            case Theme::HighContrast:
-                addFrame(Svg::load(asset::plugin(pluginInstance, TSvg::up_hc())));
-                addFrame(Svg::load(asset::plugin(pluginInstance, TSvg::down_hc())));
-                break;
-            case Theme::Unset:
-            case Theme::Light:
-            default:
-                addFrame(Svg::load(asset::plugin(pluginInstance, TSvg::up())));
-                addFrame(Svg::load(asset::plugin(pluginInstance, TSvg::down())));
-                break;
-            }
-        } else {
-            switch (theme) {
-            case Theme::Dark:
-                frames[0]->loadFile(asset::plugin(pluginInstance, TSvg::up_dark()));
-                frames[1]->loadFile(asset::plugin(pluginInstance, TSvg::down_dark()));
-                break;
-            case Theme::HighContrast:
-                frames[0]->loadFile(asset::plugin(pluginInstance, TSvg::up_hc()));
-                frames[1]->loadFile(asset::plugin(pluginInstance, TSvg::down_hc()));
-                break;
-            case Theme::Unset:
-            case Theme::Light:
-            default:
-                frames[0]->loadFile(asset::plugin(pluginInstance, TSvg::up()));
-                frames[1]->loadFile(asset::plugin(pluginInstance, TSvg::down()));
-                break;
-            }
-        }
-        fb->setDirty();
-    }
-
-    void setTheme(Theme new_theme) override {
-        IBasicTheme::setTheme(new_theme);
-        applyTheme(new_theme);
-    }
-
     void step() override {
         if (sticky) sync_frame();
     }
@@ -173,39 +129,60 @@ struct TButton : ::rack::app::SvgButton, IBasicTheme
     	appendContextMenu(menu);
     }
 
+    void loadSvg(ILoadSvg* loader) {
+        if (frames.empty()) {
+            addFrame(loader->loadSvg(TSvg::up()));
+            addFrame(loader->loadSvg(TSvg::down()));
+        }
+    }
+
+    void applyTheme(std::shared_ptr<SvgTheme> theme) {
+        applySvgTheme(frames[0], theme);
+        applySvgTheme(frames[1], theme);
+    }
+
+    void updateSvg(std::shared_ptr<SvgTheme> theme) {
+        frames[0]->loadFile(TSvg::up());
+        frames[1]->loadFile(TSvg::down());
+        applyTheme(theme);
+        fb->dirty = true;
+    }
 };
 
 struct MediumButtonSvg {
-    static std::string up() { return "res/widget/med-but-up.svg"; }
-    static std::string up_dark() { return "res/widget/med-but-up.svg"; }
-    static std::string up_hc() { return "res/widget/med-but-up.svg"; }
-
-    static std::string down() { return "res/widget/med-but-dn.svg"; }
-    static std::string down_dark() { return "res/widget/med-but-dn.svg"; }
-    static std::string down_hc() { return "res/widget/med-but-dn.svg"; }
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/med-but-up.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/med-but-dn.svg"); }
 };
-using MediumButton = TButton<MediumButtonSvg>;
+using MediumActionButton = TActionButton<MediumButtonSvg>;
 
 struct SmallButtonSvg {
-    static std::string up() { return "res/widget/sm-but-up.svg"; }
-    static std::string up_dark() { return "res/widget/sm-but-up-dark.svg"; }
-    static std::string up_hc() { return "res/widget/sm-but-up-hc.svg"; }
-
-    static std::string down() { return "res/widget/sm-but-dn.svg"; }
-    static std::string down_dark() { return "res/widget/sm-but-dn-dark.svg"; }
-    static std::string down_hc() { return "res/widget/sm-but-dn-hc.svg"; }
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/sm-but-up.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/sm-but-dn.svg"); }
 };
-using SmallButton = TButton<SmallButtonSvg>;
+using SmallActionButton = TActionButton<SmallButtonSvg>;
 
 struct PlayButtonSvg {
-    static std::string up() { return "res/widget/play-btn.svg"; }
-    static std::string up_dark() { return "res/widget/play-btn.svg"; }
-    static std::string up_hc() { return "res/widget/play-btn.svg"; }
-
-    static std::string down() { return "res/widget/pause-btn.svg"; }
-    static std::string down_dark() { return "res/widget/pause-btn.svg"; }
-    static std::string down_hc() { return "res/widget/pause-btn.svg"; }
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/play-btn.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/pause-btn.svg"); }
 };
-using PlayButton = TButton<PlayButtonSvg>;
+using PlayActionButton = TActionButton<PlayButtonSvg>;
+
+template <typename TActionButton>
+TActionButton* createThemeSvgButton(ILoadSvg* loader, Vec pos) {
+    TActionButton* o = new TActionButton();
+    o->box.pos = pos;
+    o->loadSvg(loader);
+    return o;
+}
+
+template <typename TActionButton>
+TActionButton* createThemeSvgButton(ILoadSvg* loader, std::shared_ptr<SvgTheme> theme, Vec pos) {
+    TActionButton* o = new TActionButton();
+    o->box.pos = pos;
+    o->loadSvg(loader);
+    o->applyTheme(theme);
+    return o;
+}
+
 
 }

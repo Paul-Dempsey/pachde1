@@ -3,7 +3,7 @@ using namespace ::rack;
 #include "../services/json-help.hpp"
 #include "../services/open-file.hpp"
 #include "../services/rack-help.hpp"
-#include "../services/svg-theme-2.hpp"
+#include "../services/theme-module.hpp"
 #include "../widgets/action-button.hpp"
 #include "../widgets/components.hpp"
 #include "../widgets/hamburger.hpp"
@@ -11,6 +11,7 @@ using namespace ::rack;
 #include "skiff-help.hpp"
 #include "cloak.hpp"
 
+using namespace svg_theme_2;
 using namespace widgetry;
 
 namespace pachde {
@@ -19,25 +20,28 @@ struct SkiffUi;
 
 struct Skiff : ThemeModule
 {
-    using Base = ThemeModule;
+    using Base = Module;
 
     std::string custom_rail_file = asset::user("");
     int rail_item{-1};
-    bool screws{false};
+    bool screws{true};
+    bool jacks{true};
     bool calm{false};
     bool derailed{false};
     bool running{false};
-
+    std::string theme_name;
     SkiffUi* ui;
 
     json_t* dataToJson() override
     {
-        auto root = Base::dataToJson();
+        auto root = json_object();
         set_json(root, "rail-file", custom_rail_file);
         set_json_int(root, "alt-rail", rail_item);
-        set_json(root, "screws", screws);
+        set_json(root, "rack-screws", screws);
+        set_json(root, "jacks", jacks);
         set_json(root, "calm", calm);
         set_json(root, "derailed", derailed);
+        set_json(root, "theme", theme_name);
         return root;
     }
 
@@ -46,10 +50,11 @@ struct Skiff : ThemeModule
         Base::dataFromJson(root);
         custom_rail_file = get_json_string(root, "rail-file", custom_rail_file);
         rail_item = get_json_int(root, "alt-rail", rail_item);
-        screws = get_json_bool(root, "screws", screws);
+        screws = get_json_bool(root, "rack-screws", screws);
+        jacks = get_json_bool(root, "jacks", jacks);
         calm = get_json_bool(root, "calm", calm);
         derailed = get_json_bool(root, "derailed", derailed);
-
+        theme_name = get_json_string(root, "theme", "Light");
         apply_settings();
     };
 
@@ -62,18 +67,8 @@ struct Skiff : ThemeModule
 
 struct SkiffSvg
 {
-    static std::string background(Theme theme)
-    {
-        const char * asset = "res/Skiff.svg";
-        switch (theme) {
-        case Theme::Dark: asset = "res/Skiff-dark.svg"; break;
-        case Theme::HighContrast: asset = "res/Skiff-hc.svg"; break;
-
-        case Theme::Unset:
-        case Theme::Light:
-        default: break;
-        }
-        return asset::plugin(pluginInstance, asset);
+    static std::string background() {
+        return asset::plugin(pluginInstance, "res/Skiff.svg");
     }
 };
 
@@ -89,12 +84,14 @@ struct SkiffUi : ModuleWidget, IThemeChange
     using Base = ModuleWidget;
 
     Skiff* my_module;
-    ThemeBase* theme_holder{nullptr};
+    ThemeBase* theme_holder;
+    SvgCache my_svgs;
 
     bool request_custom_rail{false};
     bool other_skiff{false};
     int rail_item{-1};
-    bool screws{false};
+    bool screws{true};
+    bool jacks{true};
     bool calm{false};
     bool derailed{false};
 
@@ -102,27 +99,24 @@ struct SkiffUi : ModuleWidget, IThemeChange
     std::map<const char *, Widget*> positioned_widgets;
 #endif
 
-    virtual ~SkiffUi()
-    {
-        if (theme_holder && !module) {
-            delete theme_holder;
-        }
-    }
-
-    SkiffUi(Skiff* module) : my_module(module)
-    {
+    SkiffUi(Skiff* module) : my_module(module) {
         setModule(module);
         if (my_module) {
             my_module->ui = this;
         }
 
-        auto th = svg_theme_2::loadFile(asset::plugin(pluginInstance, "res/test.vgt"));
-
         derailed = is_rail_visible();
-        theme_holder = module ? module : new ThemeBase();
+        theme_holder = my_module ? my_module : new ThemeBase();
         theme_holder->setNotify(this);
-        applyTheme(GetPreferredTheme(theme_holder));
+        makeUi();
+    }
 
+    void onChangeTheme(ChangedItem item) override {
+        if (ChangedItem::Theme == item) {
+            auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
+            my_svgs.changeTheme(svg_theme);
+            sendDirty(this);
+        }
     }
 
 #ifdef HOT_SVG
@@ -131,26 +125,31 @@ struct SkiffUi : ModuleWidget, IThemeChange
 #define HOT_POSITION(name,widget)
 #endif
 
-    void makeUi(Theme theme) {
+    void makeUi() {
         assert(children.empty());
-        setPanel(createSvgThemePanel<SkiffSvg>(theme));
+
+        auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
+
+        auto panel = createSvgThemePanel<SkiffSvg>(&my_svgs, nullptr);
+        auto layout = panel->svg;
+        setPanel(panel);
 
         other_skiff = !is_singleton(my_module, this);
         if (other_skiff) return;
 
-        SmallButton* button;
-        auto layout = window::Svg::load(SkiffSvg::background(Theme::Light));
+        SmallActionButton* button;
 
         std::map<std::string, ::math::Rect> bounds;
         svg_query::boundsIndex(layout, "k:", bounds, true);
 
-        auto menu = createThemeWidgetCentered<RailMenu>(theme, bounds["k:rail-menu"].getCenter());
+        auto menu = Center(createWidget<RailMenu>(bounds["k:rail-menu"].getCenter()));
         HOT_POSITION("k:rail-menu", menu);
         menu->setUi(this);
         menu->describe("Change Rails");
+        menu->applyTheme(svg_theme);
         addChild(menu);
 
-        button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:unrail-btn"].getCenter());
+        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:unrail-btn"].getCenter()));
         HOT_POSITION("k:unrail-btn", button);
         button->set_sticky(true);
         button->latched = derailed;
@@ -161,7 +160,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         addChild(button);
 
 
-        button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:bg-btn"].getCenter());
+        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:bg-btn"].getCenter()));
         HOT_POSITION("k:bg-btn", button);
         button->set_sticky(true);
         button->latched = derailed;
@@ -171,7 +170,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         }
         addChild(button);
 
-        button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:calm-btn"].getCenter());
+        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:calm-btn"].getCenter()));
         HOT_POSITION("k:calm-btn", button);
         if (module) {
             button->describe("Calm knobs and ports");
@@ -179,7 +178,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         }
         addChild(button);
 
-        button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:screw-btn"].getCenter());
+        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:screw-btn"].getCenter()));
         HOT_POSITION("k:screw-btn", button);
         button->set_sticky(true);
         if (module) {
@@ -188,7 +187,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         }
         addChild(button);
 
-        button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:pack-btn"].getCenter());
+        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:pack-btn"].getCenter()));
         HOT_POSITION("k:pack-btn", button);
         if (module) {
             button->describe("Pack modules (F7)");
@@ -196,45 +195,23 @@ struct SkiffUi : ModuleWidget, IThemeChange
         }
         addChild(button);
 
-        button = createThemeWidgetCentered<SmallButton>(theme, bounds["k:from-patch-btn"].getCenter());
+        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:nojack-btn"].getCenter()));
+        HOT_POSITION("k:nojack-btn", button);
+        if (module) {
+            button->describe("Hide unused jacks");
+            button->setHandler([this](bool ctrl, bool shift) { toggle_jacks(); });
+        }
+        addChild(button);
+
+        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:from-patch-btn"].getCenter()));
         HOT_POSITION("k:from-patch-btn", button);
         if (module) {
             button->describe("Apply last saved skiff");
             button->setHandler([this](bool ctrl, bool shift) { from_patch(); });
         }
         addChild(button);
-    }
 
-    void applyTheme(Theme theme) {
-        if (children.empty()) {
-            makeUi(theme);
-        } else {
-            if (Theme::Light == theme) {
-                auto layout = window::Svg::load(SkiffSvg::background(Theme::Light));
-                svg_query::hideElements(layout, "k:");
-            }
-            SetChildrenTheme(this, theme);
-        }
-    }
-
-    void onChangeTheme(ChangedItem item) override {
-        switch (item) {
-        case ChangedItem::Theme:
-            applyTheme(GetPreferredTheme(theme_holder));
-            break;
-        case ChangedItem::DarkTheme:
-            applyTheme(GetPreferredTheme(theme_holder));
-            break;
-        case ChangedItem::FollowDark:
-            if (theme_holder->getFollowRack()) {
-                applyTheme(GetPreferredTheme(theme_holder));
-            }
-            break;
-        case ChangedItem::MainColor:
-            break;
-        case ChangedItem::Screws:
-            break;
-        }
+        my_svgs.changeTheme(svg_theme);
     }
 
     void fancy_background()
@@ -248,6 +225,9 @@ struct SkiffUi : ModuleWidget, IThemeChange
 
         screws = my_module->screws;
         screw_visibility(APP->scene->rack, screws);
+
+        jacks = my_module->jacks;
+        port_visibility(APP->scene->rack, jacks);
 
         calm = !my_module->calm; // invert because calm_rack() toggles
         calm_rack();
@@ -353,6 +333,15 @@ struct SkiffUi : ModuleWidget, IThemeChange
         }
     }
 
+    void toggle_jacks() {
+        jacks = !jacks;
+        port_visibility(APP->scene->rack, jacks);
+        if (my_module) {
+            my_module->jacks = jacks;
+        }
+
+    }
+
     std::string get_rack_rail_filename() {
         return asset::system(
             (settings::uiTheme == "light") ? "res/ComponentLibrary/Rail-light.svg" :
@@ -425,29 +414,29 @@ struct SkiffUi : ModuleWidget, IThemeChange
             request_custom_rail = false;
             custom_rail();
         }
-        theme_holder->pollRackDarkChanged();
+        theme_holder->pollRackThemeChanged();
     }
 
     void onHoverKey(const HoverKeyEvent& e) override
     {
         auto mods = e.mods & RACK_MOD_MASK;
         switch (e.key) {
-
 #ifdef HOT_SVG
         case GLFW_KEY_F5: {
             if (e.action == GLFW_RELEASE && (0 == mods)) {
                 e.consume(this);
+                my_svgs.reloadAll();
+                reloadThemeCache();
                 auto panel = dynamic_cast<SvgThemePanel<SkiffSvg>*>(getPanel());
-                if (panel) {
-                    auto layout = window::Svg::load(SkiffSvg::background(Theme::Light));
-                    std::map<std::string, ::math::Rect> bounds;
-                    svg_query::boundsIndex(layout, "k:", bounds, true);
-                    for (auto kv: positioned_widgets) {
-                        kv.second->box.pos = bounds[kv.first].getCenter();
-                        Center(kv.second);
-                    }
-                    panel->updatePanel(theme_holder->getTheme());
+                auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
+                panel->updatePanel(svg_theme);
+                std::map<std::string, ::math::Rect> bounds;
+                svg_query::boundsIndex(panel->svg, "k:", bounds, true);
+                for (auto kv: positioned_widgets) {
+                    kv.second->box.pos = bounds[kv.first].getCenter();
+                    Center(kv.second);
                 }
+                sendDirty(this);
             }
         } break;
 #endif
@@ -478,7 +467,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
     void appendContextMenu(Menu* menu) override {
         if (!module) return;
 
-        menu->addChild(createMenuLabel<HamburgerTitle>("Skiff"));
+        menu->addChild(createMenuLabel<HamburgerTitle>("#d Skiff"));
         AddThemeMenu(menu, theme_holder, false, false);
     }
 

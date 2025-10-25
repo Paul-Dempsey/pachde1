@@ -1,4 +1,5 @@
 #include "Copper.hpp"
+#include "../widgets/hamburger.hpp"
 #include "../widgets/screws.hpp"
 using namespace widgetry;
 
@@ -6,23 +7,8 @@ namespace pachde {
 
 // ----------------------------------------------------------------------------
 struct CopperSvg {
-    static std::string background(Theme theme)
-    {
-        const char * asset;
-        switch (theme) {
-        default:
-        case Theme::Unset:
-        case Theme::Light:
-            asset = "res/Copper.svg";
-            break;
-        case Theme::Dark:
-            asset = "res/CopperDark.svg";
-            break;
-        case Theme::HighContrast:
-            asset = "res/CopperHighContrast.svg";
-            break;
-        }
-        return asset::plugin(pluginInstance, asset);
+    static std::string background() {
+        return asset::plugin(pluginInstance, "res/Copper.svg");
     }
 };
 
@@ -69,15 +55,13 @@ struct CopperColor : OpaqueWidget {
 
 };
 
-
 // ----------------------------------------------------------------------------
-CopperUi::CopperUi(CopperModule * module)
+CopperUi::CopperUi(CopperModule * module) : copper_module(module)
 {
-    copper_module = module;
     setModule(module);
     theme_holder = module ? module : new ThemeBase();
+    setTheme(theme_holder->getTheme());
     theme_holder->setNotify(this);
-    applyTheme(GetPreferredTheme(theme_holder));
 }
 
 float CopperUi::getHue()
@@ -155,12 +139,14 @@ const float output_col5 = col4_center;
 void CopperUi::makeUi(Theme theme)
 {
     assert(children.empty());
+    ThemeCache& themes = getThemeCache();
+    auto svg_theme = themes.getTheme(ThemeName(theme));
 
-    setPanel(createSvgThemePanel<CopperSvg>(theme));
+    setPanel(createSvgThemePanel<CopperSvg>(getRackSvgs(), svg_theme));
 
     if (theme_holder->hasScrews()) {
-        AddScrewCaps(this, theme, COPPER, SCREWS_OUTSIDE, WhichScrew::TOP_SCREWS);
-        AddScrewCaps(this, theme, COLOR_NONE, SCREWS_OUTSIDE, WhichScrew::BOTTOM_SCREWS);
+        AddScrewCaps(this, theme, COPPER_PACKED, SCREWS_OUTSIDE, WhichScrew::TOP_SCREWS);
+        AddScrewCaps(this, theme, colors::NoColor, SCREWS_OUTSIDE, WhichScrew::BOTTOM_SCREWS);
     }
 
     if (copper_module) {
@@ -190,16 +176,16 @@ void CopperUi::makeUi(Theme theme)
     });
     addChild(sl_picker);
 
-    auto p = createThemeParamCentered<LargeKnob>(theme, Vec(col1_center,row1_middle), module, CopperModule::H_PARAM);
+    auto p = Center(createThemeSvgParam<LargeKnob>(&my_svgs, Vec(col1_center,row1_middle), module, CopperModule::H_PARAM));
     p->stepIncrementBy = 1.f/360.f;
     addParam(p);
-    p = createThemeParamCentered<LargeKnob>(theme, Vec(col2_center,row1_middle), module, CopperModule::S_PARAM);
+    p = Center(createThemeSvgParam<LargeKnob>(&my_svgs, Vec(col2_center,row1_middle), module, CopperModule::S_PARAM));
     p->stepIncrementBy = .1f;
     addParam(p);
-    p = createThemeParamCentered<LargeKnob>(theme, Vec(col3_center,row1_middle), module, CopperModule::L_PARAM);
+    p = Center(createThemeSvgParam<LargeKnob>(&my_svgs, Vec(col3_center,row1_middle), module, CopperModule::L_PARAM));
     p->stepIncrementBy = .01f;
     addParam(p);
-    p = createThemeParamCentered<LargeKnob>(theme, Vec(col4_center,row1_middle), module, CopperModule::A_PARAM);
+    p = Center(createThemeSvgParam<LargeKnob>(&my_svgs, Vec(col4_center,row1_middle), module, CopperModule::A_PARAM));
     p->stepIncrementBy = .1f;
     addParam(p);
 
@@ -208,16 +194,18 @@ void CopperUi::makeUi(Theme theme)
     addInput(createThemeInputCentered<ColorPort>(theme, Vec(col3_center,row2_middle), module, CopperModule::L_INPUT));
     addInput(createThemeInputCentered<ColorPort>(theme, Vec(col4_center,row2_middle), module, CopperModule::A_INPUT));
 
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_RED,   Vec(output_col1,output_row1), module, CopperModule::R_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_GREEN, Vec(output_col1,output_row2), module, CopperModule::G_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_BLUE,  Vec(output_col2,output_row1 + (output_row2 - output_row1)/2.f), module, CopperModule::B_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortRed,   Vec(output_col1,output_row1), module, CopperModule::R_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortGreen, Vec(output_col1,output_row2), module, CopperModule::G_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortBlue,  Vec(output_col2,output_row1 + (output_row2 - output_row1)/2.f), module, CopperModule::B_OUT));
 
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_YELLOW, Vec(output_col3,output_row1), module, CopperModule::H_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_ORANGE, Vec(output_col4,output_row1), module, CopperModule::S_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, RampGray(G_50), Vec(output_col3,output_row2), module, CopperModule::L_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_PINK, Vec(output_col4,output_row2), module, CopperModule::A_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortYellow, Vec(output_col3,output_row1), module, CopperModule::H_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortOrange, Vec(output_col4,output_row1), module, CopperModule::S_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::G50,        Vec(output_col3,output_row2), module, CopperModule::L_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortPink,   Vec(output_col4,output_row2), module, CopperModule::A_OUT));
 
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_MAGENTA, Vec(output_col5, output_row1), module, CopperModule::POLY_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortMagenta, Vec(output_col5, output_row1), module, CopperModule::POLY_OUT));
+
+    my_svgs.changeTheme(svg_theme);
 }
 
 const float sample_x = 0.f;
@@ -277,12 +265,14 @@ void CopperUi::draw(const DrawArgs& args)
     }
 }
 
-void CopperUi::applyTheme(Theme theme)
+void CopperUi::setTheme(Theme theme)
 {
     if (children.empty()) {
         makeUi(theme);
     } else {
-        SetChildrenTheme(this, theme);
+       my_svgs.changeTheme(getThemeCache().getTheme(ThemeName(theme)));
+       sendChildrenThemeColor(this, theme, theme_holder->getMainColor());
+       sendDirty(this);
     }
 }
 
@@ -290,9 +280,9 @@ void CopperUi::applyScrews(bool screws)
 {
     if (screws) {
         if (HaveScrewChildren(this)) return;
-        auto theme = GetPreferredTheme(theme_holder);
-        AddScrewCaps(this, theme, COPPER, SCREWS_OUTSIDE, WhichScrew::TOP_SCREWS);
-        AddScrewCaps(this, theme, COLOR_NONE, SCREWS_OUTSIDE, WhichScrew::BOTTOM_SCREWS);
+        auto theme = theme_holder->getTheme();
+        AddScrewCaps(this, theme, COPPER_PACKED, SCREWS_OUTSIDE, WhichScrew::TOP_SCREWS);
+        AddScrewCaps(this, theme, colors::NoColor, SCREWS_OUTSIDE, WhichScrew::BOTTOM_SCREWS);
     } else {
         RemoveScrewCaps(this);
     }
@@ -302,15 +292,8 @@ void CopperUi::onChangeTheme(ChangedItem item)
 {
     switch (item) {
     case ChangedItem::Theme:
-        applyTheme(GetPreferredTheme(theme_holder));
-        break;
-    case ChangedItem::DarkTheme:
-    case ChangedItem::FollowDark:
-        if (theme_holder->getFollowRack()) {
-            applyTheme(GetPreferredTheme(theme_holder));
-        }
-        break;
     case ChangedItem::MainColor:
+        setTheme(GetPreferredTheme(theme_holder));
         break;
     case ChangedItem::Screws:
         applyScrews(theme_holder->hasScrews());
@@ -320,13 +303,13 @@ void CopperUi::onChangeTheme(ChangedItem item)
 
 void CopperUi::step()
 {
-    bool changed = theme_holder->pollRackDarkChanged();
+    bool changed = theme_holder->pollRackThemeChanged();
 
     if (copper_module) {
         // sync with module for change from presets
         if (!changed && copper_module->isDirty()) {
             applyScrews(theme_holder->hasScrews());
-            applyTheme(GetPreferredTheme(theme_holder));
+            setTheme(theme_holder->getTheme());
         }
         copper_module->setClean();
         copper_module->updateCableConnections();
@@ -344,7 +327,6 @@ void CopperUi::step()
             sl_picker->setLightness(getLightness());
             sl_picker->setHue(h);
         }
-
     }
     ModuleWidget::step();
 }
@@ -368,6 +350,7 @@ void AddColorItem(Self* self, Menu* menu, const char * name, PackedColor color, 
 void CopperUi::appendContextMenu(rack::ui::Menu* menu)
 {
     if (!copper_module) return;
+    menu->addChild(createMenuLabel<HamburgerTitle>("#d Copper"));
     AddThemeMenu(menu, theme_holder, false, true);
     menu->addChild(createSubmenuItem("Poly jack order", "", [=](Menu* menu) {
         menu->addChild(createCheckMenuItem("HSLARGB", "",
@@ -391,6 +374,11 @@ void CopperUi::appendContextMenu(rack::ui::Menu* menu)
         auto hex = rack::color::toHexString(getColor());
         glfwSetClipboardString(nullptr, hex.c_str());
     }));
+    // menu->addChild(createMenuItem("Copy rgba color", "", [=]() {
+    //     auto co = toPacked(getColor());
+
+    //     glfwSetClipboardString(nullptr, hex.c_str());
+    // }));
     menu->addChild(createMenuItem("Paste hex color", "", [=]() {
         std::string hex = glfwGetClipboardString(nullptr);
         if (!hex.empty()) {
@@ -402,28 +390,6 @@ void CopperUi::appendContextMenu(rack::ui::Menu* menu)
         }
     }));
 
-#ifdef USE_BAD_HEX_INPUT
-    // BUGBUG: We don't have working inverses yet for round-tripping nvgHSL(),
-    menu->addChild(createSubmenuItem("Color", "",
-        [=](Menu *menu)
-        {
-            MenuTextField *editField = new MenuTextField();
-            editField->box.size.x = 100;
-            auto color = getColor();
-            editField->setText(rack::color::toHexString(color));
-            editField->changeHandler = [=](std::string text) {
-                auto color = COLOR_NONE;
-                if (!text.empty() && text[0] == '#') {
-                    color = rack::color::fromHexString(text);
-                    setHue(Hue1(color));
-                    setSaturation(Saturation(color));
-                    setLightness(Lightness(color));
-                    setAlpha(color.a);
-                }
-            };
-            menu->addChild(editField);
-        }));
-#endif
 }
 
 }

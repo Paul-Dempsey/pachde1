@@ -1,0 +1,39 @@
+     @theme = Light
+
+      panel = [ #ebebeb, #e1e1e1 ]
+      title = #000
+       mast = #f9a806
+      swash = #000
+       logo = #000
+        sep = #888
+     symbol = #000
+ jack-glyph = #dedede stroke #000
+      patty = #444
+patty-hover = hsl(0,0%,55%)
+ info-glyph = hsl(0,0%,25%)
+
+// knobs
+k-bg      = [ #dfeffc, #bfbfbf ]
+k-inner   = none stroke none
+k-mark    = #cedcf2 opacity .8
+k-pin     = stroke #457aa6
+k-pointer = #457aa6
+k-ring    = stroke #457aa6
+
+// Coppers
+  medallion = #f9a54b stroke #f9a54b
+  picker-bg = #888
+     out-bg = #888 stroke none
+// Copper mini
+      i-sep = #cccccc
+      o-sep = #cccccc
+     lab-in = #888
+    lab-out = #888
+  minilabel = #bfbfbf
+mini-out-bg = none
+
+// Skiff
+//unscrew = #dedede stroke #000
+//unscrew-slot = #000 stroke none
+unrail-slash = none stroke #00000080
+

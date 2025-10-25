@@ -2,6 +2,7 @@
 #include "../IHaveColor.hpp"
 #include "../services/json-help.hpp"
 #include "../widgets/create-theme-widget.hpp"
+#include "../widgets/hamburger.hpp"
 #include "../widgets/screws.hpp"
 
 using namespace widgetry;
@@ -115,9 +116,10 @@ BlankModuleWidget::BlankModuleWidget(BlankModule *module)
     if (my_module) {
         my_module->setNotify(this);
     }
-    auto theme = ModuleTheme(module);
-    getITheme()->setTheme(theme);
-    applyTheme(theme);
+    auto setting = ModuleThemeSetting(module);
+    auto itheme = getITheme();
+    itheme->setThemeSetting(setting);
+    setTheme(itheme->getTheme());
 }
 
 void BlankModuleWidget::addResizeHandles()
@@ -145,7 +147,7 @@ void BlankModuleWidget::add_screws()
 {
     if (HaveScrewChildren(this)) return;
     auto itheme = getITheme();
-    AddScrewCaps(this, GetPreferredTheme(itheme), itheme->getMainColor(), ScrewAlign::SCREWS_OUTSIDE, WhichScrew::ALL_SCREWS);
+    AddScrewCaps(this, itheme->getTheme(), itheme->getMainColor(), ScrewAlign::SCREWS_OUTSIDE, WhichScrew::ALL_SCREWS);
 }
 
 void BlankModuleWidget::drawPanel(const DrawArgs &args)
@@ -175,7 +177,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
 
     auto panel_color = my_module && my_module->copper ? my_module->externalcolor() : COLOR_NONE;
     if (isColorTransparent(panel_color)) {
-        panel_color = getITheme()->getMainColor();
+        panel_color = fromPacked(getITheme()->getMainColor());
     }
 
     if (isColorVisible(panel_color)) {
@@ -281,7 +283,7 @@ void BlankModuleWidget::drawLayer(const DrawArgs &args, int layer) {
     }
 }
 
-void BlankModuleWidget::applyTheme(Theme theme)
+void BlankModuleWidget::setTheme(Theme theme)
 {
     // set default size for module browser
     box.size = Vec(RACK_GRID_WIDTH * 4, RACK_GRID_HEIGHT);
@@ -297,11 +299,8 @@ void BlankModuleWidget::applyTheme(Theme theme)
             add_screws();
         }
     } else {
-        SetChildrenTheme(this, theme);
         auto co = itheme->getMainColor();
-        if (!isColorTransparent(co)) {
-            SetChildrenThemeColor(this, co);
-        }
+        sendChildrenThemeColor(this, theme, co);
     }
 
     auto resize = dynamic_cast<const ResizableModule*>(this->module);
@@ -317,16 +316,8 @@ void BlankModuleWidget::onChangeTheme(ChangedItem item) // override
 
     switch (item) {
     case ChangedItem::Theme:
-        applyTheme(GetPreferredTheme(itheme));
-        break;
-    case ChangedItem::FollowDark:
-    case ChangedItem::DarkTheme:
-        if (itheme->getFollowRack()) {
-            applyTheme(GetPreferredTheme(itheme));
-        }
-        break;
     case ChangedItem::MainColor:
-        SetChildrenThemeColor(this, itheme->getMainColor());
+        setTheme(GetPreferredTheme(itheme));
         break;
     case ChangedItem::Screws:
         applyScrews(itheme->hasScrews());
@@ -337,7 +328,7 @@ void BlankModuleWidget::onChangeTheme(ChangedItem item) // override
 void BlankModuleWidget::step()
 {
     auto itheme = getITheme();
-    bool changed = itheme->pollRackDarkChanged();
+    bool changed = itheme->pollRackThemeChanged();
 
     if (my_module) {
         box.size.x = my_module->width * RACK_GRID_WIDTH;
@@ -345,12 +336,12 @@ void BlankModuleWidget::step()
         auto color = my_module->externalcolor();
         if (isColorVisible(color) && panel->theme_holder)
         {
-            panel->theme_holder->setMainColor(color);
+            panel->theme_holder->setMainColor(toPacked(color));
         }
         // sync with module for change from presets
         if (!changed && my_module->isDirty()) {
             applyScrews(itheme->hasScrews());
-            applyTheme(GetPreferredTheme(itheme));
+            setTheme(GetPreferredTheme(itheme));
         }
         my_module->setClean();
     }
@@ -369,18 +360,18 @@ void AddColorItem(BlankModuleWidget* self, Menu* menu, const char * name, Packed
     menu->addChild(createColorMenuItem(
         color, name, "",
         [=]() { return current == color; },
-        [=]() { self->getITheme()->setMainColor(fromPacked(color)); }
+        [=]() { self->getITheme()->setMainColor(color); }
         ));
 }
 
 void BlankModuleWidget::appendContextMenu(Menu *menu)
 {
     if (!my_module) return;
+    menu->addChild(createMenuLabel<HamburgerTitle>("#d Null"));
     AddThemeMenu(menu, getITheme(), true, true);
     menu->addChild(createSubmenuItem("Palette color", "",
-        [=](Menu *menu)
-        {
-            auto current = toPacked(my_module->getMainColor());
+        [=](Menu *menu) {
+            auto current = my_module->getMainColor();
             for (auto pco = stock_colors; nullptr != pco->name; ++pco) {
                 AddColorItem(this, menu, pco->name, pco->color, current);
             }

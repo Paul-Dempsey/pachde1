@@ -5,7 +5,7 @@ using namespace widgetry;
 
 namespace pachde {
 
-struct LogoPort : PortWidget, IBasicTheme
+struct LogoPort : PortWidget
 {
     LogoWidget* logo{nullptr};
 
@@ -13,7 +13,7 @@ struct LogoPort : PortWidget, IBasicTheme
         box.size.x = box.size.y = 18.f;
     }
 
-    void setTheme(Theme theme) override {
+    void setTheme(Theme theme) {
         if (children.empty()) {
             logo = new LogoWidget(theme, .18f);
             logo->box.pos = Vec(0, 0);

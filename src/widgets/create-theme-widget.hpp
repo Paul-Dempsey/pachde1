@@ -1,8 +1,10 @@
 #pragma once
 #include "components.hpp"
+#include "../services/theme.hpp"
 
 namespace pachde
 {
+// TODO: remove Center variants
 
 template <class TParamWidget>
 TParamWidget *createThemeParam(Theme theme, math::Vec pos, engine::Module *module, int paramId)
@@ -45,7 +47,7 @@ TPortWidget *createThemeInputCentered(Theme theme, math::Vec pos, engine::Module
 }
 
 template <class TColorPortWidget>
-TColorPortWidget *createColorInput(Theme theme, NVGcolor color, math::Vec pos, engine::Module *module, int id)
+TColorPortWidget *createColorInput(Theme theme, PackedColor color, math::Vec pos, engine::Module *module, int id)
 {
     TColorPortWidget *o = new TColorPortWidget();
     o->setTheme(theme);
@@ -58,7 +60,7 @@ TColorPortWidget *createColorInput(Theme theme, NVGcolor color, math::Vec pos, e
 }
 
 template <class TColorPortWidget>
-TColorPortWidget *createColorInputCentered(Theme theme, NVGcolor color, math::Vec pos, engine::Module *module, int id)
+TColorPortWidget *createColorInputCentered(Theme theme, PackedColor color, math::Vec pos, engine::Module *module, int id)
 {
     TColorPortWidget *o = createColorInput<TColorPortWidget>(theme, color, pos, module, id);
     o->box.pos = pos.minus(o->box.size.div(2));
@@ -86,7 +88,7 @@ TPortWidget *createThemeOutputCentered(Theme theme, math::Vec pos, engine::Modul
 }
 
 template <class TColorPortWidget>
-TColorPortWidget *createColorOutput(Theme theme, NVGcolor color, math::Vec pos, engine::Module *module, int outputId)
+TColorPortWidget *createColorOutput(Theme theme, PackedColor color, math::Vec pos, engine::Module *module, int outputId)
 {
     TColorPortWidget *o = new TColorPortWidget();
     o->setTheme(theme);
@@ -99,7 +101,7 @@ TColorPortWidget *createColorOutput(Theme theme, NVGcolor color, math::Vec pos, 
 }
 
 template <class TColorPortWidget>
-TColorPortWidget *createColorOutputCentered(Theme theme, NVGcolor color, math::Vec pos, engine::Module *module, int outputId)
+TColorPortWidget *createColorOutputCentered(Theme theme, PackedColor color, math::Vec pos, engine::Module *module, int outputId)
 {
     TColorPortWidget *o = createColorOutput<TColorPortWidget>(theme, color, pos, module, outputId);
     o->box.pos = o->box.pos.minus(o->box.size.div(2));

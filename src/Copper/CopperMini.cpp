@@ -1,26 +1,14 @@
 #include "Copper.hpp"
+#include "../widgets/hamburger.hpp"
+#include "../widgets/widgetry.hpp"
+using namespace widgetry;
 
 namespace pachde {
 using namespace rack;
 
 struct CopperMiniSvg {
-    static std::string background(Theme theme)
-    {
-        const char * asset;
-        switch (theme) {
-        default:
-        case Theme::Unset:
-        case Theme::Light:
-            asset = "res/Copper-mini.svg";
-            break;
-        case Theme::Dark:
-            asset = "res/Copper-mini-Dark.svg";
-            break;
-        case Theme::HighContrast:
-            asset = "res/Copper-mini-HighContrast.svg";
-            break;
-        }
-        return asset::plugin(pluginInstance, asset);
+    static std::string background() {
+        return asset::plugin(pluginInstance, "res/Copper-mini.svg");
     }
 };
 
@@ -31,7 +19,7 @@ CopperMiniUI::CopperMiniUI(CopperModule * module)
     setModule(module);
     theme_holder = module ? module : new ThemeBase();
     theme_holder->setNotify(this);
-    applyTheme(GetPreferredTheme(theme_holder));
+    setTheme(GetPreferredTheme(theme_holder));
 }
 
 float CopperMiniUI::getHue()
@@ -99,47 +87,52 @@ constexpr const float GAP2 = 36.f;
 void CopperMiniUI::makeUi(Theme theme)
 {
     assert(children.empty());
+    auto svg_theme = getThemeCache().getTheme(ThemeName(theme));
 
-    setPanel(createSvgThemePanel<CopperMiniSvg>(theme));
+    setPanel(createSvgThemePanel<CopperMiniSvg>(getRackSvgs(), svg_theme));
 
     float center = box.size.x * .5f;
     float y = 30.f;
-    auto p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperModule::H_PARAM);
+    auto p = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(center,y), module, CopperModule::H_PARAM));
     p->stepIncrementBy = 1.f/360.f;
     addParam(p);
+
     y += KNOB_SPACING;
-    p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperModule::S_PARAM);
+    p = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(center,y), module, CopperModule::S_PARAM));
     p->stepIncrementBy = .1f;
     addParam(p);
+
     y += KNOB_SPACING;
-    p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperModule::L_PARAM);
+    p = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(center,y), module, CopperModule::L_PARAM));
     p->stepIncrementBy = .01f;
     addParam(p);
+
     y += KNOB_SPACING;
-    p = createThemeParamCentered<SmallKnob>(theme, Vec(center,y), module, CopperModule::A_PARAM);
+    p = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(center,y), module, CopperModule::A_PARAM));
     p->stepIncrementBy = .1f;
     addParam(p);
 
     y += GAP1;
 
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_BLUE, Vec(center,y), module, CopperModule::H_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, colors::PortBlue, Vec(center,y), module, CopperModule::H_INPUT));
     y += CONTROL_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_ORANGE, Vec(center,y), module, CopperModule::S_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, colors::PortOrange, Vec(center,y), module, CopperModule::S_INPUT));
     y += CONTROL_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_YELLOW, Vec(center,y), module, CopperModule::L_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, colors::PortYellow, Vec(center,y), module, CopperModule::L_INPUT));
     y += CONTROL_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_PINK, Vec(center,y), module, CopperModule::A_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, colors::PortPink, Vec(center,y), module, CopperModule::A_INPUT));
 
     y += GAP2;
 
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_BLUE, Vec(center,y), module, CopperModule::H_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortBlue, Vec(center,y), module, CopperModule::H_OUT));
     y += CONTROL_SPACING;
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_ORANGE, Vec(center,y), module, CopperModule::S_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortOrange, Vec(center,y), module, CopperModule::S_OUT));
     y += CONTROL_SPACING;
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_YELLOW, Vec(center,y), module, CopperModule::L_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortYellow, Vec(center,y), module, CopperModule::L_OUT));
     y += CONTROL_SPACING;
-    addOutput(createColorOutputCentered<ColorPort>(theme, PORT_PINK, Vec(center,y), module, CopperModule::A_OUT));
+    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortPink, Vec(center,y), module, CopperModule::A_OUT));
 
+    my_svgs.changeTheme(svg_theme);
 }
 
 void CopperMiniUI::drawLayer(const DrawArgs& args, int layer)
@@ -174,12 +167,14 @@ void CopperMiniUI::draw(const DrawArgs& args)
     nvgRestore(vg);
 }
 
-void CopperMiniUI::applyTheme(Theme theme)
+void CopperMiniUI::setTheme(Theme theme)
 {
     if (children.empty()) {
         makeUi(theme);
     } else {
-        SetChildrenTheme(this, theme);
+        my_svgs.changeTheme(getThemeCache().getTheme(ThemeName(theme)));
+        sendChildrenThemeColor(this, theme, GetPreferredColor(theme_holder));
+        sendDirty(this);
     }
 }
 
@@ -187,15 +182,8 @@ void CopperMiniUI::onChangeTheme(ChangedItem item)
 {
     switch (item) {
     case ChangedItem::Theme:
-        applyTheme(GetPreferredTheme(theme_holder));
-        break;
-    case ChangedItem::DarkTheme:
-    case ChangedItem::FollowDark:
-        if (theme_holder->getFollowRack()) {
-            applyTheme(GetPreferredTheme(theme_holder));
-        }
-        break;
     case ChangedItem::MainColor:
+        setTheme(GetPreferredTheme(theme_holder));
         break;
     case ChangedItem::Screws:
         break;
@@ -204,12 +192,12 @@ void CopperMiniUI::onChangeTheme(ChangedItem item)
 
 void CopperMiniUI::step()
 {
-   bool changed = theme_holder->pollRackDarkChanged();
+   bool changed = theme_holder->pollRackThemeChanged();
 
     if (copper_module) {
         // sync with module for change from presets
         if (!changed && copper_module->isDirty()) {
-            applyTheme(GetPreferredTheme(theme_holder));
+            setTheme(GetPreferredTheme(theme_holder));
         }
         copper_module->setClean();
         copper_module->updateCableConnections();
@@ -236,7 +224,9 @@ void AddColorItem(Self* self, Menu* menu, const char * name, PackedColor color, 
 void CopperMiniUI::appendContextMenu(rack::ui::Menu* menu)
 {
     if (!this->module) return;
+    menu->addChild(createMenuLabel<HamburgerTitle>("#d Copper Mini"));
     AddThemeMenu(menu, theme_holder, false, false);
+    //TODO: add or switch to picker
     menu->addChild(createSubmenuItem("Palette color", "",
         [=](Menu *menu)
         {

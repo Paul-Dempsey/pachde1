@@ -1,11 +1,12 @@
 #pragma once
 #include <rack.hpp>
-#include "../widgets/components.hpp"
-#include "../services/dsp.hpp"
 #include "../IHaveColor.hpp"
-#include "../widgets/port.hpp"
+#include "../services/dsp.hpp"
 #include "../services/text.hpp"
+#include "../services/theme-module.hpp"
+#include "../widgets/components.hpp"
 #include "../widgets/hue_widget.hpp"
+#include "../widgets/port.hpp"
 #include "../widgets/sl_widget.hpp"
 
 using namespace ::rack;
@@ -14,6 +15,7 @@ using namespace widgetry;
 namespace pachde {
 
 extern const NVGcolor COPPER;
+extern const PackedColor COPPER_PACKED;
 
 struct CopperModule: ThemeModule, IHaveColor {
     enum ParamIds {
@@ -107,6 +109,7 @@ struct CopperUi : ModuleWidget, IThemeChange
     SLWidget* sl_picker = nullptr;
     NVGcolor last_color = COLOR_NONE;
     ThemeBase* theme_holder = nullptr;
+    SvgCache my_svgs;
 
     explicit CopperUi(CopperModule * module);
     virtual ~CopperUi() {
@@ -126,7 +129,7 @@ struct CopperUi : ModuleWidget, IThemeChange
     NVGcolor getColor();
     void makeUi(Theme theme);
 
-    void applyTheme(Theme theme);
+    void setTheme(Theme theme);
     void applyScrews(bool screws);
     void onChangeTheme(ChangedItem item) override;
 
@@ -138,6 +141,7 @@ struct CopperUi : ModuleWidget, IThemeChange
 struct CopperMiniUI  : ModuleWidget, IThemeChange {
     CopperModule* copper_module = nullptr;
     ThemeBase* theme_holder = nullptr;
+    SvgCache my_svgs;
 
     explicit CopperMiniUI(CopperModule * module);
     virtual ~CopperMiniUI() {
@@ -155,7 +159,7 @@ struct CopperMiniUI  : ModuleWidget, IThemeChange {
     void setAlpha(float alpha);
     NVGcolor getColor();
     void makeUi(Theme theme);
-    void applyTheme(Theme theme);
+    void setTheme(Theme theme);
     void onChangeTheme(ChangedItem item) override;
     void drawLayer(const DrawArgs& args, int layer) override;
     void draw(const DrawArgs& args) override;

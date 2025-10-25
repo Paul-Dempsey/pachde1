@@ -5,24 +5,23 @@ using namespace pachde;
 
 namespace widgetry {
 
-struct ColorPort : PortWidget, IBasicTheme
+struct ColorPort : PortWidget, ISetTheme, ISetColor
 {
-    NVGcolor ring = PORT_DEFAULT;
+    NVGcolor ring{PORT_DEFAULT};
     NVGcolor collar1, collar2, bezel, tube, bevel1, bevel2, sleeve;
 
-    ColorPort()
-    {
+    ColorPort() {
         box.size.x = box.size.y = 22.f;
     }
 	void draw(const DrawArgs& args) override;
 
-    void applyTheme(Theme theme);
+    // ISetTheme
     void setTheme(Theme theme) override;
-    void setMainColor(NVGcolor color) override
-    {
-        ring = isColorTransparent(color) ? PORT_DEFAULT : color;
+    // ISetColor
+    void setMainColor(PackedColor color) override {
+        ring = packed_color::isVisible(color) ? fromPacked(color) : PORT_DEFAULT;
     }
-    NVGcolor getMainColor() override { return ring; }
+    PackedColor getMainColor() override { return toPacked(ring); }
 };
 
 }

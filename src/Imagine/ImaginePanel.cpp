@@ -4,9 +4,10 @@
 
 namespace pachde {
 
-ImaginePanel::ImaginePanel(Imagine *mod, Vec size)
+ImaginePanel::ImaginePanel(Imagine *mod, ThemeBase* theme, Vec size) :
+    module(mod),
+    theme_holder(theme)
 {
-    module = mod;
     box.size = size;
 }
 
@@ -17,7 +18,7 @@ void ImaginePanel::drawTraversal(const DrawArgs &args, TraversalDrawOptions opti
     auto w = 80.f;
     auto y = CONTROL_ROW - 8.5f;
     bool dim = rack::settings::rackBrightness <= .9f;
-    auto color = (dim || (IsDarker(ModuleTheme(module))))
+    auto color = (dim || (IsDarker(theme_holder->getTheme())))
         ? nvgRGB(0xe6, 0xa2, 0x1a)
         : COLOR_BRAND;
 
@@ -45,12 +46,13 @@ void ImaginePanel::drawLayer(const DrawArgs &args, int layer)
 
 void ImaginePanel::draw(const DrawArgs &args)
 {
-    Theme theme = ModuleTheme(module);
-    NVGcolor panel_color = PanelBackground(theme), textColor = ThemeTextColor(theme);
+    Theme theme = theme_holder->getTheme();
+    NVGcolor panel_color = PanelBackground(theme);
+    NVGcolor textColor = ThemeTextColor(theme);
     auto vg = args.vg;
 
     // panel background
-    FillRect(vg, 0.0, 0.0, box.size.x, box.size.y, panel_color);
+    FillRect(vg, 0.f, 0.f, box.size.x, box.size.y, panel_color);
 
     // dividers
     auto gray = RampGray(G_60);

@@ -1,5 +1,5 @@
 #pragma once
-#include "../plugin.hpp"
+#include "../myplugin.hpp"
 #include "components.hpp"
 
 namespace widgetry {

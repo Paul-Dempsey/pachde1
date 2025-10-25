@@ -4,6 +4,7 @@
 #include "../services/colors.hpp"
 
 using namespace rack;
+using namespace pachde;
 namespace widgetry {
 
 // TODO: when rendering a new hue, it's likely much more efficient to

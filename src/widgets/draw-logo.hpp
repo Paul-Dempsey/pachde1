@@ -1,5 +1,7 @@
 #pragma once
 #include "widgetry.hpp"
+#include "../services/theme.hpp"
+
 using namespace pachde;
 namespace widgetry {
 
@@ -12,8 +14,8 @@ struct LogoOverlayWidget : rack::OpaqueWidget, IBasicTheme
     }
     void draw(const DrawArgs &args) override {
         rack::OpaqueWidget::draw(args);
-        auto color = LogoColor(my_theme);
-        if (my_theme != Theme::HighContrast) {
+        auto color = LogoColor(actual_theme);
+        if (actual_theme != Theme::HighContrast) {
             color.a = 0.75f;
         }
         DrawLogo(args.vg, 0, 0, color);

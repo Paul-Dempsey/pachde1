@@ -4,6 +4,7 @@
 #include "pic.hpp"
 
 using namespace rack;
+using namespace pachde;
 namespace widgetry {
 
 struct HueWidget : OpaqueWidget

@@ -89,7 +89,7 @@ struct BlankModuleWidget : ModuleWidget, IThemeChange
 
     explicit BlankModuleWidget(BlankModule* module);
 
-    void applyTheme(Theme theme);
+    void setTheme(Theme theme);
     void applyScrews(bool screws);
     void drawPanel(const DrawArgs &args);
 

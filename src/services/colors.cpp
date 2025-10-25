@@ -27,6 +27,22 @@ float Hue1(const NVGcolor& color)
     return result;
 }
 
+PackedColor packed_gray_ramp[] = {
+    colors::G0, colors::G5, colors::G10, colors::G15, colors::G18,
+    colors::G20, colors::G25,
+    colors::G30, colors::G35,
+    colors::G40, colors::G45,
+    colors::G50, colors::G55,
+    colors::G60, colors::G65,
+    colors::G70, colors::G75,
+    colors::G80, colors::G85,
+    colors::G90, colors::G95,
+    colors::G100
+};
+
+NVGcolor RampGray(Ramp g) {
+    return fromPacked(packed_gray_ramp[rack::math::clamp(g, G_BLACK, G_WHITE)]);
+}
 
 NamedColor stock_colors[] = {
     { "#d blue", packRgb(0x45, 0x7a, 0xa6) },
@@ -198,70 +214,53 @@ NamedColor stock_colors[] = {
 
 NVGcolor PanelBackground(Theme theme)
 {
+    using namespace colors;
     switch (theme) {
-        default:
-        case Theme::Unset:
-        case Theme::Light: return GrayRamp[G_90];
-        case Theme::Dark: return GrayRamp[G_10];
-        case Theme::HighContrast: return GrayRamp[G_05];
+    default:
+    case Theme::Unset:
+    case Theme::Light: return fromPacked(G90);
+    case Theme::Dark: return fromPacked(G10);
+    case Theme::HighContrast: return fromPacked(G0);
     }
 }
 
 NVGcolor ThemeTextColor(Theme theme)
 {
+    using namespace colors;
     switch (theme)
     {
     default:
     case Theme::Unset:
-    case Theme::Light:
-        return GrayRamp[G_20];
-        break;
-
-    case Theme::Dark:
-        return GrayRamp[G_65];
-
-    case Theme::HighContrast:
-        return GrayRamp[G_90];
-        break;
+    case Theme::Light: return fromPacked(G20);
+    case Theme::Dark: return fromPacked(G65);
+    case Theme::HighContrast: return fromPacked(G90);
     };
 }
 
 NVGcolor OutputBackground(Theme theme)
 {
+    using namespace colors;
     switch (theme) {
-        default:
-        case Theme::Unset:
-        case Theme::Light:
-            return GrayRamp[G_40];
-        case Theme::Dark:
-            return GrayRamp[G_10];
-        case Theme::HighContrast:
-            return GrayRamp[G_BLACK];
+    default:
+    case Theme::Unset:
+    case Theme::Light: return fromPacked(G40);
+    case Theme::Dark: return fromPacked(G10);
+    case Theme::HighContrast: return fromPacked(G0);
     }
 }
 
 NVGcolor LogoColor(Theme theme)
 {
+    using namespace colors;
     switch (theme) {
-        default:
-        case Theme::Unset:
-        case Theme::Light:
-            return GrayRamp[G_BLACK];
-        case Theme::Dark:
-            return GrayRamp[G_75];
-        case Theme::HighContrast:
-            return GrayRamp[G_95];
+    default:
+    case Theme::Unset:
+    case Theme::Light: return fromPacked(G0);
+    case Theme::Dark: return fromPacked(G75);
+    case Theme::HighContrast: return fromPacked(G95);
     }
 }
 
-const NVGcolor GrayRamp[] = {
-    BLACK,
-    GRAY05,GRAY10,GRAY15,GRAY18,GRAY20,
-    GRAY25,GRAY30,GRAY35,GRAY40,
-    GRAY45,GRAY50,GRAY55,GRAY60,
-    GRAY65,GRAY70,GRAY75,GRAY80,
-    GRAY85,GRAY90,GRAY95,WHITE
-};
 
 void FillRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color)
 {

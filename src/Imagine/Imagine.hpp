@@ -1,7 +1,8 @@
 #pragma once
 #include <ghc/filesystem.hpp>
-#include "../plugin.hpp"
+#include "../myplugin.hpp"
 #include "../services/dsp.hpp"
+#include "../services/theme-module.hpp"
 #include "../widgets/components.hpp"
 #include "../widgets/pic.hpp"
 #include "traversal.hpp"
@@ -200,9 +201,11 @@ struct Imagine : ThemeModule, IProvideImage
 
 struct ImaginePanel : Widget
 {
-    Imagine* module = nullptr;
+    Imagine* module{nullptr};
+    ThemeBase* theme_holder{nullptr};
 
-    ImaginePanel(Imagine* mod, Vec size);
+    ImaginePanel(Imagine* mod, ThemeBase* theme, Vec size);
+
     enum TraversalDrawOptions { Frame = 1, Text = 2, Both = 3 };
     void drawTraversal(const DrawArgs &args, TraversalDrawOptions options);
     void drawLayer(const DrawArgs &args, int layer) override;
@@ -211,34 +214,27 @@ struct ImaginePanel : Widget
 
 struct ImagineUi : ModuleWidget, IThemeChange, IProvideImage
 {
-    ImaginePanel *panel = nullptr;
-    Imagine* imagine = nullptr;
-    ThemeBase* my_theme = nullptr;
-    PlayPauseButton * playButton = nullptr;
-    Pic* preview_image = nullptr;
-    IProvideImage * image_source = nullptr;
+    ImaginePanel* panel{nullptr};
+    Imagine* imagine{nullptr};
+    ThemeBase* theme_holder{nullptr};
+    PlayPauseButton* playButton{nullptr};
+    Pic* preview_image{nullptr};
+    IProvideImage* image_source{nullptr};
+    SvgCache my_svgs;
 
     explicit ImagineUi(Imagine *module);
     virtual ~ImagineUi() {
         if (preview_image) {
             delete preview_image;
         }
-        if (my_theme) {
-            delete my_theme;
+        if (!imagine && theme_holder) {
+            delete theme_holder;
         }
     }
     void resetHeadPosition(bool ctrl, bool shift);
     void makeUi(Theme theme);
-    void applyTheme(Theme theme);
+    void setTheme(Theme theme);
     void applyScrews(bool screws);
-    ThemeBase* getITheme() {
-        auto result = imagine ? imagine : my_theme;
-        if (!result) {
-            result = my_theme = new ThemeBase();
-            my_theme->setNotify(this);
-        }
-        return result;
-    }
     Pic * getImage() override;
     void onChangeTheme(ChangedItem item) override;
     void step() override;

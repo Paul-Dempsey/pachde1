@@ -4,7 +4,6 @@ using namespace ::rack;
 #include "sl_widget.hpp"
 #include "hue_widget.hpp"
 #include "text-input.hpp"
-//#include "theme-button.hpp"
 
 namespace widgetry {
 

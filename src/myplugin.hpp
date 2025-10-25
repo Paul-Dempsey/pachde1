@@ -1,12 +1,10 @@
 #pragma once
 #include <rack.hpp>
 #include "services/svg-query.hpp"
-using namespace svg_query;
+#include "services/svg-theme-2.hpp"
 
-// Declare the Plugin, defined in plugin.cpp
 extern ::rack::Plugin* pluginInstance;
 
-// Declare each Model, defined in each module source file
 extern ::rack::Model* modelBlank;
 extern ::rack::Model* modelInfo;
 extern ::rack::Model* modelCopper;
@@ -15,3 +13,8 @@ extern ::rack::Model* modelImagine;
 extern ::rack::Model* modelSkiff;
 extern ::rack::Model* modelRui;
 
+void initThemeCache();
+void reloadThemeCache();
+::svg_theme_2::ThemeCache& getThemeCache();
+::svg_theme_2::RackSvgCache* getRackSvgs();
+::svg_theme_2::SvgNoCache* getSvgNoCache();

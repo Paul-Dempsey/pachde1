@@ -6,7 +6,7 @@ using namespace ::rack;
 
 namespace pachde {
 
-struct InfoSymbol: OpaqueWidget, IBasicTheme
+struct InfoSymbol: OpaqueWidget, ISetTheme
 {
     NVGcolor color;
     InfoSymbol() {

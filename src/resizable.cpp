@@ -36,7 +36,7 @@ ModuleResizeHandle::ModuleResizeHandle(ResizableModule* resizable_module)
 NVGcolor ModuleResizeHandle::HandleOverlay()
 {
     auto theme = GetPreferredTheme(module);
-    auto color = module->getMainColor();
+    auto color = fromPacked(module->getMainColor());
     if (isColorVisible(color)) {
         bool hi_contrast = Theme::HighContrast == theme;
         NVGcolor overlay;

@@ -1,23 +1,22 @@
 # pachde1 TODO
 
-- Refactor colors
-  - separate packedcolor/nvgcolor
-  - packedcolor parsers
-- Replace all NVG Ramp etc. tables with packedcolor tables
+- Module svg cache for widgets because theme is local to module.
+- Symbol button widget
 - Replace pallette menu with the CHEM color picker
-  - Add alpha
-- Move widgets under widgets folder
-- Symbol Widget
+  - Add alpha to picker
 
 ## Info
 
 - on-panel edit
-- vertical text
+- vertical text (rotation)
 
 ## Skiff
 
 - Undo for PackModules
 
-## Rui
+## Fancy background
 
-- discreet panel (show/hide fluff)
+- dialog to configure
+- inputs for animation
+- randomize
+- randomize trigger

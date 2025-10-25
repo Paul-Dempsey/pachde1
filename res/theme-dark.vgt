@@ -1,0 +1,44 @@
+     @theme = Dark
+
+      panel = [ #282828, #181818]
+      title = #f9a806
+       mast = #000
+      swash = #f9a806
+       logo = #f9a806
+        sep = #888
+     symbol = #dedede
+ jack-glyph = #dedede stroke #ccc
+      patty = hsl(0,0,90%)
+patty-hover = hsl(0,0,65%)
+ info-glyph = hsl(0,0%,50%)
+
+// Copper
+medallion = none stroke #f9a54b
+picker-bg = #171717
+   out-bg = #1a1a1a stroke #888
+// Copper mini
+minilabel = #a6a6a6
+mini-out-bg = #cc8800
+    i-sep = #cccccc
+    o-sep = #cccccc
+   lab-in = #737373
+  lab-out = #737373
+
+// knobs
+k-bg = [ #737373, #0d0d0d]
+k-inner = none stroke none
+k-mark = #cedcf2 opacity .8
+k-pin = stroke #cedcf2
+k-pointer = #cedcf2
+k-ring = stroke #202020
+
+// Skiff
+unscrew = #e6e6e6 stroke #000
+unscrew-slot = #000 stroke none
+unrail-slash = none stroke #dedede80
+
+// Rui
+//fluff-co = none
+//fluff-ct = none
+//fluff-b  = none
+//fluff-h  = none

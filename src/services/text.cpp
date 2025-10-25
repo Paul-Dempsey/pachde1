@@ -1,4 +1,4 @@
-#include "../plugin.hpp"
+#include "../myplugin.hpp"
 #include "text.hpp"
 
 namespace pachde {

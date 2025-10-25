@@ -3,12 +3,13 @@ RACK_DIR ?= ../..
 ifdef DEV_BUILD
 FLAGS += -O0
 FLAGS += -DHOT_SVG
+FLAGS += -DDEV_BUILD
 else
 FLAGS += -O3
 FLAGS += -DNDEBUG
 endif
 
-SOURCES += src/plugin.cpp
+SOURCES += src/myplugin.cpp
 SOURCES += src/resizable.cpp
 
 # widgets
@@ -31,8 +32,10 @@ SOURCES += src/services/packed-color.cpp
 SOURCES += src/services/rack-help.cpp
 SOURCES += src/services/svg-query.cpp
 SOURCES += src/services/svg-theme-2.cpp
+SOURCES += src/services/svg-theme-2-load.cpp
 SOURCES += src/services/text.cpp
 SOURCES += src/services/theme.cpp
+SOURCES += src/services/theme-module.cpp
 
 # Null module
 SOURCES += src/Null/Null.cpp

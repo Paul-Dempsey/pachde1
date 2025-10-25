@@ -1,5 +1,5 @@
 #include "skiff-help.hpp"
-#include "../plugin.hpp"
+#include "../myplugin.hpp"
 
 void replace_system_svg(const char * sys_asset, const char *alt)
 {
@@ -27,6 +27,22 @@ void screw_visibility(::rack::widget::Widget* widget, bool visible)
     }
     for (auto child: widget->children) {
         screw_visibility(child, visible);
+    }
+}
+
+void port_visibility(::rack::widget::Widget* widget, bool visible)
+{
+    auto port_widget = dynamic_cast<::rack::app::PortWidget*>(widget);
+    if (port_widget) {
+        auto port = port_widget->getPort();
+        if (port) {
+            if (!port->isConnected()) {
+                widget->setVisible(visible);
+            }
+        }
+    }
+    for (auto child: widget->children) {
+        port_visibility(child, visible);
     }
 }
 

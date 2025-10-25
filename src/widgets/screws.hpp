@@ -1,5 +1,6 @@
 #pragma once
 #include "widgetry.hpp"
+#include "../services/theme.hpp"
 using namespace pachde;
 
 namespace widgetry {
@@ -37,27 +38,33 @@ inline float tl_screw_inset(ScrewAlign align) { return ONE_HP * static_cast<bool
 inline float tr_screw_inset(ScrewAlign align) { return ONE_HP * static_cast<bool>(align & ScrewAlign::TR_INSET); }
 inline float bl_screw_inset(ScrewAlign align) { return ONE_HP * static_cast<bool>(align & ScrewAlign::BL_INSET); }
 inline float br_screw_inset(ScrewAlign align) { return ONE_HP * static_cast<bool>(align & ScrewAlign::BR_INSET); }
-void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewAlign positions = ScrewAlign::SCREWS_INSET, WhichScrew which = WhichScrew::ALL_SCREWS);
+void AddScrewCaps(Widget *widget, Theme theme, PackedColor color, ScrewAlign align, WhichScrew which = WhichScrew::ALL_SCREWS);
 void RemoveScrewCaps(Widget* widget, WhichScrew which = WhichScrew::ALL_SCREWS);
-void SetScrewColors(Widget* widget, NVGcolor color, WhichScrew which = WhichScrew::ALL_SCREWS);
-void DrawScrewCap(NVGcontext * vg, float x, float y, Theme theme, NVGcolor color = COLOR_NONE);
+void SetScrewColors(Widget* widget, PackedColor color, WhichScrew which = WhichScrew::ALL_SCREWS);
+void DrawScrewCap(NVGcontext * vg, float x, float y, Theme theme, PackedColor color = colors::NoColor);
 
-struct ScrewCap : rack::TransparentWidget, IBasicTheme
+struct ScrewCap : rack::TransparentWidget, ISetTheme, ISetColor
 {
+    Theme theme;
+    PackedColor main{colors::NoColor};
     WhichScrew which;
     ScrewAlign align;
 
-    ScrewCap (Theme theme, WhichScrew position, ScrewAlign alignment)
+    ScrewCap (WhichScrew position, ScrewAlign alignment)
     : which(position), align(alignment)
     {
-        setTheme(theme);
         box.size.x = box.size.y = 15.f;
     }
 
     void draw(const DrawArgs &args) override {
         rack::TransparentWidget::draw(args);
-        DrawScrewCap(args.vg, 0, 0, getTheme(), getMainColor());
+        DrawScrewCap(args.vg, 0, 0,theme, main);
     }
+    // ISetTheme
+    void setTheme(Theme theme) override { this->theme = theme; }
+    // ISetColor
+    void setMainColor(PackedColor color) override { main = color; }
+    PackedColor getMainColor() override { return main; }
 
     void step() override {
         rack::TransparentWidget::step();

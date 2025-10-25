@@ -2,7 +2,7 @@
 
 namespace widgetry {
 
-void SetScrewColors(Widget* widget, NVGcolor color, WhichScrew which) {
+void SetScrewColors(Widget* widget, PackedColor color, WhichScrew which) {
     if (!widget || widget->children.empty()) return;
     for (Widget * child: widget->children) {
         auto screw = dynamic_cast<ScrewCap*>(child);
@@ -34,32 +34,36 @@ WhichScrew SetScrewPosition(ScrewCap* screw, WhichScrew which)
         : which;
 }
 
-void AddScrewCaps(Widget *widget, Theme theme, NVGcolor color, ScrewAlign align, WhichScrew which)
+void AddScrewCaps(Widget *widget, Theme theme, PackedColor color, ScrewAlign align, WhichScrew which)
 {
     // top left
     if (which & WhichScrew::TL) {
-        auto screw = new ScrewCap(theme, WhichScrew::TL, align);
+        auto screw = new ScrewCap(WhichScrew::TL, align);
+        screw->setTheme(theme);
         screw->setMainColor(color);
         widget->addChild(screw);
     }
 
     //top right
     if (which & WhichScrew::TR) {
-        auto screw = new ScrewCap(theme, WhichScrew::TR, align);
+        auto screw = new ScrewCap(WhichScrew::TR, align);
+        screw->setTheme(theme);
         screw->setMainColor(color);
         widget->addChild(screw);
     }
 
     //bottom left
     if (which & WhichScrew::BL) {
-        auto screw = new ScrewCap(theme, WhichScrew::BL, align);
+        auto screw = new ScrewCap(WhichScrew::BL, align);
+        screw->setTheme(theme);
         screw->setMainColor(color);
         widget->addChild(screw);
     }
 
     // bottom right
     if (which & WhichScrew::BR) {
-        auto screw = new ScrewCap(theme, WhichScrew::BR, align);
+        auto screw = new ScrewCap(WhichScrew::BR, align);
+        screw->setTheme(theme);
         screw->setMainColor(color);
         widget->addChild(screw);
     }
@@ -82,7 +86,7 @@ void RemoveScrewCaps(Widget* widget, WhichScrew which)
     }
 }
 
-void DrawScrewCap(NVGcontext * vg, float x, float y, Theme theme, NVGcolor color)
+void DrawScrewCap(NVGcontext * vg, float x, float y, Theme theme, PackedColor color)
 {
     NVGcolor a,b,c;
     switch (theme) {
@@ -104,8 +108,8 @@ void DrawScrewCap(NVGcontext * vg, float x, float y, Theme theme, NVGcolor color
             c = RampGray(G_10);
             break;
     }
-    if (isColorVisible(color)) {
-        c = color;
+    if (packed_color::isVisible(color)) {
+        c = fromPacked(color);
     }
     nvgBeginPath(vg);
     nvgFillColor(vg, a);

@@ -2,6 +2,7 @@
 #include "imagine_layout.hpp"
 #include "../services/theme.hpp"
 #include "../widgets/create-theme-widget.hpp"
+#include "../widgets/hamburger.hpp"
 #include "../widgets/logo-widget.hpp"
 #include "../widgets/pic_button.hpp"
 #include "../widgets/port.hpp"
@@ -12,36 +13,25 @@
 using namespace widgetry;
 namespace pachde {
 
-ImagineUi::ImagineUi(Imagine *module)
+ImagineUi::ImagineUi(Imagine *module) : imagine(module)
 {
-    imagine = module;
     setModule(module);
-    if (imagine) {
-        imagine->setNotify(this);
-        image_source = imagine;
-    } else {
-        image_source = this;
-    }
-    applyTheme(GetPreferredTheme(getITheme()));
+    if (imagine) { image_source = imagine; } else { image_source = this; }
+    theme_holder = imagine ? imagine : new ThemeBase();
+    setTheme(GetPreferredTheme(theme_holder));
+    theme_holder->setNotify(this);
 }
 
 void ImagineUi::onChangeTheme(ChangedItem item)
 {
-    auto itheme = getITheme();
     switch (item) {
     case ChangedItem::Theme:
-        applyTheme(GetPreferredTheme(itheme));
-        break;
-    case ChangedItem::DarkTheme:
-    case ChangedItem::FollowDark:
-        if (itheme->getFollowRack()) {
-            applyTheme(GetPreferredTheme(itheme));
-        }
+        setTheme(GetPreferredTheme(theme_holder));
         break;
     case ChangedItem::MainColor:
         break;
     case ChangedItem::Screws:
-        applyScrews(itheme->hasScrews());
+        applyScrews(theme_holder->hasScrews());
         break;
     }
 }
@@ -52,13 +42,12 @@ void ImagineUi::step()
         playButton->pressed = imagine->isPlaying();
     }
 
-    auto itheme = getITheme();
-    bool changed = itheme->pollRackDarkChanged();
+    bool changed = theme_holder->pollRackThemeChanged();
     if (imagine) {
         if (!changed && imagine->isDirty()) {
             // sync to cover preset loading
-            applyScrews(itheme->hasScrews());
-            applyTheme(GetPreferredTheme(itheme));
+            applyScrews(theme_holder->hasScrews());
+            setTheme(GetPreferredTheme(theme_holder));
         }
         imagine->setClean();
     }
@@ -93,13 +82,14 @@ Pic * ImagineUi::getImage()
 void ImagineUi::makeUi(Theme theme)
 {
     assert(children.empty());
+    auto svg_theme = getThemeCache().getTheme(ThemeName(theme));
 
-    box.size = Vec(300, RACK_GRID_HEIGHT);
-    panel = new ImaginePanel(imagine, box.size);
+    box.size = Vec(300.f, RACK_GRID_HEIGHT);
+    panel = new ImaginePanel(imagine, theme_holder, box.size);
     setPanel(panel);
 
     if (!imagine || imagine->hasScrews()) {
-        AddScrewCaps(this, theme, COLOR_NONE, SCREWS_OUTSIDE);
+        AddScrewCaps(this, theme, colors::NoColor, SCREWS_OUTSIDE);
     }
 
     {
@@ -115,11 +105,11 @@ void ImagineUi::makeUi(Theme theme)
     }
 
     auto x = CONTROL_START;
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_VIOLET, Vec(x, CONTROL_ROW_2), module, Imagine::SPEED_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, colors::PortViolet, Vec(x, CONTROL_ROW_2), module, Imagine::SPEED_INPUT));
     x += CONTROL_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(x, CONTROL_ROW_2), module, Imagine::X_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, colors::PortLightOrange, Vec(x, CONTROL_ROW_2), module, Imagine::X_INPUT));
     x += CONTROL_SPACING - TIGHT;
-    addInput(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_ORANGE, Vec(x, CONTROL_ROW_2), module, Imagine::Y_INPUT));
+    addInput(createColorInputCentered<ColorPort>(theme, colors::PortLightOrange, Vec(x, CONTROL_ROW_2), module, Imagine::Y_INPUT));
 
     {
         auto picButton = new PicButton();
@@ -157,26 +147,26 @@ void ImagineUi::makeUi(Theme theme)
         addChild(reset);
     }
     x += CONTROL_SPACING;
-    addChild(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_LIME, Vec(x, CONTROL_ROW_2), module, Imagine::RESET_POS_INPUT));
+    addChild(createColorInputCentered<ColorPort>(theme, colors::PortLightLime, Vec(x, CONTROL_ROW_2), module, Imagine::RESET_POS_INPUT));
     x += CONTROL_SPACING;
-    addChild(createColorInputCentered<ColorPort>(theme, PORT_LIGHT_VIOLET, Vec(x, CONTROL_ROW_2), module, Imagine::PLAY_INPUT));
+    addChild(createColorInputCentered<ColorPort>(theme, colors::PortLightViolet, Vec(x, CONTROL_ROW_2), module, Imagine::PLAY_INPUT));
     x += CONTROL_SPACING;
-    addChild(createColorInputCentered<ColorPort>(theme, PORT_PINK, Vec(x, CONTROL_ROW_2), module, Imagine::MIN_TRIGGER_INPUT));
+    addChild(createColorInputCentered<ColorPort>(theme, colors::PortPink, Vec(x, CONTROL_ROW_2), module, Imagine::MIN_TRIGGER_INPUT));
 
     x = CONTROL_START;
     {
-        auto speed = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::SPEED_PARAM);
+        auto speed = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::SPEED_PARAM));
         speed->stepIncrementBy = 0.1;
         addParam(speed);
     }
 
     x += CONTROL_SPACING;
-    auto knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::SPEED_MULT_PARAM);
+    auto knob = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::SPEED_MULT_PARAM));
     knob->snap = true;
     addParam(knob);
 
     x += CONTROL_SPACING;
-    knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::PATH_PARAM);
+    knob = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::PATH_PARAM));
     knob->minAngle = -1.75;
     knob->maxAngle = 1.75;
     knob->snap = true;
@@ -184,32 +174,32 @@ void ImagineUi::makeUi(Theme theme)
     addParam(knob);
 
     x = box.size.x - CONTROL_START - 3.f * CONTROL_SPACING;
-    knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::SLEW_PARAM);
+    knob = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::SLEW_PARAM));
     knob->stepIncrementBy = 0.01f;
     addParam(knob);
 
     x += CONTROL_SPACING;
-    knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::COMP_PARAM);
+    knob = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::COMP_PARAM));
     knob->snap = true;
     addParam(knob);
 
     x += CONTROL_SPACING;
-    knob = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::GT_PARAM);
+    knob = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::GT_PARAM));
     knob->stepIncrementBy = 0.05f;
     addParam(knob);
 
     x += CONTROL_SPACING;
     {
-        auto gtrate = createThemeParamCentered<SmallKnob>(theme, Vec(x, CONTROL_ROW), imagine, Imagine::MIN_TRIGGER_PARAM);
+        auto gtrate = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::MIN_TRIGGER_PARAM));
         gtrate->stepIncrementBy = .01f;
         addChild(gtrate);
     }
 
     addOutput(createThemeOutput<ColorPort>(theme, Vec(21.f, OUTPUT_ROW), imagine, Imagine::X_OUT));
     addOutput(createThemeOutput<ColorPort>(theme, Vec(46.f, OUTPUT_ROW), imagine, Imagine::Y_OUT));
-    addOutput(createColorOutput<ColorPort>(theme, PORT_RED,   Vec(71.f, OUTPUT_ROW - 12.f), imagine, Imagine::RED_OUT));
-    addOutput(createColorOutput<ColorPort>(theme, PORT_GREEN, Vec(71.f, OUTPUT_ROW + 13.f), imagine, Imagine::GREEN_OUT));
-    addOutput(createColorOutput<ColorPort>(theme, PORT_BLUE,  Vec(95.f, OUTPUT_ROW), imagine, Imagine::BLUE_OUT));
+    addOutput(createColorOutput<ColorPort>(theme, colors::PortRed,   Vec(71.f, OUTPUT_ROW - 12.f), imagine, Imagine::RED_OUT));
+    addOutput(createColorOutput<ColorPort>(theme, colors::PortGreen, Vec(71.f, OUTPUT_ROW + 13.f), imagine, Imagine::GREEN_OUT));
+    addOutput(createColorOutput<ColorPort>(theme, colors::PortBlue,  Vec(95.f, OUTPUT_ROW), imagine, Imagine::BLUE_OUT));
     {
         auto p = createThemeParam<widgetry::Switch>(theme, Vec(190.f, OUTPUT_ROW + 1.5f), imagine, Imagine::POLARITY_PARAM);
         p->box.size.y = 18.f;
@@ -225,23 +215,26 @@ void ImagineUi::makeUi(Theme theme)
     logo->ignore_theme_changes = true;
     addChild(widgetry::Center(logo));
 
+    my_svgs.changeTheme(svg_theme);
+
 }
 
-void ImagineUi::applyTheme(Theme theme)
+void ImagineUi::setTheme(Theme theme)
 {
     if (children.empty()) {
         makeUi(theme);
     } else {
-        SetChildrenTheme(this, theme);
+        my_svgs.changeTheme(getThemeCache().getTheme(ThemeName(theme)));
+        sendChildrenThemeColor(this, theme, theme_holder->getMainColor());
+        sendDirty(this);
     }
 }
 
 void ImagineUi::applyScrews(bool screws)
 {
-    auto itheme = getITheme();
     if (screws) {
         if (HaveScrewChildren(this)) return;
-        AddScrewCaps(this, GetPreferredTheme(itheme), COLOR_NONE, SCREWS_OUTSIDE);
+        AddScrewCaps(this, theme_holder->getTheme(), colors::NoColor, SCREWS_OUTSIDE);
     } else {
         RemoveScrewCaps(this);
     }
@@ -250,12 +243,13 @@ void ImagineUi::applyScrews(bool screws)
 void ImagineUi::appendContextMenu(Menu *menu)
 {
     if (!this->module) return;
+    menu->addChild(createMenuLabel<HamburgerTitle>("#d Imagine"));
 
-    AddThemeMenu(menu, getITheme(), false, true);
     menu->addChild(createCheckMenuItem(
         "Labels", "",
         [this]() { return imagine->labels; },
         [this]() { imagine->labels = !imagine->labels; }));
+
     menu->addChild(createCheckMenuItem(
         "Gold medallion", "",
         [this]() { return imagine->medallion_fill; },
@@ -265,6 +259,8 @@ void ImagineUi::appendContextMenu(Menu *menu)
         "Bright image in a dark room", "",
         [this]() { return imagine->bright_image; },
         [this]() { imagine->bright_image = !imagine->bright_image; }));
+
+    AddThemeMenu(menu, theme_holder, false, true);
 }
 
 }
