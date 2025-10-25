@@ -2,6 +2,8 @@
 
 **Rui** (short for Rack User Interface) provides nice knobs with control voltage inputs for some of the Rack visuals. I like turning a knob better than dragging a slider in a menu.
 
+**Rui** controls from top to bottom are:
+
 1. Cable opacity (cyan)
 1. Cable tension (green)
 1. Room brightness (magenta)

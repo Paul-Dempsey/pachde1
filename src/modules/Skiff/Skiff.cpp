@@ -116,7 +116,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         if (ChangedItem::Theme == item) {
             auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
             my_svgs.changeTheme(svg_theme);
-            ham->applyTheme(svg_theme);
+            if (ham) ham->applyTheme(svg_theme);
             sendDirty(this);
         }
     }
@@ -430,12 +430,14 @@ struct SkiffUi : ModuleWidget, IThemeChange
                 my_svgs.reloadAll();
                 reloadThemeCache();
                 onChangeTheme(ChangedItem::Theme);
-                auto panel = dynamic_cast<SvgThemePanel<SkiffSvg>*>(getPanel());
-                std::map<std::string, ::math::Rect> bounds;
-                svg_query::boundsIndex(panel->svg, "k:", bounds, true);
-                for (auto kv: positioned_widgets) {
-                    kv.second->box.pos = bounds[kv.first].getCenter();
-                    Center(kv.second);
+                if (!other_skiff) {
+                    auto panel = dynamic_cast<SvgThemePanel<SkiffSvg>*>(getPanel());
+                    std::map<std::string, ::math::Rect> bounds;
+                    svg_query::boundsIndex(panel->svg, "k:", bounds, true);
+                    for (auto kv: positioned_widgets) {
+                        kv.second->box.pos = bounds[kv.first].getCenter();
+                        Center(kv.second);
+                    }
                 }
                 sendDirty(this);
             }

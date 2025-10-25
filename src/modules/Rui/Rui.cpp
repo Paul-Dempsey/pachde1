@@ -305,7 +305,7 @@ struct RuiUi : ModuleWidget, IThemeChange
             }
             // play_button->frames.clear();
             // play_button->loadSvg(getSvgNoCache());
-            play_button->applyTheme(svg_theme);
+            if (play_button) play_button->applyTheme(svg_theme);
             //sendChildrenTheme(this, new_theme);
             sendDirty(this);
         }
@@ -343,21 +343,22 @@ struct RuiUi : ModuleWidget, IThemeChange
             if (e.action == GLFW_PRESS && (0 == mods)) {
                 e.consume(this);
                 reloadThemeCache();
-                auto panel = dynamic_cast<SvgThemePanel<RuiSvg>*>(getPanel());
                 auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
-                panel->updatePanel(svg_theme);
+                auto panel = dynamic_cast<SvgThemePanel<RuiSvg>*>(getPanel());
+                if (single) {
+                    panel->updatePanel(svg_theme);
 
-                play_button->frames.clear();
-                play_button->loadSvg(getSvgNoCache());
-                play_button->applyTheme(svg_theme);
+                    play_button->frames.clear();
+                    play_button->loadSvg(getSvgNoCache());
+                    play_button->applyTheme(svg_theme);
 
-                std::map<std::string, ::math::Rect> bounds;
-                svg_query::boundsIndex(panel->svg, "k:", bounds, true);
-                for (auto kv: positioned_widgets) {
-                    kv.second->box.pos = bounds[kv.first].getCenter();
-                    Center(kv.second);
+                    std::map<std::string, ::math::Rect> bounds;
+                    svg_query::boundsIndex(panel->svg, "k:", bounds, true);
+                    for (auto kv: positioned_widgets) {
+                        kv.second->box.pos = bounds[kv.first].getCenter();
+                        Center(kv.second);
+                    }
                 }
-
                 if (my_module) show_fluff(my_module->fluff);
                 sendDirty(this);
             }

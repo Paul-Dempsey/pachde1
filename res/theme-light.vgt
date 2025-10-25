@@ -39,7 +39,7 @@ jack-glyph = #dedede stroke #000
 unrail-slash = none stroke #00000080
 
 // Rui
-//fluff-co = none stroke #50aeca width .35
-//fluff-ct = none stroke #50ca77 width .35
-//fluff-b  = none stroke #ca50b8 width .35
-//fluff-h  = none stroke #b1da29 width .35
+fluff-co = #50aeca
+fluff-ct = #50ca77
+fluff-b  = #ca50b8
+fluff-h  = #b1da29

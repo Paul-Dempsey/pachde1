@@ -39,7 +39,7 @@ unscrew-slot = #000 stroke none
 unrail-slash = stroke #dededea0
 
 // Rui
-//fluff-co = none
-//fluff-ct = none
-//fluff-b  = none
-//fluff-h  = none
+fluff-co = #50aeca
+fluff-ct = #50ca77
+fluff-b  = #ca50b8
+fluff-h  = #b1da29
