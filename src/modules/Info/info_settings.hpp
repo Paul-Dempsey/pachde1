@@ -28,6 +28,8 @@ struct InfoSettings
     PackedColor main_color{colors::NoColor};
 
     bool brilliant{false};
+    bool branding{true};
+    Orientation orientation{Orientation::Normal};
 
     float font_size{info_constant::DEFAULT_FONT_SIZE};
     std::string font_file = asset::plugin(pluginInstance, "res/fonts/HankenGrotesk-SemiBold.ttf");
@@ -41,8 +43,12 @@ struct InfoSettings
 
     float getFontSize();
     void setFontSize(float size);
+    std::shared_ptr<window::Font> getFont();
+
     HAlign getHorizontalAlignment();
     void setHorizontalAlignment(HAlign h);
+    Orientation getOrientation();
+    void setOrientation(Orientation orientation);
     PackedColor getDisplayMainColor();
     PackedColor getDisplayTextColor();
 
@@ -54,9 +60,10 @@ struct InfoSettings
     PackedColor getUserTextColor();
     void setUserTextColor(PackedColor color);
 
-    void setBrilliant(bool brilliant);
+    void setBrilliant(bool brilliance);
     bool getBrilliant();
-    void toggleBrilliant();
+    void setBranding(bool branded);
+    bool getBranding();
 
     void resetFont() {
         font_file = asset::plugin(pluginInstance, "res/fonts/HankenGrotesk-SemiBold.ttf");

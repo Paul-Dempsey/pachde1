@@ -27,8 +27,13 @@ void InfoSettings::randomize()
 
 float InfoSettings::getFontSize() { return font_size; }
 void InfoSettings::setFontSize(float size) { font_size = clamp(size, info_constant::MIN_FONT_SIZE, info_constant::MAX_FONT_SIZE); }
+std::shared_ptr<window::Font> InfoSettings::getFont() {
+    return APP->window->loadFont(font_file);
+}
 HAlign InfoSettings::getHorizontalAlignment() { return horizontal_alignment; }
 void InfoSettings::setHorizontalAlignment(HAlign h) { horizontal_alignment = h; }
+Orientation InfoSettings::getOrientation() { return orientation; }
+void InfoSettings::setOrientation(Orientation orient) { orientation = orient; }
 
 PackedColor InfoSettings::getDisplayMainColor() {
     return visible(main_color) ? main_color : theme_panel_color;
@@ -43,9 +48,10 @@ PackedColor InfoSettings::getUserPanelBackground() { return user_panel_color; }
 void InfoSettings::setUserTextColor(PackedColor color) { user_text_color = color; }
 PackedColor InfoSettings::getUserTextColor() {return user_text_color; }
 
-void InfoSettings::setBrilliant(bool brilliantness) { brilliant = brilliantness; }
+void InfoSettings::setBrilliant(bool brilliance) { brilliant = brilliance; }
 bool InfoSettings::getBrilliant() { return brilliant; }
-void InfoSettings::toggleBrilliant() { brilliant = !brilliant; }
+void InfoSettings::setBranding(bool branded) { branding = branded; }
+bool InfoSettings::getBranding() { return branding; }
 
 json_t* InfoSettings::save(json_t* root)
 {
@@ -63,6 +69,7 @@ json_t* InfoSettings::save(json_t* root)
     }
     std::string align_string = { HAlignLetter(horizontal_alignment) };
     set_json(root, "text-align", align_string);
+    set_json(root, "text-orient", OrientationJValue(orientation));
     set_json(root, "font", font_file);
     set_json(root, "font-folder", font_folder);
     set_json(root, "bright", brilliant);
@@ -87,6 +94,7 @@ void InfoSettings::load(json_t* root) {
             font_size = DEFAULT_FONT_SIZE;
         }
     }
+    orientation = ParseOrientation(get_json_string(root, "text-orient").c_str());
     horizontal_alignment = parseHAlign(get_json_string(root, "text-align"));
     font_file = get_json_string(root, "font");
     font_folder= get_json_string(root, "font-folder");

@@ -62,12 +62,64 @@ void InfoPanel::step()
 
 void InfoPanel::showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, std::string text)
 {
-    nvgScissor(args.vg, RECT_ARGS(args.clipBox));
+    auto vg = args.vg;
+    if (!FontOk(font)) return;
+
+    nvgSave(vg);
     auto font_size = settings->getFontSize();
-    SetTextStyle(args.vg, font, fromPacked(text_color), font_size);
-    nvgTextAlign(args.vg, nvgAlignFromHAlign(settings->getHorizontalAlignment()));
-    nvgTextBox(args.vg, box.pos.x + 10.f, box.pos.y + ONE_HP + font_size, box.size.x - 15.f, text.c_str(), nullptr);
-    nvgResetScissor(args.vg);
+    SetTextStyle(vg, font, fromPacked(text_color), font_size);
+    nvgTextAlign(vg, NVG_ALIGN_TOP|nvgAlignFromHAlign(settings->getHorizontalAlignment()));
+
+    auto orientation = settings->getOrientation();
+    float width = box.size.x - 15.f;
+    float height = box.size.y - 25.f;
+    if ((orientation == Orientation::Down) || (orientation == Orientation::Up)) {
+        std::swap(width, height);
+    }
+
+    int vroom = std::floor(height / font_size);
+    NVGtextRow* rows = (NVGtextRow*)malloc(vroom*sizeof(NVGtextRow));
+    if (!rows) {
+        nvgRestore(vg);
+        return;
+    }
+
+    int nrows = nvgTextBreakLines(vg, text.c_str(), nullptr, width, rows, vroom);
+    free(rows);
+    float text_height = nrows * font_size;
+
+    float x,y;
+    switch (orientation) {
+    case Orientation::Normal:
+        x = 7.5f;
+        y = 190.f - text_height*.5;
+        break;
+    case Orientation::Down:
+        nvgRotate(vg, M_PI/2.f);
+        x = 12.5;
+        y = -height*.5 - text_height*.5;
+        break;
+    case Orientation::Up:
+        nvgRotate(vg, M_PI/-2.f);
+        x = (-box.size.y) + (box.size.y - width)*.5;
+        y = (box.size.x - text_height)*.5;
+        break;
+
+    case Orientation::Inverted:
+        nvgRotate(vg, M_PI);
+        nvgTranslate(vg, -box.size.x, 0);
+        x = ((box.size.x - width)*.5f);
+        y = -(190.f + text_height*.5);
+        break;
+    }
+    // Debug bounds box
+    // nvgBeginPath(vg);
+    // nvgRect(vg, x, y, width, text_height);
+    // nvgStrokeColor(vg, nvgHSL(216.f, .5, .5));
+    // nvgStrokeWidth(vg, 2.0);
+    // nvgStroke(vg);
+    nvgTextBox(vg, x, y, width, text.c_str(), nullptr);
+    nvgRestore(vg);
 }
 
 void InfoPanel::drawError(const DrawArgs &args)
@@ -87,20 +139,17 @@ void InfoPanel::drawText(const DrawArgs &args)
 {
     std::string text = module ? module->text : "<sample text>";
     if (!text.empty()) {
-        auto font = APP->window->loadFont(settings->font_file);
+        auto font = settings->getFont();
+        if (!FontOk(font)) {
+            settings->resetFont();
+            font = settings->getFont();
+        }
         if (FontOk(font)) {
             showText(args, font, text);
         } else {
-            settings->resetFont();
-            font = APP->window->loadFont(settings->font_file);
-            if (FontOk(font)) {
-                showText(args, font, text);
-            } else {
-                drawError(args);
-            }
+            drawError(args);
         }
     }
-
 }
 
 void InfoPanel::drawLayer(const DrawArgs &args, int layer)

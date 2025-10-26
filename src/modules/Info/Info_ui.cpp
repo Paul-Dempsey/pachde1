@@ -110,10 +110,11 @@ void InfoModuleWidget::step()
         }
         my_module->setClean();
     }
-
     panel->box.size = box.size;
     title->box.pos.x = box.size.x*.5f - title->box.size.x*.5f;
+    title->setVisible(settings->getBranding());
     logo->box.pos.x = box.size.x*.5f - logo->box.size.x*.5f;
+    logo->setVisible(settings->getBranding());
     ModuleWidget::step();
 }
 
@@ -153,9 +154,14 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
 
     menu->addChild(createCheckMenuItem("Bright text in a dark room", "",
         [=]() { return settings->getBrilliant(); },
-        [=]() { settings->toggleBrilliant(); }));
+        [=]() { settings->setBrilliant(!settings->getBrilliant()); }));
 
-    menu->addChild(new MenuSeparator);
+    menu->addChild(createCheckMenuItem(
+        "Show branding", "",
+        [=]() { return settings->getBranding(); },
+        [=]() { settings->setBranding(!settings->getBranding()); }));
+
+        menu->addChild(new MenuSeparator);
 
     menu->addChild(createSubmenuItem("Edit Info", "",
         [=](Menu *menu)
@@ -192,6 +198,31 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
     slider->box.size.x = 250.0;
     menu->addChild(slider);
 
+    menu->addChild(createSubmenuItem("Orientation", "",
+        [=](Menu* menu) {
+            NVGcolor co_dot{nvgHSL(200.f/360.f, .5, .5)};
+
+            ColorDotMenuItem* option;
+            option = createMenuItem<ColorDotMenuItem>(OrientationName(Orientation::Normal), "",
+                [=](){ settings->setOrientation(Orientation::Normal); }, false);
+            option->color = settings->getOrientation() == Orientation::Normal ? co_dot : RampGray(G_45);
+            menu->addChild(option);
+
+            option = createMenuItem<ColorDotMenuItem>(OrientationName(Orientation::Down), "",
+                [=](){ settings->setOrientation(Orientation::Down); }, false);
+            option->color = settings->getOrientation() == Orientation::Down ? co_dot : RampGray(G_45);
+            menu->addChild(option);
+
+            option = createMenuItem<ColorDotMenuItem>(OrientationName(Orientation::Up), "",
+                [=](){ settings->setOrientation(Orientation::Up); }, false);
+            option->color = settings->getOrientation() == Orientation::Up ? co_dot : RampGray(G_45);
+            menu->addChild(option);
+
+            option = createMenuItem<ColorDotMenuItem>(OrientationName(Orientation::Inverted), "",
+                [=](){ settings->setOrientation(Orientation::Inverted); }, false);
+            option->color = settings->getOrientation() == Orientation::Inverted ? co_dot : RampGray(G_45);
+            menu->addChild(option);
+        }));
     menu->addChild(createSubmenuItem("Text alignment", "",
         [=](Menu *menu) {
             menu->addChild(createCheckMenuItem(

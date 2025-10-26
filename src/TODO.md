@@ -9,7 +9,6 @@
 ## Info
 
 - on-panel edit
-- vertical text (rotation)
 
 ## Skiff
 

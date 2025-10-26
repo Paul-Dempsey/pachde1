@@ -41,4 +41,33 @@ HAlign parseHAlign(std::string text) {
     }
 }
 
+const char* OrientationName(Orientation orientation) {
+    switch (orientation) {
+    default:
+    case Orientation::Normal: return "Normal";
+    case Orientation::Down: return "Down (right)";
+    case Orientation::Up: return "Up (left)";
+    case Orientation::Inverted: return "Inverted";
+    }
+}
+const char* OrientationJValue(Orientation orientation) {
+    switch (orientation ) {
+    default:
+    case Orientation::Normal: return "normal";
+    case Orientation::Down: return "down";
+    case Orientation::Up: return "up";
+    case Orientation::Inverted: return "invert";
+    }
+}
+Orientation ParseOrientation(const char* orient){
+    if (!orient) return Orientation::Normal;
+    switch (*orient) {
+    default:
+    case 'n': return Orientation::Normal;
+    case 'd': return Orientation::Down;
+    case 'u': return Orientation::Up;
+    case 'i': return Orientation::Inverted;
+    }
+}
+
 }
