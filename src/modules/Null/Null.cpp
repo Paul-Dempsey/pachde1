@@ -79,7 +79,7 @@ NVGcolor BlankModule::externalcolor()
 {
     if (!copper) { return COLOR_NONE; }
     auto color = expanderColor(getRightExpander());
-    if (isColorTransparent(color)) {
+    if (IS_SAME_COLOR(color, COLOR_NONE)) {
         color = expanderColor(getLeftExpander());
     }
     return color;
@@ -175,12 +175,17 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
             break;
     }
 
-    auto panel_color = my_module && my_module->copper ? my_module->externalcolor() : COLOR_NONE;
-    if (isColorTransparent(panel_color)) {
+    NVGcolor panel_color;
+     if (my_module && my_module->copper) {
+        panel_color = my_module->externalcolor();
+        if (!IS_SAME_COLOR(panel_color, COLOR_NONE)) {
+            getITheme()->setMainColor(toPacked(panel_color));
+        }
+    } else {
         panel_color = fromPacked(getITheme()->getMainColor());
     }
 
-    if (isColorVisible(panel_color)) {
+    if (!IS_SAME_COLOR(panel_color, COLOR_NONE)) {
         auto lum = LuminanceLinear(panel_color);
         if (lum <= 0.5f) {
             ring = Gray(lum + 0.5);
@@ -212,7 +217,7 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
     }
 
     if (bright() || glowing()) {
-        if (isColorTransparent(panel_color)) {
+        if (IS_SAME_COLOR(panel_color, COLOR_NONE)) {
             panel_color = PanelBackground(theme);
         }
 

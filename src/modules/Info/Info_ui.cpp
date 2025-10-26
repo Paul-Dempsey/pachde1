@@ -68,7 +68,6 @@ void InfoModuleWidget::applyScrews(bool screws)
 void InfoModuleWidget::addScrews()
 {
     if (HaveScrewChildren(this)) return;
-
     AddScrewCaps(this, theme_holder->getTheme(), theme_holder->getMainColor(), ScrewAlign::SCREWS_OUTSIDE, WhichScrew::ALL_SCREWS);
 }
 
@@ -90,7 +89,6 @@ void InfoModuleWidget::applyThemeSetting(ThemeSetting setting)
         logo = new LogoWidget(theme_holder->getTheme(), .18f);
         logo->box.pos = Vec(box.size.x*.5f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f);
         addChild(widgetry::Center(logo));
-
     } else {
         sendChildrenThemeColor(this, theme_holder->getTheme(), theme_holder->getMainColor());
     }

@@ -23,9 +23,9 @@ Here are some samples with Light, Dark and High Contrast themes, and selected op
 | Paste info | Paste the info from the clipboard. |
 | Font... | Open a Truetype font (.ttf) to use for the text. The name of the font file current used appears above this item. |
 | Font size | Pick a size for the text using the standard Rack slider. |
+| Text orientation | Choose from **Normal**, **Down (right)**, **Left (up)**, or **Inverted** |
 | Text alignment | Choose **Left**, **Center**, or **Right**-aligned layout. |
 | Text color  | A standard Rack #_hex_ code for the color of the text. |
-| Text background color  | A standard Rack #_hex_ code for the color of the text|
 | Copper | Choose which colors the Copper expander module sets. Choose from **None**, **Panel** or **Interior**. When set to **None**, the module is not affected by Copper. When set to **Interior**, it gets Background color from a Copper on the left, and Text color from a Copper on the right. |
 
 ## Fonts

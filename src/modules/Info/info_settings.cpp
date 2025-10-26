@@ -9,49 +9,40 @@ void InfoSettings::reset()
 {
     theme_panel_color = info_constant::PANEL_DEFAULT;
     theme_text_color = info_constant::TEXT_DEFAULT;
-    setUserPanelBackground(colors::NoColor);
-    setUserTextColor(colors::NoColor);
-    setHorizontalAlignment(HAlign::Left);
-    setBrilliant(false);
-    setFontSize(info_constant::DEFAULT_FONT_SIZE);
+    user_panel_color = colors::NoColor;
+    user_text_color = colors::NoColor;
+    horizontal_alignment = HAlign::Left;
+    brilliant = false;
+    branding = true;
+    font_size = info_constant::DEFAULT_FONT_SIZE;
     resetFont();
 }
 
 void InfoSettings::randomize()
 {
-    setUserPanelBackground(random::u32());
-    setUserTextColor(packed_color::opaque(random::u32()));
-    setHorizontalAlignment(static_cast<HAlign>(random::get<uint32_t>() % 3));
-    setBrilliant(random::get<bool>());
+    user_panel_color = random::u32();
+    user_text_color = packed_color::opaque(random::u32());
+    horizontal_alignment = static_cast<HAlign>(random::get<uint32_t>() % 3);
+    brilliant = random::get<bool>();
 }
 
 float InfoSettings::getFontSize() { return font_size; }
 void InfoSettings::setFontSize(float size) { font_size = clamp(size, info_constant::MIN_FONT_SIZE, info_constant::MAX_FONT_SIZE); }
-std::shared_ptr<window::Font> InfoSettings::getFont() {
-    return APP->window->loadFont(font_file);
-}
+std::shared_ptr<window::Font> InfoSettings::getFont() { return APP->window->loadFont(font_file); }
 HAlign InfoSettings::getHorizontalAlignment() { return horizontal_alignment; }
 void InfoSettings::setHorizontalAlignment(HAlign h) { horizontal_alignment = h; }
 Orientation InfoSettings::getOrientation() { return orientation; }
 void InfoSettings::setOrientation(Orientation orient) { orientation = orient; }
-
-PackedColor InfoSettings::getDisplayMainColor() {
-    return visible(main_color) ? main_color : theme_panel_color;
-}
-PackedColor InfoSettings::getDisplayTextColor() {
-    return visible(user_text_color) ? user_text_color : theme_text_color;
-}
-
-void InfoSettings::setUserPanelBackground(PackedColor color) { user_panel_color = color; }
-PackedColor InfoSettings::getUserPanelBackground() { return user_panel_color; }
-
+void InfoSettings::setUserPanelColor(PackedColor color) { user_panel_color = color; }
+PackedColor InfoSettings::getUserPanelColor() { return user_panel_color; }
 void InfoSettings::setUserTextColor(PackedColor color) { user_text_color = color; }
 PackedColor InfoSettings::getUserTextColor() {return user_text_color; }
-
 void InfoSettings::setBrilliant(bool brilliance) { brilliant = brilliance; }
 bool InfoSettings::getBrilliant() { return brilliant; }
 void InfoSettings::setBranding(bool branded) { branding = branded; }
 bool InfoSettings::getBranding() { return branding; }
+PackedColor InfoSettings::getDisplayPanelColor() { return user_panel_color ? user_panel_color : theme_panel_color; }
+PackedColor InfoSettings::getDisplayTextColor() { return user_text_color ? user_text_color : theme_text_color; }
 
 json_t* InfoSettings::save(json_t* root)
 {
@@ -100,7 +91,6 @@ void InfoSettings::load(json_t* root) {
     font_folder= get_json_string(root, "font-folder");
     brilliant = get_json_bool(root, "bright", brilliant);
 }
-
 
 void InfoSettings::setTheme(Theme theme) {
     using namespace colors;

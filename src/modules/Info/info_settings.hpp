@@ -25,8 +25,6 @@ struct InfoSettings
     PackedColor user_text_color{colors::NoColor};
     HAlign horizontal_alignment{HAlign::Left};
 
-    PackedColor main_color{colors::NoColor};
-
     bool brilliant{false};
     bool branding{true};
     Orientation orientation{Orientation::Normal};
@@ -49,13 +47,13 @@ struct InfoSettings
     void setHorizontalAlignment(HAlign h);
     Orientation getOrientation();
     void setOrientation(Orientation orientation);
-    PackedColor getDisplayMainColor();
+    PackedColor getDisplayPanelColor();
     PackedColor getDisplayTextColor();
 
     void setTheme(Theme theme);
 
-    PackedColor getUserPanelBackground();
-    void setUserPanelBackground(PackedColor color);
+    PackedColor getUserPanelColor();
+    void setUserPanelColor(PackedColor color);
 
     PackedColor getUserTextColor();
     void setUserTextColor(PackedColor color);

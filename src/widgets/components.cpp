@@ -18,7 +18,7 @@ void AddThemeMenu(rack::ui::Menu *menu, ThemeBase* it, bool isChangeColor, bool 
 
             ColorDotMenuItem* option;
 
-            option = createMenuItem<ColorDotMenuItem>("Follow Rack UI thme", "",
+            option = createMenuItem<ColorDotMenuItem>("Follow Rack UI theme", "",
                 [it](){ it->setThemeSetting(ThemeSetting::FollowRackUi); }, false);
             option->color = it->getThemeSetting() == ThemeSetting::FollowRackUi ? co_dot : RampGray(G_45);
             menu->addChild(option);

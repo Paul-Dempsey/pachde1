@@ -16,36 +16,36 @@ InfoPanel::InfoPanel(InfoModule* module, InfoSettings* info, ThemeBase* theme, V
 
 void InfoPanel::fetchColors()
 {
-    panel = settings->getDisplayMainColor();
+    panel = settings->getDisplayPanelColor();
     text_color = settings->getDisplayTextColor();
     if (module && module->getCopperTarget() != CopperTarget::None) {
         auto left = toPacked(module->leftExpanderColor());
         auto right = toPacked(module->rightExpanderColor());
         switch (module->getCopperTarget()) {
             case CopperTarget::Text: {
-                if (packed_color::visible(left)) {
+                if (left) {
                     text_color = left;
-                    settings->setUserTextColor(text_color);
                 }
-                if (packed_color::visible(right)) {
+                if (right) {
                     text_color = right;
-                    settings->setUserTextColor(text_color);
                 }
+                settings->setUserTextColor(text_color);
             } break;
 
             case CopperTarget::Panel: {
-                bool set_panel = false;
-                if (packed_color::visible(left)) {
-                    set_panel = true;
+                //bool set_panel = false;
+                if (left) {
+                    //set_panel = true;
                     panel = left;
                 }
-                if (packed_color::visible(right)) {
-                    set_panel = true;
+                if (right) {
+                    //set_panel = true;
                     panel = right;
                 }
-                if (set_panel) {
+                //if (set_panel) {
                     theme_holder->setMainColor(panel);
-                }
+                    settings->setUserPanelColor(panel);
+                //}
             } break;
 
             case CopperTarget::None:
