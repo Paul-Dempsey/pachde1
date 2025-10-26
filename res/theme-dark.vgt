@@ -12,7 +12,7 @@ patty-hover = hsl(0,0,65%)
  info-glyph = hsl(0,0%,50%)
 
 // Copper
-copper-title = #000
+copper-title = #f9a54b
 medallion = #f9a54b stroke #f9a54b
 picker-bg = #171717
    out-bg = #1a1a1a stroke #888
