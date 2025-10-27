@@ -2,6 +2,8 @@
 
 The first VCV Rack plugin for pachde (#d).
 
+[![Build Status](https://github.com/Paul-Dempsey/pachde1/actions/workflows/build-plugin.yml/badge.svg)](https://github.com/Paul-Dempsey/pachde1/actions/workflows/build-plugin.yml)
+
 All pachde-One modules have Light, Dark, and High Contrast themes, and allow you to choose whether to follow the Rack **Use dark panels** option.
 Right click to choose a theme.
 They also come with caps on the screws for an elegant look.
