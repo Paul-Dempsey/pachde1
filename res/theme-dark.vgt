@@ -1,8 +1,8 @@
      @theme = Dark
 
       panel = [ #282828, #181818]
-      title = #f9a806
-       mast = #000
+      title = #000
+       mast = #f9a806
       swash = #f9a806
        logo = #000
         sep = #888
@@ -12,7 +12,7 @@ patty-hover = hsl(0,0,65%)
  info-glyph = hsl(0,0%,50%)
 
 // Copper
-copper-title = #f9a54b
+copper-title = #000
 medallion = #f9a54b stroke #f9a54b
 picker-bg = #171717
    out-bg = #1a1a1a stroke #888

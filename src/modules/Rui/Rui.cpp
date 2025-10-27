@@ -387,7 +387,8 @@ struct RuiUi : ModuleWidget, IThemeChange
                 [=](){ show_fluff(!my_module->fluff); }
             ));
         }
-        AddThemeMenu(menu, theme_holder, false, false);
+        menu->addChild(createMenuLabel<FancyLabel>("theme"));
+        AddThemeMenu(menu, theme_holder, false, false, false);
     }
 
 };

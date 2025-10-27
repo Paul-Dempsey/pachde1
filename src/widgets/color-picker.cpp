@@ -1,8 +1,8 @@
 #include "color-picker.hpp"
-#include "../services/misc.hpp"
-#include "../services/color-help.hpp"
+#include "services/text.hpp"
+#include "services/packed-color.hpp"
 
-namespace pachde {
+namespace widgetry {
 
 void ColorPicker::set_text_color()
 {
@@ -13,10 +13,10 @@ void ColorPicker::set_text_color()
         text_input->text = hex_string(color);
         break;
     case ColorSyntax::RGB:
-        text_input->text = format_string("rgb(%d,%d,%d)", Red(color), Green(color), Blue(color));
+        text_input->text = rgba_string(color);
         break;
     case ColorSyntax::HSL:
-        text_input->text = hsl_string(hue, saturation, lightness, nvg_color.a);
+        text_input->text = hsla_string(hue, saturation, lightness, nvg_color.a);
         break;
     }
 }
@@ -29,7 +29,7 @@ void ColorPicker::set_color(PackedColor co)
     hue = Hue1(nvg_color);
     saturation = Saturation(nvg_color);
     lightness = Lightness(nvg_color);
-    
+
     hue_picker->setHue(hue);
     sl_picker->setHue(hue);
     sl_picker->setSaturation(saturation);
@@ -83,17 +83,31 @@ ColorPicker::ColorPicker()
     text_input->text_height = 14.f;
     text_input->set_on_change([=](std::string text) {
         syntax = ColorSyntax::Unknown;
-        if (isValidHexColor(text)) syntax = ColorSyntax::Hex;
-        else if (is_hsl(text)) syntax = ColorSyntax::HSL;
-        else if (is_rgb(text)) syntax = ColorSyntax::RGB;
-        if (syntax != ColorSyntax::Unknown) {
-            auto co = parse_color(text, RARE_COLOR);
-            if (co != RARE_COLOR) {
-                set_color(co);
-            }
-        }
+        PackedColor co;
+        if (parseColor(co, colors::NoColor, text.c_str(), nullptr)) {
+            if (is_hsl_prefix(text.c_str())) syntax = ColorSyntax::HSL;
+            else if (is_rgb_prefix(text.c_str())) syntax = ColorSyntax::RGB;
+            else syntax = ColorSyntax::Hex;
+            set_color(co);
+        };
     });
     addChild(text_input);
 }
+
+ColorPickerMenu::ColorPickerMenu() {
+    auto picker_size = ColorPicker::get_size();
+    box.size = picker_size.plus(Vec(8.f, 8.f));
+    picker = createWidgetCentered<ColorPicker>(box.getCenter());
+    addChild(picker);
+}
+
+void ColorPickerMenu::draw(const DrawArgs& args)
+{
+    auto vg = args.vg;
+    FillRect(vg, 0, 0, box.size.x, box.size.y, nvgRGB(0x18, 0x18, 0x18));
+    FittedBoxRect(vg, 0, 0, box.size.x, box.size.y, RampGray(G_65), Fit::Inside, 1.5f);
+    OpaqueWidget::draw(args);
+}
+
 
 }

@@ -1,4 +1,5 @@
 #include "Copper.hpp"
+#include "widgets/color-picker.hpp"
 #include "widgets/hamburger.hpp"
 #include "widgets/widgetry.hpp"
 using namespace widgetry;
@@ -79,6 +80,14 @@ NVGcolor CopperMiniUI::getColor() {
     }
 }
 
+void CopperMiniUI::setColor(NVGcolor color)
+{
+    setHue(Hue1(color));
+    setSaturation(Saturation1(color));
+    setLightness(Lightness(color));
+    setAlpha(color.a);
+}
+
 constexpr const float KNOB_SPACING = 27.5f;
 constexpr const float CONTROL_SPACING = 26.f;
 constexpr const float GAP1 = 33.f;
@@ -140,8 +149,8 @@ void CopperMiniUI::drawLayer(const DrawArgs& args, int layer)
     if (layer != 1) return;
     auto setcolor = getColor();
     auto modcolor = copper_module ? copper_module->getModulatedColor() : setcolor;
-    FillRect(args.vg, 4.f, box.size.y -20.f, 11.f, 3.f, setcolor);
-    FillRect(args.vg, 15.f, box.size.y -20.f, 11.f, 3.f, modcolor);
+    FillRect(args.vg, 3.5f, box.size.y -20.f, 12.5f, 4.f, setcolor);
+    FillRect(args.vg, 15.f, box.size.y -20.f, 12.5f, 4.f, modcolor);
 }
 
 void CopperMiniUI::draw(const DrawArgs& args)
@@ -211,13 +220,7 @@ void AddColorItem(Self* self, Menu* menu, const char * name, PackedColor color, 
     menu->addChild(createColorMenuItem(
         color, name, "",
         [=]() { return current == color; },
-        [=]() {
-            auto new_color = fromPacked(color);
-            self->setHue(Hue1(new_color));
-            self->setSaturation(Saturation(new_color));
-            self->setLightness(Lightness(new_color));
-            self->setAlpha(new_color.a);
-        }
+        [=]() { self->setColor(fromPacked(color)); }
         ));
 }
 
@@ -226,7 +229,6 @@ void CopperMiniUI::appendContextMenu(rack::ui::Menu* menu)
     if (!this->module) return;
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Copper Mini"));
     AddThemeMenu(menu, theme_holder, false, false);
-    //TODO: add or switch to picker
     menu->addChild(createSubmenuItem("Palette color", "",
         [=](Menu *menu)
         {
@@ -235,6 +237,14 @@ void CopperMiniUI::appendContextMenu(rack::ui::Menu* menu)
                 AddColorItem<CopperMiniUI>(this, menu, pco->name, pco->color, current);
             }
         }));
+    menu->addChild(createSubmenuItem("Color", "", [=](Menu* menu) {
+        auto picker = new ColorPickerMenu();
+        picker->set_color(toPacked(getColor()));
+        picker->set_on_new_color([=](PackedColor color) {
+            setColor(fromPacked(color));
+        });
+        menu->addChild(picker);
+    }));
     menu->addChild(createMenuItem("Copy hex color", "", [=]() {
         auto hex = rack::color::toHexString(getColor());
         glfwSetClipboardString(nullptr, hex.c_str());
@@ -249,29 +259,6 @@ void CopperMiniUI::appendContextMenu(rack::ui::Menu* menu)
             setAlpha(new_color.a);
         }
     }));
-
-#ifdef USE_BAD_HEX_INPUT
-    // BUGBUG: We don't have working inverses yet for round-tripping nvgHSL(),
-    menu->addChild(createSubmenuItem("Color", "",
-        [=](Menu *menu)
-        {
-            MenuTextField *editField = new MenuTextField();
-            editField->box.size.x = 100;
-            auto color = getColor();
-            editField->setText(rack::color::toHexString(color));
-            editField->changeHandler = [=](std::string text) {
-                auto color = COLOR_NONE;
-                if (!text.empty() && text[0] == '#') {
-                    color = rack::color::fromHexString(text);
-                    setHue(Hue1(color));
-                    setSaturation(Saturation(color));
-                    setLightness(Lightness(color));
-                    setAlpha(color.a);
-                }
-            };
-            menu->addChild(editField);
-        }));
-#endif
 }
 
 

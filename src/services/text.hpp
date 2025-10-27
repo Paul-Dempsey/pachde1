@@ -9,6 +9,8 @@ using namespace ::rack;
 namespace pachde {
 
 std::string format_string(const char *fmt, ...);
+std::string hsla_string(float hue, float saturation, float lightness, float alpha);
+std::string rgba_string(PackedColor color);
 
 std::shared_ptr<window::Font> GetPluginFontSemiBold(const char * path = NULL);
 

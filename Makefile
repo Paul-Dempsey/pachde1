@@ -9,7 +9,7 @@ FLAGS += -O3
 FLAGS += -DNDEBUG
 endif
 
-FLAGS += -Isrc -Isrc/widgets -Isrc/services
+FLAGS += -Isrc
 
 SOURCES += src/myplugin.cpp
 SOURCES += src/resizable.cpp
@@ -19,10 +19,13 @@ SOURCES += src/widgets/draw-logo.cpp
 SOURCES += src/widgets/pic.cpp
 SOURCES += src/widgets/pic_button.cpp
 SOURCES += src/widgets/components.cpp
+SOURCES += src/widgets/color-picker.cpp
+SOURCES += src/widgets/element-style.cpp
 SOURCES += src/widgets/port.cpp
 SOURCES += src/widgets/screws.cpp
 SOURCES += src/widgets/small_push.cpp
 SOURCES += src/widgets/switch.cpp
+SOURCES += src/widgets/text-input.cpp
 SOURCES += src/widgets/widgetry.cpp
 
 # services

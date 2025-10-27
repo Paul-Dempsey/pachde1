@@ -2,6 +2,7 @@
 #include "IHaveColor.hpp"
 #include "services/json-help.hpp"
 #include "widgets/create-theme-widget.hpp"
+#include "widgets/color-picker.hpp"
 #include "widgets/hamburger.hpp"
 #include "widgets/screws.hpp"
 
@@ -381,6 +382,14 @@ void BlankModuleWidget::appendContextMenu(Menu *menu)
                 AddColorItem(this, menu, pco->name, pco->color, current);
             }
         }));
+    menu->addChild(createSubmenuItem("Background", "", [=](Menu* menu) {
+        auto picker = new ColorPickerMenu();
+        picker->set_color(my_module->getMainColor());
+        picker->set_on_new_color([=](PackedColor color) {
+            my_module->setMainColor(color);
+        });
+        menu->addChild(picker);
+    }));
     menu->addChild(createCheckMenuItem(
         "Copper sets panel color", "",
         [=]() { return my_module->copper; },

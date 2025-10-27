@@ -1,21 +1,22 @@
 #include "text-input.hpp"
-#include "../services/misc.hpp"
 
 namespace widgetry {
 
-TextInput::TextInput()
-{
+template <typename T>
+inline bool in_range(T value, T minimum, T maximum) { return minimum <= value && value <= maximum; }
+
+TextInput::TextInput() {
     multiline = false;
 }
 
-// bool TextInput::applyTheme(svg_theme::SvgThemeEngine& theme_engine, std::shared_ptr<svg_theme::SvgTheme> theme)
-// {
-//     bg_style.apply_theme(theme);
-//     text_style.apply_theme(theme);
-//     prompt_style.apply_theme(theme);
-//     selection_style.apply_theme(theme);
-//     return true;
-// }
+bool TextInput::applyTheme(std::shared_ptr<SvgTheme> theme)
+{
+    bg_style.apply_theme(theme);
+    text_style.apply_theme(theme);
+    prompt_style.apply_theme(theme);
+    selection_style.apply_theme(theme);
+    return true;
+}
 
 void TextInput::onSelectKey(const SelectKeyEvent &e)
 {

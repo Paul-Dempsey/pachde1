@@ -127,6 +127,7 @@ struct CopperUi : ModuleWidget, IThemeChange
     float getAlpha();
     void setAlpha(float alpha);
     NVGcolor getColor();
+    void setColor(NVGcolor color);
     void makeUi(Theme theme);
 
     void setTheme(Theme theme);
@@ -158,6 +159,7 @@ struct CopperMiniUI  : ModuleWidget, IThemeChange {
     float getAlpha();
     void setAlpha(float alpha);
     NVGcolor getColor();
+    void setColor(NVGcolor color);
     void makeUi(Theme theme);
     void setTheme(Theme theme);
     void onChangeTheme(ChangedItem item) override;

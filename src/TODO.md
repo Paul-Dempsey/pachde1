@@ -1,19 +1,16 @@
 # pachde1 TODO
 
 - Symbol button widget
-- Replace pallette menu with the CHEM color picker
-  - Add alpha to picker
-
-- Sticky Copper color changes in Null, Info
+- Add alpha to color picker
 
 ## Info
 
-- on-panel edit
+- on-panel edit?
 
 ## Skiff
 
 - Undo for PackModules?
-- fancy background -> more limited background control
+- fancy background -> more (limited) background control
 
 ## Fancy background module
 

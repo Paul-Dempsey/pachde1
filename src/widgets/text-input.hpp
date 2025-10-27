@@ -1,13 +1,13 @@
 #pragma once
 #include <rack.hpp>
 using namespace ::rack;
-
 #include "element-style.hpp"
-#include "../services/text.hpp"
+#include "services/svg-theme-2.hpp"
+#include "services/text.hpp"
 
 namespace widgetry {
 
-struct TextInput : TextField, IApplyTheme
+struct TextInput : TextField, IThemed
 {
     using Base = TextField;
     float text_height = 12.f;
@@ -26,7 +26,7 @@ struct TextInput : TextField, IApplyTheme
 
     TextInput();
     bool empty() { return text.empty(); }
-    bool applyTheme(SvgThemeEngine& engine, std::shared_ptr<SvgTheme> theme) override;
+    bool applyTheme(std::shared_ptr<SvgTheme> theme) override;
     void onSelectKey(const SelectKeyEvent& e) override;
     void onChange(const ChangeEvent& e) override;
     void onAction(const ActionEvent& e) override;
@@ -111,7 +111,7 @@ struct TextInputMenu : TextInput
 template <typename Tin = TextInput>
 Tin* createThemedTextInput(
     float x, float y, float width, float height,
-    SvgThemeEngine& engine, std::shared_ptr<SvgTheme> theme,
+    std::shared_ptr<SvgTheme> theme,
     std::string content,
     std::function<void(std::string)> on_change = nullptr,
     std::function<void(std::string)> on_enter = nullptr,
@@ -122,7 +122,7 @@ Tin* createThemedTextInput(
     if (width <= 0) width = 120.f;
     if (height <= 0) height = 14.f;
     t->box.size = Vec(width, height);
-    t->applyTheme(theme_engine, theme);
+    t->applyTheme(theme);
     t->setText(content);
     if (on_change) t->set_on_change(on_change);
     if (on_enter) t->set_on_enter(on_enter);

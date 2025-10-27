@@ -47,6 +47,7 @@ void ImaginePanel::drawLayer(const DrawArgs &args, int layer)
 void ImaginePanel::draw(const DrawArgs &args)
 {
     Theme theme = theme_holder->getTheme();
+    NVGcolor gold = nvgRGB(0xe6, 0xa2, 0x1a);
     NVGcolor panel_color = PanelBackground(theme);
     NVGcolor textColor = ThemeTextColor(theme);
     auto vg = args.vg;
@@ -68,8 +69,10 @@ void ImaginePanel::draw(const DrawArgs &args)
         if (FontOk(font))
         {
             // title
-            SetTextStyle(vg, font, textColor);
+            SetTextStyle(vg, font, theme == Theme::Light ? nvgRGB(0,0,0) : gold);
             CenterText(vg, PANEL_CENTER, ONE_HP - 2.5, "imagine", nullptr);
+
+            SetTextStyle(vg, font, textColor);
 
             float x = CONTROL_START;
             CenterText(vg, x, CONTROL_ROW_TEXT, "speed", nullptr);
@@ -128,7 +131,6 @@ void ImaginePanel::draw(const DrawArgs &args)
         }
     }
 
-    NVGcolor gold = nvgRGB(0xe6, 0xa2, 0x1a);
     if (!module || module->medallion_fill) {
         Circle(vg, PANEL_CENTER, RACK_GRID_HEIGHT + 7.5f, 30.f, gold);
     } else {

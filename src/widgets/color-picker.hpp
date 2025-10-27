@@ -36,8 +36,7 @@ struct ColorPicker : OpaqueWidget
     PackedColor color{0};
     std::function<void(PackedColor)> on_new_color{nullptr};
 
-    void set_on_new_color(std::function<void(PackedColor)> callback)
-    {
+    void set_on_new_color(std::function<void(PackedColor)> callback) {
         on_new_color = callback;
     }
     PackedColor get_color() { return color; }
@@ -68,36 +67,20 @@ struct ColorPickerMenu : rack::ui::MenuItem
 {
     ColorPicker* picker{nullptr};
 
-    ColorPickerMenu() {
-        box.size = ColorPicker::get_size().plus(Vec(8.f, 8.f));
-        picker = createWidgetCentered<ColorPicker>(box.getCenter());
-        addChild(picker);
-    }
+    ColorPickerMenu();
 
-    void set_on_new_color(std::function<void(PackedColor)> callback)
-    {
+    void set_on_new_color(std::function<void(PackedColor)> callback) {
         picker->set_on_new_color(callback);
     }
-
     void set_color(PackedColor color) { picker->set_color(color); }
-
-    void onAction(const ActionEvent& e) override
-    {
+    void onAction(const ActionEvent& e) override {
         e.unconsume(); // don't close menu
     }
-
-    void step() override
-    {
+    void step() override {
         OpaqueWidget::step(); //note: NOT MenuItem::Step
     }
 
-    void draw(const DrawArgs& args) override
-    {
-        auto vg = args.vg;
-        FillRect(vg, 0, 0, box.size.x, box.size.y, nvgRGB(0x18, 0x18, 0x18));
-        FittedBoxRect(vg, 0, 0, box.size.x, box.size.y, RampGray(G_65), Fit::Inside, 1.5f);
-        OpaqueWidget::draw(args);
-    }
+    void draw(const DrawArgs& args) override;
 };
 
 }

@@ -71,6 +71,7 @@ float parse_float(const char * pos, const char ** stop);
 
 // return length of result (not including zero terminator) if buffer big enough
 int hexFormat(PackedColor color, int buffer_size, char * buffer);
+std::string hex_string(PackedColor color);
 
 namespace colors {
     constexpr const PackedColor NoColor{0};

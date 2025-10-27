@@ -471,7 +471,8 @@ struct SkiffUi : ModuleWidget, IThemeChange
         if (!module) return;
 
         menu->addChild(createMenuLabel<HamburgerTitle>("#d Skiff"));
-        AddThemeMenu(menu, theme_holder, false, false);
+        //menu->addChild(createMenuLabel<FancyLabel>("theme"));
+        AddThemeMenu(menu, theme_holder, false, false, false);
     }
 
 };

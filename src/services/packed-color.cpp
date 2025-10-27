@@ -36,6 +36,13 @@ int hexFormat(PackedColor color, int buffer_size, char * buffer) {
     return poke-buffer;
 }
 
+std::string hex_string(PackedColor color)
+{
+    char hex[10];
+    hexFormat(color, 10, hex);
+    return hex;
+}
+
 float clamp(float a, float min, float max) { return a < min ? min : (a > max ? max : a); }
 
 float intermediate_hue(float h, float m1, float m2)

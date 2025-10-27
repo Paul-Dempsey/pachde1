@@ -244,6 +244,7 @@ void ImagineUi::appendContextMenu(Menu *menu)
 {
     if (!this->module) return;
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Imagine"));
+    AddThemeMenu(menu, theme_holder, false, true);
 
     menu->addChild(createCheckMenuItem(
         "Labels", "",
@@ -260,7 +261,6 @@ void ImagineUi::appendContextMenu(Menu *menu)
         [this]() { return imagine->bright_image; },
         [this]() { imagine->bright_image = !imagine->bright_image; }));
 
-    AddThemeMenu(menu, theme_holder, false, true);
 }
 
 }

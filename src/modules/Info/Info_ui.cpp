@@ -2,6 +2,7 @@
 #include "info_symbol.hpp"
 #include "widgets/create-theme-widget.hpp"
 #include "widgets/draw-logo.hpp"
+#include "widgets/color-picker.hpp"
 #include "widgets/hamburger.hpp"
 #include "widgets/logo-widget.hpp"
 #include "widgets/screws.hpp"
@@ -148,6 +149,7 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
         return;
 
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Info"));
+
     AddThemeMenu(menu, theme_holder, true, true);
 
     menu->addChild(createCheckMenuItem("Bright text in a dark room", "",
@@ -240,26 +242,23 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
                 ));
         }));
 
-    menu->addChild(createSubmenuItem("Text color", "",
-        [=](Menu *menu) {
-            MenuTextField *editField = new MenuTextField();
-            editField->box.size.x = 100;
-            if (packed_color::visible(settings->user_text_color)) {
-                char hex[10];
-                hexFormat(settings->user_text_color, sizeof(hex), hex);
-                editField->setText(hex);
-            } else {
-                editField->setText(HEXPLACEHOLDER);
-            }
-            editField->changeHandler = [=](std::string text) {
-                auto color{colors::Black};
-                if (!text.empty()) {
-                    parseColor(color, colors::Black, text.c_str());
-                }
-                settings->setUserTextColor(color);
-            };
-            menu->addChild(editField);
-        }));
+    // menu->addChild(createSubmenuItem("Background", "", [=](Menu* menu) {
+    //     auto picker = new ColorPickerMenu();
+    //     picker->set_color(my_module->getMainColor());
+    //     picker->set_on_new_color([=](PackedColor color) {
+    //         my_module->setMainColor(color);
+    //     });
+    //     menu->addChild(picker);
+    // }));
+
+    menu->addChild(createSubmenuItem("Text color", "", [=](Menu* menu) {
+        auto picker = new ColorPickerMenu();
+        picker->set_color(settings->getUserTextColor());
+        picker->set_on_new_color([=](PackedColor color) {
+            settings->setUserTextColor(color);
+        });
+        menu->addChild(picker);
+    }));
 
     menu->addChild(createSubmenuItem("Copper", "",
         [=](Menu *menu) {

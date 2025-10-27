@@ -1,7 +1,8 @@
 #pragma once
-#include "../myplugin.hpp"
-#include "../services/colors.hpp"
-#include "../services/svg-theme-2.hpp"
+#include "myplugin.hpp"
+#include "services/colors.hpp"
+#include "services/svg-theme-2.hpp"
+#include "services/text.hpp"
 #include "create-theme-widget.hpp"
 using namespace ::rack;
 using namespace ::svg_theme_2;
@@ -17,7 +18,22 @@ inline float PixToHp(float pix) { return pix / 15.0; }
 inline float ClampBipolar(float v) { return rack::math::clamp(v, -5.0f, 5.0f); }
 inline float ClampUnipolar(float v) { return rack::math::clamp(v, 0.0f, 10.0f); }
 
-void AddThemeMenu(rack::ui::Menu *menu, ThemeBase* it, bool isChangeColor, bool isChangeScrews);
+void AddThemeMenu(rack::ui::Menu *menu, ThemeBase* it, bool isChangeColor, bool isChangeScrews, bool submenu = true);
+
+struct FancyLabel : MenuLabel
+{
+    NVGcolor co_bg;
+    NVGcolor co_text;
+    NVGcolor co_rule{nvgHSL(200.f/360.f,.5,.4)};
+    NVGalign align{NVG_ALIGN_CENTER};
+
+    FancyLabel();
+
+    void backgroundColor(PackedColor color) { co_bg = fromPacked(color); }
+    void textColor(PackedColor color) { co_text = fromPacked(color); }
+    void setTextAlignment(NVGalign a) { align = (NVGalign)(a & (NVG_ALIGN_LEFT|NVG_ALIGN_CENTER|NVG_ALIGN_RIGHT)); }
+    void draw(const DrawArgs& args) override;
+};
 
 template<typename TSvg>
 struct TKnob: rack::RoundKnob

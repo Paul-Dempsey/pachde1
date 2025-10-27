@@ -287,6 +287,26 @@ void BoxRect(NVGcontext *vg, float x, float y, float width, float height, NVGcol
     nvgStroke(vg);
 }
 
+void FittedBoxRect(NVGcontext *vg, float x, float y, float width, float height, const NVGcolor& color, Fit fit, float strokeWidth)
+{
+    auto half_stroke = strokeWidth*.5;
+    switch (fit) {
+    case Fit::Inside:
+        x += half_stroke;
+        y += half_stroke;
+        width -= strokeWidth;
+        height -= strokeWidth;
+        break;
+    case Fit::Outside:
+        x -= half_stroke;
+        y -= half_stroke;
+        width += strokeWidth;
+        height += strokeWidth;
+        break;
+    }
+    BoxRect(vg, x,y,width, height, color, strokeWidth);
+}
+
 void RoundBoxRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float radius, float strokeWidth)
 {
     nvgBeginPath(vg);

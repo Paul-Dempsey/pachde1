@@ -121,6 +121,14 @@ NVGcolor CopperUi::getColor() {
     }
 }
 
+void CopperUi::setColor(NVGcolor color) {
+    if (!copper_module) return;
+    copper_module->setHue(Hue1(color));
+    copper_module->setSaturation(Saturation1(color));
+    copper_module->setLightness(Lightness(color));
+    copper_module->setAlpha(color.a);
+}
+
 const float col1_center = 25.5f;
 const float col2_center = 68.f;
 const float col3_center = 109.f;
@@ -374,11 +382,7 @@ void CopperUi::appendContextMenu(rack::ui::Menu* menu)
         auto hex = rack::color::toHexString(getColor());
         glfwSetClipboardString(nullptr, hex.c_str());
     }));
-    // menu->addChild(createMenuItem("Copy rgba color", "", [=]() {
-    //     auto co = toPacked(getColor());
 
-    //     glfwSetClipboardString(nullptr, hex.c_str());
-    // }));
     menu->addChild(createMenuItem("Paste hex color", "", [=]() {
         std::string hex = glfwGetClipboardString(nullptr);
         if (!hex.empty()) {
