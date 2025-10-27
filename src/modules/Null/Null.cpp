@@ -374,7 +374,7 @@ void BlankModuleWidget::appendContextMenu(Menu *menu)
 {
     if (!my_module) return;
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Null"));
-    AddThemeMenu(menu, getITheme(), true, true);
+    AddThemeMenu(menu, this, getITheme(), true, true);
     menu->addChild(createSubmenuItem("Palette color", "",
         [=](Menu *menu) {
             auto current = my_module->getMainColor();

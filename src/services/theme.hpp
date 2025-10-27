@@ -26,6 +26,7 @@ Theme getActualTheme(ThemeSetting choice);
 const ThemeSetting DefaultThemeSetting{ThemeSetting::FollowRackPreferDark};
 ThemeSetting ParseThemeSettingShorthand(std::string text);
 ThemeSetting ThemeSettingFromJson(json_t * root);
+void broadcastThemeSetting(::rack::app::ModuleWidget*source, ThemeSetting setting);
 
 NVGcolor PanelBackground(Theme theme);
 NVGcolor ThemeTextColor(Theme theme);

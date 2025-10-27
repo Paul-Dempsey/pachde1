@@ -150,7 +150,7 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
 
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Info"));
 
-    AddThemeMenu(menu, theme_holder, true, true);
+    AddThemeMenu(menu, this, theme_holder, true, true);
 
     menu->addChild(createCheckMenuItem("Bright text in a dark room", "",
         [=]() { return settings->getBrilliant(); },

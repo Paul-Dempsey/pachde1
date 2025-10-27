@@ -4,7 +4,12 @@
 using namespace widgetry;
 namespace pachde {
 
-void addThemeItems(rack::ui::Menu *menu, ThemeBase* it) {
+void addThemeItems(rack::ui::Menu *menu, ModuleWidget* source, ThemeBase* it) {
+
+    menu->addChild(createMenuItem("Send to all", "", [=](){
+        broadcastThemeSetting(source, it->getThemeSetting());
+    }));
+
     NVGcolor co_dot{nvgHSL(200.f/360.f, .5, .5)};
     ColorDotMenuItem* option;
 
@@ -34,13 +39,13 @@ void addThemeItems(rack::ui::Menu *menu, ThemeBase* it) {
     menu->addChild(option);
 }
 
-void AddThemeMenu(rack::ui::Menu *menu, ThemeBase* it, bool isChangeColor, bool isChangeScrews, bool submenu)
+void AddThemeMenu(rack::ui::Menu *menu, ModuleWidget* source, ThemeBase* it, bool isChangeColor, bool isChangeScrews, bool submenu)
 {
     assert(it);
     if (submenu) {
-        menu->addChild(createSubmenuItem("Theme", "", [=](Menu *menu) { addThemeItems(menu, it); }));
+        menu->addChild(createSubmenuItem("Theme", "", [=](Menu *menu) { addThemeItems(menu, source, it); }));
     } else {
-        addThemeItems(menu, it);
+        addThemeItems(menu, source, it);
     }
 
     if (isChangeColor) {

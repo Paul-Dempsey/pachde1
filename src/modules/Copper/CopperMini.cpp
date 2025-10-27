@@ -228,7 +228,7 @@ void CopperMiniUI::appendContextMenu(rack::ui::Menu* menu)
 {
     if (!this->module) return;
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Copper Mini"));
-    AddThemeMenu(menu, theme_holder, false, false);
+    AddThemeMenu(menu, this, theme_holder, false, false);
     menu->addChild(createSubmenuItem("Palette color", "",
         [=](Menu *menu)
         {

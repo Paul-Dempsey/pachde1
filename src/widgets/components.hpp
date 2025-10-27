@@ -18,7 +18,7 @@ inline float PixToHp(float pix) { return pix / 15.0; }
 inline float ClampBipolar(float v) { return rack::math::clamp(v, -5.0f, 5.0f); }
 inline float ClampUnipolar(float v) { return rack::math::clamp(v, 0.0f, 10.0f); }
 
-void AddThemeMenu(rack::ui::Menu *menu, ThemeBase* it, bool isChangeColor, bool isChangeScrews, bool submenu = true);
+void AddThemeMenu(rack::ui::Menu *menu, ModuleWidget* source, ThemeBase* it, bool isChangeColor, bool isChangeScrews, bool submenu = true);
 
 struct FancyLabel : MenuLabel
 {

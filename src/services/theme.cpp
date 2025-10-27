@@ -58,7 +58,9 @@ Theme getActualTheme(ThemeSetting choice) {
         return Theme::Dark;
 
     case ThemeSetting::FollowRackPreferDark:
-        return ::rack::settings::preferDarkPanels ? Theme::Dark : Theme::Light;
+        return ::rack::settings::preferDarkPanels
+            ? ((::rack::settings::uiTheme == "hcdark") ? Theme::HighContrast : Theme::Dark)
+            : Theme::Light;
     }
     return Theme::Dark;
 }
@@ -77,6 +79,22 @@ ThemeSetting ParseThemeSettingShorthand(std::string text) {
 
 ThemeSetting ThemeSettingFromJson(json_t* root) {
     return ParseThemeSettingShorthand(get_json_string(root, "theme-choice", "f"));
+}
+
+void broadcastThemeSetting(::rack::app::ModuleWidget*source, ThemeSetting setting)
+{
+    ::rack::app::RackWidget* rack = APP->scene->rack;
+    std::vector<::rack::app::ModuleWidget*> module_widgets{rack->getModules()};
+    if (module_widgets.size() <= 1) return;
+    for (auto module_widget: module_widgets) {
+        if (module_widget == source) continue; // skip broadcaster
+        if (module_widget->model->plugin == pluginInstance) {
+            IBasicTheme* theme = dynamic_cast<IBasicTheme*>(module_widget->module);
+            if (theme) {
+                theme->setThemeSetting(setting);
+            }
+        }
+    }
 }
 
 void ThemeSettingToJson(json_t* root, ThemeSetting choice) {

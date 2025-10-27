@@ -359,7 +359,7 @@ void CopperUi::appendContextMenu(rack::ui::Menu* menu)
 {
     if (!copper_module) return;
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Copper"));
-    AddThemeMenu(menu, theme_holder, false, true);
+    AddThemeMenu(menu, this, theme_holder, false, true);
     menu->addChild(createSubmenuItem("Poly jack order", "", [=](Menu* menu) {
         menu->addChild(createCheckMenuItem("HSLARGB", "",
             [=](){ return !copper_module->poly_out_rgbahsl; },

@@ -388,7 +388,7 @@ struct RuiUi : ModuleWidget, IThemeChange
             ));
         }
         menu->addChild(createMenuLabel<FancyLabel>("theme"));
-        AddThemeMenu(menu, theme_holder, false, false, false);
+        AddThemeMenu(menu, this, theme_holder, false, false, false);
     }
 
 };

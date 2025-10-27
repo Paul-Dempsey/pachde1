@@ -244,7 +244,7 @@ void ImagineUi::appendContextMenu(Menu *menu)
 {
     if (!this->module) return;
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Imagine"));
-    AddThemeMenu(menu, theme_holder, false, true);
+    AddThemeMenu(menu, this, theme_holder, false, true);
 
     menu->addChild(createCheckMenuItem(
         "Labels", "",
