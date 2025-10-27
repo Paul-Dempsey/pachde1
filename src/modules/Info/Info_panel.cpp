@@ -66,11 +66,15 @@ void InfoPanel::showText(const DrawArgs &args, std::shared_ptr<rack::window::Fon
     if (!FontOk(font)) return;
 
     nvgSave(vg);
-    auto font_size = settings->getFontSize();
+    auto font_size = module ? settings->getFontSize() : 60;
     SetTextStyle(vg, font, fromPacked(text_color), font_size);
-    nvgTextAlign(vg, NVG_ALIGN_TOP|nvgAlignFromHAlign(settings->getHorizontalAlignment()));
+    if (module) {
+        nvgTextAlign(vg, NVG_ALIGN_TOP|nvgAlignFromHAlign(settings->getHorizontalAlignment()));
+    } else {
+        nvgTextAlign(vg, NVG_ALIGN_TOP|NVG_ALIGN_CENTER);
+    }
 
-    auto orientation = settings->getOrientation();
+    auto orientation = module ? settings->getOrientation() : Orientation::Up;
     float width = box.size.x - 15.f;
     float height = box.size.y - 25.f;
     if ((orientation == Orientation::Down) || (orientation == Orientation::Up)) {
@@ -137,7 +141,7 @@ void InfoPanel::drawError(const DrawArgs &args)
 
 void InfoPanel::drawText(const DrawArgs &args)
 {
-    std::string text = module ? module->text : "<sample text>";
+    std::string text = module ? module->text : "#d Info";
     if (!text.empty()) {
         auto font = settings->getFont();
         if (!FontOk(font)) {
@@ -171,7 +175,7 @@ void InfoPanel::draw(const DrawArgs &args)
     }
 
     if (preview) {
-        DrawLogo(args.vg, box.size.x / 2.f - 30.0f, box.size.y / 2.f - 40.f, Overlay(COLOR_BRAND), 4.f);
+        DrawLogo(args.vg, box.size.x*.5-30.0f, 35.f, Overlay(COLOR_BRAND), 4.25f);
     }
     Widget::draw(args);
 }
