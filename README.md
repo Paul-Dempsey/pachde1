@@ -65,10 +65,10 @@ I have a couple of other repos for VCV Rack-related projects you may be interest
 - **[Generic Blank](https://github.com/Paul-Dempsey/GenericBlank)**
   This is a great place to get started making a VCV Rack plugin. It's a good alternative to the VCV Rack tutorial. While it's a generic blanking plate out of the box, the code is well-commented with what you need to do to build out a functional module.
 
-- [Rack dev notes (by pachde #d)](https://github.com/Paul-Dempsey/rack-dev-notes/blob/main/doc/index.md#dev-notes-for-vcv-rack).
+- **[Rack dev notes (by pachde #d)](https://github.com/Paul-Dempsey/rack-dev-notes/blob/main/doc/index.md#dev-notes-for-vcv-rack)**.
   A growing set of tech notes for creating and maintaining VCV Rack plugins.
 
+- **[#d CHEM](https://github.com/Paul-Dempsey/pachde-CHEM?tab=readme-ov-file#pachde-chem)** Controller for the Haken EaganMatrix. 16 modules for working with EaganMatrix devices, including Haken Continuum, ContinuuMini, EM Micro, and EaganMatrix Eurorack Module, and the Osmose from Expressive E.
 
-- **[svg_theme](https://github.com/Paul-Dempsey/svg_theme)** For plugin developers: Lean in-memory SVG theming for VCV Rack plugins, using a json configuration. This allows you to maintain a single SVG for your rack, and theme it as needed. Includes a simple demo module to show you how it works.
-
+---
 ![pachde logo](docs/Logo.svg)
