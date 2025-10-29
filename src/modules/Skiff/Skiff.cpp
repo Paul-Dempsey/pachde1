@@ -219,9 +219,18 @@ struct SkiffUi : ModuleWidget, IThemeChange
     void fancy_background()
     {
         if (!my_module) return;
-        toggleCloakWidget();
+        //toggleCloakWidget();
+        ::rack::app::RackWidget* rack = APP->scene->rack;
+        std::vector<::rack::app::ModuleWidget*> module_widgets{rack->getModules()};
+        if (module_widgets.size() <= 1) return;
+        for (auto module_widget: module_widgets) {
+            if (module_widget == this) continue;
+            if (module_widget->children.size())    {
+                Widget* first = *module_widget->children.begin();
+                first->setVisible(!first->isVisible());
+            }
+        }
     }
-
     void from_patch() {
         if (!my_module) return;
 
