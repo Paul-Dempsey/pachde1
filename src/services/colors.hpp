@@ -93,7 +93,7 @@ inline NVGcolor fromPacked(PackedColor co)
     return nvgRGBA(co & 0xff, (co >> 8) & 0xff, (co >> 16) & 0xff, (co >> 24) & 0xff);
 }
 
-inline PackedColor toPacked(NVGcolor co) {
+inline PackedColor toPacked(const NVGcolor& co) {
     return packRgba(
         static_cast<uint32_t>(co.r * 255),
         static_cast<uint32_t>(co.g * 255),

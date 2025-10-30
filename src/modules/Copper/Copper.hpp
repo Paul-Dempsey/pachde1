@@ -5,9 +5,8 @@
 #include "services/text.hpp"
 #include "services/theme-module.hpp"
 #include "widgets/components.hpp"
-#include "widgets/hue_widget.hpp"
+#include "widgets/color-widgets.hpp"
 #include "widgets/port.hpp"
-#include "widgets/sl_widget.hpp"
 
 using namespace ::rack;
 using namespace widgetry;

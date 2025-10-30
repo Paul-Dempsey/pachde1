@@ -44,7 +44,7 @@ void ColorPicker::set_color(PackedColor co)
 }
 
 void ColorPicker::refresh_from_hsla() {
-    nvg_color = nvgHSLA(hue, saturation, lightness, alpha);
+    nvg_color = nvgHSLAf(hue, saturation, lightness, alpha);
     color = toPacked(nvg_color);
     sample->color = color;
     hue_picker->setHue(hue);
@@ -61,17 +61,8 @@ ColorPicker::ColorPicker()
     box.size = get_size();
     set_color(toPacked(nvgHSLAf(40.f/360.f, .85f, .5f, 1.f)));
 
-    hue_picker = new HueWidget();
-    hue_picker->hue = get_hue();
-    hue_picker->box.pos = Vec(0,0);
-    hue_picker->box.size = Vec(15.f, 224);
-    hue_picker->onClick([=](float hue) {
-        set_hue(hue);
-    });
-    addChild(hue_picker);
-
     alpha_picker = new AlphaWidget();
-    alpha_picker->box.pos = Vec(18.5f, 0);
+    alpha_picker->box.pos = Vec(0.f, 0.f);
     alpha_picker->box.size = Vec(15.f, 224);
     alpha_picker->onClick([=](float opacity) {
         set_alpha(opacity);
@@ -79,19 +70,29 @@ ColorPicker::ColorPicker()
     alpha_picker->setOpacity(get_alpha());
     addChild(alpha_picker);
 
+    hue_picker = new HueWidget();
+    hue_picker->hue = get_hue();
+    hue_picker->box.pos = Vec(18.5f,0.f);
+    hue_picker->box.size = Vec(15.f, 224);
+    hue_picker->onClick([=](float hue) {
+        set_hue(hue);
+    });
+    addChild(hue_picker);
+
     sl_picker = new SLWidget(get_hue());
     sl_picker->setSaturation(get_saturation());
     sl_picker->setLightness(get_lightness());
     sl_picker->box.pos = Vec(37.f, 0);
     sl_picker->box.size = Vec(136.f, 224.f);
     sl_picker->onClick([=](float sat, float light) {
-        set_saturation(sat);
-        set_lightness(light);
+        saturation = sat;
+        lightness = light;
+        refresh_from_hsla();
     });
     addChild(sl_picker);
 
     sample = createWidget<Swatch>(Vec(0, 227.5f));
-    sample->box.size = Vec(149.f, 14.f);
+    sample->box.size = Vec(box.size.x, 14.f);
     addChild(sample);
 
     text_input = createWidget<TextInput>(Vec(0, 244.f));

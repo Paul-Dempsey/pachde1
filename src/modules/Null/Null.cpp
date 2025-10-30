@@ -65,25 +65,31 @@ void BlankModule::onRandomize(const RandomizeEvent& e) //override
     RandomizeTheme(this, false);
 }
 
-NVGcolor expanderColor(rack::engine::Module::Expander& expander)
+bool expanderColor(rack::engine::Module::Expander& expander, NVGcolor& result)
 {
     if (expander.module && (expander.module->model == modelCopper || expander.module->model == modelCopperMini)) {
         auto copper = dynamic_cast<IHaveColor*>(expander.module);
         if (copper) {
-            return copper->getColor(1);
+            result = copper->getColor(1);
+            return true;
         }
     }
-    return COLOR_NONE;
+    return false;
 }
 
-NVGcolor BlankModule::externalcolor()
+bool BlankModule::externalcolor(NVGcolor& result)
 {
-    if (!copper) { return COLOR_NONE; }
-    auto color = expanderColor(getRightExpander());
-    if (IS_SAME_COLOR(color, COLOR_NONE)) {
-        color = expanderColor(getLeftExpander());
+    if (!copper) { return false; }
+    NVGcolor color;
+    if (expanderColor(getRightExpander(), color)) {
+        result = color;
+        return true;
     }
-    return color;
+    if (expanderColor(getRightExpander(), color)) {
+        result = color;
+        return true;
+    }
+    return false;
 }
 
 json_t* BlankModule::dataToJson()
@@ -178,27 +184,24 @@ void BlankModuleWidget::drawPanel(const DrawArgs &args)
 
     NVGcolor panel_color;
      if (my_module && my_module->copper) {
-        panel_color = my_module->externalcolor();
-        if (!IS_SAME_COLOR(panel_color, COLOR_NONE)) {
+        if (my_module->externalcolor(panel_color)) {
             getITheme()->setMainColor(toPacked(panel_color));
         }
     } else {
         panel_color = fromPacked(getITheme()->getMainColor());
     }
 
-    if (!IS_SAME_COLOR(panel_color, COLOR_NONE)) {
-        auto lum = LuminanceLinear(panel_color);
-        if (lum <= 0.5f) {
-            ring = Gray(lum + 0.5);
-            slash = Gray(lum + 0.4);
-        } else {
-            ring = Gray(lum - 0.4);
-            slash = Gray(lum - 0.5);
-        }
-        logo = ring;
-        if (theme != Theme::HighContrast) {
-            logo.a = 0.75;
-        }
+    auto lum = LuminanceLinear(panel_color);
+    if (lum <= 0.5f) {
+        ring = Gray(lum + 0.5);
+        slash = Gray(lum + 0.4);
+    } else {
+        ring = Gray(lum - 0.4);
+        slash = Gray(lum - 0.5);
+    }
+    logo = ring;
+    if (theme != Theme::HighContrast) {
+        logo.a = 0.75;
     }
 
     bool flickering = my_module ? my_module->flickering() : false;
@@ -310,8 +313,7 @@ void BlankModuleWidget::setTheme(Theme theme)
     }
 
     auto resize = dynamic_cast<const ResizableModule*>(this->module);
-    if (resize)
-    {
+    if (resize) {
         box.size.x = resize->width * RACK_GRID_WIDTH;
     }
 }
@@ -324,6 +326,7 @@ void BlankModuleWidget::onChangeTheme(ChangedItem item) // override
     case ChangedItem::Theme:
     case ChangedItem::MainColor:
         setTheme(GetPreferredTheme(itheme));
+        
         break;
     case ChangedItem::Screws:
         applyScrews(itheme->hasScrews());
@@ -339,9 +342,8 @@ void BlankModuleWidget::step()
     if (my_module) {
         box.size.x = my_module->width * RACK_GRID_WIDTH;
         logo_port->setVisible(branding() && brand_logo());
-        auto color = my_module->externalcolor();
-        if (isColorVisible(color) && panel->theme_holder)
-        {
+        NVGcolor color;
+        if (my_module->externalcolor(color)) {
             panel->theme_holder->setMainColor(toPacked(color));
         }
         // sync with module for change from presets

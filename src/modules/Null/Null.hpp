@@ -40,7 +40,7 @@ struct BlankModule : ResizableModule
     }
     bool flickering() { return getInput(0).isConnected(); }
 
-    NVGcolor externalcolor();
+    bool externalcolor(NVGcolor& result);
 
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;

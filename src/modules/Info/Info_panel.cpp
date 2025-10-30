@@ -19,37 +19,17 @@ void InfoPanel::fetchColors()
     panel = settings->getDisplayPanelColor();
     text_color = settings->getDisplayTextColor();
     if (module && module->getCopperTarget() != CopperTarget::None) {
-        auto left = toPacked(module->leftExpanderColor());
-        auto right = toPacked(module->rightExpanderColor());
-        switch (module->getCopperTarget()) {
-            case CopperTarget::Text: {
-                if (left) {
-                    text_color = left;
-                }
-                if (right) {
-                    text_color = right;
-                }
-                settings->setUserTextColor(text_color);
-            } break;
-
-            case CopperTarget::Panel: {
-                //bool set_panel = false;
-                if (left) {
-                    //set_panel = true;
-                    panel = left;
-                }
-                if (right) {
-                    //set_panel = true;
-                    panel = right;
-                }
-                //if (set_panel) {
-                    theme_holder->setMainColor(panel);
-                    settings->setUserPanelColor(panel);
-                //}
-            } break;
-
-            case CopperTarget::None:
+        NVGcolor color;
+        if (module->rightExpanderColor(color) || module->leftExpanderColor(color)) {
+            switch (module->getCopperTarget()) {
+            case CopperTarget::Text: settings->setUserTextColor(toPacked(color)); break;
+            case CopperTarget::Panel:
+                panel = toPacked(color);
+                theme_holder->setMainColor(panel);
+                settings->setUserPanelColor(panel);
                 break;
+            default: break;
+            }
         }
     }
 }

@@ -50,15 +50,16 @@ InfoSettings* InfoModule::getSettings() {
     return settings;
 }
 
-NVGcolor InfoModule::expanderColor(rack::engine::Module::Expander& expander)
+bool InfoModule::expanderColor(rack::engine::Module::Expander& expander, NVGcolor& result)
 {
     if (expander.module && (expander.module->model == modelCopper || expander.module->model == modelCopperMini)) {
         auto copper = dynamic_cast<IHaveColor*>(expander.module);
         if (copper) {
-            return copper->getColor(1);
+            result = copper->getColor(1);
+            return true;
         }
     }
-    return COLOR_NONE;
+    return false;
 }
 
 }

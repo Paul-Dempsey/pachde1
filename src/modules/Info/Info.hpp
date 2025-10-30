@@ -35,13 +35,13 @@ struct InfoModule : ResizableModule
     void dataFromJson(json_t *root) override;
 
     InfoSettings* getSettings();
-    NVGcolor expanderColor(rack::engine::Module::Expander& expander);
+    bool expanderColor(rack::engine::Module::Expander& expander, NVGcolor& result);
 
-    NVGcolor leftExpanderColor() {
-        return expanderColor(getLeftExpander());
+    bool leftExpanderColor(NVGcolor& result) {
+        return expanderColor(getLeftExpander(), result);
     }
-    NVGcolor rightExpanderColor() {
-        return expanderColor(getRightExpander());
+    bool rightExpanderColor(NVGcolor& result) {
+        return expanderColor(getRightExpander(), result);
     }
     CopperTarget getCopperTarget() { return copper_target; }
     void setCopperTarget(CopperTarget target) { copper_target = target; }

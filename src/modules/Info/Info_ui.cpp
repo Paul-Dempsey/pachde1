@@ -46,8 +46,11 @@ void InfoModuleWidget::onChangeTheme(ChangedItem item) // override
 {
     switch (item) {
     case ChangedItem::Theme:
-    case ChangedItem::MainColor:
         settings->setTheme(theme_holder->getTheme());
+        sendChildrenThemeColor(this, theme_holder->getTheme(), theme_holder->getMainColor());
+        break;
+    case ChangedItem::MainColor:
+        settings->setUserPanelColor(theme_holder->getMainColor());
         sendChildrenThemeColor(this, theme_holder->getTheme(), theme_holder->getMainColor());
         break;
     case ChangedItem::Screws:

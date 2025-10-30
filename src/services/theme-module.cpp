@@ -5,10 +5,9 @@ void ThemePanel::draw(const DrawArgs &args)
 {
     Widget::draw(args);
 
-    auto color = fromPacked(theme_holder->getMainColor());
-    if (isColorTransparent(color)) {
-        color = PanelBackground(theme_holder->getTheme());
-    }
+    PackedColor co = theme_holder->getMainColor();
+    NVGcolor color = co ? fromPacked(co) : PanelBackground(theme_holder->getTheme());
+
     auto vg = args.vg;
 
     nvgBeginPath(vg);

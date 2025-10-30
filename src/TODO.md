@@ -1,7 +1,6 @@
 # pachde1 TODO
 
 - Symbol button widget
-- Add alpha to color picker
 
 ## Info
 

@@ -15,6 +15,7 @@ SOURCES += src/myplugin.cpp
 SOURCES += src/resizable.cpp
 
 # widgets
+SOURCES += src/widgets/color-widgets.cpp
 SOURCES += src/widgets/draw-logo.cpp
 SOURCES += src/widgets/pic.cpp
 SOURCES += src/widgets/pic_button.cpp
