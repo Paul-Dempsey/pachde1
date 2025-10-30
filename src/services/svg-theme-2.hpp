@@ -31,17 +31,17 @@ enum class PaintKind { Unset, Color, Gradient, None };
 
 class Paint {
     PaintKind kind{PaintKind::Unset};
-    union {
+//    union {
         PackedColor color;
         Gradient gradient;
-    };
+//    };
 public:
     Paint() {}
     ~Paint();
-    Paint& operator=(const Paint& source);
     Paint(const Paint& source);
     Paint(PackedColor color) { setColor(color); }
     Paint(const Gradient& gradient) { setGradient(gradient); }
+    void Init(const Paint& source);
 
     PaintKind Kind() { return kind; }
     void setColor(PackedColor new_color);

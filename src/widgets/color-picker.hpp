@@ -24,7 +24,7 @@ struct AlphaWidget: OpaqueWidget {
     std::function<void(float)> clickHandler;
 
     float getOpacity() { return alpha; }
-    void setOpacity(float f) { alpha = clamp(alpha); }
+    void setOpacity(float f) { alpha = clamp(f); }
     void onClick(std::function<void(float)> callback) {
         clickHandler = callback;
     }
@@ -37,7 +37,7 @@ struct AlphaWidget: OpaqueWidget {
         glfwSetCursor(APP->window->win, NULL);
     }
     bool vertical() { return box.size.x <= box.size.y; }
-    
+
     void onDragMove(const DragMoveEvent& e) override {
         OpaqueWidget::onDragMove(e);
         drag_pos = drag_pos.plus(e.mouseDelta.div(getAbsoluteZoom()));
@@ -53,10 +53,7 @@ struct AlphaWidget: OpaqueWidget {
             return;
         }
         e.consume(this);
-        drag_pos = e.pos.div(getAbsoluteZoom());
-        setOpacity(vertical() ? (drag_pos.y / box.size.y) : (drag_pos.x / box.size.x));
-        if (clickHandler)
-            clickHandler(alpha);
+        drag_pos = e.pos;
     }
 
     void draw(const DrawArgs& args) override {
@@ -83,7 +80,7 @@ struct AlphaWidget: OpaqueWidget {
         nvgBeginPath(vg);
         nvgRect(vg, 0, 0, box.size.x, box.size.y);
         auto co_nada = nvgRGBAf(1.f,1.f,1.f,0.f);
-        NVGpaint paint = vertical() 
+        NVGpaint paint = vertical()
             ? nvgLinearGradient(vg, 0, 0, 0, box.size.y, co_nada, co_white)
             : nvgLinearGradient(vg, 0, 0, box.size.x, 0, co_nada, co_white);
         nvgFillPaint(vg, paint);
@@ -110,19 +107,21 @@ struct ColorPicker : OpaqueWidget
 
     HueWidget* hue_picker{nullptr};
     SLWidget* sl_picker{nullptr};
-    AlphaWidget* alpha_picker;
+    AlphaWidget* alpha_picker{nullptr};
     Swatch* sample{nullptr};
-    TextInput* text_input;
+    TextInput* text_input{nullptr};
     ColorSyntax syntax = ColorSyntax::Hex;
 
-    float hue{0.0f};
-    float saturation{1.f};
-    float lightness{1.f};
-    float alpha{1.f};
+    float hue;
+    float saturation;
+    float lightness;
+    float alpha;
 
     NVGcolor nvg_color;
     PackedColor color{0};
     std::function<void(PackedColor)> on_new_color{nullptr};
+
+    ColorPicker();
 
     void set_on_new_color(std::function<void(PackedColor)> callback) {
         on_new_color = callback;
@@ -153,7 +152,6 @@ struct ColorPicker : OpaqueWidget
     }
     float get_alpha() { return alpha; }
 
-    ColorPicker();
 };
 
 struct ColorPickerMenu : rack::ui::MenuItem

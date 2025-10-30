@@ -92,8 +92,9 @@ void InfoPanel::showText(const DrawArgs &args, std::shared_ptr<rack::window::Fon
     free(rows);
     float text_height = nrows * font_size;
 
-    float x,y;
+    float x, y;
     switch (orientation) {
+    default:
     case Orientation::Normal:
         x = 7.5f;
         y = 190.f - text_height*.5;

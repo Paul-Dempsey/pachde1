@@ -75,7 +75,7 @@ Paint::~Paint() {
     if (isGradient()) gradient.clear();
 }
 
-Paint& Paint::operator=(const Paint& source)
+Paint::Paint(const Paint& source)
 {
     switch (source.kind) {
     case PaintKind::Unset: break;
@@ -83,11 +83,12 @@ Paint& Paint::operator=(const Paint& source)
     case PaintKind::Gradient: setGradient(source.gradient); break;
     case PaintKind::None: setNone(); break;
     }
-    return *this;
 }
 
-Paint::Paint(const Paint& source)
+void Paint::Init(const Paint &source)
 {
+    if (isGradient()) gradient.clear();
+    kind = source.kind;
     switch (source.kind) {
     case PaintKind::Unset: break;
     case PaintKind::Color: setColor(source.color); break;
@@ -102,9 +103,12 @@ void Paint::setColor(PackedColor new_color) {
     color = new_color;
 }
 
-void Paint::setGradient(const Gradient& g) {
+void Paint::setGradient(const Gradient& source) {
     kind = PaintKind::Gradient;
-    gradient = g;
+    gradient.clear();
+    for (const GradientStop& stop : source.stops) {
+        gradient.stops.push_back(stop);
+    }
 }
 
 void Paint::setNone() {
@@ -125,7 +129,7 @@ void Style::setStrokeWidth(float width) {
     apply_stroke_width = true;
 }
 void Style::setFill(const Paint& paint) {
-    fill = paint;
+    fill.Init(paint);
 }
 void Style::setFillColor(PackedColor color) {
     fill.setColor(color);
@@ -134,7 +138,7 @@ void Style::setFillGradient(const Gradient& gradient) {
     fill.setGradient(gradient);
 }
 void Style::setStroke(const Paint& paint) {
-    stroke = paint;
+    stroke.Init(paint);
 }
 void Style::setStrokeColor(PackedColor color) {
     stroke.setColor(color);

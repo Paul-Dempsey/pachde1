@@ -24,7 +24,6 @@ void ColorPicker::set_text_color()
 void ColorPicker::set_color(PackedColor co)
 {
     color = co;
-    sample->color = co;
     nvg_color = fromPacked(co);
 
     hue = Hue1(nvg_color);
@@ -32,13 +31,15 @@ void ColorPicker::set_color(PackedColor co)
     lightness = Lightness(nvg_color);
     alpha = nvg_color.a;
 
-    hue_picker->setHue(hue);
-    alpha_picker->setOpacity(alpha);
-    sl_picker->setHue(hue);
-    sl_picker->setSaturation(saturation);
-    sl_picker->setLightness(lightness);
-
-    set_text_color();
+    if (sample) sample->color = color;
+    if (hue_picker) hue_picker->setHue(hue);
+    if (alpha_picker) alpha_picker->setOpacity(alpha);
+    if (sl_picker) {
+        sl_picker->setHue(hue);
+        sl_picker->setSaturation(saturation);
+        sl_picker->setLightness(lightness);
+    }
+    if (text_input) set_text_color();
     if (on_new_color) on_new_color(color);
 }
 
@@ -58,6 +59,7 @@ void ColorPicker::refresh_from_hsla() {
 ColorPicker::ColorPicker()
 {
     box.size = get_size();
+    set_color(toPacked(nvgHSLAf(40.f/360.f, .85f, .5f, 1.f)));
 
     hue_picker = new HueWidget();
     hue_picker->hue = get_hue();
@@ -106,6 +108,7 @@ ColorPicker::ColorPicker()
         };
     });
     addChild(text_input);
+    set_color(color);
 }
 
 ColorPickerMenu::ColorPickerMenu() {
