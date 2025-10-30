@@ -26,23 +26,28 @@ void ColorPicker::set_color(PackedColor co)
     color = co;
     sample->color = co;
     nvg_color = fromPacked(co);
+
     hue = Hue1(nvg_color);
     saturation = Saturation(nvg_color);
     lightness = Lightness(nvg_color);
+    alpha = nvg_color.a;
 
     hue_picker->setHue(hue);
+    alpha_picker->setOpacity(alpha);
     sl_picker->setHue(hue);
     sl_picker->setSaturation(saturation);
     sl_picker->setLightness(lightness);
+
     set_text_color();
     if (on_new_color) on_new_color(color);
 }
 
-void ColorPicker::refresh_from_hsl() {
-    nvg_color = nvgHSL(hue, saturation, lightness);
+void ColorPicker::refresh_from_hsla() {
+    nvg_color = nvgHSLA(hue, saturation, lightness, alpha);
     color = toPacked(nvg_color);
     sample->color = color;
     hue_picker->setHue(hue);
+    alpha_picker->setOpacity(alpha);
     sl_picker->setHue(hue);
     sl_picker->setSaturation(saturation);
     sl_picker->setLightness(lightness);
@@ -63,10 +68,19 @@ ColorPicker::ColorPicker()
     });
     addChild(hue_picker);
 
+    alpha_picker = new AlphaWidget();
+    alpha_picker->box.pos = Vec(18.5f, 0);
+    alpha_picker->box.size = Vec(15.f, 224);
+    alpha_picker->onClick([=](float opacity) {
+        set_alpha(opacity);
+    });
+    alpha_picker->setOpacity(get_alpha());
+    addChild(alpha_picker);
+
     sl_picker = new SLWidget(get_hue());
     sl_picker->setSaturation(get_saturation());
     sl_picker->setLightness(get_lightness());
-    sl_picker->box.pos = Vec(18.5f, 0);
+    sl_picker->box.pos = Vec(37.f, 0);
     sl_picker->box.size = Vec(136.f, 224.f);
     sl_picker->onClick([=](float sat, float light) {
         set_saturation(sat);

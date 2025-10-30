@@ -83,8 +83,6 @@ struct HueWidget : OpaqueWidget
         drag_pos = e.pos;
     }
 
-    // TODO: Dragging
-
     void draw(const DrawArgs & args) override
     {
         auto vg = args.vg;
