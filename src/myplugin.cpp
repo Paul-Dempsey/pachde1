@@ -47,7 +47,7 @@ void initThemeCache() {
 #else
     ErrorContext* error_context = nullptr;
 #endif
-    auto theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/theme-light.vgt"), error_context);
+    auto theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/themes/light.vgt"), error_context);
 #ifdef DEV_BUILD
     if (!theme) {
         auto report = error_context->makeErrorReport();
@@ -56,7 +56,7 @@ void initThemeCache() {
 #endif
     if (theme) theme_cache.addTheme(theme);
 
-    theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/theme-dark.vgt"), error_context);
+    theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/themes/dark.vgt"), error_context);
 #ifdef DEV_BUILD
     if (!theme) {
         auto report = error_context->makeErrorReport();
@@ -65,7 +65,7 @@ void initThemeCache() {
 #endif
     if (theme) theme_cache.addTheme(theme);
 
-    theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/theme-hc.vgt"), error_context);
+    theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/themes/high.vgt"), error_context);
 #ifdef DEV_BUILD
     if (!theme) {
         auto report = error_context->makeErrorReport();

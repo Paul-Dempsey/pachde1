@@ -6,7 +6,7 @@ namespace pachde {
 
 void addThemeItems(rack::ui::Menu *menu, ModuleWidget* source, ThemeBase* it) {
 
-    menu->addChild(createMenuItem("Send to all", "", [=](){
+    menu->addChild(createMenuItem("Send theme to all pachde1", "", [=](){
         broadcastThemeSetting(source, it->getThemeSetting());
     }));
 
