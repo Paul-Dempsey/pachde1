@@ -2,7 +2,7 @@
 
 namespace svg_query {
 
-::rack::math::Rect elementBounds(std::shared_ptr<::rack::window::Svg> svg, const char* id)
+::rack::math::Rect elementBounds(SharedSvg svg, const char* id)
 {
     for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
         if (shape->id[0] && (0 == strncmp(shape->id, id, 64))) {
@@ -13,7 +13,7 @@ namespace svg_query {
     return ::rack::math::Rect(INFINITY, INFINITY, 0, 0);
 }
 
-void boundsIndex(std::shared_ptr<::rack::window::Svg> svg, const char *prefix, std::map<std::string, ::rack::math::Rect> &map, bool hide)
+void boundsIndex(SharedSvg svg, const char *prefix, BoundsIndex &map, bool hide)
 {
     int len = strlen(prefix);
     for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
@@ -25,7 +25,7 @@ void boundsIndex(std::shared_ptr<::rack::window::Svg> svg, const char *prefix, s
     }
 }
 
-void shapeIndex(std::shared_ptr<::rack::window::Svg> svg, const char *prefix, std::map<std::string, NSVGshape *> &map)
+void shapeIndex(SharedSvg svg, const char *prefix, ShapeIndex& map)
 {
     int len = strlen(prefix);
     for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
@@ -35,7 +35,7 @@ void shapeIndex(std::shared_ptr<::rack::window::Svg> svg, const char *prefix, st
     }
 }
 
-void hideElement(std::shared_ptr<::rack::window::Svg> svg, const char *id)
+void hideElement(SharedSvg svg, const char *id)
 {
     for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
         if (shape->id[0] && (0 == strncmp(shape->id, id, 64))) {
@@ -45,7 +45,7 @@ void hideElement(std::shared_ptr<::rack::window::Svg> svg, const char *id)
     }
 }
 
-void showElement(std::shared_ptr<::rack::window::Svg> svg, const char *id)
+void showElement(SharedSvg svg, const char *id)
 {
     for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
         if (shape->id[0] && (0 == strncmp(shape->id, id, 64))) {
@@ -55,7 +55,7 @@ void showElement(std::shared_ptr<::rack::window::Svg> svg, const char *id)
     }
 }
 
-void hideElements(std::shared_ptr<::rack::window::Svg> svg, const char *prefix)
+void hideElements(SharedSvg svg, const char *prefix)
 {
     int len = strlen(prefix);
     for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
@@ -65,7 +65,7 @@ void hideElements(std::shared_ptr<::rack::window::Svg> svg, const char *prefix)
     }
 }
 
-void showElements(std::shared_ptr<::rack::window::Svg> svg, const char *prefix)
+void showElements(SharedSvg svg, const char *prefix)
 {
     int len = strlen(prefix);
     for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
@@ -75,7 +75,7 @@ void showElements(std::shared_ptr<::rack::window::Svg> svg, const char *prefix)
     }
 }
 
-std::shared_ptr<::rack::window::Svg> panelWidgetSvg(::rack::widget::Widget* panel)
+SharedSvg panelWidgetSvg(::rack::widget::Widget* panel)
 {
     if (!panel) return nullptr;
 

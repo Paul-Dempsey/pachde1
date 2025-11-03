@@ -39,17 +39,16 @@ void ElementStyle::apply_theme(std::shared_ptr<SvgTheme> theme)
     assert(key);
     auto style = theme->getStyle(key);
     if (style) {
-        if (style->isApplyStroke()) {
-            stroke_color = style->stroke_color();
-            dx = style->stroke_width;
-        }
         if (style->isApplyFill()) {
             fill_color = style->fill_color();
         }
+        if (style->isApplyStroke()) {
+            stroke_color = style->stroke_color();
+        }
+        if (style->isApplyStrokeWidth()) {
+            dx = style->stroke_width;
+        }
     }
-    // if (!isVisibleColor(fill_color) && isVisibleColor(stroke_color)) {
-    //     fill_color = stroke_color;
-    // }
 }
 
 }

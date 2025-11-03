@@ -18,31 +18,45 @@ bool widget_order_lrtb(const Widget* a, const Widget* b) {
     return a->box.pos.x < b->box.pos.x;
 }
 
-void screw_visibility(::rack::widget::Widget* widget, bool visible)
+void screw_visibility(::rack::widget::Widget* root_widget, bool visible)
 {
-    ::rack::widget::Widget* screw = dynamic_cast<SvgScrew*>(widget);
+    ::rack::widget::Widget* screw = dynamic_cast<SvgScrew*>(root_widget);
     if (screw) {
         screw->setVisible(visible);
         return;
     }
-    for (auto child: widget->children) {
+    for (auto child: root_widget->children) {
         screw_visibility(child, visible);
     }
 }
 
-void port_visibility(::rack::widget::Widget* widget, bool visible)
+void port_visibility(::rack::widget::Widget* root_widget, bool visible)
 {
-    auto port_widget = dynamic_cast<::rack::app::PortWidget*>(widget);
+    auto port_widget = dynamic_cast<::rack::app::PortWidget*>(root_widget);
     if (port_widget) {
         auto port = port_widget->getPort();
         if (port) {
             if (!port->isConnected()) {
-                widget->setVisible(visible);
+                port_widget->setVisible(visible);
             }
         }
     }
-    for (auto child: widget->children) {
+    for (auto child: root_widget->children) {
         port_visibility(child, visible);
+    }
+}
+
+void panel_visibility(::rack::widget::Widget *exclude, bool visible)
+{
+    ::rack::app::RackWidget* rack = APP->scene->rack;
+    std::vector<::rack::app::ModuleWidget*> module_widgets{rack->getModules()};
+    if (module_widgets.size() <= 1) return;
+    for (auto module_widget: module_widgets) {
+        if (module_widget == exclude) continue;
+        if (module_widget->children.size())    {
+            Widget* first = *module_widget->children.begin();
+            first->setVisible(visible);
+        }
     }
 }
 
@@ -61,7 +75,7 @@ bool toggle_rail()
 bool is_rail_visible()
 {
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
-    return rail ? rail->isVisible() : false;
+    return rail ? rail->isVisible() : true;
 }
 
 void set_rail_visible(bool visible) {

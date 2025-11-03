@@ -21,8 +21,7 @@ struct RefBox
     inline float y_pos(float factor) { return top() + factor*height(); }
 };
 
-void CloakBackgroundWidget::draw(const DrawArgs& args) 
-{
+void CloakBackgroundWidget::draw(const DrawArgs& args) {
     auto vg = args.vg;
     NVGcolor icol = nvgRGB(0,0,0); //::rack::settings::preferDarkPanels ? nvgRGB(0x40, 0x40, 0x40) : nvgRGB(0x45,0x45,0x45);
     NVGcolor ocol = nvgRGB(252,252,252); //::rack::settings::preferDarkPanels ? nvgRGB(0x10, 0x10, 0x10) : nvgRGB(0xe6,0xe6,0xe6);
@@ -37,9 +36,8 @@ void CloakBackgroundWidget::draw(const DrawArgs& args)
     nvgFill(vg);
 }
 
-CloakBackgroundWidget * toggleCloakWidget()
-{
-    auto cloak = getCloakWidget();
+CloakBackgroundWidget * toggleBackgroundCloak() {
+    auto cloak = getBackgroundCloak();
     if (cloak) {
         cloak->requestDelete();
         return nullptr;
@@ -49,6 +47,17 @@ CloakBackgroundWidget * toggleCloakWidget()
         rail->getParent()->addChildAbove(cloak, rail);
         return cloak;
     }
+}
+
+CloakBackgroundWidget * ensureBackgroundCloak() {
+    auto cloak = getBackgroundCloak();
+    if (!cloak) {
+        cloak = new CloakBackgroundWidget;
+        auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
+        rail->getParent()->addChildAbove(cloak, rail);
+    }
+    return cloak;
+
 }
 
 } // widgetry

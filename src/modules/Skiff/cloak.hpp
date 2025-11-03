@@ -20,11 +20,11 @@ struct CloakBackgroundWidget : Widget
     void draw(const DrawArgs& args) override;
 };
 
-inline CloakBackgroundWidget * getCloakWidget() {
+inline CloakBackgroundWidget * getBackgroundCloak() {
     return APP->scene->rack->getFirstDescendantOfType<CloakBackgroundWidget>();;
 }
 
-CloakBackgroundWidget * toggleCloakWidget();
-
+CloakBackgroundWidget * toggleBackgroundCloak();
+CloakBackgroundWidget * ensureBackgroundCloak();
 
 } //widgetry

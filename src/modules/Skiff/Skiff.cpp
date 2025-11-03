@@ -8,6 +8,7 @@ using namespace ::rack;
 #include "widgets/components.hpp"
 #include "widgets/hamburger.hpp"
 #include "widgets/screws.hpp"
+#include "widgets/text-button.hpp"
 #include "skiff-help.hpp"
 #include "cloak.hpp"
 
@@ -24,10 +25,15 @@ struct Skiff : ThemeModule
 
     std::string custom_rail_file = asset::user("");
     int rail_item{-1};
-    bool screws{true};
-    bool jacks{true};
+
+    bool unscrewed{false};
+    bool nojacks{false};
     bool calm{false};
     bool derailed{false};
+    bool depaneled{false};
+    bool fancy{false};
+    bool shouting{true};
+
     bool running{false};
     std::string theme_name;
     SkiffUi* ui;
@@ -37,11 +43,14 @@ struct Skiff : ThemeModule
         json_t *root = Base::dataToJson();
         set_json(root, "rail-file", custom_rail_file);
         set_json_int(root, "alt-rail", rail_item);
-        set_json(root, "rack-screws", screws);
-        set_json(root, "jacks", jacks);
+        set_json(root, "unscrewed", unscrewed);
+        set_json(root, "no-jacks", nojacks);
         set_json(root, "calm", calm);
         set_json(root, "derailed", derailed);
+        set_json(root, "depaneled", depaneled);
+        set_json(root, "fancy", fancy);
         set_json(root, "theme", theme_name);
+        set_json(root, "shouting", shouting);
         return root;
     }
 
@@ -50,11 +59,13 @@ struct Skiff : ThemeModule
         Base::dataFromJson(root);
         custom_rail_file = get_json_string(root, "rail-file", custom_rail_file);
         rail_item = get_json_int(root, "alt-rail", rail_item);
-        screws = get_json_bool(root, "rack-screws", screws);
-        jacks = get_json_bool(root, "jacks", jacks);
-        calm = get_json_bool(root, "calm", calm);
-        derailed = get_json_bool(root, "derailed", derailed);
-        theme_name = get_json_string(root, "theme", "Light");
+        unscrewed = get_json_bool(root, "unscrewed", unscrewed);
+        nojacks   = get_json_bool(root, "no-jacks", nojacks);
+        calm      = get_json_bool(root, "calm", calm);
+        derailed  = get_json_bool(root, "derailed", derailed);
+        depaneled = get_json_bool(root, "depaneled", depaneled);
+        fancy     = get_json_bool(root, "fancy", fancy);
+        shouting  = get_json_bool(root, "shouting", shouting);
         apply_settings();
     };
 
@@ -91,10 +102,21 @@ struct SkiffUi : ModuleWidget, IThemeChange
     bool request_custom_rail{false};
     bool other_skiff{false};
     int rail_item{-1};
-    bool screws{true};
-    bool jacks{true};
+
+    bool unscrewed{false};
+    bool nojacks{false};
     bool calm{false};
     bool derailed{false};
+    bool depaneled{false};
+    bool fancy{false};
+
+    TextButton* derail_button{nullptr};
+    TextButton* fancy_button{nullptr};
+    TextButton* nopanel_button{nullptr};
+    TextButton* calm_button{nullptr};
+    TextButton* unscrew_button{nullptr};
+    TextButton* nojack_button{nullptr};
+    TextButton* pack_button{nullptr};
 
 #ifdef HOT_SVG
     std::map<const char *, Widget*> positioned_widgets;
@@ -105,8 +127,9 @@ struct SkiffUi : ModuleWidget, IThemeChange
         if (my_module) {
             my_module->ui = this;
         }
+        derailed = !is_rail_visible();
+        fancy = nullptr != getBackgroundCloak();
 
-        derailed = is_rail_visible();
         theme_holder = my_module ? my_module : new ThemeBase();
         theme_holder->setNotify(this);
         makeUi();
@@ -117,6 +140,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
             auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
             my_svgs.changeTheme(svg_theme);
             if (ham) ham->applyTheme(svg_theme);
+            applyChildrenTheme(this, svg_theme);
             sendDirty(this);
         }
     }
@@ -126,6 +150,28 @@ struct SkiffUi : ModuleWidget, IThemeChange
 #else
 #define HOT_POSITION(name,widget)
 #endif
+
+    TextButton* makeTextButton(
+        std::map<std::string,::math::Rect>& bounds,
+        const char* key,
+        bool sticky,
+        const char* title,
+        const char* tip,
+        std::shared_ptr<svg_theme_2::SvgTheme> svg_theme,
+        std::function<void(bool,bool)> handler)
+    {
+        auto button = new TextButton;
+        button->box = bounds[key];
+        HOT_POSITION(key, button);
+        button->set_sticky(sticky);
+        button->set_text(title);
+        if (module) {
+            if (tip) button->describe(tip);
+            button->set_handler(handler);
+        }
+        button->applyTheme(svg_theme);
+        return button;
+    }
 
     void makeUi() {
         assert(children.empty());
@@ -139,142 +185,177 @@ struct SkiffUi : ModuleWidget, IThemeChange
         other_skiff = !is_singleton(my_module, this);
         if (other_skiff) return;
 
-        SmallActionButton* button;
-
-        std::map<std::string, ::math::Rect> bounds;
+        ::svg_query::BoundsIndex bounds;
         svg_query::boundsIndex(layout, "k:", bounds, true);
 
         ham= Center(createWidget<RailMenu>(bounds["k:rail-menu"].getCenter()));
         HOT_POSITION("k:rail-menu", ham);
         ham->setUi(this);
-        ham->describe("Change Rails");
+        ham->describe("Alternate Rails");
         ham->applyTheme(svg_theme);
         addChild(ham);
 
-        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:unrail-btn"].getCenter()));
-        HOT_POSITION("k:unrail-btn", button);
-        button->set_sticky(true);
-        button->latched = derailed;
-        if (module) {
-            button->describe("Derail");
-            button->setHandler([this](bool ctrl, bool shift) { derail(); });
-        }
-        addChild(button);
+        addChild(derail_button = makeTextButton(bounds,"k:unrail-btn", true, "", "Toggle visible rails", svg_theme,
+            [this](bool ctrl, bool shift) { derail(); }));
 
+        addChild(fancy_button = makeTextButton(bounds, "k:bg-btn", true, "", "Toggle Fancy background", svg_theme,
+            [this](bool ctrl, bool shift) { fancy_background(); }));
 
-        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:bg-btn"].getCenter()));
-        HOT_POSITION("k:bg-btn", button);
-        button->set_sticky(true);
-        button->latched = derailed;
-        if (module) {
-            button->describe("Fancy background");
-            button->setHandler([this](bool ctrl, bool shift) { fancy_background(); });
-        }
-        addChild(button);
+        addChild(nopanel_button = makeTextButton(bounds, "k:no-panel", true, "", "Toggle visibile panels", svg_theme,
+            [this](bool ctrl, bool shift){ no_panels(); }));
 
-        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:calm-btn"].getCenter()));
-        HOT_POSITION("k:calm-btn", button);
-        if (module) {
-            button->describe("Calm knobs and ports");
-            button->setHandler([this](bool ctrl, bool shift) { calm_rack(); });
-        }
-        addChild(button);
+        addChild(calm_button = makeTextButton(bounds, "k:calm-btn", true, "", "Toggle calm knobs and ports", svg_theme,
+            [this](bool ctrl, bool shift) { calm_rack(); }));
 
-        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:screw-btn"].getCenter()));
-        HOT_POSITION("k:screw-btn", button);
-        button->set_sticky(true);
-        if (module) {
-            button->describe("Unscrew");
-            button->setHandler([this](bool ctrl, bool shift) { toggle_screws(); });
-        }
-        addChild(button);
+        addChild(unscrew_button = makeTextButton(bounds, "k:screw-btn", true, "", "Toggle visible screws", svg_theme,
+            [this](bool ctrl, bool shift) { toggle_screws(); }));
 
-        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:pack-btn"].getCenter()));
-        HOT_POSITION("k:pack-btn", button);
-        if (module) {
-            button->describe("Pack modules (F7)");
-            button->setHandler([](bool ctrl, bool shift) { pack_modules(); });
-        }
-        addChild(button);
+        addChild(nojack_button = makeTextButton(bounds, "k:nojack-btn", true, "", "Toggle visible unused jacks", svg_theme,
+            [this](bool ctrl, bool shift) { toggle_jacks(); }));
 
-        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:nojack-btn"].getCenter()));
-        HOT_POSITION("k:nojack-btn", button);
-        if (module) {
-            button->describe("Hide unused jacks");
-            button->setHandler([this](bool ctrl, bool shift) { toggle_jacks(); });
-        }
-        addChild(button);
+        addChild(pack_button = makeTextButton(bounds, "k:pack-btn", false, "", "Pack (selected) modules (F7)", svg_theme,
+            [this](bool ctrl, bool shift) { pack_modules(); }));
 
-        button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:from-patch-btn"].getCenter()));
+        auto button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:from-patch-btn"].getCenter()));
         HOT_POSITION("k:from-patch-btn", button);
         if (module) {
             button->describe("Apply last saved skiff");
-            button->setHandler([this](bool ctrl, bool shift) { from_patch(); });
+            button->set_handler([this](bool ctrl, bool shift) { from_patch(); });
         }
         addChild(button);
 
+        shouting_labels(my_module ? my_module->shouting : true);
         my_svgs.changeTheme(svg_theme);
+        sync_latch_state();
     }
 
-    void fancy_background()
-    {
-        if (!my_module) return;
-        //toggleCloakWidget();
-        ::rack::app::RackWidget* rack = APP->scene->rack;
-        std::vector<::rack::app::ModuleWidget*> module_widgets{rack->getModules()};
-        if (module_widgets.size() <= 1) return;
-        for (auto module_widget: module_widgets) {
-            if (module_widget == this) continue;
-            if (module_widget->children.size())    {
-                Widget* first = *module_widget->children.begin();
-                first->setVisible(!first->isVisible());
-            }
+    void shouting_labels(bool shouting) {
+        if (shouting) {
+            derail_button->set_text("DERAIL");
+            fancy_button->set_text("FANCYBOX");
+            nopanel_button->set_text("NOPANELS");
+            calm_button->set_text("CALM");
+            unscrew_button->set_text("UNSCREW");
+            nojack_button->set_text("NOJACK");
+            pack_button->set_text("PACK'EM");
+        } else {
+            derail_button->set_text("deRail");
+            fancy_button->set_text("FancyBox");
+            nopanel_button->set_text("noPanels");
+            calm_button->set_text("Calm");
+            unscrew_button->set_text("unScrew");
+            nojack_button->set_text("noJack");
+            pack_button->set_text("Pack'em");
         }
     }
+
     void from_patch() {
         if (!my_module) return;
 
-        screws = my_module->screws;
-        screw_visibility(APP->scene->rack, screws);
+        unscrewed = my_module->unscrewed;
+        screw_visibility(APP->scene->rack, !unscrewed);
 
-        jacks = my_module->jacks;
-        port_visibility(APP->scene->rack, jacks);
+        nojacks = my_module->nojacks;
+        port_visibility(APP->scene->rack, !nojacks);
 
         calm = !my_module->calm; // invert because calm_rack() toggles
         calm_rack();
 
-        bool altered = is_alt_rail();
-        rail_item = my_module->rail_item;
-        if (rail_item < 0) {
-            if (altered) {
-                std::string rail_file = get_rack_rail_filename();
-                std::shared_ptr<window::Svg> railSvg = window::Svg::load(rail_file);
-                railSvg->loadFile(rail_file);
+        depaneled = my_module->depaneled;
+        panel_visibility(nullptr, !depaneled);
+
+        {
+            fancy = my_module->fancy;
+            auto cloak = getBackgroundCloak();
+            if (fancy) {
+                if (!cloak) {
+                    ensureBackgroundCloak();
+                }
+            } else {
+                if (cloak) cloak->requestDelete();
             }
-        } else {
-            if (!altered) {
-                if (rail_item < 6) {
-                    alt_rail(rail_item);
-                } else {
+        }
+
+        {
+            bool altered = is_alt_rail();
+            rail_item = my_module->rail_item;
+            if (rail_item < 0) {
+                if (altered) {
                     std::string rail_file = get_rack_rail_filename();
                     std::shared_ptr<window::Svg> railSvg = window::Svg::load(rail_file);
-                    if (system::isFile(my_module->custom_rail_file)) {
-                        railSvg->loadFile(my_module->custom_rail_file);
-                        if (!railSvg->handle) {
-                            railSvg->loadFile(rail_file);
+                    railSvg->loadFile(rail_file);
+                }
+            } else {
+                if (!altered) {
+                    if (rail_item < 6) {
+                        alt_rail(rail_item);
+                    } else {
+                        std::string rack_rail_file = get_rack_rail_filename();
+                        // get cached rail svg
+                        auto railSvg = window::Svg::load(rack_rail_file);
+                        if (system::isFile(my_module->custom_rail_file)) {
+                            // don't crash on bad svg
+                            try {
+                                railSvg->loadFile(my_module->custom_rail_file);
+                            } catch (Exception& e) {
+                                WARN("%s", e.what());
+                            }
+                            if (!railSvg->handle) {
+                                railSvg->loadFile(rack_rail_file);
+                                my_module->custom_rail_file.clear();
+                                my_module->rail_item = rail_item = -1;
+                            }
+                        } else {
+                            // no file -- fall back to Rack rails
+                            railSvg->loadFile(rack_rail_file);
+                            my_module->custom_rail_file.clear();
                             my_module->rail_item = rail_item = -1;
                         }
-                    } else {
-                        railSvg->loadFile(rail_file);
-                        my_module->rail_item = rail_item = -1;
                     }
                 }
             }
         }
+
         auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
         if (rail) {
-            rail->setVisible(my_module->derailed);
             derailed = my_module->derailed;
+            rail->setVisible(!derailed);
+        }
+
+        sync_latch_state();
+    }
+
+    void sync_latch_state() {
+        if (!my_module) return;
+
+        derail_button->latched = derailed;
+        fancy_button->latched = fancy;
+        nopanel_button->latched = depaneled;
+        calm_button->latched = calm;
+        unscrew_button->latched = unscrewed;
+        nojack_button->latched = nojacks;
+
+        sendDirty(this);
+    }
+
+    void no_panels() {
+        if (!my_module) return;
+
+        depaneled = !depaneled;
+        my_module->depaneled = depaneled;
+        panel_visibility(nullptr, !depaneled);
+    }
+
+    void fancy_background() {
+        if (!my_module) return;
+
+        fancy = !fancy;
+        my_module->fancy = fancy;
+        auto cloak = getBackgroundCloak();
+        if (fancy) {
+            if (!cloak) ensureBackgroundCloak();
+        } else {
+            if (cloak) cloak->requestDelete();
         }
     }
 
@@ -284,15 +365,17 @@ struct SkiffUi : ModuleWidget, IThemeChange
     }
 
     void derail() {
+        if (!my_module) return;
+
         derailed = !derailed;
-        set_rail_visible(derailed);
-        if (my_module) {
-            my_module->derailed = derailed;
-        }
+        my_module->derailed = derailed;
+        set_rail_visible(!derailed);
     }
 
     void calm_rack() {
+        if (!my_module) return;
         calm = !calm;
+        my_module->calm = calm;
         if (calm) {
             replace_system_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg", "res/calm/alt-RoundBlackKnob_bg.svg");
             replace_system_svg("res/ComponentLibrary/RoundBlackKnob.svg", "res/calm/alt-RoundBlackKnob.svg");
@@ -331,26 +414,20 @@ struct SkiffUi : ModuleWidget, IThemeChange
             original_system_svg("res/ComponentLibrary/PJ3410.svg");
         }
         APP->scene->onDirty(DirtyEvent{});
-        if (my_module) {
-            my_module->calm = calm;
-        }
     }
 
     void toggle_screws() {
-        screws = !screws;
-        screw_visibility(APP->scene->rack, screws);
-        if (my_module) {
-            my_module->screws = screws;
-        }
+        if (!my_module) return;
+        unscrewed = !unscrewed;
+        my_module->unscrewed = unscrewed;
+        screw_visibility(APP->scene->rack, !unscrewed);
     }
 
     void toggle_jacks() {
-        jacks = !jacks;
-        port_visibility(APP->scene->rack, jacks);
-        if (my_module) {
-            my_module->jacks = jacks;
-        }
-
+        if (!my_module) return;
+        nojacks = !nojacks;
+        my_module->nojacks = nojacks;
+        port_visibility(APP->scene->rack, !nojacks);
     }
 
     std::string get_rack_rail_filename() {
@@ -361,6 +438,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
     }
 
     void alt_rail(int n) {
+        if (!my_module) return;
         auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
         if (!rail) return;
 
@@ -391,6 +469,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
     }
 
     void pend_custom_rail() {
+        if (!my_module) return;
         request_custom_rail = true;
     }
 
@@ -421,6 +500,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
     }
 
     void step() override {
+        if (!my_module) return;
         if (request_custom_rail) {
             request_custom_rail = false;
             custom_rail();
@@ -430,6 +510,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
 
     void onHoverKey(const HoverKeyEvent& e) override
     {
+        if (!my_module) return;
         auto mods = e.mods & RACK_MOD_MASK;
         switch (e.key) {
 #ifdef HOT_SVG
@@ -480,7 +561,14 @@ struct SkiffUi : ModuleWidget, IThemeChange
         if (!module) return;
 
         menu->addChild(createMenuLabel<HamburgerTitle>("#d Skiff"));
-        //menu->addChild(createMenuLabel<FancyLabel>("theme"));
+        menu->addChild(createCheckMenuItem("Shouting labels", "",
+            [=](){ return my_module->shouting; },
+            [=](){
+                my_module->shouting = !my_module->shouting;
+                shouting_labels(my_module->shouting);
+            }
+        ));
+        menu->addChild(createMenuLabel<FancyLabel>("theme"));
         AddThemeMenu(menu, this, theme_holder, false, false, false);
     }
 

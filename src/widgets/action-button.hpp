@@ -5,7 +5,7 @@ using namespace pachde;
 namespace widgetry {
 
 template<typename TSvg>
-struct TActionButton : ::rack::app::SvgButton, IBasicTheme
+struct TActionButton : ::rack::app::SvgButton
 {
     using Base = ::rack::app::SvgButton;
 
@@ -16,36 +16,27 @@ struct TActionButton : ::rack::app::SvgButton, IBasicTheme
     std::function<void(bool, bool)> handler{nullptr};
     TipHolder * tip_holder{nullptr};
 
-    TActionButton()
-    {
+    TActionButton() {
         this->shadow->hide();
     }
 
-    virtual ~TActionButton()
-    {
+    virtual ~TActionButton() {
         if (tip_holder) {
             delete tip_holder;
             tip_holder = nullptr;
         }
     }
 
-    void describe(std::string text)
-    {
+    void describe(std::string text) {
         if (!tip_holder) {
             tip_holder = new TipHolder();
         }
         tip_holder->setText(text);
     }
 
-    void setHandler(std::function<void(bool,bool)> callback)
-    {
-        handler = callback;
-    }
+    void set_handler(std::function<void(bool,bool)> callback) { handler = callback; }
 
-    void set_sticky(bool is_sticky)
-    {
-        sticky = is_sticky;
-    }
+    void set_sticky(bool is_sticky) { sticky = is_sticky; }
 
     void onHover(const HoverEvent& e) override {
         e.consume(this);
@@ -68,32 +59,47 @@ struct TActionButton : ::rack::app::SvgButton, IBasicTheme
         Base::onLeave(e);
     }
 
-    void onDragStart(const DragStartEvent& e) override
-    {
+    void onDragStart(const DragStartEvent& e) override {
         destroyTip();
-        if (!sticky) Base::onDragStart(e);
+        Base::onDragStart(e);
+        if (!sticky) {
+            latched = true;
+        }
     }
 
     void onDragLeave(const DragLeaveEvent& e) override {
         destroyTip();
-        if (!sticky) Base::onDragLeave(e);
+        Base::onDragLeave(e);
+        if (!sticky) {
+            latched = false;
+        }
     }
 
-    void onDragEnd(const DragEndEvent& e) override
-    {
-        if (!sticky) Base::onDragEnd(e);
+    void onDragEnd(const DragEndEvent& e) override {
         destroyTip();
+        if (!sticky) Base::onDragEnd(e);
     }
 
-    void onHoverKey(const HoverKeyEvent& e) override
-    {
-        Base::onHoverKey(e);
-        key_ctrl = (e.mods & RACK_MOD_MASK) & RACK_MOD_CTRL;
-        key_shift = (e.mods & RACK_MOD_MASK) & GLFW_MOD_SHIFT;
+    void onButton(const ButtonEvent &e) override {
+        if (e.button != GLFW_MOUSE_BUTTON_LEFT) {
+            Base::onButton(e);
+            return;
+        }
+
+        if (sticky) {
+            if (e.action == GLFW_PRESS) {
+                ActionEvent eAction;
+                onAction(eAction);
+            }
+        } else {
+            if (e.action == GLFW_RELEASE) {
+                ActionEvent eAction;
+                onAction(eAction);
+            }
+        }
     }
 
-    void onAction(const ActionEvent& e) override
-    {
+    void onAction(const ActionEvent& e) override {
         destroyTip();
         e.consume(this) ;
         if (handler) {
@@ -106,12 +112,17 @@ struct TActionButton : ::rack::app::SvgButton, IBasicTheme
         }
     }
 
+    void onHoverKey(const HoverKeyEvent& e) override {
+        Base::onHoverKey(e);
+        key_ctrl = (e.mods & RACK_MOD_MASK) & RACK_MOD_CTRL;
+        key_shift = (e.mods & RACK_MOD_MASK) & GLFW_MOD_SHIFT;
+    }
+
     void onDirty(const DirtyEvent& e) override {
         fb->setDirty();
     }
 
-    void sync_frame()
-    {
+    void sync_frame() {
         if (sticky) {
             sw->setSvg(frames[latched ? 1 : 0]);
             fb->setDirty();

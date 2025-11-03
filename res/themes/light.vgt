@@ -19,6 +19,14 @@ k-pin     = stroke #457aa6
 k-pointer = #457aa6
 k-ring    = stroke #457aa6
 
+// text buttons
+tbtn-punch = none stroke #606060 width .75
+tbtn-bevel = [ #fff, #666666]
+tbtn-face = [ #e6e6e6, #bbb]
+tbtn-text = #000
+tbtn-text-dn = #666666
+tbtn-hover = stroke #1a1a1a width 1.35
+
 // Coppers
 copper-title = #000
   medallion = #f9a54b stroke #f9a54b

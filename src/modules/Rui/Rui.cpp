@@ -279,7 +279,7 @@ struct RuiUi : ModuleWidget, IThemeChange
         if (my_module) {
             play_button->describe(my_module->stopped ? "Play (F2)" : "Pause (F2)");
             play_button->latched = my_module->stopped;
-            play_button->setHandler([this](bool ctrl, bool shift) {
+            play_button->set_handler([this](bool ctrl, bool shift) {
                 my_module->stopped = !my_module->stopped;
                 play_button->describe(my_module->stopped ? "Play (F2)" : "Pause (F2)");
             });
