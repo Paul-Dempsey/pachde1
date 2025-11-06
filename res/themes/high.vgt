@@ -3,21 +3,21 @@
       panel = [ #000, #000]
       title = #f9a806
        mast = none
-      swash = #f9a806
        logo = #fafafa
         sep = #888
      symbol = #dedede
       patty = hsl(0,0,1)
 patty-hover = hsl(0,0,.5)
- info-glyph = hsl(0,0%,95%)
+      label = hsl(0,0,95%)
+     slabel = none stroke hsl(0,0,95%)
 
 // knobs
-k-bg = [ #737373, #0d0d0d]
-k-inner = none stroke #202020
-k-mark = #cedcf2 opacity .8
-k-pin = stroke #202020
-k-pointer = #cedcf2
-k-ring = stroke #d9d9d9
+k-bg = [ #555, #0a0a0a]
+k-mark = #cccccc opacity .6
+k-pin = stroke #000
+k-pointer = #efefef
+k-ring = none stroke #bbb
+k-inner = none stroke #000
 
 // text buttons
 tbtn-punch = none stroke #808080 width .75
@@ -26,6 +26,9 @@ tbtn-face = [#0000,#0000]
 tbtn-text = #fff
 tbtn-text-dn = #666666
 tbtn-hover = stroke hsl(42,.8,.65) width 1.25
+
+// Info
+info-glyph = hsl(0,0%,95%)
 
 // Coppers
 copper-title = #f9a806
@@ -51,3 +54,9 @@ fluff-co = none stroke #50aeca width .65
 fluff-ct = none stroke #50ca77 width .65
 fluff-b  = none stroke #ca50b8 width .65
 fluff-h  = none stroke #b1da29 width .65
+
+// Guide
+
+vguide = none stroke #f444a710
+template-box = #444
+list = #333

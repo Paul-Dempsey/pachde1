@@ -64,7 +64,7 @@ ColorPicker::ColorPicker()
     alpha_picker = new AlphaWidget();
     alpha_picker->box.pos = Vec(0.f, 0.f);
     alpha_picker->box.size = Vec(15.f, 224);
-    alpha_picker->onClick([=](float opacity) {
+    alpha_picker->set_handler([=](float opacity) {
         set_alpha(opacity);
     });
     alpha_picker->setOpacity(get_alpha());
@@ -74,7 +74,7 @@ ColorPicker::ColorPicker()
     hue_picker->hue = get_hue();
     hue_picker->box.pos = Vec(18.5f,0.f);
     hue_picker->box.size = Vec(15.f, 224);
-    hue_picker->onClick([=](float hue) {
+    hue_picker->set_handler([=](float hue) {
         set_hue(hue);
     });
     addChild(hue_picker);
@@ -84,7 +84,7 @@ ColorPicker::ColorPicker()
     sl_picker->setLightness(get_lightness());
     sl_picker->box.pos = Vec(37.f, 0);
     sl_picker->box.size = Vec(136.f, 224.f);
-    sl_picker->onClick([=](float sat, float light) {
+    sl_picker->set_handler([=](float sat, float light) {
         saturation = sat;
         lightness = light;
         refresh_from_hsla();

@@ -6,19 +6,6 @@ using namespace ::rack;
 
 namespace widgetry {
 
-struct Swatch: Widget {
-    PackedColor color{0};
-    
-    void draw(const DrawArgs& args) override {
-        FillRect(args.vg, 0.f, 0.f, box.size.x*.5f, box.size.y, RampGray(G_WHITE));
-        FillRect(args.vg, box.size.x*.5f, 0.f, box.size.x*.5f, box.size.y, RampGray(G_BLACK));
-        drawCheckers(args, 0.f, 0.f, box.size.x, box.size.y);
-        if (color) {
-            FillRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, fromPacked(color));
-        }
-    }
-};
-
 enum class ColorSyntax { Unknown = -1, Hex, RGB, HSL };
 
 struct ColorPicker : OpaqueWidget

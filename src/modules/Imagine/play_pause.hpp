@@ -28,7 +28,7 @@ struct PlayPauseButton: Switch, ISetTheme
     void center(Vec pos) {
         box.pos = pos.minus(box.size.div(2));
     }
-    void onClick(std::function<void(void)> callback) {
+    void set_handler(std::function<void(void)> callback) {
         clickHandler = callback;
     }
 };

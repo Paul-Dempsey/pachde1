@@ -8,6 +8,19 @@ using namespace pachde;
 namespace widgetry {
 void drawCheckers(const rack::widget::Widget::DrawArgs& args, float x, float y, float width, float height);
 
+struct Swatch: Widget {
+    PackedColor color{0};
+
+    void draw(const DrawArgs& args) override {
+        FillRect(args.vg, 0.f, 0.f, box.size.x*.5f, box.size.y, RampGray(G_WHITE));
+        FillRect(args.vg, box.size.x*.5f, 0.f, box.size.x*.5f, box.size.y, RampGray(G_BLACK));
+        drawCheckers(args, 0.f, 0.f, box.size.x, box.size.y);
+        if (color) {
+            FillRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, fromPacked(color));
+        }
+    }
+};
+
 struct AlphaWidget: OpaqueWidget {
     float alpha{1.0f};
     Vec drag_pos;
@@ -16,7 +29,7 @@ struct AlphaWidget: OpaqueWidget {
     bool vertical() { return box.size.x <= box.size.y; }
     float getOpacity() { return alpha; }
     void setOpacity(float f) { alpha = clamp(f); }
-    void onClick(std::function<void(float)> callback) {
+    void set_handler(std::function<void(float)> callback) {
         clickHandler = callback;
     }
     void onEnter(const EnterEvent &e) override ;
@@ -39,7 +52,7 @@ struct HueWidget : OpaqueWidget
     bool getHue() { return hue; }
     void setHue(float hue) { this->hue = hue; }
     bool vertical() { return box.size.x <= box.size.y; }
-    void onClick(std::function<void(float)> callback) {
+    void set_handler(std::function<void(float)> callback) {
         clickHandler = callback;
     }
     cachePic* getHueRamp();
@@ -70,7 +83,7 @@ struct SLWidget : OpaqueWidget
     float getLightness() { return light; }
     void setSaturation(float s) { sat = s; }
     void setLightness(float l) { light = l; }
-    void onClick(std::function<void(float, float)> callback) {
+    void set_handler(std::function<void(float, float)> callback) {
         clickHandler = callback;
     }
     void setHue(float new_hue);

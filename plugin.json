@@ -62,6 +62,12 @@
         "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Rui.md#rui",
         "description": "Rack cable and light control",
         "tags": [ "Visual", "Utility" ]
+    },
+    {
+        "slug": "pachde-guide",
+        "name": "Guide",
+        "description": "Overlay module to the left with guides/grid",
+        "tags": [ "visual", "utility" ]
     }
   ]
 }

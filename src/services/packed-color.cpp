@@ -105,6 +105,12 @@ bool is_hsl_prefix(const char * scan)
     return false;
 }
 
+PackedColor parseColor(const char *spec, PackedColor default_value) {
+    PackedColor result;
+    parseColor(result, default_value, spec, nullptr);
+    return result;
+}
+
 bool parseColor(PackedColor &result, PackedColor default_value, const char *pos, const char **stop)
 {
     if (parseHexColor(result, default_value, pos, stop)) return true;

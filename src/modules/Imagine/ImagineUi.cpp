@@ -116,7 +116,7 @@ void ImagineUi::makeUi(Theme theme)
         picButton->setTheme(theme);
         picButton->center(Vec(PANEL_CENTER - CONTROL_SPACING * .5f, CONTROL_ROW_2));
         if (imagine) {
-            picButton->onClick([this](bool ctrl, bool shift) {
+            picButton->set_handler([this](bool ctrl, bool shift) {
                 if (shift) {
                     if (ctrl) {
                         imagine->closeImage();
@@ -132,7 +132,7 @@ void ImagineUi::makeUi(Theme theme)
     }
 
     playButton = createThemeParamCentered<PlayPauseButton>(theme, Vec(PANEL_CENTER + CONTROL_SPACING * .5f, CONTROL_ROW_2), imagine, Imagine::RUN_PARAM);
-    if (imagine) { playButton->onClick([this]() { imagine->setPlaying(!imagine->isPlaying()); }); }
+    if (imagine) { playButton->set_handler([this]() { imagine->setPlaying(!imagine->isPlaying()); }); }
     addParam(playButton);
 
     x = box.size.x - CONTROL_START - 3.f * CONTROL_SPACING;
@@ -140,7 +140,7 @@ void ImagineUi::makeUi(Theme theme)
         auto reset = createThemeWidgetCentered<SmallPush>(theme, Vec(x, CONTROL_ROW_2));
         if (imagine) {
             reset->describe("Reset head position\n(Shift to save new position)");
-            reset->onClick([this](bool ctrl, bool shift) {
+            reset->set_handler([this](bool ctrl, bool shift) {
                 resetHeadPosition(ctrl, shift);
             });
         }
@@ -156,7 +156,7 @@ void ImagineUi::makeUi(Theme theme)
     x = CONTROL_START;
     {
         auto speed = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::SPEED_PARAM));
-        speed->stepIncrementBy = 0.1;
+        speed->step_increment_by = 0.1;
         addParam(speed);
     }
 
@@ -175,7 +175,7 @@ void ImagineUi::makeUi(Theme theme)
 
     x = box.size.x - CONTROL_START - 3.f * CONTROL_SPACING;
     knob = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::SLEW_PARAM));
-    knob->stepIncrementBy = 0.01f;
+    knob->step_increment_by = 0.01f;
     addParam(knob);
 
     x += CONTROL_SPACING;
@@ -185,13 +185,13 @@ void ImagineUi::makeUi(Theme theme)
 
     x += CONTROL_SPACING;
     knob = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::GT_PARAM));
-    knob->stepIncrementBy = 0.05f;
+    knob->step_increment_by = 0.05f;
     addParam(knob);
 
     x += CONTROL_SPACING;
     {
         auto gtrate = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(x, CONTROL_ROW), imagine, Imagine::MIN_TRIGGER_PARAM));
-        gtrate->stepIncrementBy = .01f;
+        gtrate->step_increment_by = .01f;
         addChild(gtrate);
     }
 

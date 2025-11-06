@@ -120,6 +120,9 @@ struct SkiffUi : ModuleWidget, IThemeChange
 
 #ifdef HOT_SVG
     std::map<const char *, Widget*> positioned_widgets;
+#define HOT_POSITION(name,widget) positioned_widgets[name] = widget
+#else
+#define HOT_POSITION(name,widget)
 #endif
 
     SkiffUi(Skiff* module) : my_module(module) {
@@ -145,13 +148,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         }
     }
 
-#ifdef HOT_SVG
-#define HOT_POSITION(name,widget) positioned_widgets[name] = widget
-#else
-#define HOT_POSITION(name,widget)
-#endif
-
-    TextButton* makeTextButton(
+    TextButton* makeTextButton (
         std::map<std::string,::math::Rect>& bounds,
         const char* key,
         bool sticky,

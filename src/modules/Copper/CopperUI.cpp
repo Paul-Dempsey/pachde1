@@ -168,7 +168,7 @@ void CopperUi::makeUi(Theme theme)
     hue_picker->hue = getHue();
     hue_picker->box.pos = Vec(12.f,15.f);
     hue_picker->box.size = Vec(15.f, 224);
-    hue_picker->onClick([=](float hue) {
+    hue_picker->set_handler([=](float hue) {
         setHue(hue);
     });
     addChild(hue_picker);
@@ -178,23 +178,23 @@ void CopperUi::makeUi(Theme theme)
     sl_picker->setLightness(getLightness());
     sl_picker->box.pos = Vec(35.5f, 15.f);
     sl_picker->box.size = Vec(134.f, 224.f);
-    sl_picker->onClick([=](float sat, float light) {
+    sl_picker->set_handler([=](float sat, float light) {
         setSaturation(sat);
         setLightness(light);
     });
     addChild(sl_picker);
 
     auto p = Center(createThemeSvgParam<LargeKnob>(&my_svgs, Vec(col1_center,row1_middle), module, CopperModule::H_PARAM));
-    p->stepIncrementBy = 1.f/360.f;
+    p->step_increment_by = 1.f/360.f;
     addParam(p);
     p = Center(createThemeSvgParam<LargeKnob>(&my_svgs, Vec(col2_center,row1_middle), module, CopperModule::S_PARAM));
-    p->stepIncrementBy = .1f;
+    p->step_increment_by = .1f;
     addParam(p);
     p = Center(createThemeSvgParam<LargeKnob>(&my_svgs, Vec(col3_center,row1_middle), module, CopperModule::L_PARAM));
-    p->stepIncrementBy = .01f;
+    p->step_increment_by = .01f;
     addParam(p);
     p = Center(createThemeSvgParam<LargeKnob>(&my_svgs, Vec(col4_center,row1_middle), module, CopperModule::A_PARAM));
-    p->stepIncrementBy = .1f;
+    p->step_increment_by = .1f;
     addParam(p);
 
     addInput(createThemeInputCentered<ColorPort>(theme, Vec(col1_center,row2_middle), module, CopperModule::H_INPUT));

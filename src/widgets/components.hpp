@@ -38,14 +38,13 @@ struct FancyLabel : MenuLabel
 template<typename TSvg>
 struct TKnob: rack::RoundKnob
 {
-    bool clickStepValue = true;
-    float stepIncrementBy = 1.f;
+    bool click_step_value = true;
+    float step_increment_by = 1.f;
     bool key_modified = false;
     bool key_modified2 = false;
 
     std::function<void(void)> clickHandler;
-    void onClick(std::function<void(void)> callback)
-    {
+    void set_handler(std::function<void(void)> callback) {
         clickHandler = callback;
     }
 
@@ -59,7 +58,7 @@ struct TKnob: rack::RoundKnob
         rack::RoundKnob::onAction(e);
         if (clickHandler) {
             clickHandler();
-        } else if (clickStepValue) {
+        } else if (click_step_value) {
             auto pq = getParamQuantity();
             if (pq) {
                 float value = pq->getValue();
@@ -68,7 +67,7 @@ struct TKnob: rack::RoundKnob
                     if (value == lim) {
                         value = pq->getMinValue();
                     } else {
-                        value = value + (key_modified2 ? stepIncrementBy * 10 : stepIncrementBy);
+                        value = value + (key_modified2 ? step_increment_by * 10 : step_increment_by);
                         if (value > lim) {
                             value = lim;
                         }
@@ -78,7 +77,7 @@ struct TKnob: rack::RoundKnob
                     if (value == lim) {
                         value = pq->getMaxValue();
                     } else {
-                        value = value - (key_modified2 ? stepIncrementBy * 10 : stepIncrementBy);
+                        value = value - (key_modified2 ? step_increment_by * 10 : step_increment_by);
                         if (value < pq->getMinValue()) {
                             value = lim;
                         }
@@ -117,6 +116,12 @@ struct SmallKnobSvg {
     static std::string background() { return asset::plugin(pluginInstance,"res/widget/SmallKnob-bg.svg"); }
 };
 using SmallKnob = TKnob<SmallKnobSvg>;
+
+struct TinyKnobSvg {
+    static std::string knob() { return asset::plugin(pluginInstance,"res/widget/TinyKnob.svg"); }
+    static std::string background() { return asset::plugin(pluginInstance,"res/widget/TinyKnob-bg.svg"); }
+};
+using TinyKnob = TKnob<TinyKnobSvg>;
 
 // template<typename TSvg>
 // void reloadThemeKnob(std::shared_ptr<SvgTheme> theme) {

@@ -178,6 +178,42 @@ struct PlayButtonSvg {
 };
 using PlayActionButton = TActionButton<PlayButtonSvg>;
 
+struct Pallette1Svg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/palette-1-blue.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/palette-down.svg"); }
+};
+using Palette1ActionButton = TActionButton<Pallette1Svg>;
+
+struct Pallette2Svg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/palette-2-orange.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/palette-down.svg"); }
+};
+using Palette2ActionButton = TActionButton<Pallette2Svg>;
+
+struct Pallette3Svg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/palette-3-green.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/palette-down.svg"); }
+};
+using Palette3ActionButton = TActionButton<Pallette3Svg>;
+
+struct Pallette4Svg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/palette-4-yellow.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/palette-down.svg"); }
+};
+using Palette4ActionButton = TActionButton<Pallette4Svg>;
+
+struct Pallette5Svg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/palette-5-magenta.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/palette-down.svg"); }
+};
+using Palette5ActionButton = TActionButton<Pallette5Svg>;
+
+struct TinyButtonSvg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/tiny-btn-up.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/tiny-btn-down.svg"); }
+};
+using TinyActionButton = TActionButton<TinyButtonSvg>;
+
 template <typename TActionButton>
 TActionButton* createThemeSvgButton(ILoadSvg* loader, Vec pos) {
     TActionButton* o = new TActionButton();

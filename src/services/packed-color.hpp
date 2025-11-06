@@ -60,6 +60,9 @@ inline PackedColor transparent(PackedColor co, float alpha) {
 
 PackedColor packHsla(float h, float s, float l, float a);
 
+// Parse color, using default_value on error
+PackedColor parseColor(const char *spec, PackedColor default_value);
+
 bool is_rgb_prefix(const char * text);
 bool is_hsl_prefix(const char * text);
 bool parseColor(PackedColor& result, PackedColor default_value, const char *pos, const char **stop = nullptr);

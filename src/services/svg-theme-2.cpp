@@ -42,6 +42,7 @@ bool applyChildrenTheme(Widget *widget, std::shared_ptr<SvgTheme> theme, bool to
 
 void sendDirty(Widget *widget)
 {
+    if (!widget) return;
 	EventContext cDirty;
 	Widget::DirtyEvent eDirty;
 	eDirty.context = &cDirty;

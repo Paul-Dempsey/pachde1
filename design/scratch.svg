@@ -3,8 +3,8 @@
 
 <svg
    width="150"
-   height="150"
-   viewBox="0 0 150 150"
+   height="380"
+   viewBox="0 0 150 380"
    version="1.1"
    id="svg1"
    inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
@@ -24,14 +24,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#404040"
      inkscape:document-units="px"
-     inkscape:zoom="9.92"
-     inkscape:cx="45.2"
-     inkscape:cy="28.4"
-     inkscape:window-width="2597"
-     inkscape:window-height="1046"
-     inkscape:window-x="43"
-     inkscape:window-y="160"
-     inkscape:window-maximized="0"
+     inkscape:zoom="64"
+     inkscape:cx="17.1"
+     inkscape:cy="1.07"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="2869"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      showguides="true"
      showgrid="false" />
@@ -41,11 +41,11 @@
        id="linearGradient27"
        inkscape:collect="always">
       <stop
-         style="stop-color:#b2b2b2;stop-opacity:1;"
+         style="stop-color:#bfbfbf;stop-opacity:1;"
          offset="0"
          id="stop27" />
       <stop
-         style="stop-color:#666666;stop-opacity:1;"
+         style="stop-color:#595959;stop-opacity:1;"
          offset="1"
          id="stop28" />
     </linearGradient>
@@ -114,7 +114,7 @@
        xlink:href="#linearGradient11"
        id="linearGradient25"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.01,0,0,1.03,-0.209,21.7)"
+       gradientTransform="matrix(1.01,0,0,1.03,102,86.7)"
        x1="4.99"
        y1="1"
        x2="5.1"
@@ -128,7 +128,7 @@
        y1="1.5"
        x2="1.45"
        y2="16.5"
-       gradientTransform="translate(0,22)" />
+       gradientTransform="translate(102,87)" />
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient27"
@@ -155,7 +155,7 @@
        xlink:href="#pg"
        id="linearGradient2"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1,0,0,0.395,0.118,-0.355)"
+       gradientTransform="scale(1,0.999)"
        x2="0"
        y2="380" />
   </defs>
@@ -172,29 +172,23 @@
       <stop
          offset="0"
          stop-color="#282828"
-         id="stop1"
+         id="stop3"
          style="stop-color:#181818;stop-opacity:1;" />
       <stop
          offset="1"
          stop-color="#181818"
-         id="stop2"
+         id="stop4"
          style="stop-color:#282828;stop-opacity:1;" />
     </linearGradient>
     <rect
        id="panel"
        width="150"
-       height="150"
+       height="380"
        fill="url(#pg)"
-       style="display:inline;fill:url(#linearGradient2);fill-opacity:1;stroke-width:1.00033"
-       x="0.118"
-       y="-0.355" />
-    <ellipse
-       style="fill:#baae54;fill-opacity:0.632;stroke-width:1.5;paint-order:fill markers stroke"
-       id="path8"
-       cx="136"
-       cy="10.6"
-       rx="4.12"
-       ry="3.9" />
+       style="display:inline;fill:url(#linearGradient2);fill-opacity:1;stroke-width:0.999671"
+       x="0"
+       y="0"
+       sodipodi:insensitive="true" />
     <g
        id="unscrew--symbol"
        transform="translate(128,17.2)">
@@ -238,9 +232,10 @@
          d="M 5.46,9.43 4.68,8.11 C 4.56,7.91 4.56,7.62 4.68,7.42 L 5.46,6.1 c 0,0 0,-0.14 0,-0.19 L 4.98,5.28 c 0,0 -0.1,-0.1 -0.15,0 L 3.84,6.3 C 3.68,6.46 3.47,6.46 3.32,6.3 l -1,-1.03 c 0,0 -0.1,0 -0.14,0 L 1.7,5.91 c 0,0 0,0.14 0,0.19 l 0.78,1.32 c 0.12,0.2 0.12,0.49 0,0.69 L 1.69,9.43 c 0,0.1 0,0.13 0,0.19 l 0.48,0.58 c 0,0.1 0.1,0.1 0.14,0.1 l 1,-1.08 c 0.15,-0.16 0.37,-0.15 0.52,0 l 0.99,1.08 c 0,0 0.11,0 0.15,-0.1 L 5.45,9.62 c 0,-0.1 0,-0.14 0,-0.19 z" />
     </g>
     <g
-       id="g22">
+       id="g22"
+       transform="translate(94.2,61.6)">
       <rect
-         style="fill:#333333;stroke-width:1.49657;paint-order:fill markers stroke;fill-opacity:1"
+         style="fill:#333333;fill-opacity:1;stroke-width:1.49657;paint-order:fill markers stroke"
          id="rect1"
          width="47.9"
          height="18"
@@ -272,52 +267,56 @@
            y="12.9"
            style="font-size:12px">Oblique</tspan></text>
     </g>
-    <rect
-       style="fill:#333333;stroke-width:1.49657;paint-order:fill markers stroke;fill-opacity:1"
-       id="rect22"
-       width="47.9"
-       height="18"
-       x="0"
-       y="22" />
-    <rect
-       style="fill:url(#linearGradient25);fill-opacity:1;stroke-width:1.5029;paint-order:fill markers stroke"
-       id="rect23"
-       width="46.5"
-       height="16.5"
-       x="0.75"
-       y="22.7" />
-    <rect
-       style="fill:url(#linearGradient26);fill-opacity:1;stroke-width:1.49485;paint-order:fill markers stroke"
-       id="rect24"
-       width="45"
-       height="15"
-       x="1.45"
-       y="23.5" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#000000;fill-opacity:1"
-       x="23.9"
-       y="34.9"
-       id="text24"><tspan
-         sodipodi:role="line"
-         id="tspan24"
-         x="23.9"
-         y="34.9"
-         style="font-size:12px;fill:#000000;fill-opacity:1">Upright</tspan></text>
+    <g
+       id="g1"
+       transform="translate(-7.8)">
+      <rect
+         style="fill:#333333;fill-opacity:1;stroke-width:1.49657;paint-order:fill markers stroke"
+         id="rect22"
+         width="47.9"
+         height="18"
+         x="102"
+         y="86.9" />
+      <rect
+         style="fill:url(#linearGradient25);fill-opacity:1;stroke-width:1.5029;paint-order:fill markers stroke"
+         id="rect23"
+         width="46.5"
+         height="16.5"
+         x="103"
+         y="87.7" />
+      <rect
+         style="fill:url(#linearGradient26);fill-opacity:1;stroke-width:1.49485;paint-order:fill markers stroke"
+         id="rect24"
+         width="45"
+         height="15"
+         x="103"
+         y="88.4" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#000000;fill-opacity:1"
+         x="126"
+         y="100"
+         id="text24"><tspan
+           sodipodi:role="line"
+           id="tspan24"
+           x="126"
+           y="100"
+           style="font-size:12px;fill:#000000;fill-opacity:1">Upright</tspan></text>
+    </g>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#999999;fill-opacity:1"
-       x="43.9"
-       y="56.9"
+       x="128"
+       y="126"
        id="text24-7"><tspan
          sodipodi:role="line"
          id="tspan24-1"
-         x="43.9"
-         y="56.9"
+         x="128"
+         y="126"
          style="font-size:12px;fill:#999999;fill-opacity:1">Upright</tspan></text>
     <g
        id="g28"
-       transform="translate(-3.82,19.9)">
+       transform="translate(80.4,88.6)">
       <circle
          style="fill:#9c9c9c;fill-opacity:1;stroke:#000000;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
          id="path26"
@@ -334,7 +333,7 @@
     <g
        id="g29"
        style="display:inline"
-       transform="translate(-3.82,0.469)">
+       transform="translate(80.4,69.1)">
       <circle
          style="fill:#9c9c9c;fill-opacity:1;stroke:#000000;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
          id="circle28"
@@ -352,13 +351,19 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#999999;fill-opacity:1"
-       x="45.5"
-       y="76.4"
+       x="130"
+       y="145"
        id="text15-8"><tspan
          sodipodi:role="line"
          id="tspan15-2"
-         x="45.5"
-         y="76.4"
+         x="130"
+         y="145"
          style="font-size:12px;fill:#999999;fill-opacity:1">Oblique</tspan></text>
+    <path
+       style="fill:none;stroke:#4073bf;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="M 3.54,13.2 H 90.5"
+       id="path50"
+       sodipodi:nodetypes="cc"
+       inkscape:label="sep" />
   </g>
 </svg>

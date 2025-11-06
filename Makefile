@@ -76,6 +76,10 @@ SOURCES += src/modules/Skiff/cloak.cpp
 # Rui module
 SOURCES += src/modules/Rui/Rui.cpp
 
+# Guide module
+SOURCES += src/modules/Guide/Guide.cpp
+SOURCES += src/modules/Guide/panel-overlay-widget.cpp
+
 DISTRIBUTABLES += res
 DISTRIBUTABLES += $(wildcard LICENSE*)
 

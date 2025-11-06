@@ -103,22 +103,22 @@ void CopperMiniUI::makeUi(Theme theme)
     float center = box.size.x * .5f;
     float y = 30.f;
     auto p = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(center,y), module, CopperModule::H_PARAM));
-    p->stepIncrementBy = 1.f/360.f;
+    p->step_increment_by = 1.f/360.f;
     addParam(p);
 
     y += KNOB_SPACING;
     p = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(center,y), module, CopperModule::S_PARAM));
-    p->stepIncrementBy = .1f;
+    p->step_increment_by = .1f;
     addParam(p);
 
     y += KNOB_SPACING;
     p = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(center,y), module, CopperModule::L_PARAM));
-    p->stepIncrementBy = .01f;
+    p->step_increment_by = .01f;
     addParam(p);
 
     y += KNOB_SPACING;
     p = Center(createThemeSvgParam<SmallKnob>(&my_svgs, Vec(center,y), module, CopperModule::A_PARAM));
-    p->stepIncrementBy = .1f;
+    p->step_increment_by = .1f;
     addParam(p);
 
     y += GAP1;

@@ -49,7 +49,7 @@ struct PicButton: OpaqueWidget, ISetTheme
     void center(Vec pos) {
         box.pos = pos.minus(box.size.div(2));
     }
-    void onClick(std::function<void(bool,bool)> callback) {
+    void set_handler(std::function<void(bool,bool)> callback) {
         clickHandler = callback;
     }
 };

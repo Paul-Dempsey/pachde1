@@ -32,13 +32,20 @@ void AlphaWidget::onButton(const ButtonEvent& e) {
 
 void drawCheckers(const rack::widget::Widget::DrawArgs& args, float x, float y, float width, float height) {
     auto vg = args.vg;
+
+    float dx = 5.f;
+    float m = std::min(width, height);
+    if (m < 15.f) {
+        dx = m / 3.f;
+    }
+
     nvgScissor(vg, x, y, width, height);
     nvgBeginPath(vg);
     int r = 0;
-    for (float iy = y; iy < y + height; iy += 5.f, r++) {
+    for (float iy = y; iy < y + height; iy += dx, r++) {
         bool g = (0 == (r & 1));
-        for (float ix = x; ix < x + width; ix += 5.f) {
-            if (g) nvgRect(vg, ix, iy, 5.f, 5.f);
+        for (float ix = x; ix < x + width; ix += dx) {
+            if (g) nvgRect(vg, ix, iy, dx, dx);
             g = !g;
         }
     }
@@ -109,7 +116,7 @@ cachePic* HueWidget::getHueRamp() {
     return ramp;
 }
 
-void HueWidget::onContextCreate(const ContextCreateEvent& e) 
+void HueWidget::onContextCreate(const ContextCreateEvent& e)
 {
     OpaqueWidget::onContextCreate(e);
     if (ramp) {
@@ -125,19 +132,19 @@ void HueWidget::onContextDestroy(const ContextDestroyEvent& e)
     OpaqueWidget::onContextDestroy(e);
 }
 
-void HueWidget::onEnter(const EnterEvent &e) 
+void HueWidget::onEnter(const EnterEvent &e)
 {
     OpaqueWidget::onEnter(e);
     glfwSetCursor(APP->window->win, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
 }
 
-void HueWidget::onLeave(const LeaveEvent &e) 
+void HueWidget::onLeave(const LeaveEvent &e)
 {
     OpaqueWidget::onLeave(e);
     glfwSetCursor(APP->window->win, NULL);
 }
 
-void HueWidget::onDragMove(const DragMoveEvent& e) 
+void HueWidget::onDragMove(const DragMoveEvent& e)
 {
     OpaqueWidget::onDragMove(e);
     drag_pos = drag_pos.plus(e.mouseDelta.div(getAbsoluteZoom()));
@@ -147,7 +154,7 @@ void HueWidget::onDragMove(const DragMoveEvent& e)
         clickHandler(hue);
 }
 
-void HueWidget::onButton(const ButtonEvent& e) 
+void HueWidget::onButton(const ButtonEvent& e)
 {
     OpaqueWidget::onButton(e);
     if (!(e.action == GLFW_PRESS && e.button == GLFW_MOUSE_BUTTON_LEFT && (e.mods & RACK_MOD_MASK) == 0)) {
@@ -157,7 +164,7 @@ void HueWidget::onButton(const ButtonEvent& e)
     drag_pos = e.pos;
 }
 
-void HueWidget::draw(const DrawArgs & args) 
+void HueWidget::draw(const DrawArgs & args)
 {
     auto vg = args.vg;
     auto image_handle = getHueRamp()->getHandle(vg);
@@ -206,7 +213,7 @@ cachePic* SLWidget::getRamp() {
     }
     return ramp;
 }
-void SLWidget::onContextCreate(const ContextCreateEvent& e) 
+void SLWidget::onContextCreate(const ContextCreateEvent& e)
 {
     OpaqueWidget::onContextCreate(e);
     if (ramp) {

@@ -14,6 +14,12 @@ inline ParamQuantity* dp4(ParamQuantity* p) {
     return p;
 }
 
+// set displayPrecision = 3
+inline ParamQuantity* dp3(ParamQuantity* p) {
+    p->displayPrecision = 3;
+    return p;
+}
+
 // set displayPrecision = 2
 inline ParamQuantity* dp2(ParamQuantity* p) {
     p->displayPrecision = 2;

@@ -50,7 +50,7 @@ struct SmallPush: OpaqueWidget, ISetTheme, ISetColor
     }
 
     std::function<void(bool, bool)> clickHandler;
-    void onClick(std::function<void(bool, bool)> callback)
+    void set_handler(std::function<void(bool, bool)> callback)
     {
         clickHandler = callback;
     }

@@ -3,12 +3,12 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/../../dep/**",
                 "${workspaceFolder}/../../include/**",
-                "C:/msys64/mingw64/include",
+                "${workspaceFolder}/../../dep/include/**",
+                "C:/msys64/mingw64/include/**",
                 "${workspaceFolder}/src",
-                "${workspaceFolder}/src/widgets",
-                "${workspaceFolder}/src/services"
+                "${workspaceFolder}/src/services",
+                "${workspaceFolder}/src/widgets"
             ],
             "defines": [
                 "_DEBUG",
