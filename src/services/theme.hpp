@@ -144,5 +144,6 @@ inline ThemeSetting RandomThemeSetting() {
 }
 
 void RandomizeTheme(ITheme* itheme, bool opaque = true);
+void draw_disabled_panel(Widget* panel, Theme theme, const Widget::DrawArgs& args, float top, float bottom);
 
 }

@@ -6,7 +6,6 @@ using namespace ::rack;
 namespace pachde {
 
 bool is_singleton(Module*my_module, ModuleWidget* me);
-void draw_disabled_panel(Widget* panel, Theme theme, const Widget::DrawArgs& args, float top, float bottom);
 
 // set displayPrecision = 4
 inline ParamQuantity* dp4(ParamQuantity* p) {
