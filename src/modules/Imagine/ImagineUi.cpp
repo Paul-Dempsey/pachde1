@@ -107,7 +107,7 @@ void ImagineUi::makeUi(Theme theme)
     auto x = CONTROL_START;
     addInput(Center(createColorInput<ColorPort>(theme, colors::PortViolet, Vec(x, CONTROL_ROW_2), module, Imagine::SPEED_INPUT)));
     x += CONTROL_SPACING;
-    addInput(Center(createColorInput<ColorPort>(theme, colors::PortLightOrange, Vec(x, CONTROL_ROW_2), module, Imagine::X_INPUT));)
+    addInput(Center(createColorInput<ColorPort>(theme, colors::PortLightOrange, Vec(x, CONTROL_ROW_2), module, Imagine::X_INPUT)));
     x += CONTROL_SPACING - TIGHT;
     addInput(Center(createColorInput<ColorPort>(theme, colors::PortLightOrange, Vec(x, CONTROL_ROW_2), module, Imagine::Y_INPUT)));
 
