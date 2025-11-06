@@ -123,23 +123,23 @@ void CopperMiniUI::makeUi(Theme theme)
 
     y += GAP1;
 
-    addInput(createColorInputCentered<ColorPort>(theme, colors::PortBlue, Vec(center,y), module, CopperModule::H_INPUT));
+    addInput(Center(createColorInput<ColorPort>(theme, colors::PortBlue, Vec(center,y), module, CopperModule::H_INPUT)));
     y += CONTROL_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, colors::PortOrange, Vec(center,y), module, CopperModule::S_INPUT));
+    addInput(Center(createColorInput<ColorPort>(theme, colors::PortOrange, Vec(center,y), module, CopperModule::S_INPUT)));
     y += CONTROL_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, colors::PortYellow, Vec(center,y), module, CopperModule::L_INPUT));
+    addInput(Center(createColorInput<ColorPort>(theme, colors::PortYellow, Vec(center,y), module, CopperModule::L_INPUT)));
     y += CONTROL_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, colors::PortPink, Vec(center,y), module, CopperModule::A_INPUT));
+    addInput(Center(createColorInput<ColorPort>(theme, colors::PortPink, Vec(center,y), module, CopperModule::A_INPUT)));
 
     y += GAP2;
 
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortBlue, Vec(center,y), module, CopperModule::H_OUT));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortBlue, Vec(center,y), module, CopperModule::H_OUT)));
     y += CONTROL_SPACING;
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortOrange, Vec(center,y), module, CopperModule::S_OUT));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortOrange, Vec(center,y), module, CopperModule::S_OUT)));
     y += CONTROL_SPACING;
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortYellow, Vec(center,y), module, CopperModule::L_OUT));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortYellow, Vec(center,y), module, CopperModule::L_OUT)));
     y += CONTROL_SPACING;
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortPink, Vec(center,y), module, CopperModule::A_OUT));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortPink, Vec(center,y), module, CopperModule::A_OUT)));
 
     my_svgs.changeTheme(svg_theme);
 }

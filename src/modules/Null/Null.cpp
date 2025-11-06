@@ -302,7 +302,7 @@ void BlankModuleWidget::setTheme(Theme theme)
         panel->box.size = box.size;
         setPanel(panel);
         addResizeHandles();
-        logo_port = createThemeInputCentered<LogoPort>(theme, Vec(box.size.x/2.f, RACK_GRID_HEIGHT - 7.5f), module, 0);
+        logo_port = Center(createThemeInput<LogoPort>(theme, Vec(box.size.x/2.f, RACK_GRID_HEIGHT - 7.5f), module, 0));
         addInput(logo_port);
         if (itheme->hasScrews()) {
             add_screws();

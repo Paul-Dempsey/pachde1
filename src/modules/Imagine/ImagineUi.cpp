@@ -105,11 +105,11 @@ void ImagineUi::makeUi(Theme theme)
     }
 
     auto x = CONTROL_START;
-    addInput(createColorInputCentered<ColorPort>(theme, colors::PortViolet, Vec(x, CONTROL_ROW_2), module, Imagine::SPEED_INPUT));
+    addInput(Center(createColorInput<ColorPort>(theme, colors::PortViolet, Vec(x, CONTROL_ROW_2), module, Imagine::SPEED_INPUT)));
     x += CONTROL_SPACING;
-    addInput(createColorInputCentered<ColorPort>(theme, colors::PortLightOrange, Vec(x, CONTROL_ROW_2), module, Imagine::X_INPUT));
+    addInput(Center(createColorInput<ColorPort>(theme, colors::PortLightOrange, Vec(x, CONTROL_ROW_2), module, Imagine::X_INPUT));)
     x += CONTROL_SPACING - TIGHT;
-    addInput(createColorInputCentered<ColorPort>(theme, colors::PortLightOrange, Vec(x, CONTROL_ROW_2), module, Imagine::Y_INPUT));
+    addInput(Center(createColorInput<ColorPort>(theme, colors::PortLightOrange, Vec(x, CONTROL_ROW_2), module, Imagine::Y_INPUT)));
 
     {
         auto picButton = new PicButton();
@@ -131,13 +131,13 @@ void ImagineUi::makeUi(Theme theme)
         addChild(picButton);
     }
 
-    playButton = createThemeParamCentered<PlayPauseButton>(theme, Vec(PANEL_CENTER + CONTROL_SPACING * .5f, CONTROL_ROW_2), imagine, Imagine::RUN_PARAM);
+    playButton = Center(createThemeParam<PlayPauseButton>(theme, Vec(PANEL_CENTER + CONTROL_SPACING * .5f, CONTROL_ROW_2), imagine, Imagine::RUN_PARAM));
     if (imagine) { playButton->set_handler([this]() { imagine->setPlaying(!imagine->isPlaying()); }); }
     addParam(playButton);
 
     x = box.size.x - CONTROL_START - 3.f * CONTROL_SPACING;
     {
-        auto reset = createThemeWidgetCentered<SmallPush>(theme, Vec(x, CONTROL_ROW_2));
+        auto reset = Center(createThemeWidget<SmallPush>(theme, Vec(x, CONTROL_ROW_2)));
         if (imagine) {
             reset->describe("Reset head position\n(Shift to save new position)");
             reset->set_handler([this](bool ctrl, bool shift) {
@@ -147,11 +147,11 @@ void ImagineUi::makeUi(Theme theme)
         addChild(reset);
     }
     x += CONTROL_SPACING;
-    addChild(createColorInputCentered<ColorPort>(theme, colors::PortLightLime, Vec(x, CONTROL_ROW_2), module, Imagine::RESET_POS_INPUT));
+    addChild(Center(createColorInput<ColorPort>(theme, colors::PortLightLime, Vec(x, CONTROL_ROW_2), module, Imagine::RESET_POS_INPUT)));
     x += CONTROL_SPACING;
-    addChild(createColorInputCentered<ColorPort>(theme, colors::PortLightViolet, Vec(x, CONTROL_ROW_2), module, Imagine::PLAY_INPUT));
+    addChild(Center(createColorInput<ColorPort>(theme, colors::PortLightViolet, Vec(x, CONTROL_ROW_2), module, Imagine::PLAY_INPUT)));
     x += CONTROL_SPACING;
-    addChild(createColorInputCentered<ColorPort>(theme, colors::PortPink, Vec(x, CONTROL_ROW_2), module, Imagine::MIN_TRIGGER_INPUT));
+    addChild(Center(createColorInput<ColorPort>(theme, colors::PortPink, Vec(x, CONTROL_ROW_2), module, Imagine::MIN_TRIGGER_INPUT)));
 
     x = CONTROL_START;
     {

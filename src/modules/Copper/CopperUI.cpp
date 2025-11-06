@@ -197,21 +197,21 @@ void CopperUi::makeUi(Theme theme)
     p->step_increment_by = .1f;
     addParam(p);
 
-    addInput(createThemeInputCentered<ColorPort>(theme, Vec(col1_center,row2_middle), module, CopperModule::H_INPUT));
-    addInput(createThemeInputCentered<ColorPort>(theme, Vec(col2_center,row2_middle), module, CopperModule::S_INPUT));
-    addInput(createThemeInputCentered<ColorPort>(theme, Vec(col3_center,row2_middle), module, CopperModule::L_INPUT));
-    addInput(createThemeInputCentered<ColorPort>(theme, Vec(col4_center,row2_middle), module, CopperModule::A_INPUT));
+    addInput(Center(createThemeInput<ColorPort>(theme, Vec(col1_center,row2_middle), module, CopperModule::H_INPUT)));
+    addInput(Center(createThemeInput<ColorPort>(theme, Vec(col2_center,row2_middle), module, CopperModule::S_INPUT)));
+    addInput(Center(createThemeInput<ColorPort>(theme, Vec(col3_center,row2_middle), module, CopperModule::L_INPUT)));
+    addInput(Center(createThemeInput<ColorPort>(theme, Vec(col4_center,row2_middle), module, CopperModule::A_INPUT)));
 
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortRed,   Vec(output_col1,output_row1), module, CopperModule::R_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortGreen, Vec(output_col1,output_row2), module, CopperModule::G_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortBlue,  Vec(output_col2,output_row1 + (output_row2 - output_row1)/2.f), module, CopperModule::B_OUT));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortRed,   Vec(output_col1,output_row1), module, CopperModule::R_OUT)));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortGreen, Vec(output_col1,output_row2), module, CopperModule::G_OUT)));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortBlue,  Vec(output_col2,output_row1 + (output_row2 - output_row1)/2.f), module, CopperModule::B_OUT)));
 
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortYellow, Vec(output_col3,output_row1), module, CopperModule::H_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortOrange, Vec(output_col4,output_row1), module, CopperModule::S_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::G50,        Vec(output_col3,output_row2), module, CopperModule::L_OUT));
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortPink,   Vec(output_col4,output_row2), module, CopperModule::A_OUT));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortYellow, Vec(output_col3,output_row1), module, CopperModule::H_OUT)));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortOrange, Vec(output_col4,output_row1), module, CopperModule::S_OUT)));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::G50,        Vec(output_col3,output_row2), module, CopperModule::L_OUT)));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortPink,   Vec(output_col4,output_row2), module, CopperModule::A_OUT)));
 
-    addOutput(createColorOutputCentered<ColorPort>(theme, colors::PortMagenta, Vec(output_col5, output_row1), module, CopperModule::POLY_OUT));
+    addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortMagenta, Vec(output_col5, output_row1), module, CopperModule::POLY_OUT)));
 
     my_svgs.changeTheme(svg_theme);
 }

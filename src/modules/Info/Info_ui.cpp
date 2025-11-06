@@ -87,7 +87,7 @@ void InfoModuleWidget::applyThemeSetting(ThemeSetting setting)
             addScrews();
         }
 
-        title = createThemeWidgetCentered<InfoSymbol>(theme_holder->getTheme(), Vec(box.size.x*.5f, 7.5f));
+        title = Center(createThemeWidget<InfoSymbol>(theme_holder->getTheme(), Vec(box.size.x*.5f, 7.5f)));
         addChild(title);
 
         logo = new LogoWidget(theme_holder->getTheme(), .18f);
