@@ -6,6 +6,7 @@ using namespace ::rack;
 #include "widgets/components.hpp"
 #include "widgets/color-picker.hpp"
 #include "widgets/hamburger.hpp"
+#include "widgets/switch.hpp"
 #include "services/json-help.hpp"
 #include "services/rack-help.hpp"
 #include "services/theme-module.hpp"
@@ -36,6 +37,8 @@ struct Guide: ThemeModule {
     enum Lights { NUM_LIGHTS };
 
     GuideData guide_data;
+    std::string guide_folder;
+    std::string guide_file;
 
     Guide();
 
@@ -48,6 +51,8 @@ struct Guide: ThemeModule {
     void process(const ProcessArgs& args) override;
 };
 
+// ---- UI ------------------------------------------------
+
 struct GuideUi  : ModuleWidget, IThemeChange
 {
     using Base = ModuleWidget;
@@ -56,10 +61,15 @@ struct GuideUi  : ModuleWidget, IThemeChange
     ThemeBase* theme_holder{nullptr};
     SvgCache my_svgs;
 #ifdef HOT_SVG
-    std::map<const char *, Widget*> positioned_widgets;
-#define HOT_POSITION(name,widget) positioned_widgets[name] = widget
+    enum class HotPosKind { Center, Box, Pos};
+    struct HotPos {
+        HotPosKind kind;
+        Widget* widget;
+    };
+    std::map<const char *, HotPos> positioned_widgets;
+#define HOT_POSITION(name, kind, widget) positioned_widgets[name] = HotPos{kind, widget}
 #else
-#define HOT_POSITION(name,widget)
+#define HOT_POSITION(name, kind, widget)
 #endif
 
     std::shared_ptr<GuideLine> guideline{nullptr};
@@ -68,8 +78,8 @@ struct GuideUi  : ModuleWidget, IThemeChange
     Swatch* panel_swatch{nullptr};
     Swatch* guide_swatch{nullptr};
     TextInput* name_input{nullptr};
-    Rect list_box;
-
+    GuideList* guide_list{nullptr};
+    widgetry::Switch* pos_switch{nullptr};
     PanelGuide* panel_guide{nullptr};
 
     GuideUi(Guide* module);
@@ -83,12 +93,13 @@ struct GuideUi  : ModuleWidget, IThemeChange
     void set_guide_color(std::shared_ptr<GuideLine> guide, PackedColor co_guide);
     void add_guide(std::shared_ptr<GuideLine> guide);
     void remove_guide(std::shared_ptr<GuideLine> guide);
-
+    void set_guide(std::shared_ptr<GuideLine> guide);
+    void save_guides();
+    void open_guides();
     void onChangeTheme(ChangedItem item) override;
     void onHoverKey(const HoverKeyEvent& e) override;
     void appendContextMenu(Menu* menu) override ;
     void step() override;
-    void draw(const DrawArgs& args) override;
 };
 
 }

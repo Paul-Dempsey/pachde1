@@ -78,6 +78,8 @@ SOURCES += src/modules/Rui/Rui.cpp
 
 # Guide module
 SOURCES += src/modules/Guide/Guide.cpp
+SOURCES += src/modules/Guide/guide-data.cpp
+SOURCES += src/modules/Guide/guide-list.cpp
 SOURCES += src/modules/Guide/panel-overlay-widget.cpp
 
 DISTRIBUTABLES += res

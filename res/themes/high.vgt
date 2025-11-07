@@ -10,6 +10,10 @@
 patty-hover = hsl(0,0,.5)
       label = hsl(0,0,95%)
      slabel = none stroke hsl(0,0,95%)
+    entry-bg = #000 stroke hsl(42, .5, .75) width .5
+  entry-text = hsl(0, 0, .95)
+entry-prompt = hsl(0, 0, .75)
+   entry-sel = hsl(216, .75, .4)
 
 // knobs
 k-bg = [ #555, #0a0a0a]
@@ -60,4 +64,9 @@ fluff-h  = none stroke #b1da29 width .65
 vguide = none stroke #f444a710
 hguide = none stroke #0083ee10
 template-box = #444
-list = #333
+guide-list = hsla(0,0,1,.15) stroke #fff width .85
+guide-bg = hsl(0,0,85)
+guide-hover = stroke hsl(216, .8, .5) width 1.5
+guide-sel = #000 stroke #000
+guide-text = #000
+guide-seltext = #efefef

@@ -19,3 +19,7 @@ void reloadThemeCache();
 ::svg_theme_2::ThemeCache& getThemeCache();
 ::svg_theme_2::RackSvgCache* getRackSvgs();
 ::svg_theme_2::SvgNoCache* getSvgNoCache();
+
+inline std::string user_plugin_asset(const std::string& asset) {
+    return system::join(asset::user(pluginInstance->slug.c_str()), asset);
+}

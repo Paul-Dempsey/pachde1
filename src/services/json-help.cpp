@@ -25,7 +25,11 @@ bool get_json_bool(const json_t* root, const char* key, bool default_value) {
 
 float get_json_float(const json_t* root, const char* key, float default_value) {
     auto j = json_object_get(root, key);
-    return j ? json_real_value(j) : default_value;
+    if (j) {
+        if (json_is_real(j)) return json_real_value(j);
+        if (json_is_integer(j)) return json_integer_value(j);
+    }
+    return default_value;
 }
 
 int get_json_int(const json_t* root, const char* key, int default_value) {

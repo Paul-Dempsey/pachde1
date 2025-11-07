@@ -8,8 +8,12 @@
      symbol = #000
       patty = #222
 patty-hover = hsl(216, .5, .5)
-      label = #222
+      label = hsl(216,.5,.5)
      slabel = none stroke #222
+    entry-bg = hsla(42, .3, .8, .5) stroke #444 width .5
+  entry-text = #000
+entry-prompt = hsl(42, 50, .2)
+   entry-sel = hsl(200, .5, .65)
 
 // knobs
 k-bg      = [ #dfeffc, #bfbfbf ]
@@ -59,4 +63,9 @@ fluff-h  = #b1da29
 vguide = none stroke #ee008810
 hguide = none stroke #0083ee10
 template-box = #444
-list = #aaa
+guide-list = hsla(0,0,0,.1) stroke hsl(0,0,.6) width .85
+guide-bg = hsl(0,0,65)
+guide-hover = stroke hsl(216, .5, .5) width 1.5
+guide-sel = hsl(30, .75, .75)
+guide-text = #1a1a1a
+guide-seltext = #000

@@ -1,6 +1,7 @@
 # pachde1 TODO
 
 - Rename svg_theme_2 to svg_theme
+- nicer-looking tiny button
 
 ## Info
 
@@ -16,6 +17,11 @@
   - Skiff ears
 
 ## Guide: Panel Design Guides/Helper
+
+- fix auto-sel on Open
+- impl template buttons
+- add factory templates
+- solid swatches
 
 - Widget mover: move widget
   - Record position data as text that can be copied (all data since becoming extender)

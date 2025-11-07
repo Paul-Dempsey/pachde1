@@ -15,4 +15,7 @@ TWidget* Center(TWidget * widget) {
 // dispatch a Dirty event to the widget
 void dirtyWidget(::rack::widget::Widget* widget);
 
+template <typename T>
+inline bool in_range(T value, T minimum, T maximum) { return minimum <= value && value <= maximum; }
+
 }

@@ -10,6 +10,10 @@
 patty-hover = hsl(0,0,65%)
       label = hsl(0,0,65%)
      slabel = none stroke hsl(0,0,65%)
+    entry-bg = #444 stroke hsl(42, .6, .65) width .75
+  entry-text = hsl(0, 0, .85)
+entry-prompt = hsl(42, .6, .85)
+   entry-sel = hsl(216, .75, .4)
 
 // knobs
 k-bg = [ #737373, #0d0d0d]
@@ -42,6 +46,10 @@ mini-out-bg = none
     o-sep = #cccccc
    lab-in = #737373
   lab-out = #737373
+    entry-bg = hsla(42, .2, 1, .05) stroke hsl(42, .5, .4) width .75
+  entry-text = hsl(0, 0, .75)
+entry-prompt = hsla(0, 0, .55, .75)
+   entry-sel = hsl(200, .5, .4)
 
 // Skiff
 jack-glyph = #dedede stroke #ccc
@@ -60,4 +68,9 @@ fluff-h  = #b1da29
 vguide = none stroke #f444a710
 hguide = none stroke #0083ee10
 template-box = #886
-list = #444
+guide-list = hsla(0,0,1,.15) stroke #bbb width .85
+guide-bg = hsl(0,0,65)
+guide-hover = stroke hsl(216, .5, .5) width 1.5
+guide-sel = hsl(30, .75, .75) stroke hsl(30, .75, .75)
+guide-text = #1a1a1a
+guide-seltext = #000

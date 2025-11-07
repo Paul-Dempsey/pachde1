@@ -1,9 +1,7 @@
 #include "text-input.hpp"
+#include "widgetry.hpp"
 
 namespace widgetry {
-
-template <typename T>
-inline bool in_range(T value, T minimum, T maximum) { return minimum <= value && value <= maximum; }
 
 TextInput::TextInput() {
     multiline = false;

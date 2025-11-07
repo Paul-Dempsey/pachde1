@@ -27,7 +27,6 @@ void PanelGuide::draw_panel(const DrawArgs& args, PackedColor color) {
 void draw_guide(PanelGuide*self, NVGcontext* vg, std::shared_ptr<GuideLine> guide) {
     if (!guide->color || (0.f == guide->width)) return;
 
-
     //float theta = nvgDegToRad(guide->angle);
     float angle = guide->angle;
     if (angle >= 180.f) angle = 0.f;
@@ -35,44 +34,35 @@ void draw_guide(PanelGuide*self, NVGcontext* vg, std::shared_ptr<GuideLine> guid
     float width = guide->width;
     if (0.f == guide->angle) {
         // horizontal
+        bool wrapped = guide->origin.y < 0;
+        float dir = wrapped ? -1.f : 1.f;
+        float y = wrapped ? 380.f + guide->origin.y : guide->origin.y;
         nvgBeginPath(vg);
-        nvgMoveTo(vg, 0.f, guide->origin.y);
-        nvgLineTo(vg, self->box.size.x, guide->origin.y);
-        nvgLineTo(vg, self->box.size.x, guide->origin.y + width);
-        nvgLineTo(vg, 0.f, guide->origin.y + width);
-        nvgClosePath(vg);
+        nvgRect(vg, guide->origin.x, y, self->box.size.x, width);
         nvgFillColor(vg, co);
         nvgFill(vg);
-        if (guide->repeat > 0.f) {
-            for (float y = guide->origin.y + guide->repeat; y < self->box.size.y; y += guide->repeat) {
+        if (guide->repeat > 0.1f) {
+            for (y += dir * guide->repeat; in_range(y, 0.f, self->box.size.y); y += dir * guide->repeat) {
                 nvgBeginPath(vg);
-                nvgMoveTo(vg, 0.f, y);
-                nvgLineTo(vg, self->box.size.x, y);
-                nvgLineTo(vg, self->box.size.x, y + width);
-                nvgLineTo(vg, 0.f, y + width);
-                nvgClosePath(vg);
+                nvgRect(vg, guide->origin.x, y, self->box.size.x, width);
                 nvgFillColor(vg, co);
                 nvgFill(vg);
             }
         }
     } else if (90.f == guide->angle) {
         // vertical
+        bool wrapped = guide->origin.x < 0;
+        float dir = wrapped ? -1.f : 1.f;
+        float x = wrapped ? self->box.size.x + guide->origin.x : guide->origin.x;
+
         nvgBeginPath(vg);
-        nvgMoveTo(vg, guide->origin.x, 0.f);
-        nvgLineTo(vg, guide->origin.x, self->box.size.y);
-        nvgLineTo(vg, guide->origin.x + width, self->box.size.y);
-        nvgLineTo(vg, guide->origin.x + width, 0.f);
-        nvgClosePath(vg);
+        nvgRect(vg, x, guide->origin.y, width, self->box.size.y);
         nvgFillColor(vg, co);
         nvgFill(vg);
-        if (guide->repeat > 0.f) {
-            for (float x = guide->origin.x + guide->repeat; x < self->box.size.x; x += guide->repeat) {
-               nvgBeginPath(vg);
-                nvgMoveTo(vg, x, 0.f);
-                nvgLineTo(vg, x, self->box.size.y);
-                nvgLineTo(vg, x + width, self->box.size.y);
-                nvgLineTo(vg, x + width, 0.f);
-                nvgClosePath(vg);
+        if (guide->repeat > 0.1f) {
+            for (x += dir * guide->repeat; in_range(x, 0.f, self->box.size.x); x += dir* guide->repeat) {
+                nvgBeginPath(vg);
+                nvgRect(vg, x, guide->origin.y, width, self->box.size.y);
                 nvgFillColor(vg, co);
                 nvgFill(vg);
             }
@@ -94,7 +84,7 @@ void PanelGuide::draw(const DrawArgs& args) {
             }
         }
     } else {
-        draw_panel(args, colors::White);
+        draw_panel(args, colors::PortRed);
     }
 }
 
