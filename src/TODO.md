@@ -1,6 +1,6 @@
 # pachde1 TODO
 
-- Symbol button widget
+- Rename svg_theme_2 to svg_theme
 
 ## Info
 
@@ -13,12 +13,10 @@
 - Alt panels for modules
   - Alternate svg
   - Drawn blank/screen/tone
+  - Skiff ears
 
 ## Guide: Panel Design Guides/Helper
 
-- Customizable tblr margins + grid (1hp 1/2hp 1/4hp _N_ px). Guide color picker
-- Design screen (over panel/over widgets)
-  - Color/transparency
 - Widget mover: move widget
   - Record position data as text that can be copied (all data since becoming extender)
     Get param/light/in/out id, or other: enter name

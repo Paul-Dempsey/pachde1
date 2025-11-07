@@ -58,5 +58,6 @@ fluff-h  = #b1da29
 // Guide
 
 vguide = none stroke #f444a710
-template-box = #8a7346
+hguide = none stroke #0083ee10
+template-box = #886
 list = #444

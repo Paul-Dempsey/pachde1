@@ -10,9 +10,9 @@ namespace pachde {
 struct GuideUi;
 struct GuideData;
 
-struct PanelGuide : TransparentWidget
+struct PanelGuide : OpaqueWidget
 {
-    using Base = TransparentWidget;
+    using Base = OpaqueWidget;
 
     GuideUi* ui{nullptr};
     GuideData* data{nullptr};
