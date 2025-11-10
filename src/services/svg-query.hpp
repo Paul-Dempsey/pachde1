@@ -10,9 +10,14 @@ using SharedSvg = std::shared_ptr<::rack::window::Svg>;
 // Bounds are 4 floats [left, top, right, bottom]
 ::rack::math::Rect elementBounds(SharedSvg svg, const char* id);
 
-// boundsIndex creates an index (map[id:bouund]) of all elements whose id has the specified prefix.
 using BoundsIndex = std::map<std::string, ::rack::math::Rect>;
-void boundsIndex(SharedSvg svg, const char * prefix, BoundsIndex& map, bool hide);
+// makeBounds creates an index (map[id:rect]) of all elements whose id has the specified prefix.
+BoundsIndex makeBounds(SharedSvg svg, const char * prefix, bool hide);
+
+// Add bounds to an existing map.
+// For creating common bounds index from multiple svgs.
+// Take care that all key names are unique across svgs.
+void addBounds(SharedSvg svg, const char * prefix, BoundsIndex& map, bool hide);
 
 // shapeIndex creates an index (map[id:shape]) of all elements whose id has the specified prefix.
 using ShapeIndex = std::map<std::string, NSVGshape*>;
@@ -35,6 +40,34 @@ inline SharedSvg panelDarkSvg(::rack::app::ThemedSvgPanel* panel) { return panel
 
 // works with the result of getPanel() when using either SvgPanel or ThemedSvgPanel
 SharedSvg panelWidgetSvg(::rack::widget::Widget* panel);
+
+// positioning / repositioning
+//
+// The moduleWidget contains a PositionIndex that is built as widgets are created.
+// Then when reloading the svg, call positionWidgets to reposition/size widgets
+// to the new location/size of the placeholder in the svg.
+//
+
+enum class HotPosKind {
+    Center,        // Widget is centered on the bounds center
+    Box,           // Widget position and size set to bounds
+    BoundsCenter,  // Widget position set to bounds center
+
+    // Widget is placed at the corresponding octant (clockwise from top left)
+    TopLeft, TopMiddle, TopRight, MiddleRight,
+    BottomRight, BottomMiddle, BottomLeft, MiddleLeft
+};
+
+struct HotPos { HotPosKind kind; ::rack::widget::Widget* widget; };
+
+// indexed by svg id
+using PositionIndex = std::map<const char *, HotPos>;
+
+inline void addPosition(PositionIndex& positions, const char * key, HotPosKind kind, ::rack::widget::Widget* widget) {
+    positions[key] = HotPos{kind, widget};
+}
+
+void positionWidgets(const PositionIndex& positions, const BoundsIndex& bounds);
 
 }
 

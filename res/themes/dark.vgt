@@ -21,7 +21,8 @@ k-inner = none stroke none
 k-mark = #cedcf2 opacity .8
 k-pin = stroke #cedcf2
 k-pointer = #cedcf2
-k-ring = stroke #202020
+k-ring = stroke #444
+knob-range = stroke #999
 
 // text buttons
 tbtn-punch = none stroke #333333 width .75

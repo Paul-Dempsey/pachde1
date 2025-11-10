@@ -5,7 +5,7 @@ version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/20
     <stop offset="0" stop-color="#a0a0a0"/>
     <stop offset="1" stop-color="#606060"/>
 </linearGradient>
-<circle id="k:pause" fill="#303030" cx="8" cy="8" r="8"/>
-<circle id="k:pause" fill="url(#face)" cx="8" cy="8" r="7.25"/>
-<path fill="none" stroke="#e6e6e6" stroke-width="1.75" d="M 6,4 v 8 M 10,4 v 8"/>
+<circle id="pause-rim" fill="#303030" cx="8" cy="8" r="8"/>
+<circle id="pause-face" fill="url(#face)" cx="8" cy="8" r="7.25"/>
+<path id="pause-glyph" fill="none" stroke="#e6e6e6" stroke-width="1.75" d="M 6,4 v 8 M 10,4 v 8"/>
 </svg>

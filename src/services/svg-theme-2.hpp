@@ -129,13 +129,14 @@ struct ThemeCache
 
     void clear() { themes.clear(); }
 
+    // NYI
     // Appends a theme menu that offers a "Theme" option submenu with a
     // list of the themes present in the cache.
     // Call from your module widget's appendContextMenu override.
     // Your IThemeHolder::applyTheme(std::string theme) override should update
     // the themes of visible widgets, and remember the name.
     //
-//    void appendThemeMenu(Menu* menu, IThemeHolder* holder, bool disable = false, void* context = nullptr);
+    //void appendThemeMenu(Menu* menu, IThemeHolder* holder, bool disable = false, void* context = nullptr);
 };
 
 struct ILoadSvg

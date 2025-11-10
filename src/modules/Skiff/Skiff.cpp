@@ -4,6 +4,7 @@ using namespace ::rack;
 #include "services/open-file.hpp"
 #include "services/rack-help.hpp"
 #include "services/theme-module.hpp"
+#include "services/svg-query.hpp"
 #include "widgets/action-button.hpp"
 #include "widgets/components.hpp"
 #include "widgets/hamburger.hpp"
@@ -14,6 +15,7 @@ using namespace ::rack;
 
 using namespace svg_theme_2;
 using namespace widgetry;
+using namespace svg_query;
 
 namespace pachde {
 
@@ -119,10 +121,10 @@ struct SkiffUi : ModuleWidget, IThemeChange
     TextButton* pack_button{nullptr};
 
 #ifdef HOT_SVG
-    std::map<const char *, Widget*> positioned_widgets;
-#define HOT_POSITION(name,widget) positioned_widgets[name] = widget
+    PositionIndex pos_widgets;
+#define HOT_POSITION(name,kind,widget) addPosition(pos_widgets, name, kind, widget)
 #else
-#define HOT_POSITION(name,widget)
+#define HOT_POSITION(name,kind,widget)
 #endif
 
     SkiffUi(Skiff* module) : my_module(module) {
@@ -159,7 +161,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
     {
         auto button = new TextButton;
         button->box = bounds[key];
-        HOT_POSITION(key, button);
+        HOT_POSITION(key, HotPosKind::Box, button);
         button->set_sticky(sticky);
         button->set_text(title);
         if (module) {
@@ -183,10 +185,10 @@ struct SkiffUi : ModuleWidget, IThemeChange
         if (other_skiff) return;
 
         ::svg_query::BoundsIndex bounds;
-        svg_query::boundsIndex(layout, "k:", bounds, true);
+        svg_query::addBounds(layout, "k:", bounds, true);
 
         ham= Center(createWidget<RailMenu>(bounds["k:rail-menu"].getCenter()));
-        HOT_POSITION("k:rail-menu", ham);
+        HOT_POSITION("k:rail-menu", HotPosKind::Center, ham);
         ham->setUi(this);
         ham->describe("Alternate Rails");
         ham->applyTheme(svg_theme);
@@ -214,7 +216,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
             [this](bool ctrl, bool shift) { pack_modules(); }));
 
         auto button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:from-patch-btn"].getCenter()));
-        HOT_POSITION("k:from-patch-btn", button);
+        HOT_POSITION("k:from-patch-btn", HotPosKind::Center, button);
         if (module) {
             button->describe("Apply last saved skiff");
             button->set_handler([this](bool ctrl, bool shift) { from_patch(); });
@@ -497,6 +499,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
     }
 
     void step() override {
+        Base::step();
         if (!my_module) return;
         if (request_custom_rail) {
             request_custom_rail = false;
@@ -519,12 +522,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
                 onChangeTheme(ChangedItem::Theme);
                 if (!other_skiff) {
                     auto panel = dynamic_cast<SvgThemePanel<SkiffSvg>*>(getPanel());
-                    std::map<std::string, ::math::Rect> bounds;
-                    svg_query::boundsIndex(panel->svg, "k:", bounds, true);
-                    for (auto kv: positioned_widgets) {
-                        kv.second->box.pos = bounds[kv.first].getCenter();
-                        Center(kv.second);
-                    }
+                    positionWidgets(pos_widgets, makeBounds(panel->svg, "k:", true));
                 }
                 sendDirty(this);
             }

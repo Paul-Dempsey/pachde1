@@ -22,6 +22,7 @@ k-mark    = #cedcf2 opacity .8
 k-pin     = stroke #457aa6
 k-pointer = #457aa6
 k-ring    = stroke #457aa6
+knob-range = stroke #222
 
 // text buttons
 tbtn-punch = none stroke #606060 width .75

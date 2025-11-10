@@ -3,7 +3,7 @@
 version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
 <circle id="k-ring"    fill="none" stroke="#457aa6" stroke-width="1.5" cx="9" cy="9" r="8.25" />
 <circle id="k-inner"   fill="none" stroke="none" stroke-width=".5" cx="9" cy="9" r="7.25" />
-<path   id="k-pointer" fill="#457aa6" stroke="none" stroke-width="0.75" d="M9,8.25 h.6 v-8 h-1.2 v8 z" />
+<path   id="k-pointer" fill="#457aa6" stroke="none" stroke-width="0.75" d="M9,8.25 h.7 v-8 h-1.4 v8 z" />
 <circle id="k-pin"     fill="none" stroke="#457aa6" stroke-width="1" cx="9" cy="9" r=".75" />
 <path   id="k-mark"    fill="#cedcf2" opacity="0.8" d="M 8.25,0.06 l 0.14,1.48 c 0.15,-0.019 0.45,-0.059 0.613,-0.059 0.163,0 0.423,0.032 0.584,0.039 l 0.169,-1.469 c 0,0 -0.366,-0.021 -0.75,-0.019 -0.369,0.002 -0.758,0.028 -0.758,0.028 z" />
 </svg>

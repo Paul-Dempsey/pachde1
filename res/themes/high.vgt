@@ -20,8 +20,9 @@ k-bg = [ #555, #0a0a0a]
 k-mark = #cccccc opacity .6
 k-pin = stroke #000
 k-pointer = #efefef
-k-ring = none stroke #bbb
+k-ring = none stroke #777
 k-inner = none stroke #000
+knob-range = stroke #457aa6
 
 // text buttons
 tbtn-punch = none stroke #808080 width .75

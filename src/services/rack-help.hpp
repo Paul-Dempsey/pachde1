@@ -37,4 +37,23 @@ inline ParamQuantity* snap(ParamQuantity* p) {
     return p;
 }
 
+enum OverlayPosition { OnPanel, OnTop };
+void add_layered_child(Widget* widget, Widget* child, OverlayPosition position);
+ModuleWidget* moduleWidgetAtPos(Vec pos);
+bool widget_order_lrtb(const Widget* a, const Widget* b); // for sorting widgets in English reading order (left->right, top->bottom)
+
+enum class AppliesTo {
+    All,
+    Selected,
+    Row,
+    RowLeft,
+    ContinuousLeft,
+    RowRight,
+    ContinuousRight,
+    Left,
+    Right
+};
+
+std::vector<ModuleWidget*> getModuleWidgets(ModuleWidget* self, AppliesTo which);
+
 }

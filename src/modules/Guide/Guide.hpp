@@ -61,13 +61,8 @@ struct GuideUi  : ModuleWidget, IThemeChange
     ThemeBase* theme_holder{nullptr};
     SvgCache my_svgs;
 #ifdef HOT_SVG
-    enum class HotPosKind { Center, Box, Pos};
-    struct HotPos {
-        HotPosKind kind;
-        Widget* widget;
-    };
-    std::map<const char *, HotPos> positioned_widgets;
-#define HOT_POSITION(name, kind, widget) positioned_widgets[name] = HotPos{kind, widget}
+    PositionIndex pos_widgets;
+#define HOT_POSITION(name, kind, widget) addPosition(pos_widgets, name, kind, widget)
 #else
 #define HOT_POSITION(name, kind, widget)
 #endif
@@ -76,7 +71,9 @@ struct GuideUi  : ModuleWidget, IThemeChange
     GuideData* guide_data{nullptr};
 
     Swatch* panel_swatch{nullptr};
+    SolidSwatch* panel_solid{nullptr};
     Swatch* guide_swatch{nullptr};
+    SolidSwatch* guide_solid{nullptr};
     TextInput* name_input{nullptr};
     GuideList* guide_list{nullptr};
     widgetry::Switch* pos_switch{nullptr};

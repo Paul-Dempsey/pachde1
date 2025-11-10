@@ -16,6 +16,7 @@ void init(Plugin* p) {
 	p->addModel(modelSkiff);
 	p->addModel(modelRui);
 	p->addModel(modelGuide);
+    p->addModel(modelPanelTone);
 }
 
 RackSvgCache rack_svg_cache;

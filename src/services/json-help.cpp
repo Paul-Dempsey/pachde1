@@ -1,5 +1,22 @@
 #include "json-help.hpp"
 
+const char* get_json_cstring(const json_t* root, const char* key, const char* default_value)
+{
+    auto j = json_object_get(root, key);
+    if (!j) return default_value;
+    auto s = json_string_value(j);
+    if (!s) return default_value;
+    return s;
+}
+
+const char * get_json_cstring(const json_t* root, const char* key)
+{
+    auto j = json_object_get(root, key);
+    if (!j) return nullptr;
+    auto s = json_string_value(j);
+    return s;
+}
+
 std::string get_json_string(const json_t* root, const char* key, const std::string& default_value)
 {
     auto j = json_object_get(root, key);

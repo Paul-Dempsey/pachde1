@@ -82,6 +82,11 @@ SOURCES += src/modules/Guide/guide-data.cpp
 SOURCES += src/modules/Guide/guide-list.cpp
 SOURCES += src/modules/Guide/panel-overlay-widget.cpp
 
+# PanelTone module
+SOURCES += src/modules/PanelTone/PanelTone.cpp
+SOURCES += src/modules/PanelTone/fader.cpp
+SOURCES += src/modules/PanelTone/panel-overlay.cpp
+
 DISTRIBUTABLES += res
 DISTRIBUTABLES += $(wildcard LICENSE*)
 

@@ -31,6 +31,7 @@ void ColorPicker::set_color(PackedColor co)
     lightness = Lightness(nvg_color);
     alpha = nvg_color.a;
 
+    if (solid) solid->color = color;
     if (sample) sample->color = color;
     if (hue_picker) hue_picker->setHue(hue);
     if (alpha_picker) alpha_picker->setOpacity(alpha);
@@ -47,6 +48,7 @@ void ColorPicker::refresh_from_hsla() {
     nvg_color = nvgHSLAf(hue, saturation, lightness, alpha);
     color = toPacked(nvg_color);
     sample->color = color;
+    solid->color = color;
     hue_picker->setHue(hue);
     alpha_picker->setOpacity(alpha);
     sl_picker->setHue(hue);
@@ -91,8 +93,11 @@ ColorPicker::ColorPicker()
     });
     addChild(sl_picker);
 
-    sample = createWidget<Swatch>(Vec(0, 227.5f));
-    sample->box.size = Vec(box.size.x, 14.f);
+    solid = createWidget<SolidSwatch>(Vec(0, 227.5f));
+    solid->box.size = Vec(36.f, 14);
+    addChild(solid);
+    sample = createWidget<Swatch>(Vec(36.f, 227.5));
+    sample->box.size = Vec(box.size.x - 36.f, 14.f);
     addChild(sample);
 
     text_input = createWidget<TextInput>(Vec(0, 244.f));

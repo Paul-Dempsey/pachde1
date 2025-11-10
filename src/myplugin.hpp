@@ -13,6 +13,7 @@ extern ::rack::Model* modelImagine;
 extern ::rack::Model* modelSkiff;
 extern ::rack::Model* modelRui;
 extern ::rack::Model* modelGuide;
+extern ::rack::Model* modelPanelTone;
 
 void initThemeCache();
 void reloadThemeCache();

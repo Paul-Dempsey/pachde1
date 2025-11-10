@@ -13,9 +13,8 @@
     </linearGradient>
   </defs>
   <g>
-    <circle fill="#888" cx="10" cy="10" r="10" />
-    <circle fill="url(#rim)" cx="10" cy="10" r="9" />
-    <circle fill="url(#face)" cx="10" cy="10" r="8" />
-    <circle opacity="0" cx="10" cy="10" r="2" />
+    <circle id="sm-btn-ring" fill="#888" cx="10" cy="10" r="10" />
+    <circle id="sm-btn-rim" fill="url(#rim)" cx="10" cy="10" r="9" />
+    <circle id="sm-btn-face" fill="url(#face)" cx="10" cy="10" r="8" />
   </g>
 </svg>

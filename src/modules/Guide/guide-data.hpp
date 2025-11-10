@@ -1,10 +1,9 @@
 #pragma once
 #include <rack.hpp>
 #include "services/packed-color.hpp"
+#include "services/rack-help.hpp"
 
 namespace pachde {
-
-enum OverlayPosition { OnPanel, OnTop };
 
 struct GuideLine {
     Vec origin{0.f};

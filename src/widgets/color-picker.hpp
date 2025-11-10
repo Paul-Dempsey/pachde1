@@ -16,6 +16,7 @@ struct ColorPicker : OpaqueWidget
     SLWidget* sl_picker{nullptr};
     AlphaWidget* alpha_picker{nullptr};
     Swatch* sample{nullptr};
+    SolidSwatch* solid{nullptr};
     TextInput* text_input{nullptr};
     ColorSyntax syntax = ColorSyntax::Hex;
 

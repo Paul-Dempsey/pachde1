@@ -1,6 +1,8 @@
 #pragma once
 #include <rack.hpp>
 
+const char * get_json_cstring(const json_t* root, const char* key);
+const char* get_json_cstring(const json_t* root, const char* key, const char* default_value);
 std::string get_json_string(const json_t* root, const char* key);
 std::string get_json_string(const json_t* root, const char* key, const std::string& default_value);
 bool get_json_bool(const json_t* root, const char* key, bool default_value);

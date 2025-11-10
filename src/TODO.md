@@ -16,7 +16,7 @@
   - Drawn blank/screen/tone
   - Skiff ears
 
-## Guide: Panel Design Guides/Helper
+## Guide: Panel Design Guides
 
 - fix auto-sel on Open
 - impl template buttons
@@ -24,8 +24,9 @@
 - solid swatches
 
 - Widget mover: move widget
-  - Record position data as text that can be copied (all data since becoming extender)
-    Get param/light/in/out id, or other: enter name
+  - Record position data as text that can be copied
+  - Position data in format that can be used at runtime (provide library for runtime positioning)
+  - Get param/light/in/out id, or other: enter name, or [type name](https://en.cppreference.com/w/cpp/types/type_info/name)
 
 - Panel blank module to use with designer.
   - Basic panel templates
@@ -33,6 +34,12 @@
   - Widget library
   - Save to working folder
   - Generate ModuleWidget code
+
+## PanelTone
+
+- Affected module options: Continuous left/right, Row left/right, Selected modules, All
+- Individual exclusions (menu of modules with check boxes)
+- Trigger to fade in/fade out, configurable fade interval.
 
 ## Fancy background module
 

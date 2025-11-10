@@ -1,6 +1,9 @@
 #pragma once
 #include <rack.hpp>
+
 using namespace ::rack;
+
+namespace pachde {
 
 void original_system_svg(const char * sys_asset);
 void replace_system_svg(const char * sys_asset, const char *alt);
@@ -15,7 +18,6 @@ bool toggle_rail(); // returns visibility after toggling
 void set_rail_visible(bool visible);
 bool is_rail_visible();
 
-bool widget_order_lrtb(const Widget* a, const Widget* b); // for sorting widgets in English reading order (left->right, top->bottom)
 void pack_modules();
 void zoom_selected();
-
+}

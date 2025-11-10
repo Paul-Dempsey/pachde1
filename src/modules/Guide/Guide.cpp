@@ -5,24 +5,6 @@
 
 namespace pachde {
 
-void add_layered_child(Widget* widget, Widget* child, OverlayPosition position)
-{
-    Widget* first = *widget->children.begin();
-    if (first) {
-        switch (position) {
-        default:
-        case OverlayPosition::OnPanel:
-            widget->addChildAbove(child, first);
-            break;
-        case OverlayPosition::OnTop:
-            widget->addChild(child);
-            break;
-        }
-    } else {
-        widget->addChild(child);
-    }
-}
-
 const char * file_dialog_filter = "Guides (.json):json;Any (*):*";
 
 std::string TempName(const std::string& suffix) {
@@ -151,8 +133,7 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
     setPanel(panel);
 
     TinyKnob* small_knob;
-    BoundsIndex bounds;
-    boundsIndex(layout, "k:", bounds, true);
+    BoundsIndex bounds = makeBounds(layout, "k:", true);
     Rect r;
 
     {
@@ -173,6 +154,12 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
         panel_swatch->box = bounds["k:panel-swatch"];
         panel_swatch->color = guide_data->co_overlay;
         addChild(panel_swatch);
+
+        panel_solid = new SolidSwatch;
+        HOT_POSITION("k:panel-solid", HotPosKind::Box, panel_solid);
+        panel_solid->box = bounds["k:panel-solid"];
+        panel_solid->color = guide_data->co_overlay;
+        addChild(panel_solid);
     }
 
     {
@@ -245,6 +232,12 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
         guide_swatch->box = bounds["k:guide-swatch"];
         guide_swatch->color = guideline->color;
         addChild(guide_swatch);
+
+        guide_solid = new SolidSwatch;
+        HOT_POSITION("k:guide-solid", HotPosKind::Box, guide_solid);
+        guide_solid->box = bounds["k:guide-solid"];
+        guide_solid->color =  guideline->color;
+        addChild(guide_solid);
     }
 
     auto tiny_button = Center(createThemeSvgButton<TinyActionButton>(&my_svgs, bounds["k:add"].getCenter()));
@@ -302,10 +295,9 @@ GuideUi::~GuideUi()
 
 void GuideUi::onExpanderChange(Module::Expander &expander) {
     if (expander.module) {
-        Model* expander_model = expander.module->model;
         auto ms = APP->scene->rack->getModules();
         for (auto mw: ms) {
-            if (mw->model == expander_model) {
+            if (mw->module == expander.module) {
                 auto pg = getPanelGuide(mw);
                 if (panel_guide && panel_guide != pg) {
                     panel_guide->requestDelete();
@@ -341,13 +333,13 @@ void GuideUi::set_overlay_position(OverlayPosition pos)
 
 void GuideUi::set_panel_overlay_color(PackedColor co_panel)
 {
-    panel_swatch->color = co_panel;
+    panel_swatch->color = panel_solid->color = co_panel;
     guide_data->co_overlay = co_panel;
     if (panel_guide) { sendDirty(panel_guide); }
 }
 
 void GuideUi::set_guide_color(std::shared_ptr<GuideLine> guide, PackedColor co_guide) {
-    guide_swatch->color = co_guide;
+    guide_swatch->color = guide_solid->color = co_guide;
     if (guide) {
         guide->color = co_guide;
         if (panel_guide) { sendDirty(panel_guide); }
@@ -380,7 +372,7 @@ void GuideUi::set_guide(std::shared_ptr<GuideLine> guide) {
     }
     guideline = guide;
     if (my_module) my_module->set_guide(guide);
-    guide_swatch->color = guideline->color;
+    guide_swatch->color = guide_solid->color = guideline->color;
     name_input->setText(guide->name);
     dirtyWidget(this);
 }
@@ -473,23 +465,7 @@ void GuideUi::onHoverKey(const HoverKeyEvent& e)
             my_svgs.reloadAll();
             onChangeTheme(ChangedItem::Theme);
             auto panel = dynamic_cast<SvgThemePanel<GuideSvg>*>(getPanel());
-            BoundsIndex bounds;
-            boundsIndex(panel->svg, "k:", bounds, true);
-            for (auto kv: positioned_widgets) {
-                switch (kv.second.kind) {
-                default:
-                case HotPosKind::Center:
-                    kv.second.widget->box.pos = bounds[kv.first].getCenter();
-                    Center(kv.second.widget);
-                    break;
-                case HotPosKind::Box:
-                    kv.second.widget->box = bounds[kv.first];
-                    break;
-                case HotPosKind::Pos:
-                    kv.second.widget->box.pos = bounds[kv.first].pos;
-                    break;
-                }
-            }
+            positionWidgets(pos_widgets, makeBounds(panel->svg, "k:", true));
             sendDirty(this);
         }
     } break;

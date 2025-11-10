@@ -13,7 +13,7 @@ namespace svg_query {
     return ::rack::math::Rect(INFINITY, INFINITY, 0, 0);
 }
 
-void boundsIndex(SharedSvg svg, const char *prefix, BoundsIndex &map, bool hide)
+void addBounds(SharedSvg svg, const char *prefix, BoundsIndex &map, bool hide)
 {
     int len = strlen(prefix);
     for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
@@ -23,6 +23,13 @@ void boundsIndex(SharedSvg svg, const char *prefix, BoundsIndex &map, bool hide)
             if (hide) shape->opacity = 0.f;
         }
     }
+}
+
+BoundsIndex makeBounds(SharedSvg svg, const char *prefix, bool hide)
+{
+    BoundsIndex bounds;
+    addBounds(svg, prefix, bounds, hide);
+    return bounds;
 }
 
 void shapeIndex(SharedSvg svg, const char *prefix, ShapeIndex& map)
@@ -88,8 +95,53 @@ SharedSvg panelWidgetSvg(::rack::widget::Widget* panel)
     return nullptr;
 }
 
+void positionWidgets(const PositionIndex &positions, const BoundsIndex& bounds)
+{
+    using namespace ::rack::math;
+
+    for (auto kv: positions) {
+        auto r = bounds.at(kv.first);
+        auto widget = kv.second.widget;
+        switch (kv.second.kind) {
+        default:
+        case HotPosKind::Center:
+            widget->box.pos = r.getCenter().minus(widget->box.size.div(2));
+            break;
+        case HotPosKind::Box:
+            widget->box = r;
+            break;
+        case HotPosKind::BoundsCenter:
+            widget->box.pos = r.getCenter();
+            break;
+        case HotPosKind::TopLeft:
+            widget->box.pos = r.pos;
+            break;
+        case HotPosKind::TopMiddle:
+            widget->box.pos = Vec(r.pos.x + r.size.x*.5, r.pos.y);
+            break;
+        case HotPosKind::TopRight:
+            widget->box.pos = r.getTopRight();
+            break;
+        case HotPosKind::MiddleRight:
+            widget->box.pos = Vec(r.pos.x + r.size.x, r.pos.y + r.size.y*.5);
+            break;
+        case HotPosKind::BottomRight:
+            widget->box.pos = r.getBottomRight();
+            break;
+        case HotPosKind::BottomMiddle:
+            widget->box.pos = Vec(r.pos.x + r.size.x*.5, r.pos.y + r.size.y);
+            break;
+        case HotPosKind::BottomLeft:
+            widget->box.pos = r.getBottomLeft();
+            break;
+        case HotPosKind::MiddleLeft:
+            widget->box.pos = Vec(r.pos.x, r.pos.y + r.size.y*.5);
+            break;
+        }
+    }
 }
 
+}
 /*
 MIT License (MIT)
 

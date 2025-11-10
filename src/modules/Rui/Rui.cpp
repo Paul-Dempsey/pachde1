@@ -6,8 +6,10 @@ using namespace ::rack;
 #include "widgets/hamburger.hpp"
 #include "services/rack-help.hpp"
 #include "services/theme-module.hpp"
+#include "services/svg-query.hpp"
 
 using namespace widgetry;
+using namespace svg_query;
 
 namespace pachde {
 
@@ -175,17 +177,10 @@ struct RuiUi : ModuleWidget, IThemeChange
 
     ThemeBase* theme_holder{nullptr};
 #ifdef HOT_SVG
-    std::map<const char *, Widget*> positioned_widgets;
+    PositionIndex pos_widgets;
 #endif
     bool single{true};
     PlayActionButton* play_button{nullptr};
-
-    // virtual ~RuiUi()
-    // {
-    //     if (theme_holder && !module) {
-    //         delete theme_holder;
-    //     }
-    // }
 
     RuiUi(Rui* module) : my_module(module)
     {
@@ -195,10 +190,17 @@ struct RuiUi : ModuleWidget, IThemeChange
         theme_holder->setNotify(this);
     }
 
+    virtual ~RuiUi()
+    {
+        if (theme_holder && !module) {
+            delete theme_holder;
+        }
+    }
+
 #ifdef HOT_SVG
-#define HOT_POSITION(name,widget) positioned_widgets[name] = widget
+#define HOT_POSITION(name, kind, widget) addPosition(pos_widgets, name, kind, widget)
 #else
-#define HOT_POSITION(name,widget)
+#define HOT_POSITION(name, kind, widget)
 #endif
 
     void show_fluff(bool visible)
@@ -231,51 +233,51 @@ struct RuiUi : ModuleWidget, IThemeChange
         ThemedPJ301MPort* port;
 
         std::map<std::string, ::math::Rect> bounds;
-        svg_query::boundsIndex(layout, "k:", bounds, true);
+        svg_query::addBounds(layout, "k:", bounds, true);
 
         knob = createParamCentered<RoundBlackKnob>(bounds["k:cableop"].getCenter(), my_module, Rui::Params::CableOpacity);
-        HOT_POSITION("k:cableop", knob);
+        HOT_POSITION("k:cableop", HotPosKind::Center, knob);
         pot = createParamCentered<Trimpot>(bounds["k:trim-cableop"].getCenter(), my_module, Rui::Params::ModCableOpacity);
-        HOT_POSITION("k:trim-cableop", pot);
+        HOT_POSITION("k:trim-cableop", HotPosKind::Center, pot);
         port = createInputCentered<ThemedPJ301MPort>(bounds["k:port-cableop"].getCenter(), my_module, Rui::Inputs::InCableOpacity);
-        HOT_POSITION("k:port-cableop", port);
+        HOT_POSITION("k:port-cableop", HotPosKind::Center, port);
         addChild(knob);
         addChild(pot);
         addChild(port);
 
         knob = createParamCentered<RoundBlackKnob>(bounds["k:cableten"].getCenter(), my_module, Rui::Params::CableTension);
-        HOT_POSITION("k:cableten", knob);
+        HOT_POSITION("k:cableten", HotPosKind::Center, knob);
         pot = createParamCentered<Trimpot>(bounds["k:trim-cableten"].getCenter(), my_module, Rui::Params::ModCableTension);
-        HOT_POSITION("k:trim-cableten", pot);
+        HOT_POSITION("k:trim-cableten", HotPosKind::Center, pot);
         port = createInputCentered<ThemedPJ301MPort>(bounds["k:port-cableten"].getCenter(), my_module, Rui::Inputs::InCableTension);
-        HOT_POSITION("k:port-cableten", port);
+        HOT_POSITION("k:port-cableten", HotPosKind::Center, port);
         addChild(knob);
         addChild(pot);
         addChild(port);
 
         knob = createParamCentered<RoundBlackKnob>(bounds["k:bright"].getCenter(), my_module, Rui::Params::Bright);
-        HOT_POSITION("k:bright", knob);
+        HOT_POSITION("k:bright", HotPosKind::Center, knob);
         pot = createParamCentered<Trimpot>(bounds["k:trim-bright"].getCenter(), my_module, Rui::Params::ModBright);
-        HOT_POSITION("k:trim-bright", pot);
+        HOT_POSITION("k:trim-bright", HotPosKind::Center, pot);
         port = createInputCentered<ThemedPJ301MPort>(bounds["k:port-bright"].getCenter(), my_module, Rui::Inputs::InBright);
-        HOT_POSITION("k:port-bright", port);
+        HOT_POSITION("k:port-bright", HotPosKind::Center, port);
         addChild(knob);
         addChild(pot);
         addChild(port);
 
         knob = createParamCentered<RoundBlackKnob>(bounds["k:bloom"].getCenter(), my_module, Rui::Params::Bloom);
-        HOT_POSITION("k:bloom", knob);
+        HOT_POSITION("k:bloom", HotPosKind::Center, knob);
         pot = createParamCentered<Trimpot>(bounds["k:trim-bloom"].getCenter(), my_module, Rui::Params::ModBloom);
-        HOT_POSITION("k:trim-bloom", pot);
+        HOT_POSITION("k:trim-bloom", HotPosKind::Center, pot);
         port = createInputCentered<ThemedPJ301MPort>(bounds["k:port-bloom"].getCenter(), my_module, Rui::Inputs::InBloom);
-        HOT_POSITION("k:port-bloom", port);
+        HOT_POSITION("k:port-bloom", HotPosKind::Center, port);
         addChild(knob);
         addChild(pot);
         addChild(port);
 
         play_button = Center(createThemeSvgButton<PlayActionButton>(getSvgNoCache(), bounds["k:pause"].getCenter()));
         play_button->set_sticky(true);
-        HOT_POSITION("k:pause", play_button);
+        HOT_POSITION("k:pause", HotPosKind::Center, play_button);
         if (my_module) {
             play_button->describe(my_module->stopped ? "Play (F2)" : "Pause (F2)");
             play_button->latched = my_module->stopped;
@@ -347,17 +349,10 @@ struct RuiUi : ModuleWidget, IThemeChange
                 auto panel = dynamic_cast<SvgThemePanel<RuiSvg>*>(getPanel());
                 if (single) {
                     panel->updatePanel(svg_theme);
-
                     play_button->frames.clear();
                     play_button->loadSvg(getSvgNoCache());
                     play_button->applyTheme(svg_theme);
-
-                    std::map<std::string, ::math::Rect> bounds;
-                    svg_query::boundsIndex(panel->svg, "k:", bounds, true);
-                    for (auto kv: positioned_widgets) {
-                        kv.second->box.pos = bounds[kv.first].getCenter();
-                        Center(kv.second);
-                    }
+                    positionWidgets(pos_widgets, makeBounds(panel->svg, "k:", true));
                 }
                 if (my_module) show_fluff(my_module->fluff);
                 sendDirty(this);
