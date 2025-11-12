@@ -163,10 +163,10 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
     }
 
     {
-        pos_switch = createThemeParam<widgetry::Switch>(theme_holder->getTheme(), Vec(), my_module, Guide::P_OVERLAY_POSITION);
+        pos_switch = createParam<widgetry::Switch>(Vec(), my_module, Guide::P_OVERLAY_POSITION);
         HOT_POSITION("k:pos-switch", HotPosKind::Box, pos_switch);
         pos_switch->box = bounds["k:pos-switch"];
-        pos_switch->setTheme(theme_holder->getTheme());
+        pos_switch->applyTheme(svg_theme);
         addChild(pos_switch);
     }
 
@@ -377,8 +377,6 @@ void GuideUi::set_guide(std::shared_ptr<GuideLine> guide) {
     dirtyWidget(this);
 }
 
-
-
 void GuideUi::save_guides() {
     if (!module) return;
     std::string path;
@@ -446,8 +444,6 @@ void GuideUi::onChangeTheme(ChangedItem item) {
         auto svg_theme = getThemeCache().getTheme(ThemeName(theme));
         my_svgs.changeTheme(svg_theme);
         applyChildrenTheme(this, svg_theme); // any IThemed widgets
-        pos_switch->setTheme(theme);
-
         sendDirty(this);
     }
 }

@@ -43,28 +43,6 @@ PanelOverlay::~PanelOverlay() {
     if (host) host->onDestroyPanelOverlay(this);
 }
 
-void PanelOverlay::fade_in(double interval)
-{
-    data.on = true;
-    fader.fade_in(interval);
-}
-
-void PanelOverlay::fade_out(double interval)
-{
-    fader.fade_out(interval);
-    if (fader.fading == Fading::Zero) {
-        requestDelete();
-    }
-}
-
-void PanelOverlay::step_fade()
-{
-    fader.step_fade();
-    if (fader.fading == Fading::Zero) {
-        requestDelete();
-    }
-}
-
 void PanelOverlay::size_to_parent() {
     auto p = getParent();
     if (p) {
@@ -75,7 +53,7 @@ void PanelOverlay::size_to_parent() {
 void PanelOverlay::step() {
     Base::step();
     size_to_parent();
-    step_fade();
+    //step_fade();
 }
 
 void PanelOverlay::draw(const DrawArgs &args) {
@@ -83,7 +61,8 @@ void PanelOverlay::draw(const DrawArgs &args) {
     if (data.on && data.color) {
         auto vg = args.vg;
         auto co = fromPacked(data.color);
-        co.a *= fader.fade;
+        //co.a *= fader.fade;
+        co.a *= fade;
         if (co.a > 0.f) {
             nvgBeginPath(vg);
             nvgRect(vg, 0, 0, box.size.x, box.size.y);

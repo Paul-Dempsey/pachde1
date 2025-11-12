@@ -104,4 +104,20 @@ struct SLWidget : OpaqueWidget
 
 };
 
+enum class ColorSyntax { Unknown = -1, Hex, RGB, HSL };
+
+struct SyntaxSelector : OpaqueWidget
+{
+    using Base = OpaqueWidget;
+
+    ColorSyntax syntax{ColorSyntax::Hex};
+    std::function<void(ColorSyntax syntax)> click_handler{nullptr};
+
+    SyntaxSelector() { box.size = Vec(16.f, 14.f); }
+    void set_handler(std::function<void(ColorSyntax syntax)> handler) { click_handler = handler; }
+    void onButton(const ButtonEvent& e) override;
+    void draw(const DrawArgs& args) override;
+};
+
+
 }

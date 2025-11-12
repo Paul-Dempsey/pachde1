@@ -2,18 +2,18 @@
 
 namespace pachde {
 void Fader::fade_in(double interval) {
-    if (interval > 0.f) {
+    if (interval > 0) {
         fade = 0.f;
         timer.start(interval);
         fading = Fading::In;
     } else {
-        fading = Fading::Ready;
         fade = 1.0f;
+        fading = Fading::Ready;
     }
 }
 
 void Fader::fade_out(double interval) {
-    if (interval > 0.f) {
+    if (interval > 0) {
         timer.start(interval);
         fading = Fading::Out;
     } else {
@@ -39,6 +39,7 @@ void Fader::step_fade() {
 
     case Fading::Out:
         if (timer.finished()) {
+            fade = 0.f;
             fading = Fading::Zero;
         } else {
             fade = 1.f - timer.progress();

@@ -24,6 +24,13 @@ k-ring = none stroke #777
 k-inner = none stroke #000
 knob-range = stroke #457aa6
 
+// switch
+sw-bg       = hsl(0, 0, .05)
+sw-frame    = hsl(0, 0, .8)
+sw-thumb    = hsl(0, 0, .6)
+sw-thumb-t  = hsl(0, 0, .9)
+sw-thumb-b  = hsl(0, 0, .1)
+
 // text buttons
 tbtn-punch = none stroke #808080 width .75
 tbtn-bevel = [#0000,#0000]

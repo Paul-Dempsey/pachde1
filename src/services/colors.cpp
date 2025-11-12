@@ -6,11 +6,11 @@ namespace pachde {
 
 float Hue1(const NVGcolor& color)
 {
-    auto r = color.r, g = color.g, b = color.b;
+    float r = color.r, g = color.g, b = color.b;
 
-    auto M = std::max(std::max(r, g), b);
-    auto m = std::min(std::min(r, g), b);
-    auto C = M - m;
+    float M = std::max(std::max(r, g), b);
+    float m = std::min(std::min(r, g), b);
+    float C = M - m;
 
     float result;
     if (0.f == C) {

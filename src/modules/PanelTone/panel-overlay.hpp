@@ -30,13 +30,10 @@ struct PanelOverlay : TransparentWidget {
 
     PanelToneUi* host{nullptr};
     OverlayData data;
-    Fader fader;
+    float fade{1.f};
 
     PanelOverlay(PanelToneUi* host);
     virtual ~PanelOverlay();
-    void fade_in(double interval);
-    void fade_out(double interval);
-    void step_fade();
     void size_to_parent();
     void step() override;
     void draw(const DrawArgs& args) override;

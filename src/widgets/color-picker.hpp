@@ -6,8 +6,6 @@ using namespace ::rack;
 
 namespace widgetry {
 
-enum class ColorSyntax { Unknown = -1, Hex, RGB, HSL };
-
 struct ColorPicker : OpaqueWidget
 {
     static Vec get_size() { return  Vec(170.f, 260.f); }
@@ -19,6 +17,7 @@ struct ColorPicker : OpaqueWidget
     SolidSwatch* solid{nullptr};
     TextInput* text_input{nullptr};
     ColorSyntax syntax = ColorSyntax::Hex;
+    SyntaxSelector* syntax_selector{nullptr};
 
     float hue;
     float saturation;

@@ -201,8 +201,9 @@ void ImagineUi::makeUi(Theme theme)
     addOutput(createColorOutput<ColorPort>(theme, colors::PortGreen, Vec(71.f, OUTPUT_ROW + 13.f), imagine, Imagine::GREEN_OUT));
     addOutput(createColorOutput<ColorPort>(theme, colors::PortBlue,  Vec(95.f, OUTPUT_ROW), imagine, Imagine::BLUE_OUT));
     {
-        auto p = createThemeParam<widgetry::Switch>(theme, Vec(190.f, OUTPUT_ROW + 1.5f), imagine, Imagine::POLARITY_PARAM);
+        auto p = createParam<widgetry::Switch>(Vec(190.f, OUTPUT_ROW + 1.5f), imagine, Imagine::POLARITY_PARAM);
         p->box.size.y = 18.f;
+        p->applyTheme(svg_theme);
         addParam(p);
         addOutput(createThemeOutput<ColorPort>(theme, Vec(210.f, OUTPUT_ROW), imagine, Imagine::VOLTAGE_OUT));
         addOutput(createThemeOutput<ColorPort>(theme, Vec(240.f, OUTPUT_ROW), imagine, Imagine::GATE_OUT));
@@ -224,7 +225,9 @@ void ImagineUi::setTheme(Theme theme)
     if (children.empty()) {
         makeUi(theme);
     } else {
-        my_svgs.changeTheme(getThemeCache().getTheme(ThemeName(theme)));
+        auto svg_theme = getThemeCache().getTheme(ThemeName(theme));
+        my_svgs.changeTheme(svg_theme);
+        applyChildrenTheme(this, svg_theme); // any IThemed widgets
         sendChildrenThemeColor(this, theme, theme_holder->getMainColor());
         sendDirty(this);
     }

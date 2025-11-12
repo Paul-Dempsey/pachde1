@@ -9,8 +9,12 @@ PanelTone::PanelTone()
         "Panel",
         "Widgets"
     });
+    configSwitch(P_CONFIG_INPUT, 0.f, 1.f, 0.f, "Configure input", {
+        "Trigger",
+        "Continuous"
+    });
     dp4(configParam(Params::P_FADE_TIME, 0.f, 10.f, 1.f, "Fade time", "sec"));
-    configInput(Inputs::IN_FADE_TRIGGER, "Fade in/out trigger");
+    configInput(Inputs::IN_FADE, "Go trigger");
 }
 
 void PanelTone::fade_in()
@@ -71,6 +75,15 @@ AppliesTo parseAppliesTo(const char * text) {
     return AppliesTo::All;
 }
 
+InputKind PanelTone::get_input_kind(){
+    if (getInput(IN_FADE).isConnected()) {
+        return (getParam(P_CONFIG_INPUT).getValue() < .5)
+            ? InputKind::Trigger
+            : InputKind::Continuous;
+    }
+    return InputKind::None;
+}
+
 json_t *PanelTone::dataToJson()
 {
     json_t *root = json_object();
@@ -93,40 +106,65 @@ void PanelTone::process(const ProcessArgs &args)
     Base::process(args);
 
     if (ui && (0 == ((getId() + args.frame) % 90))) {
-        OverlayPosition pos = (getParam(P_OVERLAY_POSITION).getValue() > .5f) ? OverlayPosition::OnTop : OverlayPosition::OnPanel;
+        OverlayPosition pos = (getParam(P_OVERLAY_POSITION).getValue() > .5f)
+            ? OverlayPosition::OnTop
+            : OverlayPosition::OnPanel;
         if (pos != data.position) {
+            data.position = pos;
             ui->set_overlay_position(pos);
         }
+
+        float v = getParam(P_CONFIG_INPUT).getValue();
+        if (last_input_config != v) {
+            last_input_config = v;
+            getInputInfo(IN_FADE)->name = v < .5f ? "Go trigger" : "Fade amount";
+        }
     }
-    if (getInput(IN_FADE_TRIGGER).isConnected()) {
-        auto v = getInput(IN_FADE_TRIGGER).getVoltage();
+
+    if (InputKind::Trigger == get_input_kind()) {
+        float v = getInput(IN_FADE).getVoltage();
         if (fade_trigger.process(v, 0.1f, 5.f)) {
-            data.on = !data.on;
             if (data.on) {
-                fader.fade_in(getParam(P_FADE_TIME).getValue());
+                fade_out();
             } else {
-                fader.fade_out(getParam(P_FADE_TIME).getValue());
+                if (ui) {
+                    ui->onStartFadeIn();
+                } else {
+                    fade_in();
+                }
             }
         }
     }
 
     switch (fader.fading) {
-    case Fading::Zero: getLight(L_ON).setBrightness(0.f); break;
     case Fading::In:
+        fader.step_fade();
+        break;
+
     case Fading::Out:
-        if (0 == ((getId() + args.frame) % 30)) {
-            fader.step_fade();
-            if (Fading::Zero == fader.fading) {
-                if (ui) ui->onFadeOutComplete();
-            }
-            getLight(L_ON).setBrightness(fader.fade);
+        fader.step_fade();
+        if (Fading::Zero == fader.fading) {
+            data.on = false;
+            if (ui) ui->onFadeOutComplete();
         }
         break;
-    case Fading::Ready: getLight(L_ON).setBrightness(1.f); break;
+
+    default:
+        break;
     }
+    getLight(L_ON).setBrightness(fader.fade);
 }
 
 // ---- UI ------------------------------------------------
+void safeDeparentOverlay(PanelOverlay* overlay) {
+    auto parent = overlay->getParent();
+    if (parent) {
+        if (parent->children.cend() != std::find(parent->children.cbegin(), parent->children.cend(), overlay)) {
+            parent->removeChild(overlay);
+        }
+    }
+}
+
 struct PanelToneMenu : Hamburger
 {
     PanelToneUi* ui{nullptr};
@@ -150,7 +188,8 @@ PanelToneUi::PanelToneUi(PanelTone* module) : my_module(module)
         data = new OverlayData;
     }
     theme_holder->setNotify(this);
-    auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
+    auto theme = theme_holder->getTheme();
+    auto svg_theme = getThemeCache().getTheme(ThemeName(theme));
     auto panel = createSvgThemePanel<PanelToneSvg>(&my_svgs, nullptr);
     auto layout = panel->svg;
     setPanel(panel);
@@ -163,10 +202,10 @@ PanelToneUi::PanelToneUi(PanelTone* module) : my_module(module)
     panel_menu->applyTheme(svg_theme);
     addChild(panel_menu);
 
-    pos_switch = createThemeParam<widgetry::Switch>(theme_holder->getTheme(), Vec(), my_module, PanelTone::P_OVERLAY_POSITION);
+    pos_switch = createParam<widgetry::Switch>(Vec(), my_module, PanelTone::P_OVERLAY_POSITION);
     HOT_POSITION("k:pos-switch", HotPosKind::Box, pos_switch);
     pos_switch->box = bounds["k:pos-switch"];
-    pos_switch->setTheme(theme_holder->getTheme());
+    pos_switch->applyTheme(svg_theme);
     addChild(pos_switch);
 
     {
@@ -205,10 +244,17 @@ PanelToneUi::PanelToneUi(PanelTone* module) : my_module(module)
     addChild(on_button);
 
     {
-        auto port = createInputCentered<ThemedPJ301MPort>(bounds["k:fade-trigger"].getCenter(), my_module, PanelTone::IN_FADE_TRIGGER);
+        auto port = createInputCentered<ThemedPJ301MPort>(bounds["k:fade-trigger"].getCenter(), my_module, PanelTone::IN_FADE);
         HOT_POSITION("k:fade-trigger", HotPosKind::Center, port);
         addChild(port);
     }
+
+    in_config_switch = createParam<widgetry::Switch>(Vec(), my_module, PanelTone::P_CONFIG_INPUT);
+    HOT_POSITION("k:cv-switch", HotPosKind::Box, in_config_switch);
+    in_config_switch->box = bounds["k:cv-switch"];
+    in_config_switch->applyTheme(svg_theme);
+    addChild(in_config_switch);
+
     my_svgs.changeTheme(svg_theme);
 }
 
@@ -225,23 +271,44 @@ void PanelToneUi::onFadeOutComplete() {
     remove_pending = true;
 }
 
-void PanelToneUi::fade_in_overlays() {
-    if (!my_module) return;
-    double interval = my_module->getParam(PanelTone::P_FADE_TIME).getValue();
-    for (auto overlay: overlays) {
-        overlay->fade_in(interval);
-    }
-    my_module->fade_in();
+void PanelToneUi::onStartFadeIn() {
+    add_pending = true;
+}
 
+void PanelToneUi::fade_in_overlays() {
+    if (my_module) my_module->fade_in();
 }
 
 void PanelToneUi::fade_out_overlays() {
+    if (my_module) my_module->fade_out();
+}
+
+void PanelToneUi::fade_overlays() {
     if (!my_module) return;
-    double interval = my_module->getParam(PanelTone::P_FADE_TIME).getValue();
-    for (auto overlay: overlays) {
-        overlay->fade_out(interval);
+    //if (!data->on) return;
+    float fade = my_module->fader.fade;
+    switch (my_module->fader.fading) {
+    default:
+    case Fading::Zero: break;
+
+    case Fading::In:
+    case Fading::Out:
+        for (auto overlay: overlays) {
+            if (!is_my_overlay(overlay)) continue;
+            overlay->fade = fade;
+        }
+        break;
+
+    case Fading::Ready:
+        if (InputKind::Continuous == my_module->get_input_kind()) {
+            fade = my_module->getInput(PanelTone::IN_FADE).getVoltage() * .1f;
+            for (auto overlay: overlays) {
+                if (!is_my_overlay(overlay)) continue;
+                overlay->fade = fade;
+            }
+        }
+        break;
     }
-    my_module->fade_out();
 }
 
 void PanelToneUi::set_overlay_position(OverlayPosition pos)
@@ -249,9 +316,12 @@ void PanelToneUi::set_overlay_position(OverlayPosition pos)
     if (pos == data->position) return;
     data->position = pos;
     for (auto overlay: overlays) {
+        if (!is_my_overlay(overlay)) continue;
         auto mw = overlay->getParent();
-        mw->removeChild(overlay);
-        add_layered_child(mw, overlay, pos);
+        if (mw) {
+            mw->removeChild(overlay);
+            add_layered_child(mw, overlay, pos);
+        }
     }
 }
 
@@ -259,19 +329,18 @@ void PanelToneUi::set_overlay_color(PackedColor color)
 {
     data->color = color;
     for (auto overlay: overlays) {
+        if (!is_my_overlay(overlay)) continue;
         overlay->data.color = color;
     }
 }
+
 
 void PanelToneUi::remove_overlays()
 {
     in_destroy = true;
     for (auto overlay: overlays) {
-        auto parent = overlay->getParent();
-        if (parent) {
-            parent->removeChild(overlay);
-            dirtyWidget(parent);
-        }
+        if (!is_my_overlay(overlay)) continue;
+        safeDeparentOverlay(overlay);
         delete overlay;
     }
     in_destroy = false;
@@ -285,8 +354,10 @@ void PanelToneUi::add_overlays(const std::vector<ModuleWidget*>& module_widgets)
         if (!my_module->apply_to_me && (mw == this)) continue;
         auto overlay = mw->getFirstDescendantOfType<PanelOverlay>();
         if (overlay) {
-            mw->removeChild(overlay);
+            safeDeparentOverlay(overlay);
+            if (overlay->host) { overlay->host->onDestroyPanelOverlay(overlay); }
             overlay->data.init(data);
+            overlay->host = this;
         } else {
             overlay = new PanelOverlay(this);
         }
@@ -302,8 +373,9 @@ void PanelToneUi::add_overlays(const std::vector<ModuleWidget*>& module_widgets)
 void PanelToneUi::toggle_panels()
 {
     if (!my_module) return;
-    data->on = !data->on;
-    if (data->on) {
+
+    if (!data->on) {
+        data->on = true;
         add_overlays(getModuleWidgets(this, my_module->apply_to));
         fade_in_overlays();
     } else {
@@ -329,7 +401,6 @@ void PanelToneUi::onChangeTheme(ChangedItem item)
     auto svg_theme = getThemeCache().getTheme(ThemeName(theme));
     my_svgs.changeTheme(svg_theme);
     applyChildrenTheme(this, svg_theme); // any IThemed widgets
-    pos_switch->setTheme(theme);
     sendDirty(this);
 }
 
@@ -368,9 +439,18 @@ void PanelToneUi::step() {
     if (data->on != on_button->latched) {
         on_button->latched = data->on;
     }
+
+    fade_overlays();
+
     if (remove_pending) {
         remove_pending = false;
         remove_overlays();
+    }
+    if (add_pending) {
+        add_pending = false;
+        data->on = true;
+        add_overlays(getModuleWidgets(this, my_module->apply_to));
+        fade_in_overlays();
     }
 }
 
@@ -379,7 +459,10 @@ void PanelToneUi::toggle_applies_to_me() {
     my_module->apply_to_me = !my_module->apply_to_me;
     if (data->on) {
         auto overlay = getPanelOverlay(this);
-        if (my_module->apply_to_me) {
+        if (!is_my_overlay(overlay)) {
+            overlay = nullptr;
+        }
+        if (overlay && my_module->apply_to_me) {
             switch (my_module->apply_to) {
                 case AppliesTo::All:
                 case AppliesTo::Row:
@@ -390,8 +473,7 @@ void PanelToneUi::toggle_applies_to_me() {
                     auto it = std::find(sel.begin(), sel.end(), this);
                     if (it == sel.end()) {
                         if (overlay) {
-                            auto parent = overlay->getParent();
-                            if (parent) parent->removeChild(overlay);
+                            safeDeparentOverlay(overlay);
                             delete overlay;
                         }
                         return;
@@ -400,8 +482,7 @@ void PanelToneUi::toggle_applies_to_me() {
 
                 default:
                     if (overlay) {
-                        auto parent = overlay->getParent();
-                        if (parent) parent->removeChild(overlay);
+                        safeDeparentOverlay(overlay);
                         delete overlay;
                     }
                     return;
@@ -412,7 +493,6 @@ void PanelToneUi::toggle_applies_to_me() {
             auto overlay = new PanelOverlay(this);
             add_layered_child(this, overlay, data->position);
             overlays.push_back(overlay);
-
         } else {
             if (overlay) delete overlay;
         }

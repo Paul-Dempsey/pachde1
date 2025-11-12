@@ -27,7 +27,7 @@ void ColorPicker::set_color(PackedColor co)
     nvg_color = fromPacked(co);
 
     hue = Hue1(nvg_color);
-    saturation = Saturation(nvg_color);
+    saturation = Saturation1(nvg_color);
     lightness = Lightness(nvg_color);
     alpha = nvg_color.a;
 
@@ -96,12 +96,13 @@ ColorPicker::ColorPicker()
     solid = createWidget<SolidSwatch>(Vec(0, 227.5f));
     solid->box.size = Vec(36.f, 14);
     addChild(solid);
+
     sample = createWidget<Swatch>(Vec(36.f, 227.5));
     sample->box.size = Vec(box.size.x - 36.f, 14.f);
     addChild(sample);
 
-    text_input = createWidget<TextInput>(Vec(0, 244.f));
-    text_input->box.size = sample->box.size;
+    text_input = createWidget<TextInput>(Vec(3.5f, 244.f));
+    text_input->box.size = Vec(142.5f, 14.f);
     text_input->text_height = 14.f;
     text_input->set_on_change([=](std::string text) {
         syntax = ColorSyntax::Unknown;
@@ -110,10 +111,18 @@ ColorPicker::ColorPicker()
             if (is_hsl_prefix(text.c_str())) syntax = ColorSyntax::HSL;
             else if (is_rgb_prefix(text.c_str())) syntax = ColorSyntax::RGB;
             else syntax = ColorSyntax::Hex;
+            syntax_selector->syntax = syntax;
             set_color(co);
         };
     });
     addChild(text_input);
+
+    syntax_selector = createWidget<SyntaxSelector>(Vec(153.f, 244.f));
+    syntax_selector->set_handler([=](ColorSyntax syntax) {
+        this->syntax = syntax;
+        set_text_color();
+    });
+    addChild(syntax_selector);
     set_color(color);
 }
 
@@ -131,6 +140,5 @@ void ColorPickerMenu::draw(const DrawArgs& args)
     FittedBoxRect(vg, 0, 0, box.size.x, box.size.y, RampGray(G_65), Fit::Inside, 1.5f);
     OpaqueWidget::draw(args);
 }
-
 
 }

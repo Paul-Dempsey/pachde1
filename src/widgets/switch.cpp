@@ -2,38 +2,18 @@
 
 namespace widgetry {
 
-Switch::Switch()
-{
+Switch::Switch() {
     box.size.x = box.size.y = 15.f;
 }
 
-void Switch::setTheme(Theme theme)
-{
-    switch (theme) {
-        default:
-        case Theme::Unset:
-        case Theme::Light:
-            frame = RampGray(G_50);
-            thumb = COLOR_BRAND;
-            thumb_top = nvgRGB(0xcb, 0xdc, 0xe9);
-            thumb_bottom = nvgRGB(0x2e, 0x51, 0x6b);
-            background = RampGray(G_75);
-            break;
-        case Theme::Dark:
-            frame = RampGray(G_50);
-            thumb = RampGray(G_40);
-            thumb_top = RampGray(G_70);
-            thumb_bottom = RampGray(G_10);
-            background = RampGray(G_30);
-            break;
-        case Theme::HighContrast:
-            frame = RampGray(G_50);
-            thumb = RampGray(G_60);
-            thumb_top = RampGray(G_85);
-            thumb_bottom = RampGray(G_35);
-            background = RampGray(G_15);
-            break;
-    }
+bool Switch::applyTheme(std::shared_ptr<SvgTheme> theme) {
+    PackedColor co;;
+    background   = theme->getFillColor(co, "sw-bg",      true) ? fromPacked(co) : RampGray(G_30);
+    frame        = theme->getFillColor(co, "sw-frame",   true) ? fromPacked(co) : RampGray(G_50);
+    thumb        = theme->getFillColor(co, "sw-thumb",   true) ? fromPacked(co) : RampGray(G_40);
+    thumb_top    = theme->getFillColor(co, "sw-thumb-t", true) ? fromPacked(co) : RampGray(G_70);
+    thumb_bottom = theme->getFillColor(co, "sw-thumb-b", true) ? fromPacked(co) : RampGray(G_10);
+    return false;
 }
 
 void Switch::initParamQuantity()
@@ -70,25 +50,25 @@ void Switch::draw(const DrawArgs &args)
 
     FillRect(vg, x, y, w, h, thumb);
 
-    auto bevel = 3.f;
-    auto bevel_depth = 1.25f;
-    auto ty = y + h - bevel;
+    auto bevel = h *.25f;
+    auto bevel_depth = h*.06f;
+    auto ty = y + h - (bevel + bevel_depth);
 
     nvgBeginPath(vg);
     nvgMoveTo(vg, x, y + h);
     nvgLineTo(vg, x + w, y + h);
-    nvgLineTo(vg, x + w, y + h - bevel);
-    nvgBezierTo(vg, w * .2f, ty + bevel_depth, w * .8f, ty + bevel_depth, x, ty);
+    nvgLineTo(vg, x + w, ty);
+    nvgBezierTo(vg, x + w * .2f, ty + bevel_depth, x + w * .8f, ty + bevel_depth, x, ty);
     nvgClosePath(vg);
     nvgFillColor(vg, thumb_bottom);
     nvgFill(vg);
 
+    ty = y + bevel;
     nvgBeginPath(vg);
     nvgMoveTo(vg, x, y);
     nvgLineTo(vg, x + w, y);
-    nvgLineTo(vg, x + w, y + bevel);
-    ty = y + bevel;
-    nvgBezierTo(vg, w * .2f, ty - bevel_depth, w * .8f, ty - bevel_depth, x, ty);
+    nvgLineTo(vg, x + w, ty);
+    nvgBezierTo(vg, x + w * .2f, ty - bevel_depth, x + w * .8f, ty - bevel_depth, x, ty);
     nvgClosePath(vg);
     nvgFillColor(vg, thumb_top);
     nvgFill(vg);

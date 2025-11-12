@@ -58,19 +58,20 @@ float intermediate_hue(float h, float m1, float m2)
 	return m1;
 }
 
-PackedColor packHsla(float h, float s, float l, float a)
+PackedColor packHsla(float h, float s, float light, float a)
 {
-	float m1, m2;
-	h = fmodf(h, 1.0f);
-	if (h < 0.0f) h += 1.0f;
+    h = fmodf(h, 1.0f);
+	if (h < 0.0f) {
+        h += 1.0f;
+    }
 	s = clamp(s, 0.0f, 1.0f);
-	l = clamp(l, 0.0f, 1.0f);
-	m2 = l <= 0.5f ? (l * (1 + s)) : (l + s - l * s);
-	m1 = 2 * l - m2;
-	auto r = static_cast<uint8_t>(255 * clamp(intermediate_hue(h + 1.0f/3.0f, m1, m2), 0.0f, 1.0f));
-	auto g = static_cast<uint8_t>(255 * clamp(intermediate_hue(h, m1, m2), 0.0f, 1.0f));
-	auto b = static_cast<uint8_t>(255 * clamp(intermediate_hue(h - 1.0f/3.0f, m1, m2), 0.0f, 1.0f));
-    auto A = static_cast<uint8_t>(255 * clamp(a, 0.0f, 1.0f));
+	light = clamp(light, 0.0f, 1.0f);
+	float m2 = light <= 0.5f ? (light * (1 + s)) : (light + s - light * s);
+	float m1 = 2 * light - m2;
+	uint8_t r = static_cast<uint8_t>(255.f * clamp(intermediate_hue(h + 1.0f/3.0f, m1, m2), 0.0f, 1.0f));
+	uint8_t g = static_cast<uint8_t>(255.f * clamp(intermediate_hue(h, m1, m2), 0.0f, 1.0f));
+	uint8_t b = static_cast<uint8_t>(255.f * clamp(intermediate_hue(h - 1.0f/3.0f, m1, m2), 0.0f, 1.0f));
+    uint8_t A = static_cast<uint8_t>(255.f * clamp(a, 0.0f, 1.0f));
     return packRgba(r, g, b, A);
 }
 

@@ -5,7 +5,7 @@
 
 ## Info
 
-- on-panel edit?
+- on-panel edit -- what's the UI gesture?
 
 ## Skiff
 
@@ -34,12 +34,6 @@
   - Widget library
   - Save to working folder
   - Generate ModuleWidget code
-
-## PanelTone
-
-- Affected module options: Continuous left/right, Row left/right, Selected modules, All
-- Individual exclusions (menu of modules with check boxes)
-- Trigger to fade in/fade out, configurable fade interval.
 
 ## Fancy background module
 

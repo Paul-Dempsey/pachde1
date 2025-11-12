@@ -24,6 +24,13 @@ k-pointer = #cedcf2
 k-ring = stroke #444
 knob-range = stroke #999
 
+// switch
+sw-bg       = hsl(0, 0, .25)
+sw-frame    = hsl(0, 0, .6)
+sw-thumb    = hsl(0, 0, .4)
+sw-thumb-t  = hsl(0, 0, .8)
+sw-thumb-b  = hsl(0, 0, .1)
+
 // text buttons
 tbtn-punch = none stroke #333333 width .75
 tbtn-bevel = [ #a6a6a6, #444444]
