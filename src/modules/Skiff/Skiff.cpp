@@ -25,8 +25,8 @@ struct Skiff : ThemeModule
 {
     using Base = ThemeModule;
 
-    std::string custom_rail_file = asset::user("");
-    int rail_item{-1};
+    std::string rail{"Rack"};
+    std::string rail_folder = asset::userDir;
 
     bool unscrewed{false};
     bool nojacks{false};
@@ -43,8 +43,8 @@ struct Skiff : ThemeModule
     json_t* dataToJson() override
     {
         json_t *root = Base::dataToJson();
-        set_json(root, "rail-file", custom_rail_file);
-        set_json_int(root, "alt-rail", rail_item);
+        set_json(root, "rail", rail);
+        set_json(root, "rail-folder", rail_folder);
         set_json(root, "unscrewed", unscrewed);
         set_json(root, "no-jacks", nojacks);
         set_json(root, "calm", calm);
@@ -59,8 +59,8 @@ struct Skiff : ThemeModule
     void dataFromJson(json_t* root) override
     {
         Base::dataFromJson(root);
-        custom_rail_file = get_json_string(root, "rail-file", custom_rail_file);
-        rail_item = get_json_int(root, "alt-rail", rail_item);
+        rail      = get_json_string(root, "rail", rail);
+        rail_folder = get_json_string(root, "rail-folder", rail_folder);
         unscrewed = get_json_bool(root, "unscrewed", unscrewed);
         nojacks   = get_json_bool(root, "no-jacks", nojacks);
         calm      = get_json_bool(root, "calm", calm);
@@ -92,6 +92,8 @@ struct RailMenu : Hamburger
     void appendContextMenu(ui::Menu* menu) override;
 };
 
+const std::set<std::string> known_rails{"Rack","Plain","Simple","No-hole","Pinstripe","Gradient","Blank"};
+
 struct SkiffUi : ModuleWidget, IThemeChange
 {
     using Base = ModuleWidget;
@@ -103,7 +105,6 @@ struct SkiffUi : ModuleWidget, IThemeChange
 
     bool request_custom_rail{false};
     bool other_skiff{false};
-    int rail_item{-1};
 
     bool unscrewed{false};
     bool nojacks{false};
@@ -131,10 +132,10 @@ struct SkiffUi : ModuleWidget, IThemeChange
         setModule(module);
         if (my_module) {
             my_module->ui = this;
+            my_module->rail = alt_rail_name();
         }
         derailed = !is_rail_visible();
         fancy = nullptr != getBackgroundCloak();
-
         theme_holder = my_module ? my_module : new ThemeBase();
         theme_holder->setNotify(this);
         makeUi();
@@ -275,45 +276,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
             }
         }
 
-        {
-            bool altered = is_alt_rail();
-            rail_item = my_module->rail_item;
-            if (rail_item < 0) {
-                if (altered) {
-                    std::string rail_file = get_rack_rail_filename();
-                    std::shared_ptr<window::Svg> railSvg = window::Svg::load(rail_file);
-                    railSvg->loadFile(rail_file);
-                }
-            } else {
-                if (!altered) {
-                    if (rail_item < 6) {
-                        alt_rail(rail_item);
-                    } else {
-                        std::string rack_rail_file = get_rack_rail_filename();
-                        // get cached rail svg
-                        auto railSvg = window::Svg::load(rack_rail_file);
-                        if (system::isFile(my_module->custom_rail_file)) {
-                            // don't crash on bad svg
-                            try {
-                                railSvg->loadFile(my_module->custom_rail_file);
-                            } catch (Exception& e) {
-                                WARN("%s", e.what());
-                            }
-                            if (!railSvg->handle) {
-                                railSvg->loadFile(rack_rail_file);
-                                my_module->custom_rail_file.clear();
-                                my_module->rail_item = rail_item = -1;
-                            }
-                        } else {
-                            // no file -- fall back to Rack rails
-                            railSvg->loadFile(rack_rail_file);
-                            my_module->custom_rail_file.clear();
-                            my_module->rail_item = rail_item = -1;
-                        }
-                    }
-                }
-            }
-        }
+        alt_rail(my_module->rail);
 
         auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
         if (rail) {
@@ -361,6 +324,12 @@ struct SkiffUi : ModuleWidget, IThemeChange
     bool is_alt_rail() {
         auto railSvg = window::Svg::load(get_rack_rail_filename());
         return is_marked_svg(railSvg);
+    }
+
+    const char * alt_rail_name() {
+        auto railSvg = window::Svg::load(get_rack_rail_filename());
+        auto name = marker_name(railSvg);
+        return (*name) ? name :"Rack";
     }
 
     void derail() {
@@ -436,7 +405,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
             "res/ComponentLibrary/Rail.svg");
     }
 
-    void alt_rail(int n) {
+    void alt_rail(const std::string& rail_name) {
         if (!my_module) return;
         auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
         if (!rail) return;
@@ -446,25 +415,34 @@ struct SkiffUi : ModuleWidget, IThemeChange
         assert(railSvg);
         if (!railSvg) return;
 
-        rail_item = n;
-        if (n >= 0 && n <= 5) {
-            switch (n) {
-            case 0: railSvg->loadFile(asset::plugin(pluginInstance, "res/rails/alt-rail-0.svg")); break;
-            case 1: railSvg->loadFile(asset::plugin(pluginInstance, "res/rails/alt-rail-1.svg")); break;
-            case 2: railSvg->loadFile(asset::plugin(pluginInstance, "res/rails/alt-rail-2.svg")); break;
-            case 3: railSvg->loadFile(asset::plugin(pluginInstance, "res/rails/alt-rail-3.svg")); break;
-            case 4: railSvg->loadFile(asset::plugin(pluginInstance, "res/rails/alt-rail-blank.svg")); break;
-            case 5: railSvg->loadFile(asset::plugin(pluginInstance, "res/rails/alt-rail-grad.svg")); break;
+        auto ext = system::getExtension(rail_name);
+        if (ext.size()) { // custom
+            try {
+                railSvg->loadFile(rail_name);
+                my_module->rail = rail_name;
+                add_named_marker(railSvg, system::getStem(rail_name));
+            } catch (Exception& e) {
+                WARN("%s", e.msg.c_str());
+                railSvg->loadFile(rail_file);
+                my_module->rail = "Rack";
+            }
+        } else { // builtin
+            if (0 == rail_name.compare("Rack")) {
+                railSvg->loadFile(rail_file);
+                my_module->rail = "Rack";
+            } else {
+                auto filename = asset::plugin(pluginInstance, format_string("res/rails/%s.svg", rail_name.c_str()));
+                if (system::exists(filename)) {
+                    railSvg->loadFile(filename);
+                    my_module->rail = rail_name;
+                } else {
+                    assert(false);
+                    railSvg->loadFile(rail_file);
+                    my_module->rail = "Rack";
+                }
             }
         }
-        if (n < 0 || !railSvg->handle) {
-            railSvg->loadFile(rail_file);
-            rail_item = -1;
-        }
         rail->onDirty(DirtyEvent{});
-        if (my_module) {
-            my_module->rail_item = rail_item;
-        }
     }
 
     void pend_custom_rail() {
@@ -478,20 +456,29 @@ struct SkiffUi : ModuleWidget, IThemeChange
         auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
         if (!rail) return;
 
-        std::string filename = system::getFilename(my_module->custom_rail_file);
-        std::string folder = system::getDirectory(my_module->custom_rail_file);
+        std::string filename;
+        std::string folder = my_module->rail_folder;
+        auto ext = system::getExtension(my_module->rail);
+        if (ext.size()) {
+            filename = system::getFilename(my_module->rail);
+        }
         if (openFileDialog(folder, "SVG Files (.svg):svg;Any (*):", filename, filename)) {
-            my_module->custom_rail_file = filename;
+            my_module->rail_folder = system::getDirectory(filename);
             std::string rail_file = get_rack_rail_filename();
             std::shared_ptr<window::Svg> railSvg = window::Svg::load(rail_file);
             if (railSvg) {
-                railSvg->loadFile(filename);
-                rail_item = 6;
-                if (!railSvg->handle) {
-                    railSvg->loadFile(rail_file);
-                    rail_item = -1;
+                try {
+                    railSvg->loadFile(filename);
+                } catch (Exception& e) {
+                    WARN("%s", e.msg.c_str());
+                }
+                if (railSvg->handle) {
+                    std::string name = system::getStem(filename);
+                    add_named_marker(railSvg, name);
+                    my_module->rail = filename;
                 } else {
-                    add_marker(railSvg);
+                    railSvg->loadFile(rail_file);
+                    my_module->rail = "Rack";
                 }
                 rail->onDirty(DirtyEvent{});
             }
@@ -576,19 +563,31 @@ void Skiff::apply_settings()
     }
 }
 
+inline const char * menu_bullet(bool other, const std::string& name, const char *item) {
+    if (other) return "";
+    return (0 == name.compare(item)) ? "●": "";
+}
+
+inline bool known_rail(const char * name) {
+    return known_rails.find(name) != known_rails.cend();
+}
+
 void RailMenu::appendContextMenu(ui::Menu* menu)
 {
     if (!ui->module) return;
+    auto rail_name = ui->alt_rail_name();
+    bool custom = !known_rail(rail_name);
+
     menu->addChild(createMenuLabel<HamburgerTitle>("Alternate rails"));
-    menu->addChild(createMenuItem("Rack rail", (ui->rail_item < 0) ? "●": "", [this](){ ui->alt_rail(-1); } ));
-    menu->addChild(new MenuSeparator);
-    menu->addChild(createMenuItem("Alt rail 1", (ui->rail_item == 0) ? "●": "", [this](){ ui->alt_rail(0); } ));
-    menu->addChild(createMenuItem("Alt rail 2", (ui->rail_item == 1) ? "●": "", [this](){ ui->alt_rail(1); } ));
-    menu->addChild(createMenuItem("Alt rail 3", (ui->rail_item == 2) ? "●": "", [this](){ ui->alt_rail(2); } ));
-    menu->addChild(createMenuItem("Alt rail 4", (ui->rail_item == 3) ? "●": "", [this](){ ui->alt_rail(3); } ));
-    menu->addChild(createMenuItem("Alt rail 5", (ui->rail_item == 4) ? "●": "", [this](){ ui->alt_rail(4); } ));
-    menu->addChild(createMenuItem("Alt rail 6", (ui->rail_item == 5) ? "●": "", [this](){ ui->alt_rail(5); } ));
-    menu->addChild(createMenuItem("Custom rail SVG", (ui->rail_item == 6) ? "●": "", [this]() { ui->pend_custom_rail(); } ));
+    menu->addChild(createMenuItem("Rack rail", menu_bullet(custom, rail_name, "Rack"), [this](){ ui->alt_rail("Rack"); } ));
+    menu->addChild(createMenuLabel<FancyLabel>(rail_name));
+    menu->addChild(createMenuItem("Plain",     menu_bullet(custom, rail_name, "Plain"),     [this](){ ui->alt_rail("Plain"); } ));
+    menu->addChild(createMenuItem("Simple",    menu_bullet(custom, rail_name, "Simple"),    [this](){ ui->alt_rail("Simple"); } ));
+    menu->addChild(createMenuItem("No-hole",   menu_bullet(custom, rail_name, "No-hole"),   [this](){ ui->alt_rail("No-hole"); } ));
+    menu->addChild(createMenuItem("Pinstripe", menu_bullet(custom, rail_name, "Pinstripe"), [this](){ ui->alt_rail("Pinstripe"); } ));
+    menu->addChild(createMenuItem("Gradient",  menu_bullet(custom, rail_name, "Gradient"),  [this](){ ui->alt_rail("Gradient"); } ));
+    menu->addChild(createMenuItem("Blank",     menu_bullet(custom, rail_name, "Blank"),     [this](){ ui->alt_rail("Blank"); } ));
+    menu->addChild(createMenuItem("Custom rail SVG", custom ? "●": "", [this]() { ui->pend_custom_rail(); } ));
 }
 
 }

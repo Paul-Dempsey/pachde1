@@ -142,7 +142,7 @@ void zoom_selected() {
 
 NSVGshape* marker_shape() {
     Svg svg;
-    svg.loadString("<svg width=\"1\"><circle id=\"%skiff%marker%\" r=\"1\" opacity=\"0\"/></svg>");
+    svg.loadString("<svg width=\"1\"><circle id=\"%skiff%mark%\" r=\"1\" opacity=\"0\"/></svg>");
     NSVGshape* marker = svg.handle->shapes;
     svg.handle->shapes = nullptr;
     assert(nullptr == marker->next);
@@ -156,11 +156,28 @@ void add_marker(std::shared_ptr<Svg> svg) {
     svg->handle->shapes = marker;
 }
 
+void add_named_marker(std::shared_ptr<Svg> svg, const std::string& name) {
+    if (!svg || !svg->handle || !svg->handle->shapes) return;
+    auto marker = marker_shape();
+    if (!name.empty()) {
+        strncpy(marker->id+12, name.c_str(), 52);
+    }
+    marker->next = svg->handle->shapes;
+    svg->handle->shapes = marker;
+}
+
 bool is_marked_svg(std::shared_ptr<Svg> svg) {
     if (!svg || !svg->handle || !svg->handle->shapes) return false;
+    return 0 == strncmp(svg->handle->shapes->id, "%skiff%mark%", 12);
+}
+
+const char * marker_name(std::shared_ptr<Svg> svg) {
+    if (!svg || !svg->handle || !svg->handle->shapes) return "";
     const char * id = &svg->handle->shapes->id[0];
-    if (!*id) return false;
-    return 0 == strncmp(id, "%skiff%marker%", 9);
+    if (0 == strncmp(id, "%skiff%mark%", 12)) {
+        return id + 12;
+    }
+    return "";
 }
 
 }
