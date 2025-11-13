@@ -5,7 +5,6 @@ using namespace ::rack;
 #include "services/svg-theme.hpp"
 using namespace packed_color;
 
-
 namespace pachde {
 struct GuideUi;
 struct GuideData;
