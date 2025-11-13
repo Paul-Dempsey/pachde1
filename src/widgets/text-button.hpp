@@ -17,7 +17,7 @@ namespace text_button_constants {
     constexpr const char* hover_key = "tbtn-hover";
 }
 
-enum TextButtonKey { tbtn_Punch, tbtn_Bevel, tbtn_Face, tbtn_Text, tbtn_TextDown, tbtn_Hover };
+enum TextButtonKey { tbtn_Punch, tbtn_Bevel, tbtn_Face, tbtn_Text, tbtn_TextDown, tbtn_Hover, tbtn_Count };
 
 struct TextButton : OpaqueWidget, IThemed {
     using Base = OpaqueWidget;
@@ -29,7 +29,7 @@ struct TextButton : OpaqueWidget, IThemed {
     bool latched{false};
     bool bold{false};
     float text_height{14.f};
-    const char * style_key[5];
+    const char * style_key[tbtn_Count];
     std::function<void(bool, bool)> handler{nullptr};
     TipHolder * tip_holder{nullptr};
     std::string text;

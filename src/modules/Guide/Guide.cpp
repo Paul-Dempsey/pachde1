@@ -448,12 +448,12 @@ void GuideUi::onChangeTheme(ChangedItem item) {
     }
 }
 
+#ifdef HOT_SVG
 void GuideUi::onHoverKey(const HoverKeyEvent& e)
 {
     if (!my_module) return;
     auto mods = e.mods & RACK_MOD_MASK;
     switch (e.key) {
-#ifdef HOT_SVG
     case GLFW_KEY_F5: {
         if (e.action == GLFW_RELEASE && (0 == mods)) {
             e.consume(this);
@@ -465,10 +465,10 @@ void GuideUi::onHoverKey(const HoverKeyEvent& e)
             sendDirty(this);
         }
     } break;
-#endif
     }
     Base::onHoverKey(e);
 }
+#endif
 
 void GuideUi::appendContextMenu(Menu* menu) {
     if (!module) return;

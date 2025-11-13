@@ -99,7 +99,7 @@ void FancyLabel::draw(const DrawArgs& args) {
     SetTextStyle(vg, font, co_text, 16.f);
     nvgTextAlign(vg, NVG_ALIGN_BASELINE | align);
     float bounds[4];
-    float x;
+    float x{0.f};
     switch (align) {
     case NVG_ALIGN_LEFT:   x = 3.5f; break;
     case NVG_ALIGN_CENTER: x = box.size.x*.5; break;

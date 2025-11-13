@@ -116,7 +116,7 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
         [this](bool ctrl, bool shift) { if(!my_module) return; set_nojacks(!my_module->nojacks); }));
 
     addChild(pack_button = makeTextButton(bounds, "k:pack-btn", false, "", "Pack (selected) modules (F7)", svg_theme,
-        [this](bool ctrl, bool shift) { pack_modules(); }));
+        [](bool ctrl, bool shift) { pack_modules(); }));
 
     auto button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:restore"].getCenter()));
     HOT_POSITION("k:restore", HotPosKind::Center, button);

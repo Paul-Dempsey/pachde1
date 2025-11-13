@@ -404,12 +404,12 @@ void PanelToneUi::onChangeTheme(ChangedItem item)
     sendDirty(this);
 }
 
+#ifdef HOT_SVG
 void PanelToneUi::onHoverKey(const HoverKeyEvent &e)
 {
     if (!my_module) return;
     auto mods = e.mods & RACK_MOD_MASK;
     switch (e.key) {
-#ifdef HOT_SVG
     case GLFW_KEY_F5: {
         if (e.action == GLFW_RELEASE && (0 == mods)) {
             e.consume(this);
@@ -421,10 +421,10 @@ void PanelToneUi::onHoverKey(const HoverKeyEvent &e)
             sendDirty(this);
         }
     } break;
-#endif
     }
     Base::onHoverKey(e);
 }
+#endif
 
 void PanelToneUi::appendContextMenu(Menu *menu)
 {

@@ -94,7 +94,9 @@ struct GuideUi  : ModuleWidget, IThemeChange
     void save_guides();
     void open_guides();
     void onChangeTheme(ChangedItem item) override;
+#ifdef HOT_SVG
     void onHoverKey(const HoverKeyEvent& e) override;
+#endif
     void appendContextMenu(Menu* menu) override ;
     void step() override;
 };

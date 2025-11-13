@@ -96,7 +96,9 @@ struct PanelToneUi : ModuleWidget, IThemeChange
     void set_applies_to(AppliesTo apply);
     void onChangeTheme(ChangedItem item) override;
 
+#ifdef HOT_SVG
     void onHoverKey(const HoverKeyEvent& e) override;
+#endif
     void appendContextMenu(Menu* menu) override ;
     void step() override;
 
