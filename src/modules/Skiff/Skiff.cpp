@@ -43,13 +43,13 @@ void Skiff::dataFromJson(json_t* root)
 };
 
 void Skiff::random_settings() {
-    unscrewed  = ::random::uniform() < .5f;
-    nojacks    = ::random::uniform() > .5f;
-    calm       = ::random::uniform() < .5f;
-    //derailed   = ::random::uniform() > .5f;
-    depaneled  = ::random::uniform() < .5f;
-    //fancy      = ::random::uniform() > .5f;
-    auto n = ::random::u32() % 7;
+    unscrewed  = random::uniform() < .5f;
+    nojacks    = random::uniform() > .5f;
+    calm       = random::uniform() < .5f;
+    //derailed   = random::uniform() > .5f;
+    depaneled  = random::uniform() < .5f;
+    //fancy      = random::uniform() > .5f;
+    auto n = random::u32() % 7;
     auto it = known_rails.cbegin();
     if (n > 0) std::advance(it, n);
     rail = *it;
