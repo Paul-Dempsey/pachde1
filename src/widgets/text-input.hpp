@@ -2,7 +2,7 @@
 #include <rack.hpp>
 using namespace ::rack;
 #include "element-style.hpp"
-#include "services/svg-theme-2.hpp"
+#include "services/svg-theme.hpp"
 #include "services/text.hpp"
 
 namespace widgetry {

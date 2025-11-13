@@ -1,8 +1,8 @@
 #include "guide-list.hpp"
 #include "services/text.hpp"
-#include "services/svg-theme-2.hpp"
+#include "services/svg-theme.hpp"
 #include "widgets/widgetry.hpp"
-using namespace svg_theme_2;
+using namespace svg_theme;
 
 namespace pachde {
 

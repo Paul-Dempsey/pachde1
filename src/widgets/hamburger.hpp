@@ -3,9 +3,9 @@
 using namespace ::rack;
 #include "../services/colors.hpp"
 #include "../services/text.hpp"
-#include "../services/svg-theme-2.hpp"
+#include "../services/svg-theme.hpp"
 #include "tip-widget.hpp"
-using namespace svg_theme_2;
+using namespace svg_theme;
 using namespace pachde;
 namespace widgetry {
 

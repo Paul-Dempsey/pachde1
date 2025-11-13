@@ -1,6 +1,6 @@
-#include "svg-theme-2-load.hpp"
+#include "svg-theme-load.hpp"
 
-namespace svg_theme_2 {
+namespace svg_theme {
 
 //
 // ErrorContext

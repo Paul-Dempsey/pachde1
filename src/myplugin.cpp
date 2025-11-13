@@ -1,7 +1,7 @@
 #include "myplugin.hpp"
 using namespace ::rack;
-#include "services/svg-theme-2-load.hpp"
-using namespace ::svg_theme_2;
+#include "services/svg-theme-load.hpp"
+using namespace ::svg_theme;
 
 Plugin* pluginInstance;
 

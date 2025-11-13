@@ -1,7 +1,7 @@
 #pragma once
-#include "services/svg-theme-2.hpp"
+#include "services/svg-theme.hpp"
 #include "services/colors.hpp"
-using namespace ::svg_theme_2;
+using namespace ::svg_theme;
 using namespace pachde;
 
 namespace widgetry {

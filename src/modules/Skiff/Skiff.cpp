@@ -1,7 +1,7 @@
 #include "Skiff.hpp"
 #include "services/json-help.hpp"
 
-using namespace svg_theme_2;
+using namespace svg_theme;
 
 namespace pachde {
 

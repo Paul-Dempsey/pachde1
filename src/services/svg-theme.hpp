@@ -5,7 +5,7 @@ using namespace ::rack;
 #include "packed-color.hpp"
 using namespace ::packed_color;
 
-namespace svg_theme_2 {
+namespace svg_theme {
 
 const char *scanTag(const char * id);
 
@@ -106,14 +106,6 @@ bool applyImageTheme(NSVGimage* svg_handle, std::shared_ptr<SvgTheme> theme);
 inline bool applySvgTheme(std::shared_ptr<::rack::window::Svg> svg, std::shared_ptr<SvgTheme> theme) {
     return (theme && svg) ? applyImageTheme(svg->handle, theme) : false;
 }
-
-// // Implement IThemeHolder to enable the appendThemeMenu helper
-// // This is usually most conveniently implemented by your module widget.
-// struct IThemeHolder
-// {
-//     virtual const std::string& getThemeName() = 0;
-//     virtual void setThemeName(const std::string& theme_name, void *context) = 0;
-// };
 
 struct ThemeCache
 {

@@ -1,6 +1,5 @@
 # pachde1 TODO
 
-- Rename svg_theme_2 to svg_theme
 - nicer-looking tiny button
 
 ## Info
@@ -11,10 +10,7 @@
 
 - Undo for PackModules?
 - Fancy background -> more (limited) background control
-- Alt panels for modules
-  - Alternate svg
-  - Drawn blank/screen/tone
-  - Skiff ears
+- Skiff ears
 
 ## Guide: Panel Design Guides
 

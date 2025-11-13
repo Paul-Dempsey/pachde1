@@ -2,7 +2,7 @@
 #include "skiff-help.hpp"
 #include "services/open-file.hpp"
 #include "services/rack-help.hpp"
-#include "services/svg-theme-2-load.hpp"
+#include "services/svg-theme-load.hpp"
 #include "widgets/action-button.hpp"
 #include "widgets/components.hpp"
 #include "widgets/screws.hpp"
@@ -138,7 +138,7 @@ TextButton* SkiffUi::makeTextButton (
     bool sticky,
     const char* title,
     const char* tip,
-    std::shared_ptr<svg_theme_2::SvgTheme> svg_theme,
+    std::shared_ptr<svg_theme::SvgTheme> svg_theme,
     std::function<void(bool,bool)> handler)
 {
     auto button = new TextButton;
@@ -411,7 +411,7 @@ void SkiffUi::set_rail_theme(RailThemeSetting theme) {
 }
 
 void SkiffUi::load_rail_themes() {
-    using namespace svg_theme_2;
+    using namespace svg_theme;
 #ifdef DEV_BUILD
     ErrorContext err;
     ErrorContext* error_context = &err;

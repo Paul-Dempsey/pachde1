@@ -97,7 +97,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         bool sticky,
         const char* title,
         const char* tip,
-        std::shared_ptr<svg_theme_2::SvgTheme> svg_theme,
+        std::shared_ptr<svg_theme::SvgTheme> svg_theme,
         std::function<void(bool,bool)> handler);
     void onChangeTheme(ChangedItem item) override;
     void sync_latch_state();

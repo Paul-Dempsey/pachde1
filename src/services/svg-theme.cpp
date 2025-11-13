@@ -1,6 +1,6 @@
-#include "svg-theme-2.hpp"
+#include "svg-theme.hpp"
 
-namespace svg_theme_2 {
+namespace svg_theme {
 
 const char * scanTag(const char * id)
 {

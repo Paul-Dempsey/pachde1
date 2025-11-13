@@ -1,7 +1,7 @@
 #pragma once
 #include <rack.hpp>
 #include "services/svg-query.hpp"
-#include "services/svg-theme-2.hpp"
+#include "services/svg-theme.hpp"
 
 extern ::rack::Plugin* pluginInstance;
 
@@ -17,9 +17,9 @@ extern ::rack::Model* modelPanelTone;
 
 void initThemeCache();
 void reloadThemeCache();
-::svg_theme_2::ThemeCache& getThemeCache();
-::svg_theme_2::RackSvgCache* getRackSvgs();
-::svg_theme_2::SvgNoCache* getSvgNoCache();
+::svg_theme::ThemeCache& getThemeCache();
+::svg_theme::RackSvgCache* getRackSvgs();
+::svg_theme::SvgNoCache* getSvgNoCache();
 
 inline std::string user_plugin_asset(const std::string& asset) {
     return system::join(asset::user(pluginInstance->slug.c_str()), asset);

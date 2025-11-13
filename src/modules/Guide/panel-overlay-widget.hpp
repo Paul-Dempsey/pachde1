@@ -2,7 +2,7 @@
 #include <rack.hpp>
 using namespace ::rack;
 #include "services/colors.hpp"
-#include "services/svg-theme-2.hpp"
+#include "services/svg-theme.hpp"
 using namespace packed_color;
 
 

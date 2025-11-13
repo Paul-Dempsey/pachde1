@@ -1,11 +1,11 @@
 #pragma once
 #include "myplugin.hpp"
 #include "services/colors.hpp"
-#include "services/svg-theme-2.hpp"
+#include "services/svg-theme.hpp"
 #include "services/text.hpp"
 #include "create-theme-widget.hpp"
 using namespace ::rack;
-using namespace ::svg_theme_2;
+using namespace ::svg_theme;
 
 namespace pachde {
 
