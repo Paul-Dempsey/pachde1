@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg version="1.0" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
-width="120" height="380" viewBox="0 0 120 380">
+width="304" height="380" viewBox="0 0 304 380">
 <circle id="%skiff%mark%Blank" r="1" />
-<rect id="rail-blank" fill="#444" width="120.5" height="100%" />
+<rect id="rail-blank" fill="#777" width="304.5" height="100%" />
 </svg>

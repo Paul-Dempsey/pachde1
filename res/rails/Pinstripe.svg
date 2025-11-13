@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg version="1.0" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
-width="45" height="380" viewBox="0 0 45 380">
+width="304" height="380" viewBox="0 0 304 380">
 <circle id="%skiff%mark%Pinstripe" r="1" />
 <linearGradient id="gpanel" x1="0" y1="0" x2="28" y2="100%" xlink:href="#panel-stops" gradientUnits="userSpaceOnUse" >
     <stop offset="0" stop-color="#383838" />
     <stop offset="1" stop-color="#181818" />
 </linearGradient>
-<rect id="rail-gbg" fill="url(#gpanel)" width="45.5" height="100%" />
-<path id="pinstripe" stroke="#444" stroke-width="1" d="M0,190 L 7.5,380  M7.5,0 L 22.5,380 M22.5,0 L 37.5,380 M 37.5,0 L 45,190" />
-<rect id="top-rail" fill="#282828" width="45.5" height="15" />
-<rect id="top-rail-top" fill="#666" width="45.5" height="1" />
-<rect id="bottom-rail" fill="#282828" y="365" width="45.5" height="15" />
-<rect id="bottom-rail-top" fill="#555" y="365" width="45.5" height="1" />
+<rect id="rail-gbg" fill="url(#gpanel)" width="304.5" height="100%" />
+<path id="pinstripe" stroke="#444" stroke-width="1" d="M0,190 l 15,380 M7.5,0 l 15,380 M22.5,0 l 15,380 M37.5,0 l 15,380 M52.5,0 l 15,380 M67.5,0 l 15,380 M82.5,0 l 15,380 M97.5,0 l 15,380 M112.5,0 l 15,380 M127.5,0 l 15,380 M142.5,0 l 15,380 M157.5,0 l 15,380 M172.5,0 l 15,380 M187.5,0 l 15,380 M202.5,0 l 15,380 M217.5,0 l 15,380 M232.5,0 l 15,380 M247.5,0 l 15,380 M262.5,0 l 15,380 M277.5,0 l 15,380 M292.5,0 l 15,380" />
+<rect id="pin-rail" fill="#282828" width="304.5" height="15" />
+<rect id="pin-rail-top" fill="#666" width="304.5" height="1" />
+<rect id="pin-rail" fill="#282828" y="365" width="304.5" height="15" />
+<rect id="pin-bot-rail-top" fill="#555" y="365" width="304.5" height="1" />
 </svg>

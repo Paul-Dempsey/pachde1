@@ -1,0 +1,15 @@
+// Rail theme
+@theme = High Contrast
+rail-blank       = #666
+rail-gbg         = [#383838, #181818]
+rail-bg          = #050505
+plain-rail       = #999
+top-rail         = #888
+top-rail-top     = #aaa
+bottom-rail      = #888
+bottom-rail-top  = #666
+rail-hole        = #000
+pinstripe        = #444
+pin-rail         = #282828
+pin-rail-top     = #666
+pin-bot-rail-top = #555

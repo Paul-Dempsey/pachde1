@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg version="1.0" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
-width="120" height="380" viewBox="0 0 120 380">
+width="304" height="380" viewBox="0 0 304 380">
 <circle id="%skiff%mark%Plain" r="1" />
-<rect id="rail-bg" fill="#181818" width="120.5" height="100%" />
-<g fill="#666">
-    <rect id="top-rail" width="120.5" height="15" />
-    <rect id="bottom-rail" y="365" width="120.5" height="15" />
+<rect id="rail-bg" fill="#181818" width="304.5" height="100%" />
+<g id="plain-rail" fill="#666">
+    <rect width="304.5" height="15" />
+    <rect y="365" width="304.5" height="15" />
 </g>
 <g id="rail-hole" fill="#1f1f1f">
     <circle cx="7.5" cy="7.7" r="3.25" />
@@ -24,5 +24,29 @@ width="120" height="380" viewBox="0 0 120 380">
     <circle cx="97.5" cy="372.6" r="3.25" />
     <circle cx="112.5" cy="7.7" r="3.25" />
     <circle cx="112.5" cy="372.6" r="3.25" />
+    <circle cx="127.5" cy="7.7" r="3.25" />
+    <circle cx="127.5" cy="372.6" r="3.25" />
+    <circle cx="142.5" cy="7.7" r="3.25" />
+    <circle cx="142.5" cy="372.6" r="3.25" />
+    <circle cx="157.5" cy="7.7" r="3.25" />
+    <circle cx="157.5" cy="372.6" r="3.25" />
+    <circle cx="172.5" cy="7.7" r="3.25" />
+    <circle cx="172.5" cy="372.6" r="3.25" />
+    <circle cx="187.5" cy="7.7" r="3.25" />
+    <circle cx="187.5" cy="372.6" r="3.25" />
+    <circle cx="202.5" cy="7.7" r="3.25" />
+    <circle cx="202.5" cy="372.6" r="3.25" />
+    <circle cx="217.5" cy="7.7" r="3.25" />
+    <circle cx="217.5" cy="372.6" r="3.25" />
+    <circle cx="232.5" cy="7.7" r="3.25" />
+    <circle cx="232.5" cy="372.6" r="3.25" />
+    <circle cx="247.5" cy="7.7" r="3.25" />
+    <circle cx="247.5" cy="372.6" r="3.25" />
+    <circle cx="262.5" cy="7.7" r="3.25" />
+    <circle cx="262.5" cy="372.6" r="3.25" />
+    <circle cx="277.5" cy="7.7" r="3.25" />
+    <circle cx="277.5" cy="372.6" r="3.25" />
+    <circle cx="292.5" cy="7.7" r="3.25" />
+    <circle cx="292.5" cy="372.6" r="3.25" />
 </g>
 </svg>

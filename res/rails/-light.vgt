@@ -1,0 +1,15 @@
+// Rail theme
+@theme = Light
+rail-blank       = #aaa
+rail-gbg         = [ #ebebeb, #e1e1e1 ]
+rail-bg          = #ccc
+plain-rail       = #efefef
+top-rail         = #efefef
+top-rail-top     = #555
+bottom-rail      = #efefef
+bottom-rail-top  = #444
+rail-hole        = #1f1f1f
+pinstripe        = #888
+pin-rail         = #ddd
+pin-rail-top     = #f1f1f1
+pin-bot-rail-top = #888
