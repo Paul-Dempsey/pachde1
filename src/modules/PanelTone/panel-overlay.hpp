@@ -30,7 +30,7 @@ struct PanelOverlay : TransparentWidget {
 
     PanelToneUi* host{nullptr};
     OverlayData data;
-    float fade{1.f};
+    float fade{0.f};
 
     PanelOverlay(PanelToneUi* host);
     virtual ~PanelOverlay();
