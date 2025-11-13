@@ -12,6 +12,10 @@ void add_named_marker(std::shared_ptr<Svg> svg, const std::string& name);
 bool is_marked_svg(std::shared_ptr<Svg> svg);
 const char * marker_name(std::shared_ptr<Svg> svg);
 
+std::string get_rack_rail_filename();
+bool is_alt_rail();
+const char * alt_rail_name();
+
 void screw_visibility(::rack::widget::Widget* root_widget, bool visible);
 void port_visibility(::rack::widget::Widget* root_widget, bool visible);
 void panel_visibility(::rack::widget::Widget* exclude, bool visible);

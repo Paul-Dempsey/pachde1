@@ -9,24 +9,6 @@
 
 namespace pachde {
 
-std::string get_rack_rail_filename() {
-    return asset::system(
-        (settings::uiTheme == "light") ? "res/ComponentLibrary/Rail-light.svg" :
-        (settings::uiTheme == "hcdark") ? "res/ComponentLibrary/Rail-hcdark.svg" :
-        "res/ComponentLibrary/Rail.svg");
-}
-
-bool is_alt_rail() {
-    auto railSvg = window::Svg::load(get_rack_rail_filename());
-    return is_marked_svg(railSvg);
-}
-
-const char * alt_rail_name() {
-    auto railSvg = window::Svg::load(get_rack_rail_filename());
-    auto name = marker_name(railSvg);
-    return (*name) ? name :"Rack";
-}
-
 inline const char * menu_bullet(bool other, const std::string& name, const char *item) {
     if (other) return "";
     return (0 == name.compare(item)) ? "●": "";
