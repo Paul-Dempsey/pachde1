@@ -2,6 +2,7 @@
 #include "services/json-help.hpp"
 #include "services/open-file.hpp"
 #include "widgets/switch.hpp"
+#include "guide-preset.hpp"
 
 namespace pachde {
 
@@ -19,14 +20,14 @@ Guide::Guide() {
     config(Params::NUM_PARAMS, Inputs::NUM_INPUTS, Outputs::NUM_OUTPUTS, Lights::NUM_LIGHTS);
     dp3(configParam(P_X, -1500.f, 1500.f, 0.f, "X", "px"));
     dp3(configParam(P_Y, -380, 380.f, 0.f, "Y", "px"));
-    snap(dp3(configParam(P_ANGLE, 0.f, 180.f, 90.f, "Angle", "°")));
     dp3(configParam(P_W, 0.f, 50.f, .75f, "Width", "px"));
     dp3(configParam(P_R, 0.f, 50.f, 0.f, "Repeat", "px"));
+    configSwitch(P_ANGLE, 0.f, 1.f, 0.f, "Angle", { "Horizontal", "Vertical"});
     configSwitch(P_OVERLAY_POSITION, 0.f, 1.f, 0.f, "Overlay position", {
         "Panel",
         "Widgets"
     });
-    configLight(L_CONNECTED, "Connected");
+    //configLight(L_CONNECTED, "Connected");
 }
 
 json_t * Guide::dataToJson() {
@@ -47,7 +48,7 @@ void Guide::set_guide(const std::shared_ptr<GuideLine> guide)
 {
     getParam(P_X).setValue(guide->origin.x);
     getParam(P_Y).setValue(guide->origin.y);
-    getParam(P_ANGLE).setValue(guide->angle);
+    getParam(P_ANGLE).setValue(guide->angle > 0.f ? 90.f : 0.f);
     getParam(P_W).setValue(guide->width);
     getParam(P_R).setValue(guide->repeat);
 }
@@ -76,14 +77,15 @@ void Guide::process(const ProcessArgs &args)
         v = getParam(P_Y).getValue();
         if (v != guide->origin.y) { change = true; guide->origin.y = v; }
 
-        v = getParam(P_ANGLE).getValue();
-        if (v != guide->angle) { change = true; guide->angle = v; }
-
         v = getParam(P_W).getValue();
         if (v != guide->width) { change = true; guide->width = v; }
 
         v = getParam(P_R).getValue();
         if (v != guide->repeat) { change = true; guide->repeat = v; }
+
+        v = getParam(P_ANGLE).getValue();
+        v = (v > 0) ? 90.f : 0.f;
+        if (v != guide->angle) { change = true; guide->angle = v; }
 
         if (change) {
             sendDirty(ui->panel_guides);
@@ -98,22 +100,42 @@ struct TemplateMenu : Hamburger
     GuideUi* ui{nullptr};
     void set_ui(GuideUi* w) { ui = w; }
     void appendContextMenu(ui::Menu* menu) override {
+        using namespace guides;
         if (!ui->module) return;
         menu->addChild(createMenuLabel<HamburgerTitle>("Guide Templates"));
-        menu->addChild(createMenuItem("Open...", "", [=](){
-            ui->open_guides();
-        }));
-        menu->addChild(createMenuItem("Save...", "", [=](){
-            ui->save_guides();
-        }));
-        //menu->addChild(createSubmenuItem("Recent", "", [](Menu* menu){ }));
+        menu->addChild(createMenuItem("Open...", "", [=](){ ui->open_guides(); }));
+        menu->addChild(createMenuItem("Save...", "", [=](){ ui->save_guides(); }));
         menu->addChild(createMenuLabel<FancyLabel>("factory"));
+        menu->addChild(createMenuItem(TopMarginData::tooltip(), "", [=](){ ui->load_guide_file(TopMarginData::guide()); }));
+        menu->addChild(createMenuItem(BottomMarginData::tooltip(), "", [=](){ ui->load_guide_file(BottomMarginData::guide()); }));
+        menu->addChild(createMenuItem(LeftData::tooltip(), "", [=](){ ui->load_guide_file(LeftData::guide()); }));
+        menu->addChild(createMenuItem(RightData::tooltip(), "", [=](){ ui->load_guide_file(RightData::guide()); }));
+        menu->addChild(createMenuItem(HorizontalData::tooltip(), "", [=](){ ui->load_guide_file(HorizontalData::guide()); }));
+        menu->addChild(createMenuItem(VerticalData::tooltip(), "", [=](){ ui->load_guide_file(VerticalData::guide()); }));
+        menu->addChild(createMenuItem(GridData::tooltip(), "", [=](){ ui->load_guide_file(GridData::guide()); }));
+        menu->addChild(createMenuLabel<FancyLabel>("goodies"));
+        menu->addChild(createMenuItem("10px horizontal rules", "", [=](){ ui->load_guide_file(asset::plugin(pluginInstance, "res/guides/Horizontal 10px.json")); }));
+        menu->addChild(createMenuItem("10px vertical rules", "", [=](){ ui->load_guide_file(asset::plugin(pluginInstance, "res/guides/Vertical 10px.json")); }));
+        menu->addChild(createMenuItem("10px ruled grid", "", [=](){ ui->load_guide_file(asset::plugin(pluginInstance, "res/guides/Grid 10px.json")); }));
+        menu->addChild(createMenuItem("1/2hp striped grid", "", [=](){ ui->load_guide_file(asset::plugin(pluginInstance, "res/guides/Plaid.json")); }));
     }
 };
 
 struct GuideSvg {
     static std::string background() { return asset::plugin(pluginInstance, "res/Guide.svg"); }
 };
+
+template <typename TData>
+void addGuideButton(GuideUi* self, BoundsIndex& bounds) {
+    const char * key = TData::key();
+    auto button = createThemeSvgButton<TActionButton<TData>>(&self->my_svgs, bounds[key].getCenter());
+#ifdef HOT_SVG
+    addPosition(self->pos_widgets, key, HotPosKind::Center, button);
+#endif
+    button->set_handler([self](bool,bool){ self->load_guide_file(TData::guide()); });
+    button->describe(TData::tooltip());
+    self->addChild(Center(button));
+}
 
 GuideUi::GuideUi(Guide* module) : my_module(module)
 {
@@ -140,7 +162,7 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
     Rect r;
 
     {
-        auto light = createLightCentered<SmallLight<BlueLight>>(bounds["k:on-light"].getCenter(), my_module, Guide::L_CONNECTED);
+        auto light = createLightCentered<MediumLight<BlueLight>>(bounds["k:on-light"].getCenter(), my_module, Guide::L_CONNECTED);
         HOT_POSITION("k:on-light", HotPosKind::Center, light);
         addChild(light);
     }
@@ -170,13 +192,19 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
         addChild(panel_solid);
     }
 
-    {
-        pos_switch = createParam<widgetry::Switch>(Vec(), my_module, Guide::P_OVERLAY_POSITION);
-        HOT_POSITION("k:pos-switch", HotPosKind::Box, pos_switch);
-        pos_switch->box = bounds["k:pos-switch"];
-        pos_switch->applyTheme(svg_theme);
-        addChild(pos_switch);
-    }
+    addGuideButton<guides::TopMarginData>(this, bounds);
+    addGuideButton<guides::BottomMarginData>(this, bounds);
+    addGuideButton<guides::LeftData>(this, bounds);
+    addGuideButton<guides::RightData>(this, bounds);
+    addGuideButton<guides::HorizontalData>(this, bounds);
+    addGuideButton<guides::VerticalData>(this, bounds);
+    addGuideButton<guides::GridData>(this, bounds);
+
+    pos_switch = createParam<widgetry::Switch>(Vec(), my_module, Guide::P_OVERLAY_POSITION);
+    HOT_POSITION("k:pos-switch", HotPosKind::Box, pos_switch);
+    pos_switch->box = bounds["k:pos-switch"];
+    pos_switch->applyTheme(svg_theme);
+    addChild(pos_switch);
 
     small_knob = Center(createThemeSvgParam<TinyKnob>(&my_svgs, bounds["k:x"].getCenter(), my_module, Guide::P_X));
     HOT_POSITION("k:x", HotPosKind::Center, small_knob);
@@ -188,10 +216,11 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
     small_knob->step_increment_by = 3.75f;
     addChild(small_knob);
 
-    small_knob = Center(createThemeSvgParam<TinyKnob>(&my_svgs, bounds["k:angle"].getCenter(), my_module, Guide::P_ANGLE));
-    HOT_POSITION("k:angle", HotPosKind::Center, small_knob);
-    small_knob->step_increment_by = 15.f;
-    addChild(small_knob);
+    angle_switch = createParam<widgetry::Switch>(Vec(), my_module, Guide::P_ANGLE);
+    HOT_POSITION("k:angle", HotPosKind::Box, angle_switch);
+    angle_switch->box = bounds["k:angle"];
+    angle_switch->applyTheme(svg_theme);
+    addChild(angle_switch);
 
     small_knob = Center(createThemeSvgParam<TinyKnob>(&my_svgs, bounds["k:width"].getCenter(), my_module, Guide::P_W));
     HOT_POSITION("k:width", HotPosKind::Center, small_knob);
@@ -252,10 +281,7 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
     HOT_POSITION("k:add", HotPosKind::Center, tiny_button);
     tiny_button->describe("Add guide");
     tiny_button->set_handler([=](bool,bool){
-        auto old_guide = guideline;
-        guideline = nullptr;
-        add_guide(old_guide);
-        guideline = std::make_shared<GuideLine>();
+        add_guide(guideline);
         name_input->setText("");
     });
     addChild(tiny_button);
@@ -280,7 +306,6 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
     });
     addChild(tiny_button);
 
-
     guide_list = new GuideList;
     HOT_POSITION("k:guide-list", HotPosKind::Box, guide_list);
     guide_list->box = bounds["k:guide-list"];
@@ -301,7 +326,8 @@ GuideUi::~GuideUi()
     }
 }
 
-void GuideUi::onExpanderChange(Module::Expander &expander) {
+void GuideUi::onExpanderChange(Module::Expander &expander)
+{
     if (expander.module) {
         auto ms = APP->scene->rack->getModules();
         for (auto mw: ms) {
@@ -363,6 +389,8 @@ void GuideUi::add_guide(std::shared_ptr<GuideLine> guide) {
                 guide->name = format_string("Guide #%d", guide_data->guides.size());
             }
         }
+    } else {
+        guide_list->selected_guide = (it - guide_data->guides.begin());
     }
 }
 
@@ -371,6 +399,7 @@ void GuideUi::remove_guide(std::shared_ptr<GuideLine> guide) {
     auto it = std::find(guide_data->guides.begin(), guide_data->guides.end(), guide);
     if (it != guide_data->guides.end()) {
         guide_data->guides.erase(it);
+        guide_list->selected_guide = it - guide_data->guides.begin() - 1;
     }
 }
 
@@ -420,6 +449,27 @@ void GuideUi::save_guides() {
 
 }
 
+void GuideUi::load_guide_file(std::string path) {
+    auto first = guide_data->guides.size();
+    FILE* file = std::fopen(path.c_str(), "r");
+    if (!file) return;
+    DEFER({std::fclose(file);});
+
+    json_error_t error;
+    json_t* root = json_loadf(file, 0, &error);
+    if (!root) {
+        WARN("Invalid JSON at %d:%d %s in %s", error.line, error.column, error.text, path.c_str());
+        return;
+    }
+    DEFER({json_decref(root);});
+    guide_data->fromJson(root);
+
+    if (guide_data->guides.size() > first) {
+        guide_list->selected_guide = first;
+        set_guide(guide_data->guides[first]);
+    }
+}
+
 void GuideUi::open_guides() {
     if (!module) return;
     std::string path;
@@ -427,22 +477,8 @@ void GuideUi::open_guides() {
         my_module->guide_folder = user_plugin_asset("Guides");
         system::createDirectories(my_module->guide_folder);
     }
-    auto first = guide_data->guides.size();
     if (openFileDialog(my_module->guide_folder, file_dialog_filter, "", path)) {
-        FILE* file = std::fopen(path.c_str(), "r");
-        if (!file) return;
-        DEFER({std::fclose(file);});
-        json_error_t error;
-        json_t* root = json_loadf(file, 0, &error);
-        if (!root) {
-            WARN("Invalid JSON at %d:%d %s in %s", error.line, error.column, error.text, path.c_str());
-            return;
-        }
-        DEFER({json_decref(root);});
-        guide_data->fromJson(root);
-        if (guide_data->guides.size() > first) {
-            set_guide(guide_data->guides[first]);
-        }
+        load_guide_file(path);
     }
 }
 

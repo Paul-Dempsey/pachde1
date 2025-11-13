@@ -1,0 +1,13 @@
+{
+  "guides": [
+    {
+      "name": "Right margin 1/2hp",
+      "color": "#3f72bf7f",
+      "x": -7.5,
+      "y": 0.0,
+      "width": 7.5,
+      "angle": 90.0,
+      "repeat": 0.0
+    }
+  ]
+}

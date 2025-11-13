@@ -1,0 +1,22 @@
+{
+  "guides": [
+    {
+      "name": "Vertical 1/2hp",
+      "color": "#3f72bf7f",
+      "x": 0.0,
+      "y": 0.0,
+      "width": 0.75,
+      "angle": 90.0,
+      "repeat": 7.5
+    },
+    {
+      "name": "Horizontal 1/2hp",
+      "color": "#3f72bf7f",
+      "x": 0.0,
+      "y": 0.0,
+      "width": 0.75,
+      "angle": 0.0,
+      "repeat": 7.5
+    }
+  ]
+}

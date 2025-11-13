@@ -80,6 +80,7 @@ struct GuideUi  : ModuleWidget, IThemeChange
     TextInput* name_input{nullptr};
     GuideList* guide_list{nullptr};
     widgetry::Switch* pos_switch{nullptr};
+    widgetry::Switch* angle_switch{nullptr};
     PanelGuides* panel_guides{nullptr};
 
     GuideUi(Guide* module);
@@ -94,6 +95,7 @@ struct GuideUi  : ModuleWidget, IThemeChange
     void add_guide(std::shared_ptr<GuideLine> guide);
     void remove_guide(std::shared_ptr<GuideLine> guide);
     void set_guide(std::shared_ptr<GuideLine> guide);
+    void load_guide_file(std::string path);
     void save_guides();
     void open_guides();
     void onChangeTheme(ChangedItem item) override;

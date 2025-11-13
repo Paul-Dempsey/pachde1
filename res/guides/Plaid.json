@@ -1,0 +1,22 @@
+{
+  "guides": [
+    {
+      "name": "1hp V stripes",
+      "color": "#a65ff548",
+      "x": 0.0,
+      "y": 0.0,
+      "width": 15,
+      "angle": 0.0,
+      "repeat": 30.0
+    },
+    {
+      "name": "1hp H stripes",
+      "color": "#e5f18e37",
+      "x": 0.0,
+      "y": 0.0,
+      "width": 15.0,
+      "angle": 90.0,
+      "repeat": 30.0
+    }
+  ]
+}

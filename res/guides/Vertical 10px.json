@@ -1,0 +1,13 @@
+{
+  "guides": [
+    {
+      "name": "Vertical 10px",
+      "color": "#cf4be050",
+      "x": 10.0,
+      "y": 10.0,
+      "width": 0.75,
+      "angle": 90.0,
+      "repeat": 10.0
+    }
+  ]
+}

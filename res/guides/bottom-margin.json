@@ -1,0 +1,13 @@
+{
+  "guides": [
+    {
+      "name": "Footer 1hp",
+      "color": "#cf4be050",
+      "x": 0.0,
+      "y": -15.0,
+      "width": 15.0,
+      "angle": 0.0,
+      "repeat": 0.0
+    }
+  ]
+}

@@ -14,11 +14,6 @@
 
 ## Guide: Panel Design Guides
 
-- fix auto-sel on Open
-- impl template buttons
-- add factory templates
-- solid swatches
-
 - Widget mover: move widget
   - Record position data as text that can be copied
   - Position data in format that can be used at runtime (provide library for runtime positioning)
