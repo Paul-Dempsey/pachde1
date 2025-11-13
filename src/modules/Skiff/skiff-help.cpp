@@ -187,15 +187,17 @@ std::string get_rack_rail_filename() {
         "res/ComponentLibrary/Rail.svg");
 }
 
+std::shared_ptr<rack::window::Svg> get_rail_svg() {
+    return window::Svg::load(get_rack_rail_filename());
+}
+
 bool is_alt_rail() {
-    auto railSvg = window::Svg::load(get_rack_rail_filename());
-    return is_marked_svg(railSvg);
+    return is_marked_svg(get_rail_svg());
 }
 
 const char * alt_rail_name() {
-    auto railSvg = window::Svg::load(get_rack_rail_filename());
-    auto name = marker_name(railSvg);
-    return (*name) ? name :"Rack";
+    auto name = marker_name(get_rail_svg());
+    return (*name) ? name : "Rack";
 }
 
 }

@@ -72,5 +72,5 @@ void initThemeCache() {
 #endif
     if (theme) theme_cache.addTheme(theme);
 
-    theme_cache.sort();
+    //theme_cache.sort();
 }

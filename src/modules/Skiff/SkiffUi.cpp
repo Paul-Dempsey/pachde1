@@ -2,6 +2,7 @@
 #include "skiff-help.hpp"
 #include "services/open-file.hpp"
 #include "services/rack-help.hpp"
+#include "services/svg-theme-2-load.hpp"
 #include "widgets/action-button.hpp"
 #include "widgets/components.hpp"
 #include "widgets/screws.hpp"
@@ -9,9 +10,28 @@
 
 namespace pachde {
 
-inline const char * menu_bullet(bool other, const std::string& name, const char *item) {
-    if (other) return "";
-    return (0 == name.compare(item)) ? "●": "";
+std::string rail_theme_name(RailThemeSetting choice) {
+    switch (choice) {
+        default:
+        case RailThemeSetting::None: return "";
+        case RailThemeSetting::Light: return "Light";
+        case RailThemeSetting::Dark: return "Dark";
+        case RailThemeSetting::HighContrast: return "High Contrast" ;
+        case RailThemeSetting::FollowRackUi: return ThemeName(getActualTheme(ThemeSetting::FollowRackUi));
+        case RailThemeSetting::FollowRackPreferDark: return ThemeName(getActualTheme(ThemeSetting::FollowRackPreferDark));
+    }
+}
+
+OptionMenuEntry* make_rail_item(SkiffUi *ui, bool other, const std::string& current, const char *item) {
+    auto entry = new OptionMenuEntry(createMenuItem(item, "", [ui, item](){ ui->set_alt_rail(item); }));
+    entry->selected = !other && (0 == current.compare(item));
+    return entry;
+}
+
+OptionMenuEntry* make_rail_theme_item(SkiffUi *ui, const char * name, RailThemeSetting setting) {
+    auto entry = new OptionMenuEntry(createMenuItem(name, "", [ui, setting](){ ui->set_rail_theme(setting); }));
+    entry->selected = (ui->rail_theme == setting);
+    return entry;
 }
 
 void RailMenu::appendContextMenu(ui::Menu* menu)
@@ -21,16 +41,26 @@ void RailMenu::appendContextMenu(ui::Menu* menu)
     bool custom = !known_rail(rail_name);
 
     menu->addChild(createMenuLabel<HamburgerTitle>("Alternate rails"));
-    menu->addChild(createMenuItem("Rack rail", menu_bullet(custom, rail_name, "Rack"), [this](){ ui->alt_rail("Rack"); } ));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "Rack"));
     menu->addChild(new MenuSeparator);
-    menu->addChild(createMenuItem("Plain",     menu_bullet(custom, rail_name, "Plain"),     [this](){ ui->alt_rail("Plain"); } ));
-    menu->addChild(createMenuItem("Simple",    menu_bullet(custom, rail_name, "Simple"),    [this](){ ui->alt_rail("Simple"); } ));
-    menu->addChild(createMenuItem("No-hole",   menu_bullet(custom, rail_name, "No-hole"),   [this](){ ui->alt_rail("No-hole"); } ));
-    menu->addChild(createMenuItem("Pinstripe", menu_bullet(custom, rail_name, "Pinstripe"), [this](){ ui->alt_rail("Pinstripe"); } ));
-    menu->addChild(createMenuItem("Gradient",  menu_bullet(custom, rail_name, "Gradient"),  [this](){ ui->alt_rail("Gradient"); } ));
-    menu->addChild(createMenuItem("Blank",     menu_bullet(custom, rail_name, "Blank"),     [this](){ ui->alt_rail("Blank"); } ));
-    menu->addChild(createMenuLabel<FancyLabel>(rail_name));
-    menu->addChild(createMenuItem("Custom rail SVG", custom ? "●": "", [this]() { ui->pend_custom_rail(); } ));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "Plain"));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "Simple"));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "No-hole"));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "Pinstripe"));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "Gradient"));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "Blank"));
+//    menu->addChild(createMenuLabel<FancyLabel>(rail_name));
+    auto option = new OptionMenuEntry(createMenuItem("Custom rail SVG", "", [=](){ ui->pend_custom_rail(); }));
+    option->selected = custom;
+    menu->addChild(option);
+
+    menu->addChild(createMenuLabel<HamburgerTitle>("Rail Theme"));
+    menu->addChild(make_rail_theme_item(ui, "None", RailThemeSetting::None));
+    menu->addChild(make_rail_theme_item(ui, "Follow Rack UI theme", RailThemeSetting::FollowRackUi));
+    menu->addChild(make_rail_theme_item(ui, "Follow Rack prefer dark panels", RailThemeSetting::FollowRackPreferDark));
+    menu->addChild(make_rail_theme_item(ui, "Light", RailThemeSetting::Light));
+    menu->addChild(make_rail_theme_item(ui, "Dark", RailThemeSetting::Dark));
+    menu->addChild(make_rail_theme_item(ui, "High Contrast", RailThemeSetting::HighContrast));
 }
 
 struct SkiffSvg
@@ -47,7 +77,7 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     }
     theme_holder = my_module ? my_module : new ThemeBase();
     theme_holder->setNotify(this);
-
+    load_rail_themes();
     auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
 
     auto panel = createSvgThemePanel<SkiffSvg>(&my_svgs, nullptr);
@@ -172,7 +202,7 @@ void SkiffUi::from_module() {
         }
     }
 
-    alt_rail(my_module->rail);
+    set_alt_rail(my_module->rail);
 
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
     if (rail) {
@@ -309,7 +339,7 @@ std::shared_ptr<window::Svg> SkiffUi::set_rail_svg(RailWidget* rail, const std::
     return railSvg;
 }
 
-void SkiffUi::alt_rail(const std::string& rail_name) {
+void SkiffUi::set_alt_rail(const std::string& rail_name) {
     if (!my_module) return;
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
     if (!rail) return;
@@ -317,7 +347,13 @@ void SkiffUi::alt_rail(const std::string& rail_name) {
     auto ext = system::getExtension(rail_name);
     if (ext.size()) { // custom
         auto railSvg = set_rail_svg(rail, rail_name);
-        if (!railSvg->handle) {
+        if (railSvg->handle) {
+            my_module->rail = rail_name;
+            if (rail_theme != RailThemeSetting::None) {
+                auto svg_theme = theme_cache.getTheme(rail_theme_name(rail_theme));
+                if (svg_theme) applySvgTheme(railSvg, svg_theme);
+            }
+        } else {
             railSvg->loadFile(get_rack_rail_filename());
             my_module->rail = "Rack";
         }
@@ -330,6 +366,10 @@ void SkiffUi::alt_rail(const std::string& rail_name) {
                 auto railSvg = set_rail_svg(rail, filename);
                 if (railSvg && railSvg->handle) {
                     my_module->rail = rail_name;
+                    if (rail_theme != RailThemeSetting::None) {
+                        auto svg_theme = theme_cache.getTheme(rail_theme_name(rail_theme));
+                        if (svg_theme) applySvgTheme(railSvg, svg_theme);
+                    }
                 } else {
                     recover_rack_rail();
                 }
@@ -357,20 +397,54 @@ void SkiffUi::custom_rail() {
     std::string folder = my_module->rail_folder;
     auto ext = system::getExtension(my_module->rail);
     if (ext.size()) {
-        filename = system::getFilename(my_module->rail);
+        filename = my_module->rail;
     }
     if (openFileDialog(folder, "SVG Files (.svg):svg;Any (*):", filename, filename)) {
         my_module->rail_folder = system::getDirectory(filename);
-        auto railSvg = set_rail_svg(rail, filename);
-        if (railSvg && railSvg->handle) {
-            std::string name = system::getStem(filename);
-            add_named_marker(railSvg, name);
-            my_module->rail = filename;
-        } else {
-            recover_rack_rail();
-        }
-        dirtyWidget(rail);
+        set_alt_rail(filename);
     }
+}
+
+void SkiffUi::set_rail_theme(RailThemeSetting theme) {
+    rail_theme = theme;
+    set_alt_rail(my_module->rail);
+}
+
+void SkiffUi::load_rail_themes() {
+    using namespace svg_theme_2;
+#ifdef DEV_BUILD
+    ErrorContext err;
+    ErrorContext* error_context = &err;
+#else
+    ErrorContext* error_context = nullptr;
+#endif
+    auto theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/rails/-light.vgt"), error_context);
+#ifdef DEV_BUILD
+    if (!theme) {
+        auto report = error_context->makeErrorReport();
+        WARN("%s", report.c_str());
+    }
+#endif
+    if (theme) theme_cache.addTheme(theme);
+
+    theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/rails/-dark.vgt"), error_context);
+#ifdef DEV_BUILD
+    if (!theme) {
+        auto report = error_context->makeErrorReport();
+        WARN("%s", report.c_str());
+    }
+#endif
+    if (theme) theme_cache.addTheme(theme);
+
+    theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/rails/-high.vgt"), error_context);
+#ifdef DEV_BUILD
+    if (!theme) {
+        auto report = error_context->makeErrorReport();
+        WARN("%s", report.c_str());
+    }
+#endif
+    if (theme) theme_cache.addTheme(theme);
+
 }
 
 void SkiffUi::onHoverKey(const HoverKeyEvent& e) {
@@ -383,6 +457,8 @@ void SkiffUi::onHoverKey(const HoverKeyEvent& e) {
             e.consume(this);
             my_svgs.reloadAll();
             reloadThemeCache();
+            load_rail_themes();
+            set_rail_theme(rail_theme);
             onChangeTheme(ChangedItem::Theme);
             if (!other_skiff) {
                 auto panel = dynamic_cast<SvgThemePanel<SkiffSvg>*>(getPanel());

@@ -18,6 +18,16 @@ inline bool known_rail(const char * name) {
     return known_rails.find(name) != known_rails.cend();
 }
 
+enum RailThemeSetting { // ThemeSetting + None
+    Light,
+    Dark,
+    HighContrast,
+    FollowRackUi,
+    FollowRackPreferDark,
+    None
+};
+std::string rail_theme_name(RailThemeSetting);
+
 struct Skiff : ThemeModule
 {
     using Base = ThemeModule;
@@ -58,11 +68,13 @@ struct SkiffUi : ModuleWidget, IThemeChange
     Skiff* my_module{nullptr};
     ThemeBase* theme_holder{nullptr};
     SvgCache my_svgs;
-    RailMenu* ham{nullptr};
+    ThemeCache theme_cache;
 
     bool request_custom_rail{false};
     bool other_skiff{false};
+    RailThemeSetting rail_theme;
 
+    RailMenu* ham{nullptr};
     TextButton* derail_button{nullptr};
     TextButton* fancy_button{nullptr};
     TextButton* nopanel_button{nullptr};
@@ -100,10 +112,11 @@ struct SkiffUi : ModuleWidget, IThemeChange
     void calm_rack(bool calm);
     void recover_rack_rail();
     std::shared_ptr<window::Svg> set_rail_svg(RailWidget* rail, const std::string& filename);
-    void alt_rail(const std::string& rail_name);
+    void set_alt_rail(const std::string& rail_name);
     void pend_custom_rail();
     void custom_rail();
-
+    void set_rail_theme(RailThemeSetting theme);
+    void load_rail_themes();
     void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;
     void draw(const DrawArgs& args) override;

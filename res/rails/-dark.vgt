@@ -1,6 +1,6 @@
 // Rail theme
 @theme = Dark
-rail-blank       = #444
+rail-blank       = #252525
 rail-gbg         = [#383838, #181818]
 rail-bg          = #181818
 plain-rail       = #666
@@ -9,7 +9,7 @@ top-rail-top     = #555
 bottom-rail      = #444
 bottom-rail-top  = #262626
 rail-hole        = #1f1f1f
-pinstripe        = #444
+pinstripe        = none stroke #444 width 1
 pin-rail         = #282828
 pin-rail-top     = #666
 pin-bot-rail-top = #555

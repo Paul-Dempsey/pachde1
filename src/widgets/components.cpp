@@ -4,39 +4,44 @@
 using namespace widgetry;
 namespace pachde {
 
-void addThemeItems(rack::ui::Menu *menu, ModuleWidget* source, ThemeBase* it) {
+static const NVGcolor co_dot{nvgHSL(200.f/360.f, .5, .5)};
+static const NVGcolor co_gray{RampGray(G_50)};
 
+OptionMenuEntry::OptionMenuEntry(rack::ui::MenuItem* item) : child_item(item) {
+    child_item->box.pos.x += 9.f;
+    addChild(child_item);
+}
+
+void OptionMenuEntry::step() {
+    MenuEntry::step();
+    box.size.x = child_item->box.size.x + 9.f;
+    box.size.y = child_item->box.size.y;
+}
+
+void OptionMenuEntry::draw(const DrawArgs &args) {
+    MenuEntry::draw(args);
+    if (selected) {
+        Circle(args.vg, 8.f, box.size.y*.5, 3.f, co_dot);
+    } else {
+        OpenCircle(args.vg, 8.f, box.size.y*.5, 3.f, co_gray, .75f);
+    }
+}
+
+OptionMenuEntry* make_theme_item(ThemeBase* it, const char * name, ThemeSetting setting) {
+    auto entry = new OptionMenuEntry(createMenuItem(name, "", [it, setting](){ it->setThemeSetting(setting); }));
+    entry->selected = (it->getThemeSetting() == setting);
+    return entry;
+}
+
+void addThemeItems(rack::ui::Menu *menu, ModuleWidget* source, ThemeBase* it) {
     menu->addChild(createMenuItem("Send theme to all pachde1", "", [=](){
         broadcastThemeSetting(source, it->getThemeSetting());
     }));
-
-    NVGcolor co_dot{nvgHSL(200.f/360.f, .5, .5)};
-    ColorDotMenuItem* option;
-
-    option = createMenuItem<ColorDotMenuItem>("Follow Rack UI theme", "",
-        [it](){ it->setThemeSetting(ThemeSetting::FollowRackUi); }, false);
-    option->color = it->getThemeSetting() == ThemeSetting::FollowRackUi ? co_dot : RampGray(G_45);
-    menu->addChild(option);
-
-    option = createMenuItem<ColorDotMenuItem>("Follow Rack prefer dark panels", "",
-        [it](){ it->setThemeSetting(ThemeSetting::FollowRackPreferDark); }, false);
-    option->color = it->getThemeSetting() == ThemeSetting::FollowRackPreferDark ? co_dot : RampGray(G_45);
-    menu->addChild(option);
-
-    option = createMenuItem<ColorDotMenuItem>("Light", "",
-        [it](){ it->setThemeSetting(ThemeSetting::Light); }, false);
-    option->color = it->getThemeSetting() == ThemeSetting::Light ? co_dot : RampGray(G_45);
-    menu->addChild(option);
-
-    option = createMenuItem<ColorDotMenuItem>("Dark", "",
-        [it](){ it->setThemeSetting(ThemeSetting::Dark); }, false);
-    option->color = it->getThemeSetting() == ThemeSetting::Dark ? co_dot : RampGray(G_45);
-    menu->addChild(option);
-
-    option = createMenuItem<ColorDotMenuItem>("High Contrast", "",
-        [it](){ it->setThemeSetting(ThemeSetting::HighContrast); }, false);
-    option->color = it->getThemeSetting() == ThemeSetting::HighContrast ? co_dot : RampGray(G_45);
-    menu->addChild(option);
+    menu->addChild(make_theme_item(it, "Follow Rack UI theme", ThemeSetting::FollowRackUi));
+    menu->addChild(make_theme_item(it, "Follow Rack prefer dark panels", ThemeSetting::FollowRackPreferDark));
+    menu->addChild(make_theme_item(it, "Light", ThemeSetting::Light));
+    menu->addChild(make_theme_item(it, "Dark", ThemeSetting::Dark));
+    menu->addChild(make_theme_item(it, "High Contrast", ThemeSetting::HighContrast));
 }
 
 void AddThemeMenu(rack::ui::Menu *menu, ModuleWidget* source, ThemeBase* it, bool isChangeColor, bool isChangeScrews, bool submenu)
@@ -112,5 +117,35 @@ void FancyLabel::draw(const DrawArgs& args) {
     }
 }
 
+void MenuTextField::step() {
+    // Keep selected
+    APP->event->setSelectedWidget(this);
+    TextField::step();
+}
+
+void MenuTextField::setText(const std::string& text) {
+    this->text = text;
+    selectAll();
+}
+
+void MenuTextField::onChange(const ChangeEvent& e) {
+    ui::TextField::onChange(e);
+    if (changeHandler) {
+        changeHandler(text);
+    }
+}
+
+void MenuTextField::onSelectKey(const event::SelectKey &e) {
+    if (e.action == GLFW_PRESS && (e.key == GLFW_KEY_ENTER || e.key == GLFW_KEY_KP_ENTER)) {
+        if (commitHandler) {
+            commitHandler(text);
+        }
+        ui::MenuOverlay *overlay = getAncestorOfType<ui::MenuOverlay>();
+        overlay->requestDelete();
+        e.consume(this);
+    }
+    if (!e.getTarget())
+        TextField::onSelectKey(e);
+}
 
 } // namespace pachde

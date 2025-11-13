@@ -61,7 +61,10 @@ Theme getActualTheme(ThemeSetting choice) {
         return ::rack::settings::preferDarkPanels
             ? ((::rack::settings::uiTheme == "hcdark") ? Theme::HighContrast : Theme::Dark)
             : Theme::Light;
+    default:
+        break;
     }
+
     return Theme::Dark;
 }
 

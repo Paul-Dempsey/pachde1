@@ -35,6 +35,25 @@ struct FancyLabel : MenuLabel
     void draw(const DrawArgs& args) override;
 };
 
+struct OptionMenuEntry : rack::ui::MenuEntry {
+    rack::ui::MenuItem* child_item;
+    bool selected{false};
+
+    OptionMenuEntry(rack::ui::MenuItem* item);
+    void step() override;
+    void draw(const DrawArgs& args) override;
+};
+
+// textfield as menu item, originally adapted from SubmarineFree
+struct MenuTextField : ui::TextField {
+    std::function<void(std::string)> changeHandler;
+    std::function<void(std::string)> commitHandler;
+    void step() override;
+    void setText(const std::string& text);
+    void onChange(const ChangeEvent& e) override;
+    void onSelectKey(const event::SelectKey &e) override;
+};
+
 template<typename TSvg>
 struct TKnob: rack::RoundKnob
 {
@@ -189,40 +208,5 @@ SvgThemePanel<TSvg>* createSvgThemePanel(ILoadSvg* loader, std::shared_ptr<SvgTh
     if (theme) panel->applyTheme(theme);
     return panel;
 }
-
-// textfield as menu item, originally adapted from SubmarineFree
-struct MenuTextField : ui::TextField {
-    std::function<void(std::string)> changeHandler;
-    std::function<void(std::string)> commitHandler;
-    void step() override {
-        // Keep selected
-        APP->event->setSelectedWidget(this);
-        TextField::step();
-    }
-    void setText(const std::string& text) {
-        this->text = text;
-        selectAll();
-    }
-
-    void onChange(const ChangeEvent& e) override {
-        ui::TextField::onChange(e);
-        if (changeHandler) {
-            changeHandler(text);
-        }
-    }
-
-    void onSelectKey(const event::SelectKey &e) override {
-        if (e.action == GLFW_PRESS && (e.key == GLFW_KEY_ENTER || e.key == GLFW_KEY_KP_ENTER)) {
-            if (commitHandler) {
-                commitHandler(text);
-            }
-            ui::MenuOverlay *overlay = getAncestorOfType<ui::MenuOverlay>();
-            overlay->requestDelete();
-            e.consume(this);
-        }
-        if (!e.getTarget())
-            TextField::onSelectKey(e);
-    }
-};
 
 } // namespace pachde
