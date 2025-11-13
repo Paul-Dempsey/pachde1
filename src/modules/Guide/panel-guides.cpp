@@ -1,22 +1,22 @@
-#include "panel-overlay-widget.hpp"
+#include "panel-guides.hpp"
 #include "Guide.hpp"
 namespace pachde {
 
-PanelGuide::~PanelGuide()
+PanelGuides::~PanelGuides()
 {
     if (ui) {
         ui->onDestroyGuide();
     }
 }
 
-void PanelGuide::step() {
+void PanelGuides::step() {
     Base::step();
     auto p = getParent();
     if (p) {
         box.size = p->box.size;
     }
 }
-void PanelGuide::draw_panel(const DrawArgs& args, PackedColor color) {
+void PanelGuides::draw_panel(const DrawArgs& args, PackedColor color) {
     auto vg = args.vg;
     nvgBeginPath(vg);
     nvgRect(vg, 0, 0, box.size.x, box.size.y);
@@ -24,7 +24,7 @@ void PanelGuide::draw_panel(const DrawArgs& args, PackedColor color) {
     nvgFill(vg);
 }
 
-void draw_guide(PanelGuide*self, NVGcontext* vg, std::shared_ptr<GuideLine> guide) {
+void draw_guide(PanelGuides*self, NVGcontext* vg, std::shared_ptr<GuideLine> guide) {
     if (!guide->color || (0.f == guide->width)) return;
 
     //float theta = nvgDegToRad(guide->angle);
@@ -72,7 +72,7 @@ void draw_guide(PanelGuide*self, NVGcontext* vg, std::shared_ptr<GuideLine> guid
     }
 }
 
-void PanelGuide::draw(const DrawArgs& args) {
+void PanelGuides::draw(const DrawArgs& args) {
     //Base::draw(args);
     auto vg = args.vg;
     if (data) {

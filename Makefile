@@ -81,7 +81,7 @@ SOURCES += src/modules/Rui/Rui.cpp
 SOURCES += src/modules/Guide/Guide.cpp
 SOURCES += src/modules/Guide/guide-data.cpp
 SOURCES += src/modules/Guide/guide-list.cpp
-SOURCES += src/modules/Guide/panel-overlay-widget.cpp
+SOURCES += src/modules/Guide/panel-guides.cpp
 
 # PanelTone module
 SOURCES += src/modules/PanelTone/PanelTone.cpp

@@ -10,7 +10,7 @@ using namespace ::rack;
 #include "services/json-help.hpp"
 #include "services/rack-help.hpp"
 #include "services/theme-module.hpp"
-#include "panel-overlay-widget.hpp"
+#include "panel-guides.hpp"
 #include "guide-data.hpp"
 #include "guide-list.hpp"
 
@@ -34,11 +34,15 @@ struct Guide: ThemeModule {
     };
     enum Inputs { NUM_INPUTS };
     enum Outputs { NUM_OUTPUTS };
-    enum Lights { NUM_LIGHTS };
+    enum Lights {
+        L_CONNECTED,
+        NUM_LIGHTS
+    };
 
     GuideData guide_data;
     std::string guide_folder;
     std::string guide_file;
+    GuideUi* ui{nullptr};
 
     Guide();
 
@@ -46,7 +50,6 @@ struct Guide: ThemeModule {
     void dataFromJson(json_t *root) override;
 
     void set_guide(const std::shared_ptr<GuideLine> guide);
-    GuideUi* ui{nullptr};
     void onExpanderChange(const ExpanderChangeEvent& e) override;
     void process(const ProcessArgs& args) override;
 };
@@ -77,13 +80,13 @@ struct GuideUi  : ModuleWidget, IThemeChange
     TextInput* name_input{nullptr};
     GuideList* guide_list{nullptr};
     widgetry::Switch* pos_switch{nullptr};
-    PanelGuide* panel_guide{nullptr};
+    PanelGuides* panel_guides{nullptr};
 
     GuideUi(Guide* module);
     virtual ~GuideUi();
 
     void onExpanderChange(Module::Expander& expander);
-    void onDestroyGuide() { panel_guide = nullptr; }
+    void onDestroyGuide() { panel_guides = nullptr; }
 
     void set_overlay_position(OverlayPosition pos);
     void set_panel_overlay_color(PackedColor panel);

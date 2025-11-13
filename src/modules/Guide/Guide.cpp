@@ -26,6 +26,7 @@ Guide::Guide() {
         "Panel",
         "Widgets"
     });
+    configLight(L_CONNECTED, "Connected");
 }
 
 json_t * Guide::dataToJson() {
@@ -60,6 +61,8 @@ void Guide::onExpanderChange(const ExpanderChangeEvent &e)
 void Guide::process(const ProcessArgs &args)
 {
     if (ui && (0 == ((getId() + args.frame) % 90))) {
+        getLight(L_CONNECTED).setBrightness(ui->panel_guides ? 1.f : 0.f);
+
         OverlayPosition pos = (getParam(P_OVERLAY_POSITION).getValue() > .5f) ? OverlayPosition::OnTop : OverlayPosition::OnPanel;
         if (pos != guide_data.position) {
             ui->set_overlay_position(pos);
@@ -83,7 +86,7 @@ void Guide::process(const ProcessArgs &args)
         if (v != guide->repeat) { change = true; guide->repeat = v; }
 
         if (change) {
-            sendDirty(ui->panel_guide);
+            sendDirty(ui->panel_guides);
         }
     }
 }
@@ -136,6 +139,11 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
     BoundsIndex bounds = makeBounds(layout, "k:", true);
     Rect r;
 
+    {
+        auto light = createLightCentered<SmallLight<BlueLight>>(bounds["k:on-light"].getCenter(), my_module, Guide::L_CONNECTED);
+        HOT_POSITION("k:on-light", HotPosKind::Center, light);
+        addChild(light);
+    }
     {
         auto palette = Center(createThemeSvgButton<Palette1ActionButton>(&my_svgs, bounds["k:pick-panel"].getCenter()));
         HOT_POSITION("k:pick-panel", HotPosKind::Center, palette);
@@ -286,10 +294,10 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
 
 GuideUi::~GuideUi()
 {
-    if (panel_guide) {
-        panel_guide->ui = nullptr;
-        panel_guide->requestDelete();
-        panel_guide = nullptr;
+    if (panel_guides) {
+        panel_guides->ui = nullptr;
+        panel_guides->requestDelete();
+        panel_guides = nullptr;
     }
 }
 
@@ -299,22 +307,22 @@ void GuideUi::onExpanderChange(Module::Expander &expander) {
         for (auto mw: ms) {
             if (mw->module == expander.module) {
                 auto pg = getPanelGuide(mw);
-                if (panel_guide && panel_guide != pg) {
-                    panel_guide->requestDelete();
-                    panel_guide = pg;
+                if (panel_guides && panel_guides != pg) {
+                    panel_guides->requestDelete();
+                    panel_guides = pg;
                 }
-                if (!panel_guide) {
-                    panel_guide = new PanelGuide();
-                    panel_guide->data = guide_data;
-                    add_layered_child(mw, panel_guide, guide_data->position);
+                if (!panel_guides) {
+                    panel_guides = new PanelGuides();
+                    panel_guides->data = guide_data;
+                    add_layered_child(mw, panel_guides, guide_data->position);
                 }
                 break;
             }
         }
     } else {
-        if (panel_guide) {
-            panel_guide->requestDelete();
-            panel_guide = nullptr;
+        if (panel_guides) {
+            panel_guides->requestDelete();
+            panel_guides = nullptr;
         }
     }
 }
@@ -323,11 +331,11 @@ void GuideUi::set_overlay_position(OverlayPosition pos)
 {
     if (pos != guide_data->position) {
         guide_data->position = pos;
-        if (!panel_guide) return;
+        if (!panel_guides) return;
 
-        auto mw = panel_guide->getParent();
-        mw->removeChild(panel_guide);
-        add_layered_child(mw, panel_guide, pos);
+        auto mw = panel_guides->getParent();
+        mw->removeChild(panel_guides);
+        add_layered_child(mw, panel_guides, pos);
     }
 }
 
@@ -335,14 +343,14 @@ void GuideUi::set_panel_overlay_color(PackedColor co_panel)
 {
     panel_swatch->color = panel_solid->color = co_panel;
     guide_data->co_overlay = co_panel;
-    if (panel_guide) { sendDirty(panel_guide); }
+    if (panel_guides) { sendDirty(panel_guides); }
 }
 
 void GuideUi::set_guide_color(std::shared_ptr<GuideLine> guide, PackedColor co_guide) {
     guide_swatch->color = guide_solid->color = co_guide;
     if (guide) {
         guide->color = co_guide;
-        if (panel_guide) { sendDirty(panel_guide); }
+        if (panel_guides) { sendDirty(panel_guides); }
     }
 }
 
