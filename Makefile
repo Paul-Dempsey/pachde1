@@ -70,6 +70,7 @@ SOURCES += src/modules/Imagine/traversal.cpp
 
 # Skiff module
 SOURCES += src/modules/Skiff/Skiff.cpp
+SOURCES += src/modules/Skiff/SkiffUi.cpp
 SOURCES += src/modules/Skiff/skiff-help.cpp
 SOURCES += src/modules/Skiff/cloak.cpp
 
