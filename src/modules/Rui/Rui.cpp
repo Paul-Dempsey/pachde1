@@ -65,8 +65,8 @@ struct Rui : ThemeModule
         initialBright = ::rack::settings::rackBrightness;
         initialBloom = ::rack::settings::haloBrightness;
 
-        dp4(configParam(Params::CableOpacity, 0, 100, 37.1f, "Cable opacity", "%"))->setValue(initialCableOpacity * 100.f);
-        dp4(configParam(Params::CableTension, 0, 100, 50, "Cable tension", "%"))->setValue(initialCableTension * 100.f);
+        dp4(configParam(Params::CableOpacity, 0, 100, 50.f, "Cable opacity", "%"))->setValue(initialCableOpacity * 100.f);
+        dp4(configParam(Params::CableTension, 0, 100, 50.f, "Cable tension", "%"))->setValue(initialCableTension * 100.f);
         dp4(configParam(Params::Bright, 0, 100, 100, "Room brightness", "%"))->setValue(initialBright * 100.f);
         dp4(configParam(Params::Bloom, 0, 100, 25, "Light bloom", "%"))->setValue(initialBloom * 100.f);
 
@@ -181,6 +181,7 @@ struct RuiUi : ModuleWidget, IThemeChange
 #endif
     bool single{true};
     PlayActionButton* play_button{nullptr};
+    SvgCache my_svgs;
 
     RuiUi(Rui* module) : my_module(module)
     {
@@ -235,6 +236,21 @@ struct RuiUi : ModuleWidget, IThemeChange
         std::map<std::string, ::math::Rect> bounds;
         svg_query::addBounds(layout, "k:", bounds, true);
 
+        auto tiny_button = Center(createThemeSvgButton<TinyActionButton>(&my_svgs, bounds["k:zero"].getCenter()));
+        HOT_POSITION("k:zero", HotPosKind::Center, tiny_button);
+        tiny_button->describe("Invisible cables");
+        tiny_button->set_handler([=](bool,bool){
+            if (!my_module) return;
+            ::rack::settings::cableOpacity = 0.f;
+            auto pq = my_module->getParamQuantity(Rui::Params::CableOpacity);
+            if (pq) {
+                pq->setImmediateValue(0.f);
+            } else {
+                my_module->getParam(Rui::Params::CableOpacity).setValue(0.f);
+            }
+        });
+        addChild(tiny_button);
+
         knob = createParamCentered<RoundBlackKnob>(bounds["k:cableop"].getCenter(), my_module, Rui::Params::CableOpacity);
         HOT_POSITION("k:cableop", HotPosKind::Center, knob);
         pot = createParamCentered<Trimpot>(bounds["k:trim-cableop"].getCenter(), my_module, Rui::Params::ModCableOpacity);
@@ -275,7 +291,7 @@ struct RuiUi : ModuleWidget, IThemeChange
         addChild(pot);
         addChild(port);
 
-        play_button = Center(createThemeSvgButton<PlayActionButton>(getSvgNoCache(), bounds["k:pause"].getCenter()));
+        play_button = Center(createThemeSvgButton<PlayActionButton>(&my_svgs, bounds["k:pause"].getCenter()));
         play_button->set_sticky(true);
         HOT_POSITION("k:pause", HotPosKind::Center, play_button);
         if (my_module) {
@@ -287,6 +303,8 @@ struct RuiUi : ModuleWidget, IThemeChange
             });
         }
         addChild(play_button);
+
+         my_svgs.changeTheme(svg_theme);
     }
 
     void toggle_play_pause() {
@@ -305,22 +323,14 @@ struct RuiUi : ModuleWidget, IThemeChange
             if (panel) {
                 panel->applyTheme(svg_theme);
             }
-            // play_button->frames.clear();
-            // play_button->loadSvg(getSvgNoCache());
-            if (play_button) play_button->applyTheme(svg_theme);
-            //sendChildrenTheme(this, new_theme);
+            my_svgs.changeTheme(svg_theme);
             sendDirty(this);
         }
     }
 
     void onChangeTheme(ChangedItem item) override {
-        switch (item) {
-        case ChangedItem::Theme:
+        if (ChangedItem::Theme == item) {
             setTheme(GetPreferredTheme(theme_holder));
-            break;
-        case ChangedItem::MainColor:
-        case ChangedItem::Screws:
-            break;
         }
     }
 
@@ -340,18 +350,17 @@ struct RuiUi : ModuleWidget, IThemeChange
             }
         } break;
 
-#ifdef HOT_SVG
+        #ifdef HOT_SVG
         case GLFW_KEY_F5: {
             if (e.action == GLFW_PRESS && (0 == mods)) {
                 e.consume(this);
                 reloadThemeCache();
                 auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
+                my_svgs.changeTheme(svg_theme);
+                my_svgs.reloadAll();
                 auto panel = dynamic_cast<SvgThemePanel<RuiSvg>*>(getPanel());
                 if (single) {
                     panel->updatePanel(svg_theme);
-                    play_button->frames.clear();
-                    play_button->loadSvg(getSvgNoCache());
-                    play_button->applyTheme(svg_theme);
                     positionWidgets(pos_widgets, makeBounds(panel->svg, "k:", true));
                 }
                 if (my_module) show_fluff(my_module->fluff);

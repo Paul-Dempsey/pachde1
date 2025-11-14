@@ -11,7 +11,7 @@ xmlns:svg="http://www.w3.org/2000/svg">
 </linearGradient>
 <rect id="panel" width="100%" height="100%" fill="url(#pg)"/>
 <rect id="mast" width="100%" height="20" fill="#f9a806"/>
-<path id="Rui--title" transform="translate(1.5,3.5)" d="M0,-0.022 H 4.22 q 1.92,0 3.04,1.015 Q 8.38,2.01 8.38,3.74 8.38,4.72 7.86,5.79 7.35,6.85 5.98,7.46 L 9.56,12.8 H 6.4 L 3.08,7.84 H 2.76 V 12.8 H -7.03e-4 Z M 2.78,2.26 V 5.6 h 0.6 Q 5.54,5.6 5.54,3.84 5.54,3.11 4.97,2.69 4.41,2.26 3.42,2.26 Z m 8.12,-2.282 h 2.7 V 7.82 q 0,1.09 0.6,1.76 0.6,0.62 1.6,0.62 1.1,0 1.8,-0.62 0.6,-0.68 0.6,-1.9 v -7.702 h 2.7 V 8.28 q 0,1.09 -0.6,2.32 -0.5,1.1 -1.7,1.8 Q 17.4,13 16,13 13.3,13 12.1,11.5 10.9,10 10.9,8.42 Z m 12.5,0 h 2.8 V 12.8 h -2.8 z"
+<path id="Rui--title" transform="translate(1.5,3.5)" d="M0,-0.022 H 4.22 q 1.92,0 3.04,1.015 Q 8.38,2.01 8.38,3.74 8.38,4.72 7.86,5.79 7.35,6.85 5.98,7.46 L 9.56,12.8 H 6.4 L 3.08,7.84 H 2.76 V 12.8 H -7.03e-4 Z M 2.78,2.26 V 5.6 h 0.6 Q 5.54,5.6 5.54,3.84 5.54,3.11 4.97,2.69 4.41,2.26 3.42,2.26 Z m 8.12,-2.282 h 2.7 V 7.82 q 0,1.09 0.6,1.76 0.6,0.62 1.6,0.62 1.1,0 1.8,-0.62 0.6,-0.68 0.6,-1.9 v -7.702 h 2.7 V 8.28 q 0,1.09 -0.6,2.32 -0.5,1.1 -1.7,1.8 Q 17.4,13 16,13 13.3,13 12.1,11.5 10.9,10 10.9,8.42 Z m 12.5,0 h 2.8 V 12.8 h -2.8 z" />
 
 <g aria-label="fluff">
     <circle id="fluff-co" fill="#50aeca" cx="20" cy="62" r="40" />
@@ -20,6 +20,7 @@ xmlns:svg="http://www.w3.org/2000/svg">
     <circle id="fluff-h"  fill="#b1da29" cx="10" cy="312" r="40" />
 </g>
 <g>
+    <circle id="k:zero" cx="6" cy="58" r="5" fill="#2f2" />
     <circle id="k:cableop" cx="15" cy="40" r="14" fill="#f22" />
     <circle id="k:trim-cableop" cx="20" cy="64" r="8.9" fill="#bd10c3" />
     <circle id="k:port-cableop" cx="15" cy="85" r="11.5" fill="#3b8ab7" />
@@ -44,7 +45,7 @@ xmlns:svg="http://www.w3.org/2000/svg">
 </g>
 
 <g transform="translate(5, 352)">
-    <circle id="k:pause" fill="#808080" cx="16" cy="8" r="8"/>
+    <circle id="k:pause" fill="#2b2" cx="16" cy="8" r="8"/>
 </g>
 
 <g id="logo" aria-label="#d (pachde logo)" fill="#000000" transform="translate(7.5,366)">
