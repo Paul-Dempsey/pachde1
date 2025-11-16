@@ -5,7 +5,7 @@ using namespace svg_theme;
 
 namespace pachde {
 
-const std::set<std::string> known_rails{"Rack","Plain","Simple","No-hole","Pinstripe","Gradient","Blank"};
+const std::set<std::string> known_rails{"Rack", "Blank", "Plain", "Simple", "No-hole", "Pinstripe", "Gradient", "Sine"};
 
 void Skiff::set_defaults() {
     unscrewed = nojacks = calm = derailed = depaneled = fancy = false;
@@ -25,6 +25,7 @@ json_t* Skiff::dataToJson()
     set_json(root, "fancy", fancy);
     set_json(root, "theme", theme_name);
     set_json(root, "shouting", shouting);
+    RailThemeSetting_to_json(root, rail_theme);
     return root;
 }
 
@@ -40,6 +41,7 @@ void Skiff::dataFromJson(json_t* root)
     depaneled = get_json_bool(root, "depaneled", depaneled);
     fancy     = get_json_bool(root, "fancy", fancy);
     shouting  = get_json_bool(root, "shouting", shouting);
+    rail_theme = RailThemeSetting_from_json(root);
 };
 
 void Skiff::random_settings() {

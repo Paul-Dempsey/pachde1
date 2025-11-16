@@ -73,6 +73,7 @@ SOURCES += src/modules/Skiff/Skiff.cpp
 SOURCES += src/modules/Skiff/SkiffUi.cpp
 SOURCES += src/modules/Skiff/skiff-help.cpp
 SOURCES += src/modules/Skiff/cloak.cpp
+SOURCES += src/modules/Skiff/rails.cpp
 
 # Rui module
 SOURCES += src/modules/Rui/Rui.cpp

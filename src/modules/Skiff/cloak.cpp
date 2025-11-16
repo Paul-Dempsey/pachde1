@@ -1,6 +1,9 @@
 #include "cloak.hpp"
-namespace widgetry {
+#include "services/colors.hpp"
 
+namespace widgetry {
+using namespace packed_color;
+using namespace pachde;
 
 struct RefBox
 {
@@ -23,17 +26,66 @@ struct RefBox
 
 void CloakBackgroundWidget::draw(const DrawArgs& args) {
     auto vg = args.vg;
-    NVGcolor icol = nvgRGB(0,0,0); //::rack::settings::preferDarkPanels ? nvgRGB(0x40, 0x40, 0x40) : nvgRGB(0x45,0x45,0x45);
-    NVGcolor ocol = nvgRGB(252,252,252); //::rack::settings::preferDarkPanels ? nvgRGB(0x10, 0x10, 0x10) : nvgRGB(0xe6,0xe6,0xe6);
 
-    RefBox r{args.clipBox};
-    nvgBeginPath(vg);
-    nvgRect(vg, RECT_ARGS(r.box));
-    //auto paint = nvgRadialGradient(vg, VEC_ARGS(r.center()), 0, r.width()*.5, icol, ocol);
-    auto paint = nvgLinearGradient(vg, r.left(), r.top(), r.right(), r.bottom(), icol, ocol);
-    nvgFillPaint(vg, paint);
-    //nvgFillColor(vg, color);
-    nvgFill(vg);
+    if (fill.enabled) {
+        auto co = fromPacked(fill.color);
+        co.a *= fill.fade;
+        RefBox r{args.clipBox};
+        nvgBeginPath(vg);
+        nvgRect(vg, RECT_ARGS(r.box));
+        nvgFillColor(vg, co);
+        nvgFill(vg);
+    }
+    if (l_grad.enabled) {
+        auto icol = fromPacked(l_grad.icol);
+        icol.a *= l_grad.ifade;
+        auto ocol = fromPacked(l_grad.ocol);
+        ocol.a *= l_grad.ofade;
+        RefBox r{args.clipBox};
+        float x1 = r.width() * l_grad.x1;
+        float y1 = r.height() * l_grad.y1;
+        float x2 = r.width() * l_grad.x2;
+        float y2 = r.height() * l_grad.y2;
+        nvgBeginPath(vg);
+        nvgRect(vg, RECT_ARGS(r.box));
+        auto paint = nvgLinearGradient(vg, x1, y1, x2, y2, icol, ocol);
+        nvgFillPaint(vg, paint);
+        nvgFill(vg);
+    }
+    if (r_grad.enabled) {
+        auto icol = fromPacked(r_grad.icol);
+        icol.a *= r_grad.ifade;
+        auto ocol = fromPacked(r_grad.ocol);
+        ocol.a *= r_grad.ofade;
+        RefBox r{args.clipBox};
+        float w = r.width();
+        float h = r.height();
+        float cx = r_grad.cx * w;
+        float cy = r_grad.cy * h;
+        float radius = r_grad.r * std::max(w, h);
+        auto paint = nvgRadialGradient(vg, cx, cy, 0, radius, icol, ocol);
+        nvgFillPaint(vg, paint);
+        nvgFill(vg);
+    }
+    if (b_grad.enabled) {
+        RefBox r{args.clipBox};
+        auto icol = fromPacked(b_grad.icol);
+        icol.a *= b_grad.ifade;
+        auto ocol = fromPacked(b_grad.ocol);
+        ocol.a *= b_grad.ofade;
+        if (b_grad.xshrink < 1.f || b_grad.yshrink < 1.f) {
+            r.box = r.box.shrink(Vec(b_grad.xshrink * r.width(), b_grad.yshrink * r.height()));
+        }
+        float w = r.width();
+        float h = r.height();
+        float base = std::max(w, h);
+        float radius = b_grad.radius * base;
+        float feather = b_grad.feather * base;
+
+        auto paint = nvgBoxGradient(vg, r.left(), r.top(), w, h, radius, feather, icol, ocol);
+        nvgFillPaint(vg, paint);
+        nvgFill(vg);
+    }
 }
 
 CloakBackgroundWidget * toggleBackgroundCloak() {
@@ -57,7 +109,6 @@ CloakBackgroundWidget * ensureBackgroundCloak() {
         rail->getParent()->addChildAbove(cloak, rail);
     }
     return cloak;
-
 }
 
 } // widgetry

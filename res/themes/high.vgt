@@ -4,7 +4,7 @@
       title = #f9a806
        mast = none
        logo = #fafafa
-        sep = #888
+        sep = hsl(216, .5, .5)
      symbol = #dedede
       patty = hsl(0,0,1)
 patty-hover = hsl(0,0,.5)
@@ -32,7 +32,7 @@ sw-thumb-t  = hsl(0, 0, .9)
 sw-thumb-b  = hsl(0, 0, .1)
 
 // text buttons
-tbtn-punch = none stroke #808080 width .75
+tbtn-punch = none stroke #999 width .75
 tbtn-bevel = [#0000,#0000]
 tbtn-face = [#0000,#0000]
 tbtn-text = #fff

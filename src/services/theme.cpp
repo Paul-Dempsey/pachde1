@@ -84,6 +84,18 @@ ThemeSetting ThemeSettingFromJson(json_t* root) {
     return ParseThemeSettingShorthand(get_json_string(root, "theme-choice", "f"));
 }
 
+void ThemeSettingToJson(json_t* root, ThemeSetting choice) {
+    const char * value{"f"};
+    switch (choice) {
+    case ThemeSetting::Light: value = "light"; break;
+    case ThemeSetting::Dark: value = "dark"; break;
+    case ThemeSetting::HighContrast: value = "hc"; break;
+    case ThemeSetting::FollowRackUi: value = "rack-ui"; break;
+    case ThemeSetting::FollowRackPreferDark: value = "follow"; break;
+    }
+    set_json(root, "theme-choice", value);
+}
+
 void broadcastThemeSetting(::rack::app::ModuleWidget*source, ThemeSetting setting)
 {
     ::rack::app::RackWidget* rack = APP->scene->rack;
@@ -98,18 +110,6 @@ void broadcastThemeSetting(::rack::app::ModuleWidget*source, ThemeSetting settin
             }
         }
     }
-}
-
-void ThemeSettingToJson(json_t* root, ThemeSetting choice) {
-    const char * value{"f"};
-    switch (choice) {
-    case ThemeSetting::Light: value = "light"; break;
-    case ThemeSetting::Dark: value = "dark"; break;
-    case ThemeSetting::HighContrast: value = "hc"; break;
-    case ThemeSetting::FollowRackUi: value = "rack-ui"; break;
-    case ThemeSetting::FollowRackPreferDark: value = "follow"; break;
-    }
-    set_json(root, "theme-choice", value);
 }
 
 void ThemeBase::reset() {

@@ -10,18 +10,6 @@
 
 namespace pachde {
 
-std::string rail_theme_name(RailThemeSetting choice) {
-    switch (choice) {
-        default:
-        case RailThemeSetting::None: return "";
-        case RailThemeSetting::Light: return "Light";
-        case RailThemeSetting::Dark: return "Dark";
-        case RailThemeSetting::HighContrast: return "High Contrast" ;
-        case RailThemeSetting::FollowRackUi: return ThemeName(getActualTheme(ThemeSetting::FollowRackUi));
-        case RailThemeSetting::FollowRackPreferDark: return ThemeName(getActualTheme(ThemeSetting::FollowRackPreferDark));
-    }
-}
-
 OptionMenuEntry* make_rail_item(SkiffUi *ui, bool other, const std::string& current, const char *item) {
     auto entry = new OptionMenuEntry(createMenuItem(item, "", [ui, item](){ ui->set_alt_rail(item); }));
     entry->selected = !other && (0 == current.compare(item));
@@ -30,7 +18,7 @@ OptionMenuEntry* make_rail_item(SkiffUi *ui, bool other, const std::string& curr
 
 OptionMenuEntry* make_rail_theme_item(SkiffUi *ui, const char * name, RailThemeSetting setting) {
     auto entry = new OptionMenuEntry(createMenuItem(name, "", [ui, setting](){ ui->set_rail_theme(setting); }));
-    entry->selected = (ui->rail_theme == setting);
+    entry->selected = (ui->my_module->rail_theme == setting);
     return entry;
 }
 
@@ -46,9 +34,10 @@ void RailMenu::appendContextMenu(ui::Menu* menu)
     menu->addChild(make_rail_item(ui, custom, rail_name, "Plain"));
     menu->addChild(make_rail_item(ui, custom, rail_name, "Simple"));
     menu->addChild(make_rail_item(ui, custom, rail_name, "No-hole"));
-    menu->addChild(make_rail_item(ui, custom, rail_name, "Pinstripe"));
-    menu->addChild(make_rail_item(ui, custom, rail_name, "Gradient"));
     menu->addChild(make_rail_item(ui, custom, rail_name, "Blank"));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "Gradient"));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "Pinstripe"));
+    menu->addChild(make_rail_item(ui, custom, rail_name, "Sine"));
 //    menu->addChild(createMenuLabel<FancyLabel>(rail_name));
     auto option = new OptionMenuEntry(createMenuItem("Custom rail SVG", "", [=](){ ui->pend_custom_rail(); }));
     option->selected = custom;
@@ -63,11 +52,8 @@ void RailMenu::appendContextMenu(ui::Menu* menu)
     menu->addChild(make_rail_theme_item(ui, "High Contrast", RailThemeSetting::HighContrast));
 }
 
-struct SkiffSvg
-{
-    static std::string background() {
-        return asset::plugin(pluginInstance, "res/Skiff.svg");
-    }
+struct SkiffSvg {
+    static std::string background() { return asset::plugin(pluginInstance, "res/Skiff.svg"); }
 };
 
 SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
@@ -100,9 +86,6 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     addChild(derail_button = makeTextButton(bounds,"k:unrail-btn", true, "", "Toggle visible rails", svg_theme,
         [this](bool ctrl, bool shift) { if(!my_module) return; derail(!my_module->derailed); }));
 
-    addChild(fancy_button = makeTextButton(bounds, "k:bg-btn", true, "", "Toggle Fancy background", svg_theme,
-        [this](bool ctrl, bool shift) { if(!my_module) return; fancy_background(!my_module->fancy); }));
-
     addChild(nopanel_button = makeTextButton(bounds, "k:no-panel", true, "", "Toggle visibile panels", svg_theme,
         [this](bool ctrl, bool shift){ if(!my_module) return; no_panels(!my_module->depaneled); }));
 
@@ -115,8 +98,11 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     addChild(nojack_button = makeTextButton(bounds, "k:nojack-btn", true, "", "Toggle visible unused jacks", svg_theme,
         [this](bool ctrl, bool shift) { if(!my_module) return; set_nojacks(!my_module->nojacks); }));
 
-    addChild(pack_button = makeTextButton(bounds, "k:pack-btn", false, "", "Pack (selected) modules (F7)", svg_theme,
+    addChild(pack_button = makeTextButton(bounds, "k:pack-btn", false, "", "Pack modules (pack selected: F7)", svg_theme,
         [](bool ctrl, bool shift) { pack_modules(); }));
+
+    addChild(fancy_button = makeTextButton(bounds, "k:fancy-btn", true, "", "Toggle Fancy background", svg_theme,
+        [this](bool ctrl, bool shift) { if(!my_module) return; fancy_background(!my_module->fancy); }));
 
     auto button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:restore"].getCenter()));
     HOT_POSITION("k:restore", HotPosKind::Center, button);
@@ -126,7 +112,7 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     }
     addChild(button);
 
-    shouting_labels(my_module ? my_module->shouting : true);
+    shouting_buttons(my_module ? my_module->shouting : true);
     my_svgs.changeTheme(svg_theme);
     from_module();
     sync_latch_state();
@@ -152,6 +138,26 @@ TextButton* SkiffUi::makeTextButton (
     }
     button->applyTheme(svg_theme);
     return button;
+}
+
+void SkiffUi::shouting_buttons(bool shouting) {
+    if (shouting) {
+        derail_button->set_text("DERAIL");
+        nopanel_button->set_text("NOPANELS");
+        calm_button->set_text("CALM");
+        unscrew_button->set_text("UNSCREW");
+        nojack_button->set_text("NOJACK");
+        pack_button->set_text("PACK'EM");
+        fancy_button->set_text("FANCYBOX");
+    } else {
+        derail_button->set_text("deRail");
+        nopanel_button->set_text("noPanels");
+        calm_button->set_text("Calm");
+        unscrew_button->set_text("unScrew");
+        nojack_button->set_text("noJack");
+        pack_button->set_text("Pack'em");
+        fancy_button->set_text("FancyBox");
+    }
 }
 
 void SkiffUi::onChangeTheme(ChangedItem item) {
@@ -210,26 +216,6 @@ void SkiffUi::from_module() {
     }
 
     sync_latch_state();
-}
-
-void SkiffUi::shouting_labels(bool shouting) {
-    if (shouting) {
-        derail_button->set_text("DERAIL");
-        fancy_button->set_text("FANCYBOX");
-        nopanel_button->set_text("NOPANELS");
-        calm_button->set_text("CALM");
-        unscrew_button->set_text("UNSCREW");
-        nojack_button->set_text("NOJACK");
-        pack_button->set_text("PACK'EM");
-    } else {
-        derail_button->set_text("deRail");
-        fancy_button->set_text("FancyBox");
-        nopanel_button->set_text("noPanels");
-        calm_button->set_text("Calm");
-        unscrew_button->set_text("unScrew");
-        nojack_button->set_text("noJack");
-        pack_button->set_text("Pack'em");
-    }
 }
 
 void SkiffUi::no_panels(bool depanel) {
@@ -349,8 +335,8 @@ void SkiffUi::set_alt_rail(const std::string& rail_name) {
         auto railSvg = set_rail_svg(rail, rail_name);
         if (railSvg->handle) {
             my_module->rail = rail_name;
-            if (rail_theme != RailThemeSetting::None) {
-                auto svg_theme = theme_cache.getTheme(rail_theme_name(rail_theme));
+            if (my_module->rail_theme != RailThemeSetting::None) {
+                auto svg_theme = get_rail_theme(rail_theme_name(my_module->rail_theme));
                 if (svg_theme) applySvgTheme(railSvg, svg_theme);
             }
         } else {
@@ -366,8 +352,8 @@ void SkiffUi::set_alt_rail(const std::string& rail_name) {
                 auto railSvg = set_rail_svg(rail, filename);
                 if (railSvg && railSvg->handle) {
                     my_module->rail = rail_name;
-                    if (rail_theme != RailThemeSetting::None) {
-                        auto svg_theme = theme_cache.getTheme(rail_theme_name(rail_theme));
+                    if (my_module->rail_theme != RailThemeSetting::None) {
+                        auto svg_theme = get_rail_theme(rail_theme_name(my_module->rail_theme));
                         if (svg_theme) applySvgTheme(railSvg, svg_theme);
                     }
                 } else {
@@ -406,45 +392,8 @@ void SkiffUi::custom_rail() {
 }
 
 void SkiffUi::set_rail_theme(RailThemeSetting theme) {
-    rail_theme = theme;
+    my_module->rail_theme = theme;
     set_alt_rail(my_module->rail);
-}
-
-void SkiffUi::load_rail_themes() {
-    using namespace svg_theme;
-#ifdef DEV_BUILD
-    ErrorContext err;
-    ErrorContext* error_context = &err;
-#else
-    ErrorContext* error_context = nullptr;
-#endif
-    auto theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/rails/-light.vgt"), error_context);
-#ifdef DEV_BUILD
-    if (!theme) {
-        auto report = error_context->makeErrorReport();
-        WARN("%s", report.c_str());
-    }
-#endif
-    if (theme) theme_cache.addTheme(theme);
-
-    theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/rails/-dark.vgt"), error_context);
-#ifdef DEV_BUILD
-    if (!theme) {
-        auto report = error_context->makeErrorReport();
-        WARN("%s", report.c_str());
-    }
-#endif
-    if (theme) theme_cache.addTheme(theme);
-
-    theme = loadSvgThemeFile(asset::plugin(pluginInstance, "res/rails/-high.vgt"), error_context);
-#ifdef DEV_BUILD
-    if (!theme) {
-        auto report = error_context->makeErrorReport();
-        WARN("%s", report.c_str());
-    }
-#endif
-    if (theme) theme_cache.addTheme(theme);
-
 }
 
 void SkiffUi::onHoverKey(const HoverKeyEvent& e) {
@@ -455,10 +404,10 @@ void SkiffUi::onHoverKey(const HoverKeyEvent& e) {
     case GLFW_KEY_F5: {
         if (e.action == GLFW_RELEASE && (0 == mods)) {
             e.consume(this);
-            my_svgs.reloadAll();
             reloadThemeCache();
+            my_svgs.reloadAll();
             load_rail_themes();
-            set_rail_theme(rail_theme);
+            set_rail_theme(my_module->rail_theme);
             onChangeTheme(ChangedItem::Theme);
             if (!other_skiff) {
                 auto panel = dynamic_cast<SvgThemePanel<SkiffSvg>*>(getPanel());
@@ -510,7 +459,7 @@ void SkiffUi::appendContextMenu(Menu* menu) {
         [=](){ return my_module->shouting; },
         [=](){
             my_module->shouting = !my_module->shouting;
-            shouting_labels(my_module->shouting);
+            shouting_buttons(my_module->shouting);
         }
     ));
     menu->addChild(createMenuLabel<FancyLabel>("theme"));

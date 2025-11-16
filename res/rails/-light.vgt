@@ -13,3 +13,4 @@ pinstripe        = none stroke #ddd width 5
 pin-rail         = #ddd
 pin-rail-top     = #f1f1f1
 pin-bot-rail-top = #888
+sine = stroke #999 width 3

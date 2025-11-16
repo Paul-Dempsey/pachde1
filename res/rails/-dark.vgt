@@ -13,3 +13,4 @@ pinstripe        = none stroke #444 width 1
 pin-rail         = #282828
 pin-rail-top     = #666
 pin-bot-rail-top = #555
+sine = stroke #626262 width 1.85
