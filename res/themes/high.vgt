@@ -56,16 +56,17 @@ mini-out-bg = #cc8800
   lab-out = #202020
 
 // Skiff
-jack-glyph = #dedede stroke #ccc
-unscrew = #e6e6e6 stroke #000
-unscrew-slot = #000 stroke none
-unrail-slash = none stroke #dedededd
 
 // Rui
 fluff-co = none stroke #50aeca width .65
 fluff-ct = none stroke #50ca77 width .65
 fluff-b  = none stroke #ca50b8 width .65
 fluff-h  = none stroke #b1da29 width .65
+rui-O = #50aeca
+rui-T = #50ca77
+rui-B = #ca50b8
+rui-L = #b1da29
+
 
 // Guide
 

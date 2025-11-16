@@ -506,7 +506,7 @@ void SkiffUi::appendContextMenu(Menu* menu) {
     if (!module) return;
 
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Skiff"));
-    menu->addChild(createCheckMenuItem("Shouting labels", "",
+    menu->addChild(createCheckMenuItem("Shouting buttons", "",
         [=](){ return my_module->shouting; },
         [=](){
             my_module->shouting = !my_module->shouting;

@@ -60,19 +60,18 @@ entry-prompt = hsla(0, 0, .55, .75)
    entry-sel = hsl(200, .5, .4)
 
 // Skiff
-jack-glyph = #dedede stroke #ccc
-unscrew = #e6e6e6 stroke #000
-unscrew-slot = #000 stroke none
-unrail-slash = stroke #dededea0
 
 // Rui
-fluff-co = #50aeca
-fluff-ct = #50ca77
-fluff-b  = #ca50b8
-fluff-h  = #b1da29
+fluff-co = hsla(194, 54%, 55%, 1.00)
+fluff-ct = hsla(139, 54%, 55%, 1.00)
+fluff-b  = hsla(309, 54%, 55%, 1.00)
+fluff-h  = hsla(74, 71%, 51%, 1.00)
+rui-O = #000
+rui-T = #000
+rui-B = #000
+rui-L = #000
 
 // Guide
-
 vguide = none stroke #f444a710
 hguide = none stroke #0083ee10
 template-box = #886

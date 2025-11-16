@@ -56,16 +56,16 @@ copper-title = #000
 mini-out-bg = none
 
 // Skiff
-jack-glyph = #dedede stroke #000
-//unscrew = #dedede stroke #000
-//unscrew-slot = #000 stroke none
-unrail-slash = none stroke #00000080
 
 // Rui
 fluff-co = #50aeca
 fluff-ct = #50ca77
 fluff-b  = #ca50b8
 fluff-h  = #b1da29
+rui-O = #fff
+rui-T = #222
+rui-B = #fff
+rui-L = #222
 
 // Guide
 vguide = none stroke #ee008810

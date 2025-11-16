@@ -502,11 +502,12 @@ void GuideUi::onHoverKey(const HoverKeyEvent& e)
         if (e.action == GLFW_RELEASE && (0 == mods)) {
             e.consume(this);
             reloadThemeCache();
+            auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
+            my_svgs.changeTheme(svg_theme);
             my_svgs.reloadAll();
-            onChangeTheme(ChangedItem::Theme);
             auto panel = dynamic_cast<SvgThemePanel<GuideSvg>*>(getPanel());
             positionWidgets(pos_widgets, makeBounds(panel->svg, "k:", true));
-            sendDirty(this);
+            onChangeTheme(ChangedItem::Theme);
         }
     } break;
     }
