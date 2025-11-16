@@ -126,7 +126,7 @@ struct FontSizeQuantity : Quantity
 {
     InfoSettings* settings{nullptr};
     explicit FontSizeQuantity(InfoSettings* settings) : settings(settings) {}
-    void setValue(float value) override { settings->setFontSize(value); }
+    void setValue(float value) override { settings->setFontSize(::rack::math::clamp(value, getMinValue(), getMaxValue())); }
     float getValue() override { return settings->getFontSize(); }
     float getMinValue() override { return info_constant::MIN_FONT_SIZE; }
     float getMaxValue() override { return info_constant::MAX_FONT_SIZE; }
@@ -146,6 +146,29 @@ struct FontSizeSlider : ui::Slider
     }
 };
 
+struct MarginQuantity : Quantity
+{
+    float* data{nullptr};
+    std::string label;
+    explicit MarginQuantity(float* value, const std::string& name) : data(value), label(name) {}
+    void setValue(float value) override { *data = ::rack::math::clamp(value, getMinValue(), getMaxValue()); }
+    float getValue() override { return *data; }
+    float getMinValue() override { return 0.f; }
+    float getMaxValue() override { return 30.f; }
+    float getDefaultValue() override { return 0.f; }
+    int getDisplayPrecision() override { return 3; }
+    std::string getLabel() override { return label; }
+    std::string getUnit() override { return "px"; }
+};
+struct MarginSlider : ui::Slider
+{
+    explicit MarginSlider(float* value, const std::string& name) {
+        quantity = new MarginQuantity(value, name);
+    }
+    ~MarginSlider() {
+        delete quantity;
+    }
+};
 void InfoModuleWidget::appendContextMenu(Menu *menu)
 {
     if (!my_module)
@@ -198,8 +221,16 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
     }));
 
     FontSizeSlider* slider = new FontSizeSlider(settings);
-    slider->box.size.x = 250.0;
+    slider->box.size.x = 250.f;
     menu->addChild(slider);
+
+    MarginSlider* mslider = new MarginSlider(&settings->left_margin, "Left margin");
+    mslider->box.size.x = 250.f;
+    menu->addChild(mslider);
+
+    mslider = new MarginSlider(&settings->right_margin, "Right margin");
+    mslider->box.size.x = 250.f;
+    menu->addChild(mslider);
 
     menu->addChild(createSubmenuItem("Orientation", "",
         [=](Menu* menu) {

@@ -58,6 +58,8 @@ json_t* InfoSettings::save(json_t* root)
     if (info_constant::DEFAULT_FONT_SIZE != font_size) {
         set_json(root, "text-size", font_size);
     }
+    set_json(root, "left-margin", left_margin);
+    set_json(root, "right-margin", right_margin);
     std::string align_string = { HAlignLetter(horizontal_alignment) };
     set_json(root, "text-align", align_string);
     set_json(root, "text-orient", OrientationJValue(orientation));
@@ -85,6 +87,16 @@ void InfoSettings::load(json_t* root) {
             font_size = DEFAULT_FONT_SIZE;
         }
     }
+
+    left_margin = clamp(get_json_float(root, "left-margin", left_margin), 0.f, 30.f);
+    if (std::isnan(left_margin)) {
+        left_margin = 0.f;
+    }
+    right_margin = clamp(get_json_float(root, "right-margin", right_margin), 0.f, 30.f);
+    if (std::isnan(right_margin)) {
+        right_margin = 0.f;
+    }
+
     orientation = ParseOrientation(get_json_string(root, "text-orient").c_str());
     horizontal_alignment = parseHAlign(get_json_string(root, "text-align"));
     font_file = get_json_string(root, "font");

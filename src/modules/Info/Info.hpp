@@ -59,7 +59,7 @@ struct InfoPanel : Widget
     InfoPanel(InfoModule* module, InfoSettings* settings, ThemeBase* theme, Vec size);
 
     void fetchColors();
-    void showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, std::string text);
+    void showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, const std::string& text);
     void drawError(const DrawArgs &args);
     void drawText(const DrawArgs &args);
 

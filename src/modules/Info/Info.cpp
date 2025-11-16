@@ -9,7 +9,7 @@ namespace pachde {
 InfoModule::InfoModule()
 {
     settings = new InfoSettings();
-    minWidth = 4;
+    minWidth = 2;
 }
 
 void InfoModule::onReset(const ResetEvent& e) //override

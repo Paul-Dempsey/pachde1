@@ -23,13 +23,16 @@ struct InfoSettings
     // overrides
     PackedColor user_panel_color{colors::NoColor};
     PackedColor user_text_color{colors::NoColor};
-    HAlign horizontal_alignment{HAlign::Left};
 
     bool brilliant{false};
     bool branding{true};
-    Orientation orientation{Orientation::Normal};
 
+    HAlign horizontal_alignment{HAlign::Left};
+    Orientation orientation{Orientation::Normal};
     float font_size{info_constant::DEFAULT_FONT_SIZE};
+    float left_margin{0.f};
+    float right_margin{0.f};
+
     std::string font_file = asset::plugin(pluginInstance, "res/fonts/HankenGrotesk-SemiBold.ttf");
     std::string font_folder{""};
 
