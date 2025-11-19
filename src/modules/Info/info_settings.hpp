@@ -1,7 +1,7 @@
 #pragma once
 #include "myplugin.hpp"
+#include "services/text-align.hpp"
 #include "services/theme.hpp"
-#include "text_align.hpp"
 
 namespace pachde {
 using namespace packed_color;
@@ -13,6 +13,10 @@ namespace info_constant {
     constexpr const float DEFAULT_FONT_SIZE{16.f};
     constexpr const float MIN_FONT_SIZE{5.f};
     constexpr const float MAX_FONT_SIZE{60.f};
+}
+
+inline std::string get_plugin_bold_file() {
+    return asset::plugin(pluginInstance, "res/fonts/HankenGrotesk-SemiBold.ttf");
 }
 
 struct InfoSettings
@@ -28,12 +32,13 @@ struct InfoSettings
     bool branding{true};
 
     HAlign horizontal_alignment{HAlign::Left};
+    VAlign vertical_alignment{VAlign::Middle};
     Orientation orientation{Orientation::Normal};
     float font_size{info_constant::DEFAULT_FONT_SIZE};
     float left_margin{0.f};
     float right_margin{0.f};
 
-    std::string font_file = asset::plugin(pluginInstance, "res/fonts/HankenGrotesk-SemiBold.ttf");
+    std::string font_file = get_plugin_bold_file();
     std::string font_folder{""};
 
     void reset();
@@ -46,10 +51,12 @@ struct InfoSettings
     void setFontSize(float size);
     std::shared_ptr<window::Font> getFont();
 
-    HAlign getHorizontalAlignment();
     void setHorizontalAlignment(HAlign h);
-    Orientation getOrientation();
+    void setVerticalAlignment(VAlign v);
     void setOrientation(Orientation orientation);
+    HAlign getHorizontalAlignment();
+    VAlign getVerticalAlignment();
+    Orientation getOrientation();
     PackedColor getDisplayPanelColor();
     PackedColor getDisplayTextColor();
 
@@ -66,9 +73,7 @@ struct InfoSettings
     void setBranding(bool branded);
     bool getBranding();
 
-    void resetFont() {
-        font_file = asset::plugin(pluginInstance, "res/fonts/HankenGrotesk-SemiBold.ttf");
-    }
+    void resetFont() { font_file = get_plugin_bold_file(); }
     bool fontDialog();
 };
 

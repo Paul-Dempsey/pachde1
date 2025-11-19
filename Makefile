@@ -41,6 +41,7 @@ SOURCES += src/services/svg-query.cpp
 SOURCES += src/services/svg-theme.cpp
 SOURCES += src/services/svg-theme-load.cpp
 SOURCES += src/services/text.cpp
+SOURCES += src/services/text-align.cpp
 SOURCES += src/services/theme.cpp
 SOURCES += src/services/theme-module.cpp
 
@@ -53,7 +54,6 @@ SOURCES += src/modules/Info/info_symbol.cpp
 SOURCES += src/modules/Info/info_settings.cpp
 SOURCES += src/modules/Info/Info_ui.cpp
 SOURCES += src/modules/Info/Info.cpp
-SOURCES += src/modules/Info/text_align.cpp
 
 # Copper module
 SOURCES += src/modules/Copper/Copper.cpp
@@ -73,6 +73,7 @@ SOURCES += src/modules/Skiff/Skiff.cpp
 SOURCES += src/modules/Skiff/SkiffUi.cpp
 SOURCES += src/modules/Skiff/skiff-help.cpp
 SOURCES += src/modules/Skiff/cloak.cpp
+SOURCES += src/modules/Skiff/fancy-dialog.cpp
 SOURCES += src/modules/Skiff/rails.cpp
 
 # Rui module

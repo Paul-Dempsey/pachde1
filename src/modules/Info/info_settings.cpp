@@ -12,6 +12,7 @@ void InfoSettings::reset()
     user_panel_color = colors::NoColor;
     user_text_color = colors::NoColor;
     horizontal_alignment = HAlign::Left;
+    vertical_alignment = VAlign::Middle;
     brilliant = false;
     branding = true;
     font_size = info_constant::DEFAULT_FONT_SIZE;
@@ -23,6 +24,7 @@ void InfoSettings::randomize()
     user_panel_color = random::u32();
     user_text_color = packed_color::opaque(random::u32());
     horizontal_alignment = static_cast<HAlign>(random::get<uint32_t>() % 3);
+    vertical_alignment = static_cast<VAlign>(random::get<uint32_t>() % 3);
     brilliant = random::get<bool>();
 }
 
@@ -31,6 +33,8 @@ void InfoSettings::setFontSize(float size) { font_size = clamp(size, info_consta
 std::shared_ptr<window::Font> InfoSettings::getFont() { return APP->window->loadFont(font_file); }
 HAlign InfoSettings::getHorizontalAlignment() { return horizontal_alignment; }
 void InfoSettings::setHorizontalAlignment(HAlign h) { horizontal_alignment = h; }
+VAlign InfoSettings::getVerticalAlignment() { return vertical_alignment; }
+void InfoSettings::setVerticalAlignment(VAlign v) { vertical_alignment = v; }
 Orientation InfoSettings::getOrientation() { return orientation; }
 void InfoSettings::setOrientation(Orientation orient) { orientation = orient; }
 void InfoSettings::setUserPanelColor(PackedColor color) { user_panel_color = color; }
@@ -60,8 +64,10 @@ json_t* InfoSettings::save(json_t* root)
     }
     set_json(root, "left-margin", left_margin);
     set_json(root, "right-margin", right_margin);
-    std::string align_string = { HAlignLetter(horizontal_alignment) };
+    std::string align_string{HAlignLetter(horizontal_alignment)};
     set_json(root, "text-align", align_string);
+    align_string = {VAlignLetter(vertical_alignment)};
+    set_json(root, "text-v-align", align_string);
     set_json(root, "text-orient", OrientationJValue(orientation));
     set_json(root, "font", font_file);
     set_json(root, "font-folder", font_folder);
@@ -71,13 +77,14 @@ json_t* InfoSettings::save(json_t* root)
 
 void InfoSettings::load(json_t* root) {
     using namespace info_constant;
-    auto color_string = get_json_string(root, "text-background");
-    if (!color_string.empty()) {
-        parseHexColor(user_panel_color, PANEL_DEFAULT, color_string.c_str(), nullptr);
+    std::string str;
+    str = get_json_string(root, "text-background");
+    if (!str.empty()) {
+        parseHexColor(user_panel_color, PANEL_DEFAULT, str.c_str(), nullptr);
     }
-    color_string = get_json_string(root, "text-color");
-    if (!color_string.empty()) {
-        parseHexColor(user_text_color, TEXT_DEFAULT, color_string.c_str(), nullptr);
+    str = get_json_string(root, "text-color");
+    if (!str.empty()) {
+        parseHexColor(user_text_color, TEXT_DEFAULT, str.c_str(), nullptr);
     }
 
     font_size = get_json_float(root, "text-size", DEFAULT_FONT_SIZE);
@@ -99,6 +106,10 @@ void InfoSettings::load(json_t* root) {
 
     orientation = ParseOrientation(get_json_string(root, "text-orient").c_str());
     horizontal_alignment = parseHAlign(get_json_string(root, "text-align"));
+
+    str = get_json_string(root, "text-v-align");
+    vertical_alignment = str.empty() ? VAlign::Middle : parseVAlign(str);
+
     font_file = get_json_string(root, "font");
     font_folder= get_json_string(root, "font-folder");
     brilliant = get_json_bool(root, "bright", brilliant);

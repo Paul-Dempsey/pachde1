@@ -7,6 +7,7 @@ extern ::rack::Plugin* pluginInstance;
 namespace pachde {
 
 svg_theme::ThemeCache rail_theme_cache;
+const std::set<std::string> known_rails{"Rack", "Blank", "Plain", "Simple", "No-hole", "Pinstripe", "Gradient", "Sine"};
 
 struct RailThemeData {
     static std::string light() { return asset::plugin(pluginInstance, "res/rails/-light.vgt"); }

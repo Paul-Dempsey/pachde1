@@ -303,6 +303,8 @@ void FittedBoxRect(NVGcontext *vg, float x, float y, float width, float height, 
         width += strokeWidth;
         height += strokeWidth;
         break;
+    case Fit::None:
+        break;
     }
     BoxRect(vg, x,y,width, height, color, strokeWidth);
 }

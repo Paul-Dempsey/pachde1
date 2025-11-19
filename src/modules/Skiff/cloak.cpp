@@ -24,63 +24,83 @@ struct RefBox
     inline float y_pos(float factor) { return top() + factor*height(); }
 };
 
+void CloakBackgroundWidget::add_client(ICloakBackgroundClient* client) {
+    auto it = std::find(clients.begin(), clients.end(), client);
+    if (it == clients.end()) {
+        clients.push_back(client);
+    }
+}
+
+void CloakBackgroundWidget::remove_client(ICloakBackgroundClient* client) {
+    auto it = std::find(clients.begin(), clients.end(), client);
+    if (it == clients.end()) {
+        clients.erase(it);
+    }
+}
+
+CloakBackgroundWidget::~CloakBackgroundWidget() {
+    for (auto client: clients) {
+        client->onDelete(this);
+    }
+}
+
 void CloakBackgroundWidget::draw(const DrawArgs& args) {
     auto vg = args.vg;
 
-    if (fill.enabled) {
-        auto co = fromPacked(fill.color);
-        co.a *= fill.fade;
+    if (data.fill.enabled) {
+        auto co = fromPacked(data.fill.color);
+        co.a *= data.fill.fade;
         RefBox r{args.clipBox};
         nvgBeginPath(vg);
         nvgRect(vg, RECT_ARGS(r.box));
         nvgFillColor(vg, co);
         nvgFill(vg);
     }
-    if (l_grad.enabled) {
-        auto icol = fromPacked(l_grad.icol);
-        icol.a *= l_grad.ifade;
-        auto ocol = fromPacked(l_grad.ocol);
-        ocol.a *= l_grad.ofade;
+    if (data.linear.enabled) {
+        auto icol = fromPacked(data.linear.icol);
+        icol.a *= data.linear.ifade;
+        auto ocol = fromPacked(data.linear.ocol);
+        ocol.a *= data.linear.ofade;
         RefBox r{args.clipBox};
-        float x1 = r.width() * l_grad.x1;
-        float y1 = r.height() * l_grad.y1;
-        float x2 = r.width() * l_grad.x2;
-        float y2 = r.height() * l_grad.y2;
+        float x1 = r.width() * data.linear.x1;
+        float y1 = r.height() * data.linear.y1;
+        float x2 = r.width() * data.linear.x2;
+        float y2 = r.height() * data.linear.y2;
         nvgBeginPath(vg);
         nvgRect(vg, RECT_ARGS(r.box));
         auto paint = nvgLinearGradient(vg, x1, y1, x2, y2, icol, ocol);
         nvgFillPaint(vg, paint);
         nvgFill(vg);
     }
-    if (r_grad.enabled) {
-        auto icol = fromPacked(r_grad.icol);
-        icol.a *= r_grad.ifade;
-        auto ocol = fromPacked(r_grad.ocol);
-        ocol.a *= r_grad.ofade;
+    if (data.radial.enabled) {
+        auto icol = fromPacked(data.radial.icol);
+        icol.a *= data.radial.ifade;
+        auto ocol = fromPacked(data.radial.ocol);
+        ocol.a *= data.radial.ofade;
         RefBox r{args.clipBox};
         float w = r.width();
         float h = r.height();
-        float cx = r_grad.cx * w;
-        float cy = r_grad.cy * h;
-        float radius = r_grad.r * std::max(w, h);
+        float cx = data.radial.cx * w;
+        float cy = data.radial.cy * h;
+        float radius = data.radial.radius * std::max(w, h);
         auto paint = nvgRadialGradient(vg, cx, cy, 0, radius, icol, ocol);
         nvgFillPaint(vg, paint);
         nvgFill(vg);
     }
-    if (b_grad.enabled) {
+    if (data.boxg.enabled) {
         RefBox r{args.clipBox};
-        auto icol = fromPacked(b_grad.icol);
-        icol.a *= b_grad.ifade;
-        auto ocol = fromPacked(b_grad.ocol);
-        ocol.a *= b_grad.ofade;
-        if (b_grad.xshrink < 1.f || b_grad.yshrink < 1.f) {
-            r.box = r.box.shrink(Vec(b_grad.xshrink * r.width(), b_grad.yshrink * r.height()));
+        auto icol = fromPacked(data.boxg.icol);
+        icol.a *= data.boxg.ifade;
+        auto ocol = fromPacked(data.boxg.ocol);
+        ocol.a *= data.boxg.ofade;
+        if (data.boxg.xshrink < 1.f || data.boxg.yshrink < 1.f) {
+            r.box = r.box.shrink(Vec(data.boxg.xshrink * r.width(), data.boxg.yshrink * r.height()));
         }
         float w = r.width();
         float h = r.height();
         float base = std::max(w, h);
-        float radius = b_grad.radius * base;
-        float feather = b_grad.feather * base;
+        float radius = data.boxg.radius * base;
+        float feather = data.boxg.feather * base;
 
         auto paint = nvgBoxGradient(vg, r.left(), r.top(), w, h, radius, feather, icol, ocol);
         nvgFillPaint(vg, paint);
@@ -107,6 +127,18 @@ CloakBackgroundWidget * ensureBackgroundCloak() {
         cloak = new CloakBackgroundWidget;
         auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
         rail->getParent()->addChildAbove(cloak, rail);
+    }
+    return cloak;
+}
+
+CloakBackgroundWidget * applyCloak(CloakBackgroundWidget* cloak) {
+    if (cloak) {
+        auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
+        if (!rail->getParent()->hasChild(cloak)) {
+            rail->getParent()->addChildAbove(cloak, rail);
+        }
+    } else {
+        cloak = ensureBackgroundCloak();
     }
     return cloak;
 }

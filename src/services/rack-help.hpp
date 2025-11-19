@@ -5,7 +5,7 @@ using namespace ::rack;
 
 namespace pachde {
 
-bool is_singleton(Module*my_module, ModuleWidget* me);
+bool is_singleton(Module*my_module);
 
 // set displayPrecision = 4
 inline ParamQuantity* dp4(ParamQuantity* p) {

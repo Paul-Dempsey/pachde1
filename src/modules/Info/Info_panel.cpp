@@ -79,82 +79,19 @@ void draw_margins(const rack::widget::Widget::DrawArgs &args, const Rect& box, I
 }
 #endif
 
-void dt(NVGcontext *vg, float x, float y, float w, float h, float lm, float rm,
-    std::string text,
-    std::shared_ptr<rack::window::Font> font,
-    float font_size,
-    NVGalign align,
-    const NVGcolor& text_color
-) {
-    NVGtextRow text_rows[10];
-
-    SetTextStyle(vg, font, text_color, font_size);
-    nvgTextAlign(vg, align);
-    float width = (align & NVG_ALIGN_CENTER) ? w : w - (lm + rm);
-    int nrows = nvgTextBreakLines(vg, text.c_str(), nullptr, width, text_rows, 10);
-    float text_height = nrows * font_size;
-    float text_width = 0.f;
-    for (int i = 0; i < 10; ++i) {
-        text_width = std::max(text_width, std::min(width, text_rows[i].width));
-    }
-    float tx{0};
-    switch (align & (NVG_ALIGN_LEFT|NVG_ALIGN_CENTER|NVG_ALIGN_RIGHT)) {
-        case NVG_ALIGN_LEFT: tx = x + lm; break;
-        case NVG_ALIGN_CENTER: break;
-        case NVG_ALIGN_RIGHT: tx = x + w - rm - text_width; break;
-    }
-    float ty = y + h*.5 - text_height*.5;
-    nvgTextBox(vg, tx, ty, text_width, text.c_str(), nullptr);
-}
-
 void InfoPanel::showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, const std::string& text)
 {
 #if DEV_BUILD
-    draw_margins(args, box, settings);
+    //draw_margins(args, box, settings);
 #endif
-    auto vg = args.vg;
     auto font_size = module ? settings->getFontSize() : 60;
-    auto align = module ? settings->getHorizontalAlignment() : HAlign::Center;
+    auto halign = module ? settings->getHorizontalAlignment() : HAlign::Center;
+    auto valign = module ? settings->getVerticalAlignment() : VAlign::Middle;
     Orientation orientation = module ? settings->getOrientation() : Orientation::Up;
-    float width = box.size.x;
-    float height = box.size.y;
-    if ((orientation == Orientation::Down) || (orientation == Orientation::Up)) {
-        std::swap(width, height);
-    }
     float left_margin = module ? settings->left_margin : 7.5f;
     float right_margin = module ? settings->right_margin : 7.5f;
-    NVGalign nvg_align = NVGalign(NVG_ALIGN_TOP|nvgAlignFromHAlign(align));
-    auto co_text = fromPacked(text_color);
 
-    switch (orientation) {
-    case Orientation::Normal:
-        dt(vg, 0, 0, width, height, left_margin, right_margin, text, font, font_size, nvg_align, co_text);
-        break;
-
-    case Orientation::Down:
-        nvgSave(vg);
-        nvgRotate(vg, M_PI/2.f); //down
-        nvgTranslate(vg, 0, -height);
-        dt(vg, 0, 0, width, height, left_margin, right_margin, text, font, font_size, nvg_align, co_text);
-        nvgRestore(vg);
-        break;
-
-    case Orientation::Up:
-        nvgSave(vg);
-        nvgRotate(vg, -M_PI/2.f); //up
-        nvgTranslate(vg, -width, 0);
-        dt(vg, 0, 0, width, height, left_margin, right_margin, text, font, font_size, nvg_align, co_text);
-        nvgRestore(vg);
-        break;
-
-    case Orientation::Inverted:
-        nvgSave(vg);
-        nvgRotate(vg, M_PI);
-        nvgTranslate(vg, -width, -height);
-        dt(vg, 0, 0, width, height, left_margin, right_margin, text, font, font_size, nvg_align, co_text);
-        nvgRestore(vg);
-        break;
-    }
+    draw_oriented_text_box(args.vg, box, left_margin, right_margin, text, font, font_size, text_color, halign, valign, orientation);
 }
 
 void InfoPanel::drawError(const DrawArgs &args)

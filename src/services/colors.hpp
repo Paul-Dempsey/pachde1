@@ -163,7 +163,7 @@ inline NVGcolor RandomOpaqueColor() { return nvgRGBAf(random::uniform(), random:
 
 void FillRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color);
 void RoundRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float radius);
-enum class Fit { Inside, Outside };
+enum class Fit { Inside, Outside, None };
 void FittedBoxRect(NVGcontext *vg, float x, float y, float width, float height, const NVGcolor& color, Fit fit, float strokeWidth = 1.0);
 void BoxRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float strokeWidth = 1.0);
 void RoundBoxRect(NVGcontext *vg, float x, float y, float width, float height, NVGcolor color, float radius, float strokeWidth = 1.0);

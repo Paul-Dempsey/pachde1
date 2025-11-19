@@ -4,10 +4,12 @@ using namespace ::rack;
 #include "services/theme-module.hpp"
 #include "services/svg-query.hpp"
 using namespace svg_query;
+#include "widgets/action-button.hpp"
 #include "widgets/hamburger.hpp"
 #include "widgets/text-button.hpp"
 using namespace widgetry;
 #include "rails.hpp"
+#include "cloak.hpp"
 
 namespace pachde {
 
@@ -17,9 +19,47 @@ struct Skiff : ThemeModule
 {
     using Base = ThemeModule;
 
+    enum Params {
+        P_FANCY_FILL_ON,
+        P_FANCY_FILL_FADE,
+
+        P_FANCY_LINEAR_ON,
+        P_FANCY_LINEAR_START_FADE,
+        P_FANCY_LINEAR_X1,
+        P_FANCY_LINEAR_Y1,
+        P_FANCY_LINEAR_END_FADE,
+        P_FANCY_LINEAR_X2,
+        P_FANCY_LINEAR_Y2,
+
+        P_FANCY_BOX_ON,
+        P_FANCY_BOX_INNER_FADE,
+        P_FANCY_BOX_SHRINK_X,
+        P_FANCY_BOX_SHRINK_Y,
+        P_FANCY_BOX_OUTER_FADE,
+        P_FANCY_BOX_RADIUS,
+        P_FANCY_BOX_FEATHER,
+
+        P_FANCY_RADIAL_ON,
+        P_FANCY_RADIAL_INNER_FADE,
+        P_FANCY_RADIAL_CX,
+        P_FANCY_RADIAL_CY,
+        P_FANCY_RADIAL_OUTER_FADE,
+        P_FANCY_RADIAL_RADIUS,
+        N_PARAMS
+    };
+    enum Inputs {
+        N_INPUTS
+    };
+    enum Outputs {
+        N_OUTPUTS
+    };
+    enum Lights {
+        N_LIGHTS
+    };
+
     std::string rail{"Rack"};
     std::string rail_folder = asset::userDir;
-
+    bool other_skiff{false};
     bool unscrewed{false};
     bool nojacks{false};
     bool calm{false};
@@ -27,10 +67,11 @@ struct Skiff : ThemeModule
     bool depaneled{false};
     bool fancy{false};
     bool shouting{true};
-
+    CloakData fancy_data;
     std::string theme_name;
     RailThemeSetting rail_theme;
 
+    Skiff();
     SkiffUi* ui{nullptr};
 
     void set_defaults();
@@ -39,6 +80,7 @@ struct Skiff : ThemeModule
     void random_settings();
 
     void onRandomize(const RandomizeEvent& e) override;
+    void process(const ProcessArgs& args) override;
 };
 
 struct RailMenu : Hamburger
@@ -57,23 +99,23 @@ struct SkiffUi : ModuleWidget, IThemeChange
     SvgCache my_svgs;
 
     bool request_custom_rail{false};
-    bool other_skiff{false};
 
     RailMenu* ham{nullptr};
     TextButton* derail_button{nullptr};
-    TextButton* fancy_button{nullptr};
     TextButton* nopanel_button{nullptr};
     TextButton* calm_button{nullptr};
     TextButton* unscrew_button{nullptr};
     TextButton* nojack_button{nullptr};
     TextButton* pack_button{nullptr};
+    TextButton* fancy_button{nullptr};
+    GearActionButton* fancy_options{nullptr};
 
-#ifdef HOT_SVG
+    #ifdef HOT_SVG
     PositionIndex pos_widgets;
-#define HOT_POSITION(name,kind,widget) addPosition(pos_widgets, name, kind, widget)
-#else
-#define HOT_POSITION(name,kind,widget)
-#endif
+    #define HOT_POSITION(name,kind,widget) addPosition(pos_widgets, name, kind, widget)
+    #else
+    #define HOT_POSITION(name,kind,widget)
+    #endif
     SkiffUi(Skiff* module);
 
     TextButton* makeTextButton (

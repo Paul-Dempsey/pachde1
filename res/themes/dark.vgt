@@ -60,6 +60,15 @@ entry-prompt = hsla(0, 0, .55, .75)
    entry-sel = hsl(200, .5, .4)
 
 // Skiff
+fancy-title = #000
+fancy-group = #f9a806
+fancy-label = #e6e6e6
+fancy-panel = #111
+dlg-border = none stroke #444 width 2.5
+group-box = stroke #f9a806 width .75
+close-hover = hsl(0, .6, .5) stroke none
+close-frame = none stroke none
+close-glyph = #181818
 
 // Rui
 fluff-co = hsla(194, 54%, 55%, 1.00)

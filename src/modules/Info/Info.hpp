@@ -1,9 +1,9 @@
 #pragma once
 #include <rack.hpp>
+#include "services/text-align.hpp"
 #include "widgets/components.hpp"
 #include "widgets/logo-widget.hpp"
 #include "resizable.hpp"
-#include "text_align.hpp"
 #include "info_settings.hpp"
 
 using namespace ::rack;

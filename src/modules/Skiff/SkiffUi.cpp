@@ -3,10 +3,9 @@
 #include "services/open-file.hpp"
 #include "services/rack-help.hpp"
 #include "services/svg-theme-load.hpp"
-#include "widgets/action-button.hpp"
 #include "widgets/components.hpp"
 #include "widgets/screws.hpp"
-#include "cloak.hpp"
+#include "fancy-dialog.hpp"
 
 namespace pachde {
 
@@ -60,6 +59,7 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     setModule(module);
     if (my_module) {
         my_module->ui = this;
+        my_module->other_skiff = !is_singleton(my_module);
     }
     theme_holder = my_module ? my_module : new ThemeBase();
     theme_holder->setNotify(this);
@@ -69,14 +69,14 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     auto panel = createSvgThemePanel<SkiffSvg>(&my_svgs, nullptr);
     auto layout = panel->svg;
     setPanel(panel);
+    //pre_cache_fancy_dialog_svg(&my_svgs);
 
-    other_skiff = !is_singleton(my_module, this);
-    if (other_skiff) return;
+    if (my_module && my_module->other_skiff) return;
 
     ::svg_query::BoundsIndex bounds;
     svg_query::addBounds(layout, "k:", bounds, true);
 
-    ham= Center(createWidget<RailMenu>(bounds["k:rail-menu"].getCenter()));
+    ham = Center(createWidget<RailMenu>(bounds["k:rail-menu"].getCenter()));
     HOT_POSITION("k:rail-menu", HotPosKind::Center, ham);
     ham->setUi(this);
     ham->describe("Alternate Rails");
@@ -104,11 +104,20 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     addChild(fancy_button = makeTextButton(bounds, "k:fancy-btn", true, "", "Toggle Fancy background", svg_theme,
         [this](bool ctrl, bool shift) { if(!my_module) return; fancy_background(!my_module->fancy); }));
 
+
+    fancy_options = Center(createThemeSvgButton<GearActionButton>(&my_svgs, bounds["k:fancy-options"].getCenter()));
+    HOT_POSITION("k:fancy-options", HotPosKind::Center, fancy_options);
+    if (module) {
+        fancy_options->describe("FancyBox options");
+        fancy_options->set_handler([=](bool,bool) { if (my_module) show_fancy_dialog(this); });
+    }
+    addChild(fancy_options);
+
     auto button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:restore"].getCenter()));
     HOT_POSITION("k:restore", HotPosKind::Center, button);
     if (module) {
         button->describe("Restore normal Rack");
-        button->set_handler([this](bool ctrl, bool shift) { restore_rack(); });
+        button->set_handler([this](bool, bool) { restore_rack(); });
     }
     addChild(button);
 
@@ -164,7 +173,7 @@ void SkiffUi::onChangeTheme(ChangedItem item) {
     if (ChangedItem::Theme == item) {
         auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
         my_svgs.changeTheme(svg_theme);
-        if (ham) ham->applyTheme(svg_theme);
+        //if (ham) ham->applyTheme(svg_theme);
         applyChildrenTheme(this, svg_theme);
         sendDirty(this);
     }
@@ -244,7 +253,10 @@ void SkiffUi::fancy_background(bool fancy) {
     my_module->fancy = fancy;
     auto cloak = getBackgroundCloak();
     if (fancy) {
-        if (!cloak) ensureBackgroundCloak();
+        if (!cloak) cloak = ensureBackgroundCloak();
+        if (cloak) {
+            cloak->data.init(my_module->fancy_data);
+        }
     } else {
         if (cloak) cloak->requestDelete();
     }
@@ -396,7 +408,8 @@ void SkiffUi::set_rail_theme(RailThemeSetting theme) {
     set_alt_rail(my_module->rail);
 }
 
-void SkiffUi::onHoverKey(const HoverKeyEvent& e) {
+void SkiffUi::onHoverKey(const HoverKeyEvent &e)
+{
     if (!my_module) return;
     auto mods = e.mods & RACK_MOD_MASK;
     switch (e.key) {
@@ -409,7 +422,7 @@ void SkiffUi::onHoverKey(const HoverKeyEvent& e) {
             load_rail_themes();
             set_rail_theme(my_module->rail_theme);
             onChangeTheme(ChangedItem::Theme);
-            if (!other_skiff) {
+            if (!my_module->other_skiff) {
                 auto panel = dynamic_cast<SvgThemePanel<SkiffSvg>*>(getPanel());
                 positionWidgets(pos_widgets, makeBounds(panel->svg, "k:", true));
             }
@@ -446,7 +459,7 @@ void SkiffUi::step() {
 
 void SkiffUi::draw(const DrawArgs& args) {
     Base::draw(args);
-    if (my_module && other_skiff) {
+    if (my_module && my_module->other_skiff) {
         draw_disabled_panel(this, GetPreferredTheme(theme_holder), args, 20.f, 20.f);
     }
 }

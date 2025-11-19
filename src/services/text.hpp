@@ -4,6 +4,8 @@
 #include <rack.hpp>
 #include <string>
 #include "./colors.hpp"
+#include "text-align.hpp"
+
 using namespace ::rack;
 
 namespace pachde {
@@ -35,6 +37,34 @@ enum class BaselineCorrection {
 // or the bottom of text box (BaselineCorrection::Baseline).
 // Text style must have been previously set.
 void RightAlignText(NVGcontext *vg, float x, float y, const char * text, const char * end, BaselineCorrection correction = BaselineCorrection::None);
+
+void draw_text_box (
+    NVGcontext *vg,
+    float x, float y, float w, float h,
+    float left_margin, float right_margin,
+    std::string text,
+    std::shared_ptr<rack::window::Font> font,
+    float font_size,
+    PackedColor text_color,
+    HAlign halign,
+    VAlign valign,
+    float first_baseline = INFINITY
+);
+
+void draw_oriented_text_box(
+    NVGcontext *vg,
+    Rect box,
+    float left_margin,
+    float right_margin,
+    const std::string& text,
+    std::shared_ptr<rack::window::Font> font,
+    float font_size,
+    PackedColor text_color,
+    HAlign halign,
+    VAlign valign,
+    Orientation orientation,
+    float first_baseline = INFINITY
+);
 
 } // namespace pachde
 #endif

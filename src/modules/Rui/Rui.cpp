@@ -179,7 +179,6 @@ struct RuiUi : ModuleWidget, IThemeChange
 #ifdef HOT_SVG
     PositionIndex pos_widgets;
 #endif
-    bool single{true};
     PlayActionButton* play_button{nullptr};
     SvgCache my_svgs;
 
@@ -225,9 +224,12 @@ struct RuiUi : ModuleWidget, IThemeChange
         setPanel(panel);
         auto layout = panel->svg;
 
-        single = is_singleton(my_module, this);
-        if (my_module) my_module->single = single;
-        if (!single) return;
+        if (my_module) {
+            my_module->single = is_singleton(my_module);
+            if (!my_module->single) {
+                return;
+            }
+        }
 
         RoundBlackKnob* knob;
         Trimpot* pot;
@@ -341,6 +343,7 @@ struct RuiUi : ModuleWidget, IThemeChange
 
     void onHoverKey(const HoverKeyEvent& e) override
     {
+        if (!my_module) return;
         auto mods = e.mods & RACK_MOD_MASK;
         switch (e.key) {
 
@@ -359,7 +362,7 @@ struct RuiUi : ModuleWidget, IThemeChange
                 my_svgs.changeTheme(svg_theme);
                 my_svgs.reloadAll();
                 auto panel = dynamic_cast<SvgThemePanel<RuiSvg>*>(getPanel());
-                if (single) {
+                if (my_module-> single) {
                     panel->updatePanel(svg_theme);
                     positionWidgets(pos_widgets, makeBounds(panel->svg, "k:", true));
                 }
@@ -373,7 +376,7 @@ struct RuiUi : ModuleWidget, IThemeChange
     }
     void draw(const DrawArgs& args) override {
         Base::draw(args);
-        if (my_module && !single) {
+        if (my_module && !my_module->single) {
             draw_disabled_panel(this, GetPreferredTheme(theme_holder), args, 20, 20);
         }
     }

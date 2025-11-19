@@ -4,7 +4,7 @@
 
 ## Info
 
-- on-panel edit -- what's the UI gesture?
+- dialog for options
 
 ## Skiff
 

@@ -208,11 +208,23 @@ struct Pallette5Svg {
 };
 using Palette5ActionButton = TActionButton<Pallette5Svg>;
 
+struct Pallette20Svg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/palette-20.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/palette-20-down.svg"); }
+};
+using Palette20ActionButton = TActionButton<Pallette20Svg>;
+
 struct TinyButtonSvg {
     static std::string up()   { return asset::plugin(pluginInstance, "res/widget/tiny-btn-up.svg"); }
     static std::string down() { return asset::plugin(pluginInstance, "res/widget/tiny-btn-down.svg"); }
 };
 using TinyActionButton = TActionButton<TinyButtonSvg>;
+
+struct GearButtonSvg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/gear-btn-up.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/gear-btn-dn.svg"); }
+};
+using GearActionButton = TActionButton<GearButtonSvg>;
 
 template <typename TActionButton>
 TActionButton* createThemeSvgButton(ILoadSvg* loader, Vec pos) {

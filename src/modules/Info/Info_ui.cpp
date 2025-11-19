@@ -274,6 +274,23 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
                 [=]() { return settings->getHorizontalAlignment() == HAlign::Right; },
                 [=]() { settings->setHorizontalAlignment(HAlign::Right); }
                 ));
+            menu->addChild(new MenuSeparator);
+            menu->addChild(createCheckMenuItem(
+                "Top", "",
+                [=]() { return settings->getVerticalAlignment() == VAlign::Top; },
+                [=]() { settings->setVerticalAlignment(VAlign::Top); }
+                ));
+            menu->addChild(createCheckMenuItem(
+                "Middle", "",
+                [=]() { return settings->getVerticalAlignment() == VAlign::Middle; },
+                [=]() { settings->setVerticalAlignment(VAlign::Middle); }
+                ));
+            menu->addChild(createCheckMenuItem(
+                "Bottom", "",
+                [=]() { return settings->getVerticalAlignment() == VAlign::Bottom; },
+                [=]() { settings->setVerticalAlignment(VAlign::Bottom); }
+                ));
+
         }));
 
     // menu->addChild(createSubmenuItem("Background", "", [=](Menu* menu) {

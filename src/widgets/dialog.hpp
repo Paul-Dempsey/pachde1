@@ -1,6 +1,19 @@
 #pragma once
+//
+// Copyright (c) 2025 Paul Chase Dempsey
+// License at end of file
+//
+// Configuration options:
+//
+// #define DIALOG_THEMED to enable SVG cache control for theming
+// #define DIALOG_MODAL_SCREEN to enable modal screening
+//
+
 #include <rack.hpp>
 //using namespace ::rack;
+#ifdef DIALOG_THEMED
+#include "services/svg-theme.hpp"
+#endif
 
 namespace widgetry {
 
@@ -38,6 +51,21 @@ struct SvgDialog : DialogBase
 
         set_svg(::rack::window::Svg::load(TSvg::background()));
     }
+
+#ifdef DIALOG_THEMED
+    ILoadSvg* load_svg{nullptr};
+
+    SvgDialog(::rack::app::ModuleWidget* src, ILoadSvg* load_svg) : DialogBase(src), load_svg(load_svg) {
+        fb = new ::rack::widget::FramebufferWidget;
+        addChild(fb);
+        sw = new ::rack::widget::SvgWidget;
+        fb->addChild(sw);
+
+        set_svg(load_svg->loadSvg(TSvg::background()));
+    }
+#endif
+
+    std::shared_ptr<::rack::window::Svg> get_svg() { return sw->svg; }
 
     void set_svg(std::shared_ptr<::rack::window::Svg> svg) {
         if (!sw->svg) {
@@ -80,20 +108,31 @@ TDialog* createMinimalMenuDialog() {
     return dialog;
 }
 
-template <typename TDialog>
+template <typename TDialog, typename TSource>
 TDialog* createDialog(
-    ::rack::app::ModuleWidget* source,
+    TSource* source,
     ::rack::math::Vec pos,
-    bool center = false,
-    NVGcolor screen = NVGcolor{0}
+#ifdef DIALOG_THEMED
+    ILoadSvg* load_svg,
+#endif
+#ifdef DIALOG_MODAL_SCREEN
+    const NVGcolor& screen,
+#endif
+    bool center = false
 ) {
+#ifdef DIALOG_THEMED
+    TDialog* dialog = new TDialog(source, load_svg);
+#else
     TDialog* dialog = new TDialog(source);
+#endif
     if (center) {
         pos = pos.minus(dialog->box.size.div(2));
     }
 
     auto menuOverlay = new ::rack::ui::MenuOverlay;
+#ifdef DIALOG_MODAL_SCREEN
     menuOverlay->bgColor = screen; // optionally dim/screen rack
+#endif
 
     auto zoomer = new TrackingZoom(source, pos);
     menuOverlay->addChild(zoomer);
@@ -103,18 +142,30 @@ TDialog* createDialog(
     return dialog;
 }
 
-template <typename TDialog>
+
+template <typename TDialog, typename TSource>
 TDialog* createMenuDialog(
-    ::rack::app::ModuleWidget* source,
+    TSource* source,
     ::rack::math::Vec(pos),
-    bool center = false,
-    NVGcolor screen = NVGcolor{0}
+#ifdef DIALOG_THEMED
+    ILoadSvg* load_svg,
+#endif
+#ifdef DIALOG_MODAL_SCREEN
+    const NVGcolor& screen,
+#endif
+    bool center = false
 ) {
+#ifdef DIALOG_THEMED
+    TDialog* dialog = new TDialog(source, load_svg);
+#else
     TDialog* dialog = new TDialog(source);
+#endif
 
     auto menu = ::rack::createMenu();
     auto overlay = menu->getAncestorOfType<MenuOverlay>();
-    overlay->bgColor = screen;
+#ifdef DIALOG_MODAL_SCREEN
+    menuOverlay->bgColor = screen; // optionally dim/screen rack
+#endif
 
     bool real_pos = pos.isFinite();
     if (real_pos) {

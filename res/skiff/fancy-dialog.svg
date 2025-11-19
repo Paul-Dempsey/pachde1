@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="435" height="280" viewBox="0 0 435 280" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<rect id="fancy-panel" fill="#222222" width="100%" height="100%" />
+<rect id="mast" fill="#f9a806" width="100%" height="18" />
+<rect id="k:close" fill="#f22" width="12" height="12" x="417" y="4.5" />
+
+<rect id="k:fancy-title" fill="#a6a6a6" x="142.5" y="3.5" width="150" height="14" />
+
+<path   id="fill--group-box"      fill="none" stroke="#f9a806" stroke-width="0.75" d="m 142,32 h 64 v 106 h -189.3 v -106 h 63" />
+<rect   id="k:fill-check"       fill="#ccc" x="90" y="27" width="10" height="10" />
+<rect   id="k:fill-title"       fill="#ccc" x="104" y="26" width="34" height="14" />
+<circle id="k:fill-co"          fill="#3cdb0f" cx="90" cy="80" r="10" />
+<circle id="k:fill-fade-knob"   fill="#5c95d6" cx="124" cy="80" r="11.3" />
+<rect   id="k:fill-fade"        fill="#bbb" x="107.5" y="96" width="35" height="10" />
+
+<path id="lg--group-box" fill="none" stroke="#f9a806" stroke-width="0.75" d="m 390,32 h 28 v 106 h -190 v -106 h 25" />
+<rect id="k:lg-check" fill="#ccc" x="264" y="27" width="10" height="10" />
+<rect id="k:lg-title" fill="#ccc" x="278" y="26" width="100" height="14" />
+
+<circle id="k:lg-start-co"        fill="#3cdb0f" cx="255" cy="60" r="10" />
+<circle id="k:lg-start-fade-knob" fill="#5c95d6" cx="297" cy="60" r="11.3" />
+<circle id="k:lg-start-x-knob"    fill="#5c95d6" cx="345" cy="60" r="11.3" />
+<circle id="k:lg-start-y-knob"    fill="#5c95d6" cx="393" cy="60" r="11.3" />
+<rect   id="k:lg-start-label"     fill="#a0a0a0" x="237" y="76" width="36" height="12" />
+<rect   id="k:lg-fade-label"      fill="#a0a0a0" x="277" y="76" width="36" height="12" />
+<rect   id="k:lg-x1-label"        fill="#a0a0a0" x="339" y="76" width="12" height="12" />
+<rect   id="k:lg-spos-label"      fill="#a0a0a0" x="352" y="76" width="35" height="12" />
+<rect   id="k:lg-y1-label"        fill="#a0a0a0" x="388" y="76" width="12" height="12" />
+
+<circle id="k:lg-end-co"          fill="#3cdb0f" cx="255" cy="104" r="10" />
+<circle id="k:lg-end-x-knob"      fill="#5c95d6" cx="346" cy="104" r="11.3" />
+<circle id="k:lg-end-y-knob"      fill="#5c95d6" cx="394" cy="104" r="11.3" />
+<circle id="k:lg=end-fade-knob"   fill="#5c95d6" cx="297" cy="104" r="11.3" />
+<rect   id="k:lg-end-label"       fill="#a0a0a0" x="237" y="120" width="36" height="12" />
+<rect   id="k:lg-efade-label"     fill="#a0a0a0" x="277" y="120" width="36" height="12" />
+<rect   id="k:lg-x2-label"        fill="#a0a0a0" x="336" y="120" width="18" height="12" />
+<rect   id="k:lg-epos-label"      fill="#a0a0a0" x="350" y="120" width="38" height="12" />
+<rect   id="k:lg-y2-label"        fill="#a0a0a0" x="385" y="120" width="17" height="12" />
+
+<path id="rg--group-box" fill="none" stroke="#f9a806" stroke-width="0.75" d="m 390,158 h 28 v 106 h -190 v -106 h 25" />
+<rect id="k:rg-check" fill="#ccc" x="264" y="153" width="10" height="10" />
+<rect id="k:rg-title" fill="#ccc" x="278" y="152" width="100" height="14" />
+<circle id="k:rg.start-co"          fill="#3cdb0f" cx="255" cy="186" r="10" />
+<circle id="k:rg-inner-fade-knob"   fill="#5c95d6" cx="295" cy="186" r="11.3" />
+<circle id="k:rg-cx-knob"           fill="#5c95d6" cx="345" cy="186" r="11.3" />
+<circle id="k:rg-cy-knob"           fill="#5c95d6" cx="393" cy="186" r="11.3" />
+<rect   id="k:rg-inner-label"       fill="#a0a0a0" x="237.5" y="202" width="35" height="12" />
+<rect   id="k:rg-innerfade-label"   fill="#a0a0a0" x="277.5" y="202" width="35" height="12" />
+<rect   id="k:rg-cx-label"          fill="#a0a0a0" x="336"   y="202" width="18" height="12" />
+<rect   id="k:rg-cy-label"          fill="#a0a0a0" x="385"   y="202" width="18" height="12" />
+
+<circle id="k:rg-end-co"            fill="#3cdb0f" cx="252" cy="230" r="10" />
+<circle id="k:rg-outer-fade-knob"   fill="#5c95d6" cx="295" cy="230" r="11.3" />
+<circle id="k:rg-radius-knob"       fill="#5c95d6" cx="369" cy="230" r="11.3" />
+<rect   id="k:rg-outer-label"       fill="#a0a0a0" x="237" y="244" width="36" height="12" />
+<rect   id="k:rg-ofade-label"       fill="#a0a0a0" x="277" y="244" width="36" height="12" />
+<rect   id="k:rg-radius-label"      fill="#a0a0a0" x="346"  y="244" width="46" height="12" />
+
+<path id="bg--group-box" fill="none" stroke="#f9a806" stroke-width="0.75" d="M 178,158 h 28 v 106 h -190 v -106 h 25" />
+<rect id="k:bg-check" fill="#ccc" x="58" y="153" width="10" height="10" />
+<rect id="k:bg-title" fill="#ccc" x="72" y="152" width="90" height="14" />
+
+<circle id="k:bg-inner-co"          fill="#3cdb0f" cx="42"  cy="186" r="10.0" />
+<circle id="k:bg-inner-fade-knob"   fill="#5c95d6" cx="85"  cy="186" r="11.3" />
+<circle id="k:bg-shrink-x-knob"     fill="#5c95d6" cx="132" cy="186" r="11.3" />
+<circle id="k:bg-shrink-y-knob"     fill="#5c95d6" cx="178" cy="186" r="11.3" />
+
+<rect   id="k:bg-inner-label"       fill="#a0a0a0" x="24.5" y="202" width="35" height="12" />
+<rect   id="k:bg-innerfade-label"   fill="#a0a0a0" x="67.5" y="202" width="35" height="12" />
+<rect   id="k:bg-cx-label"          fill="#a0a0a0" x="123"  y="202" width="18" height="12" />
+<rect   id="k:bg-shrink-label"      fill="#a0a0a080" x="137"  y="202" width="36" height="12" />
+<rect   id="k:bg-cy-label"          fill="#a0a0a0" x="169"  y="202" width="18" height="12" />
+
+<circle id="k:bg-outer-co"          fill="#3cdb0f" cx="42"  cy="230" r="10.0" />
+<circle id="k:bg-outer-fade-knob"   fill="#5c95d6" cx="85"  cy="230" r="11.3" />
+<circle id="k:bg-radius-knob"       fill="#5c95d6" cx="132" cy="230" r="11.3" />
+<circle id="k:bg-feather-knob"      fill="#5c95d6" cx="178" cy="230" r="11.3" />
+
+<rect   id="k:bg-outer-label"       fill="#a0a0a0" x="19"   y="244" width="46" height="12" />
+<rect   id="k:bg-ofade-label"       fill="#a0a0a0" x="65"   y="244" width="40" height="12" />
+<rect   id="k:bg-radius-label"      fill="#a0a0a0" x="109"  y="244" width="46" height="12" />
+<rect   id="k:bg-feather-label"     fill="#a0a0a0" x="156"  y="244" width="46" height="12" />
+
+<rect id="dlg-border" fill="none" stroke="#888" stroke-width="2.5" x="1.25" y="1.25" width="432" height="278" />
+</svg>
