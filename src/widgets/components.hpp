@@ -40,6 +40,7 @@ struct OptionMenuEntry : rack::ui::MenuEntry {
     bool selected{false};
 
     OptionMenuEntry(rack::ui::MenuItem* item);
+    OptionMenuEntry(bool selected, rack::ui::MenuItem* item);
     void step() override;
     void draw(const DrawArgs& args) override;
 };
@@ -141,19 +142,6 @@ struct TinyKnobSvg {
     static std::string background() { return asset::plugin(pluginInstance,"res/widget/TinyKnob-bg.svg"); }
 };
 using TinyKnob = TKnob<TinyKnobSvg>;
-
-// template<typename TSvg>
-// void reloadThemeKnob(std::shared_ptr<SvgTheme> theme) {
-//     std::string path = TSvg::background();
-//     auto bg = window::Svg::load(path);
-//     bg->loadFile(path);
-//     applySvgTheme(theme, bg);
-
-//     path = TSvg::knob();
-//     auto knob = window::Svg::load(path);
-//     knob->loadFile(path);
-//     applySvgTheme(theme, knob);
-// }
 
 template <class TParamWidget>
 TParamWidget *createThemeSvgParam(ILoadSvg* loader, std::shared_ptr<SvgTheme> theme, math::Vec pos, engine::Module *module, int paramId)

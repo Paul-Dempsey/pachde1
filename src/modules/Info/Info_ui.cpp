@@ -169,6 +169,38 @@ struct MarginSlider : ui::Slider
         delete quantity;
     }
 };
+
+void InfoModuleWidget::add_orientation_entry(Menu* menu, Orientation orient) {
+    menu->addChild(new OptionMenuEntry(
+        orient == settings->getOrientation(),
+        createMenuItem(OrientationName(orient), "",
+            [=](){ settings->setOrientation(orient); }, false)));
+}
+
+void InfoModuleWidget::add_halign_entry(Menu *menu, HAlign align)
+{
+    menu->addChild(new OptionMenuEntry(
+        align == settings->getHorizontalAlignment(),
+        createMenuItem(HAlignName(align), "",
+            [=](){ settings->setHorizontalAlignment(align); }, false)));
+}
+
+void InfoModuleWidget::add_valign_entry(Menu *menu, VAlign align)
+{
+    menu->addChild(new OptionMenuEntry(
+        align == settings->getVerticalAlignment(),
+        createMenuItem(VAlignName(align), "",
+            [=](){ settings->setVerticalAlignment(align); }, false)));
+}
+
+void InfoModuleWidget::add_copper_entry(Menu *menu, const char *name, CopperTarget target)
+{
+    menu->addChild(new OptionMenuEntry(
+        target == my_module->getCopperTarget(),
+        createMenuItem(name, "", [=](){ my_module->setCopperTarget(target); }, false)));
+}
+
+
 void InfoModuleWidget::appendContextMenu(Menu *menu)
 {
     if (!my_module)
@@ -207,6 +239,7 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
             glfwSetClipboardString(APP->window->win, my_module->text.c_str());
         }
     }, my_module->text.empty()));
+
     menu->addChild(createMenuItem("Paste info", "", [=]() {
         auto text = glfwGetClipboardString(APP->window->win);
         if (text) my_module->text = text;
@@ -234,73 +267,24 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
 
     menu->addChild(createSubmenuItem("Orientation", "",
         [=](Menu* menu) {
-            NVGcolor co_dot{nvgHSL(200.f/360.f, .5, .5)};
-
-            ColorDotMenuItem* option;
-            option = createMenuItem<ColorDotMenuItem>(OrientationName(Orientation::Normal), "",
-                [=](){ settings->setOrientation(Orientation::Normal); }, false);
-            option->color = settings->getOrientation() == Orientation::Normal ? co_dot : RampGray(G_45);
-            menu->addChild(option);
-
-            option = createMenuItem<ColorDotMenuItem>(OrientationName(Orientation::Down), "",
-                [=](){ settings->setOrientation(Orientation::Down); }, false);
-            option->color = settings->getOrientation() == Orientation::Down ? co_dot : RampGray(G_45);
-            menu->addChild(option);
-
-            option = createMenuItem<ColorDotMenuItem>(OrientationName(Orientation::Up), "",
-                [=](){ settings->setOrientation(Orientation::Up); }, false);
-            option->color = settings->getOrientation() == Orientation::Up ? co_dot : RampGray(G_45);
-            menu->addChild(option);
-
-            option = createMenuItem<ColorDotMenuItem>(OrientationName(Orientation::Inverted), "",
-                [=](){ settings->setOrientation(Orientation::Inverted); }, false);
-            option->color = settings->getOrientation() == Orientation::Inverted ? co_dot : RampGray(G_45);
-            menu->addChild(option);
+            add_orientation_entry(menu, Orientation::Normal);
+            add_orientation_entry(menu, Orientation::Down);
+            add_orientation_entry(menu, Orientation::Up);
+            add_orientation_entry(menu, Orientation::Inverted);
         }));
+
     menu->addChild(createSubmenuItem("Text alignment", "",
         [=](Menu *menu) {
-            menu->addChild(createCheckMenuItem(
-                "Left", "",
-                [=]() { return settings->getHorizontalAlignment() == HAlign::Left; },
-                [=]() { settings->setHorizontalAlignment(HAlign::Left); }
-                ));
-            menu->addChild(createCheckMenuItem(
-                "Center", "",
-                [=]() { return settings->getHorizontalAlignment() == HAlign::Center; },
-                [=]() { settings->setHorizontalAlignment(HAlign::Center); }
-                ));
-            menu->addChild(createCheckMenuItem(
-                "Right", "",
-                [=]() { return settings->getHorizontalAlignment() == HAlign::Right; },
-                [=]() { settings->setHorizontalAlignment(HAlign::Right); }
-                ));
+            add_halign_entry(menu, HAlign::Left);
+            add_halign_entry(menu, HAlign::Center);
+            add_halign_entry(menu, HAlign::Right);
+
             menu->addChild(new MenuSeparator);
-            menu->addChild(createCheckMenuItem(
-                "Top", "",
-                [=]() { return settings->getVerticalAlignment() == VAlign::Top; },
-                [=]() { settings->setVerticalAlignment(VAlign::Top); }
-                ));
-            menu->addChild(createCheckMenuItem(
-                "Middle", "",
-                [=]() { return settings->getVerticalAlignment() == VAlign::Middle; },
-                [=]() { settings->setVerticalAlignment(VAlign::Middle); }
-                ));
-            menu->addChild(createCheckMenuItem(
-                "Bottom", "",
-                [=]() { return settings->getVerticalAlignment() == VAlign::Bottom; },
-                [=]() { settings->setVerticalAlignment(VAlign::Bottom); }
-                ));
 
+            add_valign_entry(menu, VAlign::Top);
+            add_valign_entry(menu, VAlign::Middle);
+            add_valign_entry(menu, VAlign::Bottom);
         }));
-
-    // menu->addChild(createSubmenuItem("Background", "", [=](Menu* menu) {
-    //     auto picker = new ColorPickerMenu();
-    //     picker->set_color(my_module->getMainColor());
-    //     picker->set_on_new_color([=](PackedColor color) {
-    //         my_module->setMainColor(color);
-    //     });
-    //     menu->addChild(picker);
-    // }));
 
     menu->addChild(createSubmenuItem("Text color", "", [=](Menu* menu) {
         auto picker = new ColorPickerMenu();
@@ -310,24 +294,11 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
         });
         menu->addChild(picker);
     }));
-
     menu->addChild(createSubmenuItem("Copper", "",
         [=](Menu *menu) {
-            menu->addChild(createCheckMenuItem(
-                "None", "",
-                [=]() { return my_module->getCopperTarget() == CopperTarget::None; },
-                [=]() { my_module->setCopperTarget(CopperTarget::None); }
-                ));
-            menu->addChild(createCheckMenuItem(
-                "Panel", "",
-                [=]() { return my_module->getCopperTarget() == CopperTarget::Panel; },
-                [=]() { my_module->setCopperTarget(CopperTarget::Panel); }
-                ));
-            menu->addChild(createCheckMenuItem(
-                "Text", "",
-                [=]() { return my_module->getCopperTarget() == CopperTarget::Text; },
-                [=]() { my_module->setCopperTarget(CopperTarget::Text); }
-                ));
+            add_copper_entry(menu, "None", CopperTarget::None);
+            add_copper_entry(menu, "Panel", CopperTarget::Panel);
+            add_copper_entry(menu, "Text", CopperTarget::Text);
         }));
 
 }

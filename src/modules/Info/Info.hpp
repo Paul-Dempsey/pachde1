@@ -91,6 +91,12 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
     void applyThemeSetting(ThemeSetting setting);
     void onChangeTheme(ChangedItem item) override;
     void step() override;
+
+    void add_orientation_entry(Menu* menu, Orientation orient);
+    void add_halign_entry(Menu* menu, HAlign align);
+    void add_valign_entry(Menu* menu, VAlign align);
+    void add_copper_entry(Menu *menu, const char * name, CopperTarget target);
+
     void appendContextMenu(Menu *menu) override;
 };
 

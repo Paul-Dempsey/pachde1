@@ -12,6 +12,11 @@ OptionMenuEntry::OptionMenuEntry(rack::ui::MenuItem* item) : child_item(item) {
     addChild(child_item);
 }
 
+OptionMenuEntry::OptionMenuEntry(bool selected, rack::ui::MenuItem* item) : child_item(item), selected(selected) {
+    child_item->box.pos.x += 9.f;
+    addChild(child_item);
+}
+
 void OptionMenuEntry::step() {
     MenuEntry::step();
     box.size.x = child_item->box.size.x + 9.f;
