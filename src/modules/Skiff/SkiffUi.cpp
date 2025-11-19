@@ -255,7 +255,7 @@ void SkiffUi::fancy_background(bool fancy) {
     if (fancy) {
         if (!cloak) cloak = ensureBackgroundCloak();
         if (cloak) {
-            cloak->data.init(my_module->fancy_data);
+            cloak->data.init(my_module->fancy_data)
         }
     } else {
         if (cloak) cloak->requestDelete();
