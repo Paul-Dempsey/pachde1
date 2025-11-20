@@ -11,10 +11,10 @@ Skiff::Skiff() {
     std::vector<std::string> off_on{"off", "on"};
     config(Params::N_PARAMS, Inputs::N_INPUTS, Outputs::N_OUTPUTS, Lights::N_LIGHTS);
 
-    configSwitch(P_FANCY_FILL_ON,  0.f, 1.f, 1.f, "FancyBox Fill", off_on);
+    configSwitch(P_FANCY_FILL_ON,  0.f, 1.f, 1.f, "Enable FancyBox Fill", off_on);
     configParam(P_FANCY_FILL_FADE, 0.f, 1.f, 0.f, "FancyBox Fill fade", "%", 0.f, 100.f);
 
-    configSwitch(P_FANCY_LINEAR_ON, 0.f, 1.f, 0.f, "FancyBox Linear gradient", off_on);
+    configSwitch(P_FANCY_LINEAR_ON, 0.f, 1.f, 0.f, "Enable FancyBox Linear gradient", off_on);
     configParam(P_FANCY_LINEAR_START_FADE, 0.f, 10.f, 0.f, "FancyBox Linear start fade", "%", 0.f, 10.f);
     configParam(P_FANCY_LINEAR_X1,         0.f, 10.f, 0.f, "FancyBox Linear x1", "%", 0.f, 10.f);
     configParam(P_FANCY_LINEAR_Y1,         0.f, 10.f, 0.f, "FancyBox Linear y1", "%", 0.f, 10.f);
@@ -22,20 +22,20 @@ Skiff::Skiff() {
     configParam(P_FANCY_LINEAR_X2,         0.f, 10.f, 0.f, "FancyBox Linear x2", "%", 0.f, 10.f);
     configParam(P_FANCY_LINEAR_Y2,         0.f, 10.f, 0.f, "FancyBox Linear y2", "%", 0.f, 10.f);
 
-    configSwitch(P_FANCY_BOX_ON, 0.f, 1.f, 0.f, "FancyBox Box Gradient", off_on);
+    configSwitch(P_FANCY_RADIAL_ON, 0.f, 1.f, 0.f, "Enable FancyBox Radial gradient", off_on);
+    configParam(P_FANCY_RADIAL_INNER_FADE, 0.f, 10.f, 0.f,  "FancyBox Radial inner fade", "%", 0.f, 10.f);
+    configParam(P_FANCY_RADIAL_CX,         0.f, 10.f, 0.5f, "FancyBox Radial cx", "%", 0.f, 10.f);
+    configParam(P_FANCY_RADIAL_CY,         0.f, 10.f, 0.5f, "FancyBox Radial cy", "%", 0.f, 10.f);
+    configParam(P_FANCY_RADIAL_OUTER_FADE, 0.f, 10.f, 0.f,  "FancyBox Radial outer fade", "%", 0.f, 10.f);
+    configParam(P_FANCY_RADIAL_RADIUS,     0.f, 10.f, 0.8f, "FancyBox Radial radius", "%", 0.f, 10.f);
+
+    configSwitch(P_FANCY_BOX_ON, 0.f, 1.f, 0.f, "Enable FancyBox Box gradient (vignette)", off_on);
     configParam(P_FANCY_BOX_INNER_FADE,    0.f, 10.f, 0.f,  "FancyBox Box inner fade", "%", 0.f, 10.f);
     configParam(P_FANCY_BOX_SHRINK_X,      0.f, 10.f, 0.f,  "FancyBox Box shrink x", "%", 0.f, 10.f);
     configParam(P_FANCY_BOX_SHRINK_Y,      0.f, 10.f, 0.f,  "FancyBox Box shrink y", "%", 0.f, 10.f);
     configParam(P_FANCY_BOX_OUTER_FADE,    0.f, 10.f, 0.f,  "FancyBox Box outer fade", "%", 0.f, 10.f);
     configParam(P_FANCY_BOX_RADIUS,        0.f, 10.f, 0.2f, "FancyBox Box radius", "%", 0.f, 10.f);
     configParam(P_FANCY_BOX_FEATHER,       0.f, 10.f, 0.1f, "FancyBox Box feather", "%", 0.f, 10.f);
-
-    configSwitch(P_FANCY_RADIAL_ON, 0.f, 1.f, 0.f, "FancyBox Radial gradient", off_on);
-    configParam(P_FANCY_RADIAL_INNER_FADE, 0.f, 10.f, 0.f,  "FancyBox Radial inner fade", "%", 0.f, 10.f);
-    configParam(P_FANCY_RADIAL_CX,         0.f, 10.f, 0.5f, "FancyBox Radial cx", "%", 0.f, 10.f);
-    configParam(P_FANCY_RADIAL_CY,         0.f, 10.f, 0.5f, "FancyBox Radial cy", "%", 0.f, 10.f);
-    configParam(P_FANCY_RADIAL_OUTER_FADE, 0.f, 10.f, 0.f,  "FancyBox Radial outer fade", "%", 0.f, 10.f);
-    configParam(P_FANCY_RADIAL_RADIUS,     0.f, 10.f, 0.8f, "FancyBox Radial radius", "%", 0.f, 10.f);
 }
 
 void Skiff::set_defaults() {

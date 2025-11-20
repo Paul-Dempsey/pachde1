@@ -160,6 +160,35 @@ struct TActionButton : ::rack::app::SvgButton
     }
 };
 
+template<typename TSvg>
+struct TParamButton : ::rack::app::SvgSwitch
+{
+    using Base = SvgSwitch;
+
+    TParamButton() {
+        this->shadow->hide();
+    }
+
+    void loadSvg(ILoadSvg* loader) {
+        if (frames.empty()) {
+            addFrame(loader->loadSvg(TSvg::up()));
+            addFrame(loader->loadSvg(TSvg::down()));
+        }
+    }
+
+    void applyTheme(std::shared_ptr<SvgTheme> theme) {
+        applySvgTheme(frames[0], theme);
+        applySvgTheme(frames[1], theme);
+    }
+
+    void updateSvg(std::shared_ptr<SvgTheme> theme) {
+        frames[0]->loadFile(TSvg::up());
+        frames[1]->loadFile(TSvg::down());
+        applyTheme(theme);
+        fb->dirty = true;
+    }
+};
+
 struct MediumButtonSvg {
     static std::string up()   { return asset::plugin(pluginInstance, "res/widget/med-but-up.svg"); }
     static std::string down() { return asset::plugin(pluginInstance, "res/widget/med-but-dn.svg"); }
@@ -226,6 +255,12 @@ struct GearButtonSvg {
 };
 using GearActionButton = TActionButton<GearButtonSvg>;
 
+struct CheckButtonSvg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/check-btn-up.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/check-btn-dn.svg"); }
+};
+using CheckButton = TParamButton<CheckButtonSvg>;
+
 template <typename TActionButton>
 TActionButton* createThemeSvgButton(ILoadSvg* loader, Vec pos) {
     TActionButton* o = new TActionButton();
@@ -243,5 +278,23 @@ TActionButton* createThemeSvgButton(ILoadSvg* loader, std::shared_ptr<SvgTheme> 
     return o;
 }
 
+template <typename TPButton>
+TPButton * createThemeParamButton(ILoadSvg* loader, ::rack::math::Vec pos, ::rack::engine::Module*module, int paramId, std::shared_ptr<SvgTheme> theme) {
+    TPButton * o  = createParam<TPButton>(pos, module, paramId);
+    o->loadSvg(loader);
+    o->applyTheme(theme);
+    return o;
+}
+
+template <typename TPButton, typename TLight>
+TPButton * createThemeParamLightButton(ILoadSvg* loader, ::rack::math::Vec pos, ::rack::engine::Module* module, int paramId, int lightId, std::shared_ptr<SvgTheme> theme) {
+    TPButton * o = createThemeParamButton<TPButton>(pos, module, paramId, theme);
+
+    auto light = createLight<TLight>(Vec(0,0), module, lightId);
+    light->box.pos = o->box.size.div(2).minus(light->box.size.div(2));
+    light->box.pos.y += .75f;
+    o->addChildBottom(light);
+    return o;
+}
 
 }

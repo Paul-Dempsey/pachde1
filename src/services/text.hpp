@@ -28,15 +28,8 @@ void SetTextStyle(NVGcontext *vg, std::shared_ptr<window::Font> font, NVGcolor c
 // Text style must have been previously set
 void CenterText(NVGcontext *vg, float x, float y, const char * text, const char * end);
 
-enum class BaselineCorrection {
-    None,
-    Baseline
-};
-
-// The y coordinate is the baseline (BaselineCorrection::none)
-// or the bottom of text box (BaselineCorrection::Baseline).
 // Text style must have been previously set.
-void RightAlignText(NVGcontext *vg, float x, float y, const char * text, const char * end, BaselineCorrection correction = BaselineCorrection::None);
+void RightAlignText(NVGcontext *vg, float x, float y, const char * text, const char * end);
 
 void draw_text_box (
     NVGcontext *vg,

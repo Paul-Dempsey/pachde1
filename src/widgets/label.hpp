@@ -19,7 +19,7 @@ struct LabelStyle {
     float right_margin{0.f};
     float baseline{INFINITY};
     HAlign halign{HAlign::Center};
-    VAlign valign{VAlign::Baseline};
+    VAlign valign{VAlign::Middle};
     Orientation orientation{Orientation::Normal};
 
     LabelStyle() {}
@@ -36,7 +36,6 @@ struct LabelStyle {
             color = colors::PortRed;
         }
     }
-
 };
 
 struct TextLabel : OpaqueWidget, svg_theme::IThemed

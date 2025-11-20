@@ -12,7 +12,7 @@ using namespace widgetry;
 namespace pachde {
 
 struct FancySvg {
-    static std::string background() { return asset::plugin(pluginInstance, "res/skiff/fancy-dialog.svg"); }
+    static std::string background() { return asset::plugin(pluginInstance, "res/skiff/fancy-options.svg"); }
 };
 
 struct FancyDialog : SvgDialog<FancySvg>
@@ -27,6 +27,7 @@ struct FancyDialog : SvgDialog<FancySvg>
 
     void add_knob(::svg_query::BoundsIndex& bounds, const char* key, int param);
     void add_label(::svg_query::BoundsIndex& bounds, const char* key, const char* text, LabelStyle* style, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
+    void add_check(::svg_query::BoundsIndex& bounds, const char* key, int param, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
     void make_ui();
 };
 

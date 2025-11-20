@@ -67,8 +67,8 @@ fancy-panel = #111
 dlg-border = none stroke #444 width 2.5
 group-box = stroke #f9a806 width .75
 close-hover = hsl(0, .6, .5) stroke none
-close-frame = none stroke none
-close-glyph = #181818
+close-frame = none stroke #666
+close-glyph = #e6e6e6
 
 // Rui
 fluff-co = hsla(194, 54%, 55%, 1.00)

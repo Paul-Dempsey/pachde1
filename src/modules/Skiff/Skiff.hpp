@@ -31,6 +31,13 @@ struct Skiff : ThemeModule
         P_FANCY_LINEAR_X2,
         P_FANCY_LINEAR_Y2,
 
+        P_FANCY_RADIAL_ON,
+        P_FANCY_RADIAL_INNER_FADE,
+        P_FANCY_RADIAL_CX,
+        P_FANCY_RADIAL_CY,
+        P_FANCY_RADIAL_OUTER_FADE,
+        P_FANCY_RADIAL_RADIUS,
+
         P_FANCY_BOX_ON,
         P_FANCY_BOX_INNER_FADE,
         P_FANCY_BOX_SHRINK_X,
@@ -39,12 +46,6 @@ struct Skiff : ThemeModule
         P_FANCY_BOX_RADIUS,
         P_FANCY_BOX_FEATHER,
 
-        P_FANCY_RADIAL_ON,
-        P_FANCY_RADIAL_INNER_FADE,
-        P_FANCY_RADIAL_CX,
-        P_FANCY_RADIAL_CY,
-        P_FANCY_RADIAL_OUTER_FADE,
-        P_FANCY_RADIAL_RADIUS,
         N_PARAMS
     };
     enum Inputs {
