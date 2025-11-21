@@ -101,7 +101,7 @@ struct CloakData {
 struct CloakBackgroundWidget;
 
 struct ICloakBackgroundClient {
-    virtual void onDelete(CloakBackgroundWidget* cloak) = 0;
+    virtual void onDeleteCloak(CloakBackgroundWidget* cloak) = 0;
 };
 
 struct CloakBackgroundWidget : Widget
@@ -110,21 +110,29 @@ struct CloakBackgroundWidget : Widget
     std::vector<ICloakBackgroundClient*> clients;
 
     ~CloakBackgroundWidget();
+    CloakBackgroundWidget() {};
+    CloakBackgroundWidget(CloakData* cd) {
+        box = Rect{Vec{0.f,0.f}, Vec{INFINITY,INFINITY}};
+        if (cd) data.init(*cd);
+    }
     void init(const CloakData& source) { data.init(source); }
 
     void add_client(ICloakBackgroundClient* client);
     void remove_client(ICloakBackgroundClient* client);
 
     void onButton(const ButtonEvent& e) override { e.unconsume(); } // make clicks transparent
+    void draw_fill(const DrawArgs &args);
+    void draw_linear(const DrawArgs &args);
+    void draw_radial(const DrawArgs &args);
+    void draw_box(const DrawArgs &args);
     void draw(const DrawArgs& args) override;
 };
 
 inline CloakBackgroundWidget * getBackgroundCloak() {
-    return APP->scene->rack->getFirstDescendantOfType<CloakBackgroundWidget>();;
+    //return APP->scene->rack->getFirstDescendantOfType<CloakBackgroundWidget>();;
+    return APP->scene->getFirstDescendantOfType<CloakBackgroundWidget>();
 }
 
-CloakBackgroundWidget * toggleBackgroundCloak();
-CloakBackgroundWidget * ensureBackgroundCloak();
-CloakBackgroundWidget * applyCloak(CloakBackgroundWidget* cloak);
+CloakBackgroundWidget * ensureBackgroundCloak(Widget*host, CloakData* data);
 
 } //widgetry

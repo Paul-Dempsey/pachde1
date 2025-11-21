@@ -1,4 +1,0 @@
-#theme : Dark
-item-a : f[#abcdef]s[hsl(12,51%,80%)]w[1.25]o[.8]
-item-b : grad[stop[#abcdef89,0,0] stop[#efefef,1,8.5]]
-

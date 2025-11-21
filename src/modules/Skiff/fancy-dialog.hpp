@@ -22,6 +22,7 @@ struct FancyDialog : SvgDialog<FancySvg>
     LabelStyle* label_style{nullptr};
     LabelStyle* title_style{nullptr};
     LabelStyle* group_style{nullptr};
+    ::svg_query::BoundsIndex swatch_rects;
 
     FancyDialog(SkiffUi* src, ILoadSvg* loader);
 
@@ -29,6 +30,7 @@ struct FancyDialog : SvgDialog<FancySvg>
     void add_label(::svg_query::BoundsIndex& bounds, const char* key, const char* text, LabelStyle* style, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
     void add_check(::svg_query::BoundsIndex& bounds, const char* key, int param, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
     void make_ui();
+    void draw(const DrawArgs& args) override;
 };
 
 void pre_cache_fancy_dialog_svg(ILoadSvg* loader);

@@ -91,7 +91,7 @@ struct RailMenu : Hamburger
     void appendContextMenu(ui::Menu* menu) override;
 };
 
-struct SkiffUi : ModuleWidget, IThemeChange
+struct SkiffUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
 {
     using Base = ModuleWidget;
 
@@ -111,6 +111,9 @@ struct SkiffUi : ModuleWidget, IThemeChange
     TextButton* fancy_button{nullptr};
     GearActionButton* fancy_options{nullptr};
 
+    CloakBackgroundWidget* my_cloak{nullptr};
+    bool request_cloak{false};
+
     #ifdef HOT_SVG
     PositionIndex pos_widgets;
     #define HOT_POSITION(name,kind,widget) addPosition(pos_widgets, name, kind, widget)
@@ -128,6 +131,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
         std::shared_ptr<svg_theme::SvgTheme> svg_theme,
         std::function<void(bool,bool)> handler);
     void onChangeTheme(ChangedItem item) override;
+    void onDeleteCloak(CloakBackgroundWidget* cloak) override;
     void sync_latch_state();
     void restore_rack();
     void from_module();

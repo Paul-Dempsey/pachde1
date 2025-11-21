@@ -104,12 +104,11 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     addChild(fancy_button = makeTextButton(bounds, "k:fancy-btn", true, "", "Toggle Fancy background", svg_theme,
         [this](bool ctrl, bool shift) { if(!my_module) return; fancy_background(!my_module->fancy); }));
 
-
     fancy_options = Center(createThemeSvgButton<GearActionButton>(&my_svgs, bounds["k:fancy-options"].getCenter()));
     HOT_POSITION("k:fancy-options", HotPosKind::Center, fancy_options);
     if (module) {
         fancy_options->describe("FancyBox options");
-        fancy_options->set_handler([=](bool,bool) { if (my_module) show_fancy_dialog(this); });
+        fancy_options->set_handler([=](bool,bool) { show_fancy_dialog(this); });
     }
     addChild(fancy_options);
 
@@ -206,17 +205,9 @@ void SkiffUi::from_module() {
     calm_rack(my_module->calm);
     panel_visibility(nullptr, !my_module->depaneled);
 
-    {
-        auto cloak = getBackgroundCloak();
-        if (my_module->fancy) {
-            if (!cloak) {
-                ensureBackgroundCloak();
-            }
-        } else {
-            if (cloak) cloak->requestDelete();
-        }
+    if (my_module->fancy) {
+        request_cloak = true;
     }
-
     set_alt_rail(my_module->rail);
 
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
@@ -247,19 +238,29 @@ void SkiffUi::derail(bool derail) {
     set_rail_visible(!derail);
 }
 
+void SkiffUi::onDeleteCloak(CloakBackgroundWidget *cloak) {
+    assert(my_cloak == cloak);
+    if (my_cloak) my_cloak = nullptr;
+    my_module->fancy = false;
+    sync_latch_state();
+}
+
 void SkiffUi::fancy_background(bool fancy) {
     if (!my_module) return;
 
     my_module->fancy = fancy;
     auto cloak = getBackgroundCloak();
     if (fancy) {
-        if (!cloak) cloak = ensureBackgroundCloak();
-        if (cloak) {
-            cloak->data.init(my_module->fancy_data);
+        if (!cloak) {
+            my_cloak = ensureBackgroundCloak(this, &my_module->fancy_data);
         }
     } else {
-        if (cloak) cloak->requestDelete();
+        if (cloak) {
+            my_cloak = nullptr;
+            cloak->requestDelete();
+        }
     }
+    sync_latch_state();
 }
 
 void SkiffUi::set_nojacks(bool nojacks) {
@@ -454,6 +455,10 @@ void SkiffUi::step() {
         request_custom_rail = false;
         custom_rail();
     }
+    if (request_cloak) {
+        request_cloak = false;
+        fancy_background(my_module->fancy);
+   }
     theme_holder->pollRackThemeChanged();
 }
 
@@ -461,8 +466,12 @@ void SkiffUi::draw(const DrawArgs& args) {
     Base::draw(args);
     if (my_module && my_module->other_skiff) {
         draw_disabled_panel(this, GetPreferredTheme(theme_holder), args, 20.f, 20.f);
+        return;
     }
-}
+    if (my_cloak) {
+        Circle(args.vg, 12, 192, 4, nvgHSLAf(50.f/360.f, 1.f, .8f, 1.f));
+    }
+ }
 
 void SkiffUi::appendContextMenu(Menu* menu) {
     if (!module) return;

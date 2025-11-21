@@ -33,6 +33,7 @@ void FancyDialog::make_ui() {
     auto svg_theme = getThemeCache().getTheme(ThemeName(skiff->theme_holder->getTheme()));
     auto layout = get_svg();
     ::svg_query::BoundsIndex bounds;
+    svg_query::addBounds(layout, "s:", swatch_rects, true);
     svg_query::addBounds(layout, "k:", bounds, true);
 
     title_style = new LabelStyle("fancy-title", colors::Black, 14.f, true);
@@ -64,6 +65,9 @@ void FancyDialog::make_ui() {
         picker->set_color(skiff->my_module->fancy_data.fill.color);
         picker->set_on_new_color([=](PackedColor color) {
             skiff->my_module->fancy_data.fill.color = color;
+            if (skiff->my_cloak) {
+                skiff->my_cloak->data.fill.color = color;
+            }
         });
         createMenu()->addChild(picker);
     });
@@ -78,7 +82,12 @@ void FancyDialog::make_ui() {
     palette->set_handler([=](bool,bool) {
         auto picker = new ColorPickerMenu();
         picker->set_color(skiff->my_module->fancy_data.linear.icol);
-        picker->set_on_new_color([=](PackedColor color) { skiff->my_module->fancy_data.linear.icol = color; });
+        picker->set_on_new_color([=](PackedColor color) {
+            skiff->my_module->fancy_data.linear.icol = color;
+            if (skiff->my_cloak) {
+                skiff->my_cloak->data.linear.icol = color;
+            }
+        });
         createMenu()->addChild(picker);
     });
     addChild(palette);
@@ -96,7 +105,12 @@ void FancyDialog::make_ui() {
     palette->set_handler([=](bool,bool) {
         auto picker = new ColorPickerMenu();
         picker->set_color(skiff->my_module->fancy_data.linear.ocol);
-        picker->set_on_new_color([=](PackedColor color) { skiff->my_module->fancy_data.linear.ocol = color; });
+        picker->set_on_new_color([=](PackedColor color) {
+            skiff->my_module->fancy_data.linear.ocol = color;
+            if (skiff->my_cloak) {
+                skiff->my_cloak->data.linear.ocol = color;
+            }
+        });
         createMenu()->addChild(picker);
     });
     addChild(palette);
@@ -116,7 +130,12 @@ void FancyDialog::make_ui() {
     palette->set_handler([=](bool,bool) {
         auto picker = new ColorPickerMenu();
         picker->set_color(skiff->my_module->fancy_data.radial.icol);
-        picker->set_on_new_color([=](PackedColor color) { skiff->my_module->fancy_data.radial.icol = color; });
+        picker->set_on_new_color([=](PackedColor color) {
+            skiff->my_module->fancy_data.radial.icol = color;
+            if (skiff->my_cloak) {
+                skiff->my_cloak->data.radial.icol = color;
+            }
+        });
         createMenu()->addChild(picker);
     });
     addChild(palette);
@@ -132,7 +151,12 @@ void FancyDialog::make_ui() {
     palette->set_handler([=](bool,bool) {
         auto picker = new ColorPickerMenu();
         picker->set_color(skiff->my_module->fancy_data.radial.ocol);
-        picker->set_on_new_color([=](PackedColor color) { skiff->my_module->fancy_data.radial.ocol = color; });
+        picker->set_on_new_color([=](PackedColor color) {
+            skiff->my_module->fancy_data.radial.ocol = color;
+            if (skiff->my_cloak) {
+                skiff->my_cloak->data.radial.ocol = color;
+            }
+        });
         createMenu()->addChild(picker);
     });
     addChild(palette);
@@ -149,7 +173,12 @@ void FancyDialog::make_ui() {
     palette->set_handler([=](bool,bool) {
         auto picker = new ColorPickerMenu();
         picker->set_color(skiff->my_module->fancy_data.boxg.icol);
-        picker->set_on_new_color([=](PackedColor color) { skiff->my_module->fancy_data.boxg.icol = color; });
+        picker->set_on_new_color([=](PackedColor color) {
+            skiff->my_module->fancy_data.boxg.icol = color;
+            if (skiff->my_cloak) {
+                skiff->my_cloak->data.boxg.icol = color;
+            }
+        });
         createMenu()->addChild(picker);
     });
     addChild(palette);
@@ -166,7 +195,12 @@ void FancyDialog::make_ui() {
     palette->set_handler([=](bool,bool) {
         auto picker = new ColorPickerMenu();
         picker->set_color(skiff->my_module->fancy_data.boxg.ocol);
-        picker->set_on_new_color([=](PackedColor color) { skiff->my_module->fancy_data.boxg.ocol = color; });
+        picker->set_on_new_color([=](PackedColor color) {
+            skiff->my_module->fancy_data.boxg.ocol = color;
+            if (skiff->my_cloak) {
+                skiff->my_cloak->data.boxg.ocol = color;
+            }
+        });
         createMenu()->addChild(picker);
     });
     addChild(palette);
@@ -181,4 +215,25 @@ void FancyDialog::make_ui() {
 
 }
 
+void FancyDialog::draw(const DrawArgs &args)
+{
+    Base::draw(args);
+    if (skiff && skiff->my_module) {
+        CloakData& data = skiff->my_module->fancy_data;
+        Rect r = swatch_rects["s:fill-swatch"];
+        FillRect(args.vg, RECT_ARGS(r), fromPacked(data.fill.color));
+        r = swatch_rects["s:lg-start-swatch"];
+        FillRect(args.vg, RECT_ARGS(r), fromPacked(data.linear.icol));
+        r = swatch_rects["s:lg-end-swatch"];
+        FillRect(args.vg, RECT_ARGS(r), fromPacked(data.linear.ocol));
+        r = swatch_rects["s:rg-inner-swatch"];
+        FillRect(args.vg, RECT_ARGS(r), fromPacked(data.radial.icol));
+        r = swatch_rects["s:rg-outer-swatch"];
+        FillRect(args.vg, RECT_ARGS(r), fromPacked(data.radial.ocol));
+        r = swatch_rects["s:bg-inner-swatch"];
+        FillRect(args.vg, RECT_ARGS(r), fromPacked(data.boxg.icol));
+        r = swatch_rects["s:bg-outer-swatch"];
+        FillRect(args.vg, RECT_ARGS(r), fromPacked(data.boxg.ocol));
+    }
+}
 }
