@@ -98,8 +98,15 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     addChild(nojack_button = makeTextButton(bounds, "k:nojack-btn", true, "", "Toggle visible unused jacks", svg_theme,
         [this](bool ctrl, bool shift) { if(!my_module) return; set_nojacks(!my_module->nojacks); }));
 
+    addChild(dark_ages_button = makeTextButton(bounds, "k:darkages-btn", true, "", "Toggle visible lights", svg_theme,
+        [this](bool ctrl, bool shift) { if(!my_module) return; set_dark_ages(!my_module->dark_ages); }));
+
     addChild(pack_button = makeTextButton(bounds, "k:pack-btn", false, "", "Pack modules (pack selected: F7)", svg_theme,
         [](bool ctrl, bool shift) { pack_modules(); }));
+
+    auto light = createLightCentered<SmallLight<RedLight>>(bounds["k:fancy-light"].getCenter(), my_module, Skiff::L_FANCY);
+    HOT_POSITION("k:fancy-light", HotPosKind::Center, light);
+    addChild(light);
 
     addChild(fancy_button = makeTextButton(bounds, "k:fancy-btn", true, "", "Toggle Fancy background", svg_theme,
         [this](bool ctrl, bool shift) { if(!my_module) return; fancy_background(!my_module->fancy); }));
@@ -123,7 +130,6 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     shouting_buttons(my_module ? my_module->shouting : true);
     my_svgs.changeTheme(svg_theme);
     from_module();
-    sync_latch_state();
 }
 
 TextButton* SkiffUi::makeTextButton (
@@ -155,6 +161,7 @@ void SkiffUi::shouting_buttons(bool shouting) {
         calm_button->set_text("CALM");
         unscrew_button->set_text("UNSCREW");
         nojack_button->set_text("NOJACK");
+        dark_ages_button->set_text("DARKNESS");
         pack_button->set_text("PACK'EM");
         fancy_button->set_text("FANCYBOX");
     } else {
@@ -163,6 +170,7 @@ void SkiffUi::shouting_buttons(bool shouting) {
         calm_button->set_text("Calm");
         unscrew_button->set_text("unScrew");
         nojack_button->set_text("noJack");
+        dark_ages_button->set_text("darkness");
         pack_button->set_text("Pack'em");
         fancy_button->set_text("FancyBox");
     }
@@ -182,13 +190,11 @@ void SkiffUi::sync_latch_state() {
     if (!my_module) return;
 
     derail_button->latched  = my_module->derailed;
-    fancy_button->latched   = my_module->fancy;
     nopanel_button->latched = my_module->depaneled;
     calm_button->latched    = my_module->calm;
     unscrew_button->latched = my_module->unscrewed;
     nojack_button->latched  = my_module->nojacks;
-
-    sendDirty(this);
+    fancy_button->latched   = my_module->fancy;
 }
 
 void SkiffUi::restore_rack() {
@@ -214,8 +220,6 @@ void SkiffUi::from_module() {
     if (rail) {
         rail->setVisible(!my_module->derailed);
     }
-
-    sync_latch_state();
 }
 
 void SkiffUi::no_panels(bool depanel) {
@@ -242,7 +246,6 @@ void SkiffUi::onDeleteCloak(CloakBackgroundWidget *cloak) {
     assert(my_cloak == cloak);
     if (my_cloak) my_cloak = nullptr;
     my_module->fancy = false;
-    sync_latch_state();
 }
 
 void SkiffUi::fancy_background(bool fancy) {
@@ -260,13 +263,19 @@ void SkiffUi::fancy_background(bool fancy) {
             cloak->requestDelete();
         }
     }
-    sync_latch_state();
 }
 
 void SkiffUi::set_nojacks(bool nojacks) {
     if (!my_module) return;
     my_module->nojacks = nojacks;
     port_visibility(APP->scene->rack, !nojacks);
+}
+
+void SkiffUi::set_dark_ages(bool dark)
+{
+    if (!my_module) return;
+    my_module->dark_ages = dark;
+    light_visibility(APP->scene->rack, !dark);
 }
 
 void SkiffUi::calm_rack(bool calm) {
@@ -459,7 +468,8 @@ void SkiffUi::step() {
         request_cloak = false;
         fancy_background(my_module->fancy);
    }
-    theme_holder->pollRackThemeChanged();
+   theme_holder->pollRackThemeChanged();
+   sync_latch_state();
 }
 
 void SkiffUi::draw(const DrawArgs& args) {
@@ -468,9 +478,9 @@ void SkiffUi::draw(const DrawArgs& args) {
         draw_disabled_panel(this, GetPreferredTheme(theme_holder), args, 20.f, 20.f);
         return;
     }
-    if (my_cloak) {
-        Circle(args.vg, 12, 192, 4, nvgHSLAf(50.f/360.f, 1.f, .8f, 1.f));
-    }
+    // if (my_cloak) {
+    //     Circle(args.vg, 12, 192, 4, nvgHSLAf(50.f/360.f, 1.f, .8f, 1.f));
+    // }
  }
 
 void SkiffUi::appendContextMenu(Menu* menu) {

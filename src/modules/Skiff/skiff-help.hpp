@@ -19,6 +19,7 @@ const char * alt_rail_name();
 
 void screw_visibility(::rack::widget::Widget* root_widget, bool visible);
 void port_visibility(::rack::widget::Widget* root_widget, bool visible);
+void light_visibility(::rack::widget::Widget* root_widget, bool visible);
 void panel_visibility(::rack::widget::Widget* exclude, bool visible);
 
 bool toggle_rail(); // returns visibility after toggling

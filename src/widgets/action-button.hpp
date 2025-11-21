@@ -278,6 +278,21 @@ TActionButton* createThemeSvgButton(ILoadSvg* loader, std::shared_ptr<SvgTheme> 
     return o;
 }
 
+template <typename TActionButton, typename TLight>
+TActionButton* createThemeSvgLightButton(ILoadSvg* loader, std::shared_ptr<SvgTheme> theme, Vec pos, ::rack::engine::Module* module, int lightId) {
+    TActionButton* o = new TActionButton();
+    o->box.pos = pos;
+    o->loadSvg(loader);
+    o->applyTheme(theme);
+
+    auto light = createLight<TLight>(Vec(0,0), module, lightId);
+    light->box.pos = o->box.size.div(2).minus(light->box.size.div(2));
+    light->box.pos.y += .75f;
+    o->addChildBottom(light);
+
+    return o;
+}
+
 template <typename TPButton>
 TPButton * createThemeParamButton(ILoadSvg* loader, ::rack::math::Vec pos, ::rack::engine::Module*module, int paramId, std::shared_ptr<SvgTheme> theme) {
     TPButton * o  = createParam<TPButton>(pos, module, paramId);

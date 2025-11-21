@@ -55,17 +55,19 @@ struct Skiff : ThemeModule
         N_OUTPUTS
     };
     enum Lights {
+        L_FANCY,
         N_LIGHTS
     };
 
     std::string rail{"Rack"};
     std::string rail_folder = asset::userDir;
     bool other_skiff{false};
-    bool unscrewed{false};
-    bool nojacks{false};
-    bool calm{false};
     bool derailed{false};
     bool depaneled{false};
+    bool calm{false};
+    bool unscrewed{false};
+    bool nojacks{false};
+    bool dark_ages{false};
     bool fancy{false};
     bool shouting{true};
     CloakData fancy_data;
@@ -107,6 +109,7 @@ struct SkiffUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     TextButton* calm_button{nullptr};
     TextButton* unscrew_button{nullptr};
     TextButton* nojack_button{nullptr};
+    TextButton* dark_ages_button{nullptr};
     TextButton* pack_button{nullptr};
     TextButton* fancy_button{nullptr};
     GearActionButton* fancy_options{nullptr};
@@ -141,6 +144,7 @@ struct SkiffUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void derail(bool derail);
     void fancy_background(bool fancy);
     void set_nojacks(bool nojacks);
+    void set_dark_ages(bool dark);
     void calm_rack(bool calm);
     void recover_rack_rail();
     std::shared_ptr<window::Svg> set_rail_svg(RailWidget* rail, const std::string& filename);

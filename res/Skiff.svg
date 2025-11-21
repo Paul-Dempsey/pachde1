@@ -18,15 +18,17 @@ version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/20
 <rect id="k:calm-btn"   x="1.5" y="79" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
 <rect id="k:screw-btn"  x="1.5" y="96" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
 <rect id="k:nojack-btn" x="1.5" y="113" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
+<rect id="k:darkages-btn" x="1.5" y="130" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
 
-<path id="1--sep" stroke="#888" stroke-width=".75" d="M 2.5,134 h 55"/>
+<path id="1--sep" stroke="#888" stroke-width=".75" d="M 2.5,151 h 55"/>
 
-<rect id="k:pack-btn"  x="1.5" y="138" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
+<rect id="k:pack-btn"  x="1.5" y="155" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
 
-<path id="2--sep" stroke="#888" stroke-width=".75" d="M 2.5,159 h 55"/>
+<path id="2--sep" stroke="#888" stroke-width=".75" d="M 2.5,176 h 55"/>
 
-<rect id="k:fancy-btn"  x="1.5" y="163" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
-<circle id="k:fancy-options" cx="30" cy="192" r="10" fill="#33b"/>
+<circle id="k:fancy-light" cx="50" cy="209" r="2.95" />
+<rect id="k:fancy-btn"  x="1.5" y="180" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
+<circle id="k:fancy-options" cx="30" cy="209" r="10" fill="#33b"/>
 
 <path id="3--sep" stroke="#888" stroke-width=".75" d="M 2.5,320 h 55"/>
 

@@ -5,7 +5,7 @@
 <rect fill="#f62222" id="k:close" width="12" height="12" x="8" y="3.5" />
 
 <g transform="translate(0,18)">
-    <rect fill="#222" x="3.5" y="0" width="157" height="48"/>
+    <rect id="group-box" fill="#222" x="3.5" y="0" width="158" height="48"/>
     <rect id="k:fill-check" fill="#a6a6a6" x="7.5" y="0" width="14" height="14" />
     <rect id="k:fill-group" fill="#a6a6a6" width="14" height="30" x="7.5" y="15" />
     <circle id="k:fill-co" fill="#d65cab" cx="36" cy="14" r="10" />
@@ -16,7 +16,7 @@
 </g>
 
 <g transform="translate(0,68)">
-    <rect fill="#222" x="3.5" y="0" width="157" height="102"/>
+    <rect id="group-box" fill="#222" x="3.5" y="0" width="158" height="102"/>
     <rect id="k:lg-check" fill="#a6a6a6" x="7.5" y="0" width="14" height="14" />
     <rect id="k:lg-group" fill="#a6a6a6" x="7.5" y="15" width="14" height="86" />
     <g transform="translate(0,2)">
@@ -44,7 +44,7 @@
 </g>
 
 <g transform="translate(0,172)">
-    <rect fill="#222" x="3.5" y="0" width="157" height="102"/>
+    <rect id="group-box" fill="#222" x="3.5" y="0" width="158" height="102"/>
     <rect id="k:rg-check" fill="#a6a6a6" x="7.5" y="0" width="14" height="14" />
     <rect id="k:rg-group" fill="#a6a6a6" x="7.5" y="15" width="14" height="86" />
     <g transform="translate(0,2)">
@@ -70,7 +70,7 @@
 </g>
 
 <g transform="translate(0,276)">
-    <rect fill="#222" x="3.5" y="0" width="157" height="102"/>
+    <rect id="group-box" fill="#222" x="3.5" y="0" width="157" height="102"/>
     <rect id="k:bg-check" fill="#a6a6a6" x="7.5" y="0" width="14" height="14" />
     <rect id="k:bg-group" fill="#a6a6a6" x="7.5" y="16" width="14" height="86" />
     <g transform="translate(0,2)">

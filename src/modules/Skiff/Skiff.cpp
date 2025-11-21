@@ -52,6 +52,7 @@ json_t* Skiff::dataToJson() {
     set_json(root, "calm", calm);
     set_json(root, "derailed", derailed);
     set_json(root, "depaneled", depaneled);
+    set_json(root, "dark-ages", dark_ages);
     set_json(root, "fancy", fancy);
     set_json(root, "theme", theme_name);
     set_json(root, "shouting", shouting);
@@ -84,6 +85,7 @@ void Skiff::dataFromJson(json_t* root) {
     calm        = get_json_bool(root, "calm", calm);
     derailed    = get_json_bool(root, "derailed", derailed);
     depaneled   = get_json_bool(root, "depaneled", depaneled);
+    dark_ages   = get_json_bool(root, "dark-ages", dark_ages);
     fancy       = get_json_bool(root, "fancy", fancy);
     shouting    = get_json_bool(root, "shouting", shouting);
     rail_theme  = RailThemeSetting_from_json(root);
@@ -101,6 +103,7 @@ void Skiff::random_settings() {
     unscrewed  = random::uniform() < .5f;
     nojacks    = random::uniform() > .5f;
     calm       = random::uniform() < .5f;
+    dark_ages  = random::uniform() > .5f;
     //derailed   = random::uniform() > .5f;
     depaneled  = random::uniform() < .5f;
     //fancy      = random::uniform() > .5f;
@@ -123,7 +126,7 @@ void Skiff::process(const ProcessArgs &args)
 {
     if (other_skiff || !ui) return;
     if ((0 == ((args.frame + getId()) % PARAM_INTERVAL))) {
-
+        getLight(L_FANCY).setSmoothBrightness(ui->my_cloak ? 1.0 : 0.f, 86.f);
         if (ui->my_cloak) {
             ui->my_cloak->data.fill.enabled
                 = fancy_data.fill.enabled = param_bool(getParam(P_FANCY_FILL_ON));

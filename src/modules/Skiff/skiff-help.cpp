@@ -39,6 +39,18 @@ void port_visibility(::rack::widget::Widget* root_widget, bool visible) {
     }
 }
 
+void light_visibility(::rack::widget::Widget *root_widget, bool visible)
+{
+    auto light = dynamic_cast<::rack::app::LightWidget*>(root_widget);
+    if (light) {
+        light->setVisible(visible);
+        return;
+    }
+    for (auto child: root_widget->children) {
+        light_visibility(child, visible);
+    }
+}
+
 void panel_visibility(::rack::widget::Widget *exclude, bool visible) {
     ::rack::app::RackWidget* rack = APP->scene->rack;
     std::vector<::rack::app::ModuleWidget*> module_widgets{rack->getModules()};

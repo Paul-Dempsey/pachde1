@@ -24,6 +24,11 @@ k-pointer = #cedcf2
 k-ring = stroke #444
 knob-range = stroke #999
 
+// Check Button
+checked   = #efefef
+unchecked =  #444
+ctl-frame = stroke #aaa
+
 // switch
 sw-bg       = hsl(0, 0, .25)
 sw-frame    = hsl(0, 0, .6)
@@ -64,8 +69,8 @@ fancy-title = #000
 fancy-group = #f9a806
 fancy-label = #e6e6e6
 fancy-panel = #111
+group-box = #222 stroke none
 dlg-border = none stroke #444 width 2.5
-group-box = stroke #f9a806 width .75
 close-hover = hsl(0, .6, .5) stroke none
 close-frame = none stroke #666
 close-glyph = #e6e6e6

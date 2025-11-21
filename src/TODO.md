@@ -8,9 +8,8 @@
 
 ## Skiff
 
+- Flyout for Fancy options + CV jacks
 - Undo for PackModules?
-- Fancy background -> more (limited) background control
-- Skiff ears
 
 ## Guide: Panel Design Guides
 
