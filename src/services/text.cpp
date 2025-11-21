@@ -149,7 +149,7 @@ void draw_text_box (
         case VAlign::Top: ty = y; break;
         case VAlign::Middle: ty = y + h*.5 - total_height*.5; break;
         case VAlign::Bottom: ty = h - total_height; break;
-        case VAlign::Baseline: ty = y - (std::isfinite(first_baseline)) ? first_baseline : tm_ascent; break;
+        case VAlign::Baseline: ty = y - (std::isfinite(first_baseline) ? first_baseline : tm_ascent); break;
     }
     nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
     float tx{0};

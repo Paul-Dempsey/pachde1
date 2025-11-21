@@ -162,9 +162,9 @@ TDialog* createMenuDialog(
 #endif
 
     auto menu = ::rack::createMenu();
-    auto overlay = menu->getAncestorOfType<MenuOverlay>();
 #ifdef DIALOG_MODAL_SCREEN
-    menuOverlay->bgColor = screen; // optionally dim/screen rack
+    auto overlay = menu->getAncestorOfType<MenuOverlay>();
+    overlay->bgColor = screen; // optionally dim/screen rack
 #endif
 
     bool real_pos = pos.isFinite();
