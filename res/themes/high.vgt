@@ -4,6 +4,7 @@
       title = #f9a806
        mast = none
        logo = #fafafa
+logo-circle = #111 stroke #f9a806 width .5
         sep = hsl(216, .5, .5)
      symbol = #dedede
       patty = hsl(0,0,1)
@@ -41,7 +42,7 @@ tbtn-punch = none stroke #999 width .75
 tbtn-bevel = [#0000,#0000]
 tbtn-face = [#0000,#0000]
 tbtn-text = #fff
-tbtn-text-dn = #666666
+tbtn-text-dn = #f6f224ff
 tbtn-hover = stroke hsl(42,.8,.65) width 1.25
 
 // Info
@@ -60,16 +61,16 @@ mini-out-bg = #cc8800
    lab-in = #bfbfbf
   lab-out = #202020
 
-// Skiff
-fancy-title = #fff
+// Fancy
+//fancy-title = #fff
 fancy-group = #efefef
 fancy-label = #efefef
-fancy-panel = #050505
-group-box = none stroke #f9a806 width .5
-dlg-border = stroke #fff width 1.5
-close-hover = hsl(0, .6, .5) stroke none
-close-frame = none stroke #dbdbdb width .25
-close-glyph = #efefef
+//fancy-panel = #050505
+//close-hover = hsl(0, .6, .5) stroke none
+//close-frame = none stroke #dbdbdb width .25
+//close-glyph = #efefef
+fsep   = none stroke #395177
+coj-bg = hsla(100, .3, .6, .5)
 
 // Rui
 fluff-co = none stroke #50aeca width .65

@@ -4,6 +4,7 @@
       title = #000
        mast = #f9a806
        logo = #f9a806
+logo-circle = #111 stroke #f9a806 width .75
         sep = #888
      symbol = #dedede
       patty = hsl(0,0,90%)
@@ -14,6 +15,7 @@ patty-hover = hsl(0,0,65%)
   entry-text = hsl(0, 0, .85)
 entry-prompt = hsl(42, .6, .85)
    entry-sel = hsl(216, .75, .4)
+   btn-hover = none stroke hsl(30,.8,.8) width 1
 
 // knobs
 k-bg = [ #737373, #0d0d0d]
@@ -41,7 +43,7 @@ tbtn-punch = none stroke #333333 width .75
 tbtn-bevel = [ #a6a6a6, #444444]
 tbtn-face = [ #888888, #4c4c4c]
 tbtn-text = #d9d9d9
-tbtn-text-dn = #444444
+tbtn-text-dn = #ddd922ff
 tbtn-hover = stroke hsl(42,.8,.65) width 1.25
 
 // Info
@@ -64,16 +66,16 @@ mini-out-bg = none
 entry-prompt = hsla(0, 0, .55, .75)
    entry-sel = hsl(200, .5, .4)
 
-// Skiff
-fancy-title = #000
+// Fancy
+//fancy-title = #000
 fancy-group = #f9a806
 fancy-label = #e6e6e6
-fancy-panel = #111
-group-box = #222 stroke none
-dlg-border = none stroke #444 width 2.5
-close-hover = hsl(0, .6, .5) stroke none
-close-frame = none stroke #666
-close-glyph = #e6e6e6
+//fancy-panel = #111
+//close-hover = hsl(0, .6, .5) stroke none
+//close-frame = none stroke #666
+//close-glyph = #e6e6e6
+fsep   = none stroke #395177
+coj-bg = hsla(100, .4, .25, 1)
 
 // Rui
 fluff-co = hsla(194, 54%, 55%, 1.00)

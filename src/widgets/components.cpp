@@ -39,7 +39,7 @@ OptionMenuEntry* make_theme_item(ThemeBase* it, const char * name, ThemeSetting 
 }
 
 void addThemeItems(rack::ui::Menu *menu, ModuleWidget* source, ThemeBase* it) {
-    menu->addChild(createMenuItem("Send theme to all pachde1", "", [=](){
+    menu->addChild(createMenuItem("Send theme to all #d One", "", [=](){
         broadcastThemeSetting(source, it->getThemeSetting());
     }));
     menu->addChild(make_theme_item(it, "Follow Rack UI theme", ThemeSetting::FollowRackUi));

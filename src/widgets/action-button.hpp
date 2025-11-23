@@ -1,6 +1,7 @@
 #pragma once
 #include "widgetry.hpp"
 #include "tip-widget.hpp"
+#include "element-style.hpp"
 using namespace pachde;
 namespace widgetry {
 
@@ -13,6 +14,10 @@ struct TActionButton : ::rack::app::SvgButton
     bool key_shift{false};
     bool sticky{false};
     bool latched{false};
+    bool hover_frame{false};
+    bool hovered{false};
+    ElementStyle hover_style{"btn-hover", colors::NoColor, "hsl(30,.8,.8)", 1.f};
+
     std::function<void(bool, bool)> handler{nullptr};
     TipHolder * tip_holder{nullptr};
 
@@ -35,7 +40,8 @@ struct TActionButton : ::rack::app::SvgButton
     }
 
     void set_handler(std::function<void(bool,bool)> callback) { handler = callback; }
-
+    void set_hover_key(const char * key) { hover_style.key = key; }
+    void set_hover(bool hover) { hover_frame = hover; }
     void set_sticky(bool is_sticky) { sticky = is_sticky; }
 
     void onHover(const HoverEvent& e) override {
@@ -52,11 +58,13 @@ struct TActionButton : ::rack::app::SvgButton
     void onEnter(const EnterEvent& e) override {
         Base::onEnter(e);
         createTip();
+        hovered = true;
     }
 
     void onLeave(const LeaveEvent& e) override {
         destroyTip();
         Base::onLeave(e);
+        hovered = false;
     }
 
     void onDragStart(const DragStartEvent& e) override {
@@ -133,6 +141,20 @@ struct TActionButton : ::rack::app::SvgButton
         if (sticky) sync_frame();
     }
 
+    void draw(const DrawArgs& args) override {
+        if (hover_frame && hovered) {
+            if (packed_color::isVisible(hover_style.fill_color)) {
+                FillRect(args.vg, 0, 0, VEC_ARGS(box.size), hover_style.nvg_color());
+            }
+            Base::draw(args);
+            if (packed_color::isVisible(hover_style.stroke_color)) {
+                FittedBoxRect(args.vg, 0, 0, VEC_ARGS(box.size), hover_style.nvg_stroke_color(), Fit::Outside, hover_style.width());
+            }
+        } else {
+            Base::draw(args);
+        }
+    }
+
     void appendContextMenu(ui::Menu* menu) {}
 
     void createContextMenu() {
@@ -150,6 +172,7 @@ struct TActionButton : ::rack::app::SvgButton
     void applyTheme(std::shared_ptr<SvgTheme> theme) {
         applySvgTheme(frames[0], theme);
         applySvgTheme(frames[1], theme);
+        hover_style.apply_theme(theme);
     }
 
     void updateSvg(std::shared_ptr<SvgTheme> theme) {
@@ -188,6 +211,7 @@ struct TParamButton : ::rack::app::SvgSwitch
         fb->dirty = true;
     }
 };
+
 
 struct MediumButtonSvg {
     static std::string up()   { return asset::plugin(pluginInstance, "res/widget/med-but-up.svg"); }
@@ -261,6 +285,12 @@ struct CheckButtonSvg {
 };
 using CheckButton = TParamButton<CheckButtonSvg>;
 
+struct JackButtonSvg {
+    static std::string up()   { return asset::plugin(pluginInstance, "res/widget/jack-right.svg"); }
+    static std::string down() { return asset::plugin(pluginInstance, "res/widget/jack-left.svg"); }
+};
+using JackButton = TActionButton<JackButtonSvg>;
+
 template <typename TActionButton>
 TActionButton* createThemeSvgButton(ILoadSvg* loader, Vec pos) {
     TActionButton* o = new TActionButton();
@@ -271,19 +301,14 @@ TActionButton* createThemeSvgButton(ILoadSvg* loader, Vec pos) {
 
 template <typename TActionButton>
 TActionButton* createThemeSvgButton(ILoadSvg* loader, std::shared_ptr<SvgTheme> theme, Vec pos) {
-    TActionButton* o = new TActionButton();
-    o->box.pos = pos;
-    o->loadSvg(loader);
+    TActionButton* o = createThemeSvgButton<TActionButton>(loader, pos);
     o->applyTheme(theme);
     return o;
 }
 
 template <typename TActionButton, typename TLight>
 TActionButton* createThemeSvgLightButton(ILoadSvg* loader, std::shared_ptr<SvgTheme> theme, Vec pos, ::rack::engine::Module* module, int lightId) {
-    TActionButton* o = new TActionButton();
-    o->box.pos = pos;
-    o->loadSvg(loader);
-    o->applyTheme(theme);
+    TActionButton* o = createThemeSvgButton<TActionButton>(loader, theme, pos);
 
     auto light = createLight<TLight>(Vec(0,0), module, lightId);
     light->box.pos = o->box.size.div(2).minus(light->box.size.div(2));

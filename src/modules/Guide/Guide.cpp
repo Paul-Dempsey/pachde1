@@ -27,6 +27,10 @@ Guide::Guide() {
         "Panel",
         "Widgets"
     });
+    configSwitch(P_ONOFF, 0.f, 1.f, 1.f, "On/Off", {
+        "Off",
+        "On"
+    });
     //configLight(L_CONNECTED, "Connected");
 }
 
@@ -63,6 +67,12 @@ void Guide::process(const ProcessArgs &args)
 {
     if (ui && (0 == ((getId() + args.frame) % 90))) {
         getLight(L_CONNECTED).setBrightness(ui->panel_guides ? 1.f : 0.f);
+
+        float onoff = getParam(P_ONOFF).getValue();
+        if (onoff != last_onoff) {
+            last_onoff = onoff;
+            ui->onExpanderChange(getLeftExpander());
+        }
 
         OverlayPosition pos = (getParam(P_OVERLAY_POSITION).getValue() > .5f) ? OverlayPosition::OnTop : OverlayPosition::OnPanel;
         if (pos != guide_data.position) {
@@ -166,6 +176,13 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
         HOT_POSITION("k:on-light", HotPosKind::Center, light);
         addChild(light);
     }
+
+    onoff_switch = createParam<widgetry::Switch>(Vec(), my_module, Guide::P_ONOFF);
+    HOT_POSITION("k:onoff-switch", HotPosKind::Box, onoff_switch);
+    onoff_switch->box = bounds["k:onoff-switch"];
+    onoff_switch->applyTheme(svg_theme);
+    addChild(onoff_switch);
+
     {
         auto palette = Center(createThemeSvgButton<Palette1ActionButton>(&my_svgs, bounds["k:pick-panel"].getCenter()));
         HOT_POSITION("k:pick-panel", HotPosKind::Center, palette);
@@ -192,6 +209,12 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
         addChild(panel_solid);
     }
 
+    pos_switch = createParam<widgetry::Switch>(Vec(), my_module, Guide::P_OVERLAY_POSITION);
+    HOT_POSITION("k:pos-switch", HotPosKind::Box, pos_switch);
+    pos_switch->box = bounds["k:pos-switch"];
+    pos_switch->applyTheme(svg_theme);
+    addChild(pos_switch);
+
     addGuideButton<guides::TopMarginData>(this, bounds);
     addGuideButton<guides::BottomMarginData>(this, bounds);
     addGuideButton<guides::LeftData>(this, bounds);
@@ -199,12 +222,6 @@ GuideUi::GuideUi(Guide* module) : my_module(module)
     addGuideButton<guides::HorizontalData>(this, bounds);
     addGuideButton<guides::VerticalData>(this, bounds);
     addGuideButton<guides::GridData>(this, bounds);
-
-    pos_switch = createParam<widgetry::Switch>(Vec(), my_module, Guide::P_OVERLAY_POSITION);
-    HOT_POSITION("k:pos-switch", HotPosKind::Box, pos_switch);
-    pos_switch->box = bounds["k:pos-switch"];
-    pos_switch->applyTheme(svg_theme);
-    addChild(pos_switch);
 
     small_knob = Center(createThemeSvgParam<TinyKnob>(&my_svgs, bounds["k:x"].getCenter(), my_module, Guide::P_X));
     HOT_POSITION("k:x", HotPosKind::Center, small_knob);
@@ -328,7 +345,9 @@ GuideUi::~GuideUi()
 
 void GuideUi::onExpanderChange(Module::Expander &expander)
 {
-    if (expander.module) {
+    if (!my_module) return;
+
+    if (expander.module && enabled_guides()) {
         auto ms = APP->scene->rack->getModules();
         for (auto mw: ms) {
             if (mw->module == expander.module) {
@@ -351,6 +370,12 @@ void GuideUi::onExpanderChange(Module::Expander &expander)
             panel_guides = nullptr;
         }
     }
+}
+
+bool GuideUi::enabled_guides()
+{
+    if (!my_module) return true;
+    return my_module->getParam(Guide::P_ONOFF).getValue() > 0.5;
 }
 
 void GuideUi::set_overlay_position(OverlayPosition pos)

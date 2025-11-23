@@ -30,6 +30,7 @@ struct Guide: ThemeModule {
         P_W,
         P_R,
         P_OVERLAY_POSITION,
+        P_ONOFF,
         NUM_PARAMS
     };
     enum Inputs { NUM_INPUTS };
@@ -43,6 +44,7 @@ struct Guide: ThemeModule {
     std::string guide_folder;
     std::string guide_file;
     GuideUi* ui{nullptr};
+    float last_onoff{-1.f};
 
     Guide();
 
@@ -79,6 +81,7 @@ struct GuideUi  : ModuleWidget, IThemeChange
     SolidSwatch* guide_solid{nullptr};
     TextInput* name_input{nullptr};
     GuideList* guide_list{nullptr};
+    widgetry::Switch* onoff_switch{nullptr};
     widgetry::Switch* pos_switch{nullptr};
     widgetry::Switch* angle_switch{nullptr};
     PanelGuides* panel_guides{nullptr};
@@ -88,7 +91,7 @@ struct GuideUi  : ModuleWidget, IThemeChange
 
     void onExpanderChange(Module::Expander& expander);
     void onDestroyGuide() { panel_guides = nullptr; }
-
+    bool enabled_guides();
     void set_overlay_position(OverlayPosition pos);
     void set_panel_overlay_color(PackedColor panel);
     void set_guide_color(std::shared_ptr<GuideLine> guide, PackedColor co_guide);

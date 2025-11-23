@@ -25,7 +25,7 @@
      inkscape:deskcolor="#404040"
      inkscape:document-units="px"
      inkscape:zoom="4.72"
-     inkscape:cx="74.9"
+     inkscape:cx="75.1"
      inkscape:cy="71.5"
      inkscape:window-width="3840"
      inkscape:window-height="2054"
@@ -37,102 +37,6 @@
      showgrid="false" />
   <defs
      id="defs1">
-    <linearGradient
-       id="linearGradient27"
-       inkscape:collect="always">
-      <stop
-         style="stop-color:#bfbfbf;stop-opacity:1;"
-         offset="0"
-         id="stop27" />
-      <stop
-         style="stop-color:#595959;stop-opacity:1;"
-         offset="1"
-         id="stop28" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient21"
-       inkscape:collect="always">
-      <stop
-         style="stop-color:#adadad;stop-opacity:1;"
-         offset="0"
-         id="stop21" />
-      <stop
-         style="stop-color:#737373;stop-opacity:1;"
-         offset="1"
-         id="stop22" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient11"
-       inkscape:collect="always">
-      <stop
-         style="stop-color:#d9d9d9;stop-opacity:1;"
-         offset="0"
-         id="stop11" />
-      <stop
-         style="stop-color:#575757;stop-opacity:1;"
-         offset="1"
-         id="stop12" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient11"
-       id="linearGradient12"
-       x1="4.99"
-       y1="1"
-       x2="5.1"
-       y2="16.5"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.01,0,0,1.03,-0.209,-0.282)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient21"
-       id="linearGradient22"
-       x1="1.45"
-       y1="1.5"
-       x2="1.45"
-       y2="16.5"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient11"
-       id="linearGradient25"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.01,0,0,1.03,102,86.7)"
-       x1="4.99"
-       y1="1"
-       x2="5.1"
-       y2="16.5" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient21"
-       id="linearGradient26"
-       gradientUnits="userSpaceOnUse"
-       x1="1.45"
-       y1="1.5"
-       x2="1.45"
-       y2="16.5"
-       gradientTransform="translate(102,87)" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient27"
-       id="radialGradient28"
-       cx="16.1"
-       cy="52.3"
-       fx="16.1"
-       fy="52.3"
-       r="4.25"
-       gradientUnits="userSpaceOnUse" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient27"
-       id="radialGradient29"
-       gradientUnits="userSpaceOnUse"
-       cx="16.1"
-       cy="52.3"
-       fx="16.1"
-       fy="52.3"
-       r="4.25"
-       gradientTransform="translate(-33.6,-106)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#pg"
@@ -174,65 +78,77 @@
        sodipodi:insensitive="true" />
     <g
        id="unscrew--symbol"
-       transform="translate(128,17.2)">
+       transform="translate(128,17.2)"
+       style="fill:#bf9940;fill-opacity:1">
       <g
          fill="#dedede"
          stroke="#000000"
          stroke-width="0.65"
-         id="g7">
+         id="g7"
+         style="fill:#bf9940;fill-opacity:1">
         <path
            d="M 15.4,7.81 A 2.72,2.35 0 0 1 12.7,10.2 2.72,2.35 0 0 1 9.99,7.81 2.72,2.35 0 0 1 12.7,5.46 2.72,2.35 0 0 1 15.4,7.81 Z"
-           id="path1" />
+           id="path1"
+           style="fill:#bf9940;fill-opacity:1" />
         <path
            d="M 15,7.68 A 2.31,1.64 82.2 0 1 13.6,10.1 2.31,1.64 82.2 0 1 11.7,7.99 2.31,1.64 82.2 0 1 13.1,5.53 2.31,1.64 82.2 0 1 15,7.68 Z"
-           id="path2" />
+           id="path2"
+           style="fill:#bf9940;fill-opacity:1" />
         <path
            d="M 14.4,7.65 A 2.43,1.64 83.2 0 1 13.1,10.2 2.43,1.64 83.2 0 1 11.2,7.97 2.43,1.64 83.2 0 1 12.5,5.39 2.43,1.64 83.2 0 1 14.4,7.65 Z"
-           id="path3" />
+           id="path3"
+           style="fill:#bf9940;fill-opacity:1" />
         <path
            d="M 13.2,7.67 A 2.43,1.64 83.2 0 1 11.8,10.2 2.43,1.64 83.2 0 1 9.94,8 2.43,1.64 83.2 0 1 11.3,5.42 2.43,1.64 83.2 0 1 13.2,7.67 Z"
-           id="path4" />
+           id="path4"
+           style="fill:#bf9940;fill-opacity:1" />
         <path
            d="M 11.9,7.67 A 2.43,1.64 83.2 0 1 10.5,10.2 2.43,1.64 83.2 0 1 8.63,8 2.43,1.64 83.2 0 1 10,5.42 2.43,1.64 83.2 0 1 11.9,7.67 Z"
-           id="path5" />
+           id="path5"
+           style="fill:#bf9940;fill-opacity:1" />
         <path
            d="M 10.6,7.67 A 2.43,1.64 83.2 0 1 9.22,10.2 2.43,1.64 83.2 0 1 7.32,8 2.43,1.64 83.2 0 1 8.69,5.42 2.43,1.64 83.2 0 1 10.6,7.67 Z"
-           id="path6" />
+           id="path6"
+           style="fill:#bf9940;fill-opacity:1" />
         <path
            d="m 9.22,8.04 c 0,2.76 -1.68,5.06 -3.76,5.06 -2.08,0 -1.91,0 -1.91,0 L 3.54,3 c 0,0 1.24,0 1.92,0 2.08,0 3.76,2.25 3.76,5.05 z"
-           id="path7" />
+           id="path7"
+           style="fill:#bf9940;fill-opacity:1" />
         <ellipse
            cx="3.75"
            cy="8.04"
            rx="3.12"
            ry="5.06"
-           id="ellipse7" />
+           id="ellipse7"
+           style="fill:#bf9940;fill-opacity:1" />
       </g>
       <path
          id="slot"
          fill="#000000"
          stroke="none"
-         d="M 5.46,9.43 4.68,8.11 C 4.56,7.91 4.56,7.62 4.68,7.42 L 5.46,6.1 c 0,0 0,-0.14 0,-0.19 L 4.98,5.28 c 0,0 -0.1,-0.1 -0.15,0 L 3.84,6.3 C 3.68,6.46 3.47,6.46 3.32,6.3 l -1,-1.03 c 0,0 -0.1,0 -0.14,0 L 1.7,5.91 c 0,0 0,0.14 0,0.19 l 0.78,1.32 c 0.12,0.2 0.12,0.49 0,0.69 L 1.69,9.43 c 0,0.1 0,0.13 0,0.19 l 0.48,0.58 c 0,0.1 0.1,0.1 0.14,0.1 l 1,-1.08 c 0.15,-0.16 0.37,-0.15 0.52,0 l 0.99,1.08 c 0,0 0.11,0 0.15,-0.1 L 5.45,9.62 c 0,-0.1 0,-0.14 0,-0.19 z" />
+         d="M 5.46,9.43 4.68,8.11 C 4.56,7.91 4.56,7.62 4.68,7.42 L 5.46,6.1 c 0,0 0,-0.14 0,-0.19 L 4.98,5.28 c 0,0 -0.1,-0.1 -0.15,0 L 3.84,6.3 C 3.68,6.46 3.47,6.46 3.32,6.3 l -1,-1.03 c 0,0 -0.1,0 -0.14,0 L 1.7,5.91 c 0,0 0,0.14 0,0.19 l 0.78,1.32 c 0.12,0.2 0.12,0.49 0,0.69 L 1.69,9.43 c 0,0.1 0,0.13 0,0.19 l 0.48,0.58 c 0,0.1 0.1,0.1 0.14,0.1 l 1,-1.08 c 0.15,-0.16 0.37,-0.15 0.52,0 l 0.99,1.08 c 0,0 0.11,0 0.15,-0.1 L 5.45,9.62 c 0,-0.1 0,-0.14 0,-0.19 z"
+         style="fill:#bf9940;fill-opacity:1" />
     </g>
     <g
        id="g22"
-       transform="translate(94.2,61.6)">
+       transform="translate(94.2,61.6)"
+       style="fill:#bf9940;fill-opacity:1">
       <rect
-         style="fill:#333333;fill-opacity:1;stroke-width:1.49657;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke-width:1.49657;paint-order:fill markers stroke"
          id="rect1"
          width="47.9"
          height="18"
          x="0"
          y="0" />
       <rect
-         style="fill:url(#linearGradient12);fill-opacity:1;stroke-width:1.5029;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke-width:1.5029;paint-order:fill markers stroke"
          id="rect10"
          width="46.5"
          height="16.5"
          x="0.75"
          y="0.748" />
       <rect
-         style="fill:url(#linearGradient22);fill-opacity:1;stroke-width:1.49485;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke-width:1.49485;paint-order:fill markers stroke"
          id="rect11"
          width="45"
          height="15"
@@ -240,7 +156,7 @@
          y="1.5" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#bf9940;fill-opacity:1"
          x="23.9"
          y="12.9"
          id="text15"><tspan
@@ -248,27 +164,28 @@
            id="tspan15"
            x="23.9"
            y="12.9"
-           style="font-size:12px">Oblique</tspan></text>
+           style="font-size:12px;fill:#bf9940;fill-opacity:1">Oblique</tspan></text>
     </g>
     <g
        id="g1"
-       transform="translate(-7.8)">
+       transform="translate(-7.8)"
+       style="fill:#bf9940;fill-opacity:1">
       <rect
-         style="fill:#333333;fill-opacity:1;stroke-width:1.49657;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke-width:1.49657;paint-order:fill markers stroke"
          id="rect22"
          width="47.9"
          height="18"
          x="102"
          y="86.9" />
       <rect
-         style="fill:url(#linearGradient25);fill-opacity:1;stroke-width:1.5029;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke-width:1.5029;paint-order:fill markers stroke"
          id="rect23"
          width="46.5"
          height="16.5"
          x="103"
          y="87.7" />
       <rect
-         style="fill:url(#linearGradient26);fill-opacity:1;stroke-width:1.49485;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke-width:1.49485;paint-order:fill markers stroke"
          id="rect24"
          width="45"
          height="15"
@@ -276,7 +193,7 @@
          y="88.4" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#000000;fill-opacity:1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#bf9940;fill-opacity:1"
          x="126"
          y="100"
          id="text24"><tspan
@@ -284,11 +201,11 @@
            id="tspan24"
            x="126"
            y="100"
-           style="font-size:12px;fill:#000000;fill-opacity:1">Upright</tspan></text>
+           style="font-size:12px;fill:#bf9940;fill-opacity:1">Upright</tspan></text>
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#999999;fill-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#bf9940;fill-opacity:1"
        x="128"
        y="126"
        id="text24-7"><tspan
@@ -296,18 +213,19 @@
          id="tspan24-1"
          x="128"
          y="126"
-         style="font-size:12px;fill:#999999;fill-opacity:1">Upright</tspan></text>
+         style="font-size:12px;fill:#bf9940;fill-opacity:1">Upright</tspan></text>
     <g
        id="g28"
-       transform="translate(80.4,88.6)">
+       transform="translate(80.4,88.6)"
+       style="fill:#bf9940;fill-opacity:1">
       <circle
-         style="fill:#9c9c9c;fill-opacity:1;stroke:#000000;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke:#000000;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
          id="path26"
          cx="16.8"
          cy="52.8"
          r="4.25" />
       <circle
-         style="fill:url(#radialGradient28);fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
          id="circle26"
          cx="16.8"
          cy="52.8"
@@ -315,16 +233,16 @@
     </g>
     <g
        id="g29"
-       style="display:inline"
+       style="display:inline;fill:#bf9940;fill-opacity:1"
        transform="translate(80.4,69.1)">
       <circle
-         style="fill:#9c9c9c;fill-opacity:1;stroke:#000000;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke:#000000;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
          id="circle28"
          cx="16.8"
          cy="52.8"
          r="4.25" />
       <circle
-         style="fill:url(#radialGradient29);fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         style="fill:#bf9940;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
          id="circle29"
          cx="-16.8"
          cy="-52.8"
@@ -333,7 +251,7 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#999999;fill-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#bf9940;fill-opacity:1"
        x="130"
        y="145"
        id="text15-8"><tspan
@@ -341,20 +259,51 @@
          id="tspan15-2"
          x="130"
          y="145"
-         style="font-size:12px;fill:#999999;fill-opacity:1">Oblique</tspan></text>
+         style="font-size:12px;fill:#bf9940;fill-opacity:1">Oblique</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:9px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#c19a3e;fill-opacity:1"
+       style="font-size:9px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#bf9940;fill-opacity:1"
        transform="translate(-45.1,-53)"
        id="text6">     <tspan
    x="143"
    y="160"
-   id="tspan6" /></text>
+   id="tspan6"
+   style="fill:#bf9940;fill-opacity:1" /></text>
     <path
-       d="m -1.71,10.3 q -1.16,0 -2.03,-0.5 -0.87,-0.54 -1.36,-1.51 -0.48,-0.98 -0.48,-2.28 0,-1.29 0.48,-2.27 0.49,-0.97 1.36,-1.51 0.87,-0.54 2.03,-0.54 1.256,0 2.18,0.63 0.92,0.62 1.33,1.72 l -0.982,0.38 q -0.312,-0.82 -0.96,-1.26 -0.648,-0.46 -1.568,-0.46 -0.86,0 -1.49,0.41 -0.64,0.41 -0.99,1.15 -0.33,0.73 -0.33,1.75 0,1.02 0.33,1.77 0.35,0.74 0.99,1.15 0.63,0.41 1.49,0.41 0.92,0 1.568,-0.46 0.648,-0.46 0.96,-1.26 l 0.982,0.36 q -0.41,1.09 -1.33,1.73 -0.924,0.59 -2.18,0.59 z m 7.38,-0.1 -3.34,-8.36 h 1.16 l 2.74,7.08 h -0.3 l 2.7,-7.08 h 1.16 l -3.31,8.36 z"
+       style="font-weight:bold;font-size:16px;line-height:1.25;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT Bold';font-variant-ligatures:none;text-orientation:upright;fill:#bf9940;fill-opacity:1"
+       d="m -2.51,14.5 h 5.78 v 2 h -3.58 v 2.1 h 3.58 v 2 h -3.564 v 4.2 h -2.216 z m 12.02,10.3 v -1.1 0 q -0.47,0.6 -0.95,0.9 -0.47,0.3 -1.18,0.3 -1.18,0 -2,-1 -0.83,-1 -0.83,-2.5 0,-1.4 0.88,-2.4 0.88,-1.1 2.09,-1.1 0.58,0 1.04,0.3 0.46,0.3 0.98,0.8 v -0.9 h 1.96 v 6.7 z m -1.47,-4.9 q -0.59,0 -0.99,0.5 -0.4,0.5 -0.4,1.2 0,0.7 0.38,1.1 0.38,0.4 1,0.4 0.59,0 1.01,-0.5 0.42,-0.4 0.42,-1.1 0,-0.6 -0.42,-1.1 -0.42,-0.5 -1,-0.5 z m 7.66,-1.8 v 0.8 q 1,-1 2.1,-1 1,0 1.6,0.8 0.6,0.8 0.6,2 v 4.1 h -2 v -3.8 q 0,-0.5 -0.3,-0.9 -0.3,-0.4 -0.8,-0.4 -0.5,0 -0.9,0.5 -0.3,0.5 -0.3,1.3 v 3.3 h -2 v -6.7 z m 11.2,4.4 v 2 q -1.1,0.4 -1.7,0.4 -1.6,0 -2.6,-1 -1,-1 -1,-2.5 0,-1.5 0.9,-2.5 1,-1 2.4,-1 1,0 2,0.5 v 1.9 q -0.9,-0.4 -1.6,-0.4 -0.7,0 -1.1,0.4 -0.4,0.4 -0.4,1.1 0,0.6 0.4,1.1 0.4,0.4 1.1,0.4 0.6,0 1.6,-0.4 z m 1,-4.4 h 2.1 l 2,3.9 1.7,-3.9 h 2 l -4.2,9.7 h -2 l 1.5,-3.5 z m 9.1,-3.6 h 3 q 1.9,0 2.6,0.8 0.6,0.8 0.6,1.9 0,0.6 -0.2,1.1 -0.3,0.4 -0.8,0.9 1.1,0.4 1.5,1.1 0.4,0.7 0.4,1.5 0,1.4 -0.9,2.2 -1,0.8 -2.8,0.8 h -3.4 z m 2.2,1.8 v 2.2 h 0.5 q 0.6,0 1,-0.3 0.3,-0.4 0.3,-0.9 0,-0.4 -0.3,-0.7 -0.4,-0.3 -1,-0.3 z m 0,4 v 2.8 h 0.8 q 1.8,0 1.8,-1.4 0,-0.7 -0.4,-1.1 -0.5,-0.3 -1.3,-0.3 z m 6,1.2 q 0,-1.6 1,-2.6 1,-1 2.6,-1 1.4,0 2.4,1 1,1 1,2.5 0,1.5 -1,2.5 -1,1 -2.5,1 -1.6,0 -2.5,-1 -1,-1.1 -1,-2.4 z m 5,0 q 0,-0.7 -0.4,-1.2 -0.5,-0.5 -1.1,-0.5 -0.6,0 -1,0.4 -0.5,0.5 -0.5,1.2 0,0.7 0.5,1.2 0.4,0.5 1,0.5 0.6,0 1.1,-0.5 0.4,-0.5 0.4,-1.1 z m 2.7,-3.4 h 2.5 l 1.3,1.7 1.4,-1.7 h 2.4 l -2.6,3.2 2.8,3.5 h -2.4 l -1.6,-2 -1.6,2 h -2.4 l 2.8,-3.5 z"
        id="text1"
-       style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle"
-       transform="translate(5.51,-1.27)"
-       aria-label="CV" />
+       transform="translate(11.6,73.6)"
+       aria-label="FancyBox" />
+    <path
+       d="m 9.33,2.4 -1.52,1.3 c -0.31,-0.53 -0.69,-0.9 -1.14,-1.1 -0.45,-0.27 -0.93,-0.4 -1.42,-0.4 -0.8,0 -1.5,0.3 -2.09,0.9 -0.59,0.6 -0.89,1.3 -0.89,2.1 0,0.87 0.3,1.63 0.89,2.3 0.59,0.6 1.31,0.9 2.14,0.9 0.45,0 0.89,-0.13 1.3,-0.4 0.42,-0.2 0.76,-0.6 1.02,-1.2 h -2.43 v -2 h 4.74 v 1.3 c 0,0.67 -0.23,1.4 -0.7,2.2 -0.47,0.8 -1.09,1.37 -1.86,1.7 -0.77,0.3 -1.54,0.5 -2.32,0.5 -1.42,0 -2.62,-0.5 -3.59,-1.5 -0.973,-1 -1.46,-2.27 -1.46,-3.8 0,-1.47 0.5,-2.7 1.5,-3.7 1.01,-1 2.22,-1.5 3.63,-1.5 1.8,0 3.2,0.8 4.2,2.4 z m 2.07,1.3 h 2.1 v 3.2 c 0,0.47 0.1,0.87 0.3,1.2 0.3,0.27 0.6,0.4 0.9,0.4 0.4,0 0.7,-0.13 0.9,-0.4 0.3,-0.33 0.4,-0.7 0.4,-1.1 v -3.3 h 2 v 3.9 c 0,0.8 -0.3,1.5 -0.9,2.1 -0.6,0.5 -1.4,0.8 -2.4,0.8 -1,0 -1.8,-0.3 -2.4,-0.8 -0.6,-0.6 -0.9,-1.37 -0.9,-2.3 z m 8.4,-2.5 c 0,-0.333 0.1,-0.633 0.3,-0.9 0.3,-0.2 0.6,-0.3 0.9,-0.3 0.4,0 0.7,0.1 0.9,0.3 0.3,0.267 0.4,0.567 0.4,0.9 0,0.33 -0.1,0.63 -0.4,0.9 -0.2,0.2 -0.5,0.3 -0.9,0.3 -0.3,0 -0.6,-0.1 -0.9,-0.3 -0.2,-0.27 -0.3,-0.57 -0.3,-0.9 z m 0.2,2.5 h 2 v 6.7 h -2 z m 8.6,-3.7 h 2 v 10.4 h -2 v -1.1 0 c -0.6,0.8 -1.3,1.2 -2.2,1.2 -0.8,0 -1.4,-0.3 -2,-1 -0.5,-0.67 -0.8,-1.5 -0.8,-2.5 0,-0.93 0.3,-1.73 0.9,-2.4 0.6,-0.73 1.2,-1.1 2,-1.1 0.5,0 0.9,0.1 1.1,0.3 0.4,0.13 0.7,0.4 1,0.8 z m -1.5,5.5 c -0.3,0 -0.6,0.17 -0.9,0.5 -0.3,0.27 -0.5,0.67 -0.5,1.2 0,0.4 0.2,0.77 0.4,1.1 0.3,0.27 0.6,0.4 0.9,0.4 0.5,0 0.9,-0.17 1.1,-0.5 0.3,-0.33 0.4,-0.73 0.4,-1.2 0,-0.4 -0.1,-0.73 -0.4,-1 -0.2,-0.33 -0.6,-0.5 -1,-0.5 z m 11.7,2 h -4.7 c 0,0.47 0.2,0.83 0.4,1.1 0.3,0.27 0.6,0.4 0.9,0.4 0.6,0 1.1,-0.3 1.4,-0.9 l 1.9,0.7 c -0.7,1.13 -1.8,1.7 -3.2,1.7 -1,0 -1.9,-0.3 -2.5,-0.9 -0.6,-0.67 -1,-1.53 -1,-2.6 0,-1 0.4,-1.83 1,-2.5 0.7,-0.67 1.5,-1 2.4,-1 1,0 1.9,0.37 2.5,1.1 0.6,0.67 0.9,1.53 0.9,2.6 z m -4.7,-1.3 h 2.7 c -0.2,-0.87 -0.6,-1.3 -1.3,-1.3 -0.4,0 -0.7,0.1 -1,0.3 -0.2,0.27 -0.3,0.6 -0.4,1 z"
+       id="text2"
+       style="font-weight:bold;font-size:16px;line-height:1.25;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT Bold';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#bf9940"
+       aria-label="Guide"
+       transform="translate(9.66,56.6)" />
+    <path
+       d="m 0,0.1 h 3.38 c 1.03,0 1.84,0.3 2.43,0.9 0.6,0.53 0.9,1.23 0.9,2.1 0,0.53 -0.14,1.1 -0.42,1.7 -0.27,0.53 -0.77,0.97 -1.51,1.3 l 2.87,4.3 h -2.53 l -2.66,-4 h -0.25 v 4 h -2.21 z m 2.23,1.9 v 2.6 h 0.48 c 1.15,0 1.72,-0.47 1.72,-1.4 0,-0.4 -0.15,-0.7 -0.45,-0.9 -0.3,-0.2 -0.71,-0.3 -1.24,-0.3 z m 6.21,1.7 h 2.06 v 3.2 c 0,0.47 0.1,0.87 0.3,1.2 0.3,0.27 0.6,0.4 0.9,0.4 0.4,0 0.7,-0.13 0.9,-0.4 0.3,-0.33 0.4,-0.7 0.4,-1.1 v -3.3 h 2 v 3.9 c 0,0.8 -0.3,1.5 -0.9,2.1 -0.6,0.5 -1.4,0.8 -2.4,0.8 -1,0 -1.76,-0.3 -2.36,-0.8 -0.6,-0.6 -0.9,-1.37 -0.9,-2.3 z m 8.36,-2.5 c 0,-0.333 0.1,-0.633 0.3,-0.9 0.3,-0.2 0.6,-0.3 0.9,-0.3 0.4,0 0.7,0.1 0.9,0.3 0.3,0.267 0.4,0.567 0.4,0.9 0,0.33 -0.1,0.63 -0.4,0.9 -0.2,0.2 -0.5,0.3 -0.9,0.3 -0.3,0 -0.6,-0.1 -0.9,-0.3 -0.2,-0.27 -0.3,-0.57 -0.3,-0.9 z m 0.2,2.5 h 2 v 6.7 h -2 z"
+       id="text3"
+       style="font-weight:bold;font-size:16px;line-height:1.25;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT Bold';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#bf9940;fill-opacity:1"
+       aria-label="Rui"
+       transform="translate(9.05,106)" />
+    <path
+       style="font-weight:bold;font-size:16px;line-height:1.25;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT Bold';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#bf9940"
+       d="m 6.46,1.2 -1.37,1.5 c -0.73,-0.47 -1.25,-0.7 -1.57,-0.7 -0.24,0 -0.45,0.1 -0.63,0.3 -0.17,0.2 -0.26,0.43 -0.26,0.7 0,0.47 0.46,0.9 1.37,1.3 0.67,0.27 1.18,0.53 1.52,0.8 0.35,0.2 0.63,0.5 0.86,0.9 0.24,0.4 0.36,0.87 0.36,1.4 0,0.87 -0.36,1.63 -1.07,2.3 -0.71,0.6 -1.55,0.9 -2.52,0.9 -1.06,0 -2.11,-0.5 -3.15,-1.5 l 1.45,-1.7 c 0.66,0.73 1.26,1.1 1.83,1.1 0.27,0 0.52,-0.13 0.77,-0.4 0.25,-0.27 0.37,-0.5 0.37,-0.7 0,-0.6 -0.57,-1.1 -1.7,-1.5 -0.65,-0.2 -1.1,-0.4 -1.38,-0.6 -0.27,-0.2 -0.495,-0.5 -0.683,-0.9 -0.185,-0.4 -0.277,-0.8 -0.277,-1.2 0,-0.93 0.298,-1.67 0.89,-2.2 0.6,-0.6 1.37,-0.9 2.33,-0.9 1.14,0 2.09,0.367 2.86,1.1 z m 1.72,-1.1 h 2.02 v 6.3 l 1.9,-2.6 h 2.4 l -2.2,2.9 2.4,3.8 h -2.2 l -2.3,-3.6 v 3.6 h -2.02 z m 7.52,1.2 c 0,-0.333 0.2,-0.633 0.4,-0.9 0.2,-0.2 0.5,-0.3 0.8,-0.3 0.4,0 0.7,0.1 0.9,0.3 0.3,0.267 0.4,0.567 0.4,0.9 0,0.33 -0.1,0.63 -0.4,0.9 -0.2,0.2 -0.5,0.3 -0.9,0.3 -0.3,0 -0.6,-0.1 -0.8,-0.3 -0.2,-0.27 -0.4,-0.57 -0.4,-0.9 z m 0.3,2.5 h 2 v 6.7 h -2 z m 7.7,-3.5 v 1.9 c -0.2,-0.2 -0.5,-0.3 -0.7,-0.3 -0.3,0 -0.5,0.1 -0.7,0.3 -0.2,0.2 -0.3,0.47 -0.3,0.8 v 0.8 h 1.7 v 1.8 h -1.7 v 4.9 h -2 v -4.9 h -0.6 v -1.8 h 0.6 v -0.8 c 0,-1.13 0.3,-1.93 0.7,-2.4 0.6,-0.4 1.1,-0.6 1.7,-0.6 0.6,0 1,0.1 1.3,0.3 z m 5.5,0 v 1.9 c -0.2,-0.2 -0.5,-0.3 -0.8,-0.3 -0.2,0 -0.4,0.1 -0.6,0.3 -0.2,0.2 -0.3,0.47 -0.3,0.8 v 0.8 h 1.7 v 1.8 h -1.7 v 4.9 h -2 v -4.9 h -0.6 v -1.8 h 0.6 v -0.8 c 0,-1.13 0.3,-1.93 0.7,-2.4 0.5,-0.4 1.1,-0.6 1.7,-0.6 0.6,0 1,0.1 1.3,0.3 z"
+       id="text4"
+       aria-label="Skiff"
+       transform="translate(9.66,73)" />
+    <path
+       id="title"
+       fill="#bf9940"
+       transform="translate(15.8,29.3)"
+       d="m 15.7,10.6 q 0,-0.5 0.4,-0.9 0.4,-0.38 0.9,-0.38 0.5,0 0.9,0.38 0.4,0.4 0.4,0.9 0,0.5 -0.4,0.9 -0.4,0.4 -0.9,0.4 -0.5,0 -0.9,-0.4 -0.4,-0.4 -0.4,-0.9 z m 2.1,0 q 0,-0.3 -0.2,-0.6 -0.3,-0.18 -0.6,-0.18 -0.3,0 -0.6,0.28 -0.2,0.2 -0.2,0.5 0,0.3 0.2,0.5 0.3,0.3 0.6,0.3 0.3,0 0.6,-0.3 0.2,-0.2 0.2,-0.5 z m 0.7,1.2 v -2.42 h 0.5 v 0.4 q 0.2,-0.24 0.4,-0.35 0.2,-0.11 0.4,-0.11 0.3,0 0.6,0.21 0.2,0.22 0.2,0.57 v 1.7 h -0.5 v -1.6 q 0,-0.2 -0.2,-0.32 -0.1,-0.13 -0.3,-0.13 -0.2,0 -0.4,0.22 -0.2,0.23 -0.2,0.53 v 1.3 z m 4.9,-1.1 h -2.1 q 0.1,0.4 0.3,0.5 0.3,0.2 0.5,0.2 0.5,0 0.8,-0.4 l 0.3,0.3 q -0.4,0.6 -1.1,0.6 -0.5,0 -0.9,-0.4 -0.3,-0.4 -0.3,-0.9 0,-0.5 0.3,-0.91 0.4,-0.37 0.9,-0.37 0.5,0 0.9,0.38 0.4,0.4 0.4,1 z m -2,-0.4 h 1.4 q -0.2,-0.52 -0.7,-0.52 -0.5,0 -0.7,0.52 z m -16.35,-0.92 h 0.51 v 2.42 h -0.51 v -0.5 q -0.38,0.6 -0.93,0.6 -0.47,0 -0.81,-0.4 -0.34,-0.4 -0.34,-0.9 0,-0.5 0.34,-0.9 0.34,-0.38 0.8,-0.38 0.29,0 0.54,0.15 0.26,0.16 0.4,0.41 z m 0.1,1.22 q -0,-0.3 -0.27,-0.6 -0.24,-0.2 -0.57,-0.2 -0.32,0 -0.56,0.2 -0.25,0.3 -0.25,0.6 0,0.3 0.24,0.6 0.23,0.2 0.57,0.2 0.33,0 0.57,-0.2 0.23,-0.3 0.23,-0.6 z m 0.87,1.2 v -2.42 h 0.49 v 0.4 q 0.22,-0.24 0.4,-0.35 0.18,-0.11 0.4,-0.11 0.33,0 0.56,0.21 0.24,0.22 0.24,0.57 v 1.7 h -0.55 v -1.6 q 0,-0.2 -0.13,-0.32 -0.13,-0.13 -0.33,-0.13 -0.25,0 -0.43,0.22 -0.19,0.23 -0.19,0.53 v 1.3 z m 4.88,-1.1 h -2.1 q 0.1,0.4 0.3,0.5 0.24,0.2 0.53,0.2 0.47,0 0.77,-0.4 l 0.3,0.3 q -0.4,0.6 -1.1,0.6 -0.54,0 -0.9,-0.4 -0.36,-0.4 -0.36,-0.9 0,-0.5 0.36,-0.91 0.37,-0.37 0.9,-0.37 0.5,0 0.9,0.38 0.4,0.4 0.4,1 z m -2.05,-0.4 h 1.45 q -0.2,-0.52 -0.7,-0.52 -0.52,0 -0.75,0.52 z m 2.45,-2.3 h 0.5 v 3.8 h -0.5 z m -11.3,-8.022 h 4.38 q 1.77,0 2.85,1.032 1.09,1.03 1.09,2.71 0,1.1 -0.54,2.1 -0.53,0.98 -1.6,1.47 -1.08,0.49 -1.84,0.51 h -1.6 v 5 h -2.74 z m 2.7,2.302 v 3.28 h 1.08 q 0.69,0 1.18,-0.49 0.5,-0.5 0.5,-1.19 0,-0.78 -0.56,-1.21 -0.56,-0.43 -1.58,-0.43 z m 6.98,-2.302 h 8.62 v 2.722 h -2.9 v 10.1 h -2.8 v -10.1 h -2.92 z" />
+    <path
+       d="m 0,0 h 3.5 c 0.93,0 1.7,0.3 2.3,0.9 0.6,0.53 0.9,1.23 0.9,2.1 0,0.6 -0.17,1.17 -0.5,1.7 -0.27,0.53 -0.67,0.93 -1.2,1.2 -0.6,0.27 -1.1,0.4 -1.5,0.4 h -1.3 v 4 h -2.2 z m 2.2,1.9 v 2.6 h 0.8 c 0.4,0 0.73,-0.13 1,-0.4 0.27,-0.27 0.4,-0.57 0.4,-0.9 0,-0.47 -0.17,-0.8 -0.5,-1 -0.27,-0.2 -0.67,-0.3 -1.2,-0.3 z m 5.5,-1.9 h 6.9 v 2.2 h -2.3 v 8.1 h -2.2 v -8.1 h -2.4 z"
+       id="text5"
+       style="font-weight:bold;font-size:16px;line-height:1.25;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT Bold';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#bf9940"
+       aria-label="PT"
+       transform="translate(9.32,123)" />
+    <path id="paneltone" fill="#bf9940" d="m 0.5,1.4 v 0.5 0 c 0.267,-0.4 0.57,-0.6 0.9,-0.6 0.33,0 0.6,0.13 0.8,0.4 0.27,0.27 0.4,0.57 0.4,0.9 0,0.33 -0.13,0.63 -0.4,0.9 -0.2,0.27 -0.47,0.4 -0.8,0.4 -0.13,0 -0.3,-0.1 -0.5,-0.2 -0.133,-0.1 -0.267,-0.2 -0.4,-0.4 v 0 1.6 h -0.5 v -3.5 z m 1.6,1.2 c 0,-0.2 -0.1,-0.4 -0.3,-0.6 -0.13,-0.13 -0.33,-0.2 -0.6,-0.2 -0.2,0 -0.367,0.1 -0.5,0.2 -0.2,0.2 -0.3,0.4 -0.3,0.6 0,0.2 0.1,0.4 0.3,0.6 0.133,0.13 0.3,0.2 0.5,0.2 0.27,0 0.47,-0.1 0.6,-0.2 0.2,-0.2 0.3,-0.4 0.3,-0.6 z m 3.2,-1.2 h 0.5 v 2.4 h -0.5 v -0.5 c -0.27,0.4 -0.57,0.6 -0.9,0.6 -0.33,0 -0.63,-0.13 -0.9,-0.4 -0.2,-0.27 -0.3,-0.57 -0.3,-0.9 0,-0.33 0.1,-0.63 0.3,-0.9 0.27,-0.27 0.53,-0.4 0.8,-0.4 0.2,0 0.4,0.1 0.6,0.2 0.13,0.1 0.27,0.2 0.4,0.4 z m 0,1.2 c 0,-0.2 -0.1,-0.4 -0.2,-0.6 -0.13,-0.13 -0.33,-0.2 -0.6,-0.2 -0.2,0 -0.37,0.1 -0.5,0.2 -0.2,0.2 -0.3,0.4 -0.3,0.6 0,0.2 0.1,0.4 0.3,0.6 0.13,0.13 0.3,0.2 0.5,0.2 0.27,0 0.47,-0.1 0.6,-0.2 0.13,-0.2 0.2,-0.4 0.2,-0.6 z m 1.2,1.2 v -2.4 h 0.5 v 0.4 c 0.13,-0.2 0.27,-0.33 0.4,-0.4 0.1,-0.1 0.2,-0.1 0.4,-0.1 0.2,0 0.37,0.1 0.5,0.2 0.13,0.13 0.2,0.33 0.2,0.6 v 1.7 h -0.5 v -1.6 c 0,-0.13 0,-0.23 -0.1,-0.3 -0.1,-0.13 -0.17,-0.2 -0.3,-0.2 -0.2,0 -0.37,0.1 -0.5,0.3 -0.1,0.13 -0.1,0.3 -0.1,0.5 v 1.3 z m 5.1,-1.1 h -2.1 c 0.1,0.27 0.17,0.43 0.3,0.5 0.2,0.13 0.4,0.2 0.6,0.2 0.3,0 0.5,-0.13 0.7,-0.4 l 0.4,0.3 c -0.3,0.4 -0.7,0.6 -1.2,0.6 -0.33,0 -0.63,-0.13 -0.9,-0.4 -0.2,-0.27 -0.3,-0.57 -0.3,-0.9 0,-0.33 0.1,-0.63 0.3,-0.9 0.27,-0.27 0.57,-0.4 0.9,-0.4 0.4,0 0.7,0.13 0.9,0.4 0.3,0.27 0.4,0.6 0.4,1 z m -2,-0.4 h 1.5 c -0.2,-0.33 -0.5,-0.5 -0.8,-0.5 -0.33,0 -0.57,0.17 -0.7,0.5 z m 2.7,-2.3 h 0.5 v 3.8 h -0.5 z m 1.4,0.7 h 0.5 v 0.7 h 0.5 v 0.4 h -0.5 v 2 h -0.5 v -2 h -0.4 v -0.4 h 0.4 z m 1.3,1.9 c 0,-0.33 0.1,-0.63 0.4,-0.9 0.3,-0.27 0.6,-0.4 0.9,-0.4 0.3,0 0.6,0.13 0.9,0.4 0.3,0.27 0.4,0.57 0.4,0.9 0,0.33 -0.1,0.63 -0.4,0.9 -0.3,0.27 -0.6,0.4 -0.9,0.4 -0.3,0 -0.6,-0.13 -0.9,-0.4 -0.3,-0.27 -0.4,-0.57 -0.4,-0.9 z m 2.1,0 c 0,-0.2 -0.1,-0.4 -0.3,-0.6 -0.1,-0.13 -0.3,-0.2 -0.5,-0.2 -0.2,0 -0.4,0.1 -0.6,0.3 -0.1,0.13 -0.2,0.3 -0.2,0.5 0,0.2 0.1,0.37 0.2,0.5 0.2,0.2 0.4,0.3 0.6,0.3 0.2,0 0.4,-0.1 0.5,-0.3 0.2,-0.13 0.3,-0.3 0.3,-0.5 z m 0.9,1.2 v -2.4 h 0.5 v 0.4 c 0.1,-0.2 0.3,-0.33 0.4,-0.4 0.1,-0.1 0.3,-0.1 0.4,-0.1 0.3,0 0.5,0.1 0.6,0.2 0.1,0.13 0.2,0.33 0.2,0.6 v 1.7 h -0.5 v -1.6 c 0,-0.13 0,-0.23 -0.1,-0.3 -0.1,-0.13 -0.2,-0.2 -0.3,-0.2 -0.2,0 -0.4,0.1 -0.5,0.3 -0.1,0.13 -0.2,0.3 -0.2,0.5 v 1.3 z m 5.2,-1.1 h -2.1 c 0.1,0.27 0.2,0.43 0.3,0.5 0.1,0.13 0.3,0.2 0.5,0.2 0.3,0 0.6,-0.13 0.8,-0.4 l 0.3,0.3 c -0.3,0.4 -0.6,0.6 -1.1,0.6 -0.3,0 -0.6,-0.13 -0.9,-0.4 -0.3,-0.27 -0.4,-0.57 -0.4,-0.9 0,-0.33 0.1,-0.63 0.4,-0.9 0.3,-0.27 0.6,-0.4 0.9,-0.4 0.3,0 0.6,0.13 0.9,0.4 0.3,0.27 0.4,0.6 0.4,1 z m -2,-0.4 h 1.4 c -0.1,-0.33 -0.4,-0.5 -0.7,-0.5 -0.3,0 -0.6,0.17 -0.7,0.5 z" />
   </g>
 </svg>

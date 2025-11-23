@@ -4,6 +4,7 @@
       title = #000
        mast = #f9a806
        logo = #000
+logo-circle = #f9a806 stroke #f9a806 width .75
         sep = #888
      symbol = #000
       patty = #222
@@ -41,7 +42,7 @@ tbtn-punch = none stroke #606060 width .75
 tbtn-bevel = [ #fff, #666666]
 tbtn-face = [ #e6e6e6, #bbb]
 tbtn-text = #000
-tbtn-text-dn = #666666
+tbtn-text-dn = hsl(220, .9, .35)
 tbtn-hover = none stroke #1a1a1a width 1.35
 
 // info
@@ -60,16 +61,16 @@ copper-title = #000
   minilabel = #bfbfbf
 mini-out-bg = none
 
-// Skiff
-fancy-title = #000
+// Fancy
+//fancy-title = #000
 fancy-group = #222
 fancy-label = #222
-fancy-panel = #ebebeb
-group-box = #f9f4ebff stroke none
-dlg-border = none stroke #888 width 2.5
-close-hover = hsl(0, .6, .5) stroke none
-close-frame = none stroke #a6a6a6
-close-glyph = #000
+//fancy-panel = #ebebeb
+//close-hover = hsl(0, .6, .5) stroke none
+//close-frame = none stroke #a6a6a6
+//close-glyph = #000
+fsep   = none stroke #5c95d6
+coj-bg = hsla(100, .25, .8, 1)
 
 // Rui
 fluff-co = #50aeca

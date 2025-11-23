@@ -5,7 +5,6 @@
 #include "services/svg-theme-load.hpp"
 #include "widgets/components.hpp"
 #include "widgets/screws.hpp"
-#include "fancy-dialog.hpp"
 
 namespace pachde {
 
@@ -69,7 +68,6 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     auto panel = createSvgThemePanel<SkiffSvg>(&my_svgs, nullptr);
     auto layout = panel->svg;
     setPanel(panel);
-    //pre_cache_fancy_dialog_svg(&my_svgs);
 
     if (my_module && my_module->other_skiff) return;
 
@@ -103,21 +101,6 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
 
     addChild(pack_button = makeTextButton(bounds, "k:pack-btn", false, "", "Pack modules (pack selected: F7)", svg_theme,
         [](bool ctrl, bool shift) { pack_modules(); }));
-
-    auto light = createLightCentered<SmallLight<RedLight>>(bounds["k:fancy-light"].getCenter(), my_module, Skiff::L_FANCY);
-    HOT_POSITION("k:fancy-light", HotPosKind::Center, light);
-    addChild(light);
-
-    addChild(fancy_button = makeTextButton(bounds, "k:fancy-btn", true, "", "Toggle Fancy background", svg_theme,
-        [this](bool ctrl, bool shift) { if(!my_module) return; fancy_background(!my_module->fancy); }));
-
-    fancy_options = Center(createThemeSvgButton<GearActionButton>(&my_svgs, bounds["k:fancy-options"].getCenter()));
-    HOT_POSITION("k:fancy-options", HotPosKind::Center, fancy_options);
-    if (module) {
-        fancy_options->describe("FancyBox options");
-        fancy_options->set_handler([=](bool,bool) { show_fancy_dialog(this); });
-    }
-    addChild(fancy_options);
 
     auto button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:restore"].getCenter()));
     HOT_POSITION("k:restore", HotPosKind::Center, button);
@@ -163,7 +146,6 @@ void SkiffUi::shouting_buttons(bool shouting) {
         nojack_button->set_text("NOJACK");
         dark_ages_button->set_text("DARKNESS");
         pack_button->set_text("PACK'EM");
-        fancy_button->set_text("FANCYBOX");
     } else {
         derail_button->set_text("deRail");
         nopanel_button->set_text("noPanels");
@@ -172,7 +154,6 @@ void SkiffUi::shouting_buttons(bool shouting) {
         nojack_button->set_text("noJack");
         dark_ages_button->set_text("darkness");
         pack_button->set_text("Pack'em");
-        fancy_button->set_text("FancyBox");
     }
 }
 
@@ -194,7 +175,6 @@ void SkiffUi::sync_latch_state() {
     calm_button->latched    = my_module->calm;
     unscrew_button->latched = my_module->unscrewed;
     nojack_button->latched  = my_module->nojacks;
-    fancy_button->latched   = my_module->fancy;
 }
 
 void SkiffUi::restore_rack() {
@@ -211,9 +191,6 @@ void SkiffUi::from_module() {
     calm_rack(my_module->calm);
     panel_visibility(nullptr, !my_module->depaneled);
 
-    if (my_module->fancy) {
-        request_cloak = true;
-    }
     set_alt_rail(my_module->rail);
 
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
@@ -240,29 +217,6 @@ void SkiffUi::derail(bool derail) {
 
     my_module->derailed = derail;
     set_rail_visible(!derail);
-}
-
-void SkiffUi::onDeleteCloak(CloakBackgroundWidget *cloak) {
-    assert(my_cloak == cloak);
-    if (my_cloak) my_cloak = nullptr;
-    my_module->fancy = false;
-}
-
-void SkiffUi::fancy_background(bool fancy) {
-    if (!my_module) return;
-
-    my_module->fancy = fancy;
-    auto cloak = getBackgroundCloak();
-    if (fancy) {
-        if (!cloak) {
-            my_cloak = ensureBackgroundCloak(this, &my_module->fancy_data);
-        }
-    } else {
-        if (cloak) {
-            my_cloak = nullptr;
-            cloak->requestDelete();
-        }
-    }
 }
 
 void SkiffUi::set_nojacks(bool nojacks) {
@@ -464,10 +418,6 @@ void SkiffUi::step() {
         request_custom_rail = false;
         custom_rail();
     }
-    if (request_cloak) {
-        request_cloak = false;
-        fancy_background(my_module->fancy);
-   }
    theme_holder->pollRackThemeChanged();
    sync_latch_state();
 }

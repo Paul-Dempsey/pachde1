@@ -100,7 +100,17 @@ void positionWidgets(const PositionIndex &positions, const BoundsIndex& bounds)
     using namespace ::rack::math;
 
     for (auto kv: positions) {
-        auto r = bounds.at(kv.first);
+        #ifdef DEV_BUILD
+        Rect r;
+        try {
+            r = bounds.at(kv.first);
+        } catch (std::exception &e) {
+            DEBUG("Bounds missing %s", kv.first);
+            continue;
+        }
+#else
+        Rect r{bounds.at(kv.first)};
+#endif
         auto widget = kv.second.widget;
         switch (kv.second.kind) {
         default:

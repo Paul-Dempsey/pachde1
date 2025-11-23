@@ -58,9 +58,17 @@
         "slug": "pachde-skiff",
         "name": "Skiff",
         "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Skiff.md#skiff",
-        "description": "Customize the skiff: pack modules, alternate rails, panel modification, unscrew, hide unused jacks",
+        "description": "Customize the skiff: pack modules, alternate rails, panel modification, unscrew, hide unused jacks, hide lights",
         "tags": [ "Visual", "Utility" ],
-        "keywords" : "colors graphic RGB HSL skiff rails declutter screws ports jacks"
+        "keywords" : "colors graphic RGB HSL skiff rails declutter screws ports jacks UI"
+    },
+    {
+        "slug": "pachde-fancybox",
+        "name": "FancyBox",
+        "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/FancyBox.md#fancybox",
+        "description": "Customize your skiff with a fancy background/green-screen",
+        "tags": [ "Visual", "Utility" ],
+        "keywords" : "colors graphic RGB HSL skiff rails declutter greenscreen screen UI"
     },
     {
         "slug": "pachde-rui",

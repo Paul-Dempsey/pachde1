@@ -9,7 +9,6 @@ using namespace svg_query;
 #include "widgets/text-button.hpp"
 using namespace widgetry;
 #include "rails.hpp"
-#include "cloak.hpp"
 
 namespace pachde {
 
@@ -18,46 +17,6 @@ struct SkiffUi;
 struct Skiff : ThemeModule
 {
     using Base = ThemeModule;
-
-    enum Params {
-        P_FANCY_FILL_ON,
-        P_FANCY_FILL_FADE,
-
-        P_FANCY_LINEAR_ON,
-        P_FANCY_LINEAR_START_FADE,
-        P_FANCY_LINEAR_X1,
-        P_FANCY_LINEAR_Y1,
-        P_FANCY_LINEAR_END_FADE,
-        P_FANCY_LINEAR_X2,
-        P_FANCY_LINEAR_Y2,
-
-        P_FANCY_RADIAL_ON,
-        P_FANCY_RADIAL_INNER_FADE,
-        P_FANCY_RADIAL_CX,
-        P_FANCY_RADIAL_CY,
-        P_FANCY_RADIAL_OUTER_FADE,
-        P_FANCY_RADIAL_RADIUS,
-
-        P_FANCY_BOX_ON,
-        P_FANCY_BOX_INNER_FADE,
-        P_FANCY_BOX_SHRINK_X,
-        P_FANCY_BOX_SHRINK_Y,
-        P_FANCY_BOX_OUTER_FADE,
-        P_FANCY_BOX_RADIUS,
-        P_FANCY_BOX_FEATHER,
-
-        N_PARAMS
-    };
-    enum Inputs {
-        N_INPUTS
-    };
-    enum Outputs {
-        N_OUTPUTS
-    };
-    enum Lights {
-        L_FANCY,
-        N_LIGHTS
-    };
 
     std::string rail{"Rack"};
     std::string rail_folder = asset::userDir;
@@ -68,9 +27,7 @@ struct Skiff : ThemeModule
     bool unscrewed{false};
     bool nojacks{false};
     bool dark_ages{false};
-    bool fancy{false};
     bool shouting{true};
-    CloakData fancy_data;
     std::string theme_name;
     RailThemeSetting rail_theme;
 
@@ -83,7 +40,6 @@ struct Skiff : ThemeModule
     void random_settings();
 
     void onRandomize(const RandomizeEvent& e) override;
-    void process(const ProcessArgs& args) override;
 };
 
 struct RailMenu : Hamburger
@@ -93,7 +49,7 @@ struct RailMenu : Hamburger
     void appendContextMenu(ui::Menu* menu) override;
 };
 
-struct SkiffUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
+struct SkiffUi : ModuleWidget, IThemeChange
 {
     using Base = ModuleWidget;
 
@@ -111,11 +67,6 @@ struct SkiffUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     TextButton* nojack_button{nullptr};
     TextButton* dark_ages_button{nullptr};
     TextButton* pack_button{nullptr};
-    TextButton* fancy_button{nullptr};
-    GearActionButton* fancy_options{nullptr};
-
-    CloakBackgroundWidget* my_cloak{nullptr};
-    bool request_cloak{false};
 
     #ifdef HOT_SVG
     PositionIndex pos_widgets;
@@ -134,7 +85,6 @@ struct SkiffUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
         std::shared_ptr<svg_theme::SvgTheme> svg_theme,
         std::function<void(bool,bool)> handler);
     void onChangeTheme(ChangedItem item) override;
-    void onDeleteCloak(CloakBackgroundWidget* cloak) override;
     void sync_latch_state();
     void restore_rack();
     void from_module();
@@ -142,7 +92,6 @@ struct SkiffUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void no_panels(bool depanel);
     void set_unscrewed(bool unscrewed);
     void derail(bool derail);
-    void fancy_background(bool fancy);
     void set_nojacks(bool nojacks);
     void set_dark_ages(bool dark);
     void calm_rack(bool calm);

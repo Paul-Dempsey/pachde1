@@ -8,7 +8,7 @@ namespace widgetry {
 
 struct FillData {
     bool enabled{true};
-    PackedColor color{0xff808080};
+    PackedColor color{0x5c2393c4};
     float fade{1.f};
     void init(const FillData& source) {
         enabled = source.enabled;
@@ -19,8 +19,8 @@ struct FillData {
 
 struct LinearGradientData {
     bool enabled{false};
-    PackedColor icol{0};
-    PackedColor ocol{0xffffffff};
+    PackedColor icol{colors::White};
+    PackedColor ocol{colors::Black};
     float ifade{1.f};
     float x1{0.f};
     float y1{0.f};
@@ -42,8 +42,8 @@ struct LinearGradientData {
 
 struct RadialGradientData {
     bool enabled{false};
-    PackedColor icol{0xffffffff};
-    PackedColor ocol{0};
+    PackedColor icol{0};
+    PackedColor ocol{colors::Black};
     float ifade{1.f};
     float cx{.5f};
     float cy{.5f};
@@ -63,8 +63,8 @@ struct RadialGradientData {
 
 struct BoxGradientData {
     bool enabled{false};
-    PackedColor icol{0xff000000};
-    PackedColor ocol{0xffffffff};
+    PackedColor icol{0};
+    PackedColor ocol{colors::Black};
     float ifade{1.f};
     float xshrink{.1f};
     float yshrink{.1f};
