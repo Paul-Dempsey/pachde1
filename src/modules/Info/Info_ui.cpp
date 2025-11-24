@@ -112,10 +112,14 @@ void InfoModuleWidget::step()
         }
         my_module->setClean();
     }
-    panel->box.size = box.size;
-    title->box.pos.x = box.size.x*.5f - title->box.size.x*.5f;
+    bool size_change = (panel->box.size != box.size);
+    if (size_change) {
+        panel->box.size = box.size;
+        title->box.pos.x = box.size.x*.5f - title->box.size.x*.5f;
+        logo->box.pos.x = box.size.x*.5f - logo->box.size.x*.5f;
+        APP->scene->rack->setModulePosForce(this, box.pos);
+    }
     title->setVisible(settings->getBranding());
-    logo->box.pos.x = box.size.x*.5f - logo->box.size.x*.5f;
     logo->setVisible(settings->getBranding());
     ModuleWidget::step();
 }
