@@ -69,8 +69,8 @@ json_t* InfoSettings::save(json_t* root)
     align_string = {VAlignLetter(vertical_alignment)};
     set_json(root, "text-v-align", align_string);
     set_json(root, "text-orient", OrientationJValue(orientation));
-    set_json(root, "font", font_file);
-    set_json(root, "font-folder", font_folder);
+    set_json(root, "font", make_portable_path(font_file));
+    set_json(root, "font-folder", make_portable_path(font_folder));
     set_json(root, "bright", brilliant);
     return root;
 }
@@ -111,7 +111,9 @@ void InfoSettings::load(json_t* root) {
     vertical_alignment = str.empty() ? VAlign::Middle : parseVAlign(str);
 
     font_file = get_json_string(root, "font");
-    font_folder= get_json_string(root, "font-folder");
+    if (!font_file.empty()) font_file = path_from_portable_path(font_file);
+    font_folder = get_json_string(root, "font-folder");
+    if (!font_folder.empty()) font_folder = path_from_portable_path(font_folder);
     brilliant = get_json_bool(root, "bright", brilliant);
 }
 

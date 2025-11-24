@@ -5,7 +5,6 @@
 ## Info
 
 - dialog for options
-- When persisting, use placeholders for user-relative and plugin-relative paths (for patch portability)
 
 ## Skiff
 
