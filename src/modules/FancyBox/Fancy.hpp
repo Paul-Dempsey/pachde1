@@ -180,7 +180,9 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void add_input(::svg_query::BoundsIndex& bounds, const char* key, int id, PackedColor color);
     void add_ports(::svg_query::BoundsIndex& bounds, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
     bool show_ports() { return my_module ? my_module->show_ports : true; }
+    bool ui_showing_ports() { return box.size.x > 165.f; }
     void remove_ports();
+    void set_ports(bool ports);
     void toggle_ports();
     void set_fill_color(PackedColor color);
     void set_lg_start_color(PackedColor color);
@@ -195,7 +197,6 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void sync_latch_state();
     void shouting_buttons(bool shouting);
     void fancy_background(bool fancy);
-    void from_module();
 
     void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;

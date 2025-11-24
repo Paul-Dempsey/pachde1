@@ -302,7 +302,7 @@ std::shared_ptr<window::Svg> SkiffUi::set_rail_svg(RailWidget* rail, const std::
 }
 
 void SkiffUi::set_alt_rail(const std::string& rail_name) {
-    if (!my_module) return;
+    if (!my_module || my_module->other_skiff) return;
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
     if (!rail) return;
 
