@@ -4,7 +4,7 @@
 
 namespace pachde {
 
-constexpr const int PARAM_INTERVAL = 64;
+constexpr const int PARAM_INTERVAL = 50;
 
 Fancy::Fancy() {
     std::vector<std::string> off_on{"off", "on"};
@@ -123,75 +123,168 @@ void Fancy::dataFromJson(json_t* root) {
 
 inline bool param_bool(rack::engine::Param& param) { return param.getValue() >= .5f; }
 inline float fancy_param(rack::engine::Param& param) { return .01f * param.getValue(); }
+
+PackedColor Fancy::modulate_color(PackedColor base, int input_id_first) {
+    bool modulated{false};
+    for (int id = input_id_first; id < input_id_first + 4; ++id) {
+        if (getInput(id).isConnected()) {
+            modulated = true;
+            break;
+        }
+    }
+    if (!modulated) return base;
+
+    auto co = fromPacked(base);
+    float hue   = clamp(Hue1(co)        + voltage(input_id_first++));
+    float sat   = clamp(Saturation1(co) + voltage(input_id_first++));
+    float lit   = clamp(Lightness(co)   + voltage(input_id_first++));
+    float alpha = clamp(co.a            + voltage(input_id_first));
+    return packHsla(hue, sat, lit, alpha);
+}
+
+void Fancy::onPortChange(const PortChangeEvent &e)
+{
+    if (e.connecting) {
+        connection_count++;
+    } else {
+        connection_count--;
+        if ((0 == connection_count) && ui) {
+            ui->restore_unmodulated_parameters();
+        }
+    }
+    assert(in_range(connection_count, 0, (int)Inputs::N_INPUTS));
+}
+
+void Fancy::process_fill(const ProcessArgs &args)
+{
+    fill_process_count = (fill_process_count + 1) % 25;
+    if (fill_process_count % 25) return;
+
+    fancy_data.fill.enabled = param_bool(getParam(P_FANCY_FILL_ON));
+    fancy_data.fill.fade    = fancy_param(getParam(P_FANCY_FILL_FADE));
+    if (ui->my_cloak) {
+        ui->my_cloak->data.fill.enabled = fancy_data.fill.enabled;
+        if (fancy_data.fill.enabled) {
+            ui->my_cloak->data.fill.fade = clamp(fancy_data.fill.fade + getInput(IN_FANCY_FILL_FADE).getVoltage());
+        }
+    }
+}
+
+void Fancy::process_linear(const ProcessArgs& args) {
+    linear_process_count = (linear_process_count + 1) % 25;
+    if (linear_process_count % 25) return;
+
+    fancy_data.linear.enabled = param_bool(getParam(P_FANCY_LINEAR_ON));
+    fancy_data.linear.ifade   = fancy_param(getParam(P_FANCY_LINEAR_START_FADE));
+    fancy_data.linear.x1      = fancy_param(getParam(P_FANCY_LINEAR_X1));
+    fancy_data.linear.y1      = fancy_param(getParam(P_FANCY_LINEAR_Y1));
+    fancy_data.linear.ofade   = fancy_param(getParam(P_FANCY_LINEAR_END_FADE));
+    fancy_data.linear.x2      = fancy_param(getParam(P_FANCY_LINEAR_X2));
+    fancy_data.linear.y2      = fancy_param(getParam(P_FANCY_LINEAR_Y2));
+
+    if (ui->my_cloak) {
+        ui->my_cloak->data.linear.enabled = fancy_data.linear.enabled;
+        if (fancy_data.linear.enabled) {
+            LinearGradientData linear{fancy_data.linear};
+            linear.ifade = clamp(linear.ifade + voltage(IN_FANCY_LINEAR_START_FADE));
+            linear.x1    = clamp(linear.x1    + voltage(IN_FANCY_LINEAR_X1));
+            linear.y1    = clamp(linear.y1    + voltage(IN_FANCY_LINEAR_Y1));
+            linear.ofade = clamp(linear.ofade + voltage(IN_FANCY_LINEAR_END_FADE));
+            linear.x2    = clamp(linear.x2    + voltage(IN_FANCY_LINEAR_X2));
+            linear.y2    = clamp(linear.y2    + voltage(IN_FANCY_LINEAR_Y2));
+            if (linear.ifade > 0.f) {
+                linear.icol = modulate_color(fancy_data.linear.icol, IN_FANCY_LINEAR_START_H);
+            }
+            if (linear.ofade > 0.f) {
+                linear.ocol = modulate_color(fancy_data.linear.ocol, IN_FANCY_LINEAR_END_H);
+            }
+            ui->my_cloak->data.linear.init(linear);
+        }
+    }
+}
+
+void Fancy::process_radial(const ProcessArgs& args) {
+    radial_process_count = (radial_process_count + 1) % 25;
+    if (radial_process_count % 25) return;
+
+    fancy_data.radial.enabled = param_bool(getParam(P_FANCY_RADIAL_ON));
+    fancy_data.radial.ifade   = fancy_param(getParam(P_FANCY_RADIAL_INNER_FADE));
+    fancy_data.radial.cx      = fancy_param(getParam(P_FANCY_RADIAL_CX));
+    fancy_data.radial.cy      = fancy_param(getParam(P_FANCY_RADIAL_CY));
+    fancy_data.radial.ofade   = fancy_param(getParam(P_FANCY_RADIAL_OUTER_FADE));
+    fancy_data.radial.radius  = fancy_param(getParam(P_FANCY_RADIAL_RADIUS));
+
+    if (ui->my_cloak) {
+        ui->my_cloak->data.radial.enabled = fancy_data.radial.enabled;
+        if (fancy_data.radial.enabled) {
+            RadialGradientData radial{fancy_data.radial};
+            radial.ifade  = clamp(radial.ifade  + voltage(IN_FANCY_RADIAL_INNER_FADE));
+            radial.cx     = clamp(radial.cx     + voltage(IN_FANCY_RADIAL_CX));
+            radial.cy     = clamp(radial.cy     + voltage(IN_FANCY_RADIAL_CY));
+            radial.ofade  = clamp(radial.ofade  + voltage(IN_FANCY_RADIAL_OUTER_FADE));
+            radial.radius = clamp(radial.radius + voltage(IN_FANCY_RADIAL_RADIUS));
+            if (radial.ifade > 0.f) {
+                radial.icol = modulate_color(fancy_data.radial.icol, IN_FANCY_RADIAL_INNER_H);
+            }
+            if (radial.ofade > 0.f) {
+                radial.ocol = modulate_color(fancy_data.radial.ocol, IN_FANCY_RADIAL_OUTER_H);
+            }
+            ui->my_cloak->data.radial.init(radial);
+        }
+    }
+}
+
+void Fancy::process_box(const ProcessArgs& args) {
+    box_process_count = (box_process_count + 1) % 25;
+    if (box_process_count % 25) return;
+
+    fancy_data.boxg.enabled = param_bool(getParam(P_FANCY_BOX_ON));
+    fancy_data.boxg.ifade   = fancy_param(getParam(P_FANCY_BOX_INNER_FADE));
+    fancy_data.boxg.xshrink = fancy_param(getParam(P_FANCY_BOX_SHRINK_X));
+    fancy_data.boxg.yshrink = fancy_param(getParam(P_FANCY_BOX_SHRINK_Y));
+    fancy_data.boxg.ofade   = fancy_param(getParam(P_FANCY_BOX_OUTER_FADE));
+    fancy_data.boxg.radius  = fancy_param(getParam(P_FANCY_BOX_RADIUS));
+    fancy_data.boxg.feather = fancy_param(getParam(P_FANCY_BOX_FEATHER));
+
+    if (ui->my_cloak) {
+        ui->my_cloak->data.boxg.enabled = fancy_data.boxg.enabled;
+        if (fancy_data.boxg.enabled) {
+            BoxGradientData boxg;
+            boxg.enabled = fancy_data.boxg.enabled;
+            boxg.ifade   = clamp(fancy_data.boxg.ifade   + voltage(IN_FANCY_BOX_INNER_FADE));
+            boxg.xshrink = clamp(fancy_data.boxg.xshrink + voltage(IN_FANCY_BOX_SHRINK_X));
+            boxg.yshrink = clamp(fancy_data.boxg.yshrink + voltage(IN_FANCY_BOX_SHRINK_Y));
+            boxg.ofade   = clamp(fancy_data.boxg.ofade   + voltage(IN_FANCY_BOX_OUTER_FADE));
+            boxg.radius  = clamp(fancy_data.boxg.radius  + voltage(IN_FANCY_BOX_RADIUS));
+            boxg.feather = clamp(fancy_data.boxg.feather + voltage(IN_FANCY_BOX_FEATHER));
+            if (boxg.ifade > 0.f) {
+                boxg.icol = modulate_color(fancy_data.boxg.icol, IN_FANCY_BOX_INNER_H);
+            } else {
+                boxg.icol = fancy_data.boxg.icol;
+            }
+            if (boxg.ofade > 0.f) {
+                boxg.ocol = modulate_color(fancy_data.boxg.ocol, IN_FANCY_BOX_OUTER_H);
+            } else {
+                boxg.ocol = fancy_data.boxg.ocol;
+            }
+            ui->my_cloak->data.boxg.init(boxg);
+        }
+    }
+}
+
 void Fancy::process(const ProcessArgs &args)
 {
     if (other_fancy || !ui) return;
     if ((0 == ((args.frame + getId()) % PARAM_INTERVAL))) {
         getLight(L_FANCY).setSmoothBrightness(ui->my_cloak ? 1.0 : 0.f, 86.f);
-        if (ui->my_cloak) {
-            ui->my_cloak->data.fill.enabled
-                = fancy_data.fill.enabled = param_bool(getParam(P_FANCY_FILL_ON));
-            if (fancy_data.fill.enabled) {
-                fancy_data.fill.fade = ui->my_cloak->data.fill.fade = fancy_param(getParam(P_FANCY_FILL_FADE));
-            }
-            fancy_data.linear.enabled = ui->my_cloak->data.linear.enabled = param_bool(getParam(P_FANCY_LINEAR_ON));
-            if (fancy_data.linear.enabled) {
-                fancy_data.linear.ifade = ui->my_cloak->data.linear.ifade = fancy_param(getParam(P_FANCY_LINEAR_START_FADE));
-                fancy_data.linear.x1    = ui->my_cloak->data.linear.x1    = fancy_param(getParam(P_FANCY_LINEAR_X1));
-                fancy_data.linear.y1    = ui->my_cloak->data.linear.y1    = fancy_param(getParam(P_FANCY_LINEAR_Y1));
-                fancy_data.linear.ofade = ui->my_cloak->data.linear.ofade = fancy_param(getParam(P_FANCY_LINEAR_END_FADE));
-                fancy_data.linear.x2    = ui->my_cloak->data.linear.x2    = fancy_param(getParam(P_FANCY_LINEAR_X2));
-                fancy_data.linear.y2    = ui->my_cloak->data.linear.y2    = fancy_param(getParam(P_FANCY_LINEAR_Y2));
-            }
-            fancy_data.radial.enabled = ui->my_cloak->data.radial.enabled = param_bool(getParam(P_FANCY_RADIAL_ON));
-            if (fancy_data.radial.enabled) {
-                fancy_data.radial.ifade  = ui->my_cloak->data.radial.ifade  = fancy_param(getParam(P_FANCY_RADIAL_INNER_FADE));
-                fancy_data.radial.cx     = ui->my_cloak->data.radial.cx     = fancy_param(getParam(P_FANCY_RADIAL_CX));
-                fancy_data.radial.cy     = ui->my_cloak->data.radial.cy     = fancy_param(getParam(P_FANCY_RADIAL_CY));
-                fancy_data.radial.ofade  = ui->my_cloak->data.radial.ofade  = fancy_param(getParam(P_FANCY_RADIAL_OUTER_FADE));
-                fancy_data.radial.radius = ui->my_cloak->data.radial.radius = fancy_param(getParam(P_FANCY_RADIAL_RADIUS));
-            }
-            fancy_data.boxg.enabled = ui->my_cloak->data.boxg.enabled = param_bool(getParam(P_FANCY_BOX_ON));
-            if (fancy_data.boxg.enabled) {
-                fancy_data.boxg.ifade   = ui->my_cloak->data.boxg.ifade    = fancy_param(getParam(P_FANCY_BOX_INNER_FADE));
-                fancy_data.boxg.xshrink = ui->my_cloak->data.boxg.xshrink  = fancy_param(getParam(P_FANCY_BOX_SHRINK_X));
-                fancy_data.boxg.yshrink = ui->my_cloak->data.boxg.yshrink  = fancy_param(getParam(P_FANCY_BOX_SHRINK_Y));
-                fancy_data.boxg.ofade   = ui->my_cloak->data.boxg.ofade    = fancy_param(getParam(P_FANCY_BOX_OUTER_FADE));
-                fancy_data.boxg.radius  = ui->my_cloak->data.boxg.radius   = fancy_param(getParam(P_FANCY_BOX_RADIUS));
-                fancy_data.boxg.feather = ui->my_cloak->data.boxg.feather  = fancy_param(getParam(P_FANCY_BOX_FEATHER));
-            }
-        } else {
-            fancy_data.fill.enabled = param_bool(getParam(P_FANCY_FILL_ON));
-            if (fancy_data.fill.enabled) {
-                fancy_data.fill.fade = getParam(P_FANCY_FILL_FADE).getValue();
-            }
-            fancy_data.linear.enabled = param_bool(getParam(P_FANCY_LINEAR_ON));
-            if (fancy_data.linear.enabled) {
-                fancy_data.linear.ifade = fancy_param(getParam(P_FANCY_LINEAR_START_FADE));
-                fancy_data.linear.x1    = fancy_param(getParam(P_FANCY_LINEAR_X1));
-                fancy_data.linear.y1    = fancy_param(getParam(P_FANCY_LINEAR_Y1));
-                fancy_data.linear.ofade = fancy_param(getParam(P_FANCY_LINEAR_END_FADE));
-                fancy_data.linear.x2    = fancy_param(getParam(P_FANCY_LINEAR_X2));
-                fancy_data.linear.y2    = fancy_param(getParam(P_FANCY_LINEAR_Y2));
-            }
-            fancy_data.radial.enabled = param_bool(getParam(P_FANCY_RADIAL_ON));
-            if (fancy_data.radial.enabled) {
-                fancy_data.radial.ifade  = fancy_param(getParam(P_FANCY_RADIAL_INNER_FADE));
-                fancy_data.radial.cx     = fancy_param(getParam(P_FANCY_RADIAL_CX));
-                fancy_data.radial.cy     = fancy_param(getParam(P_FANCY_RADIAL_CY));
-                fancy_data.radial.ofade  = fancy_param(getParam(P_FANCY_RADIAL_OUTER_FADE));
-                fancy_data.radial.radius = fancy_param(getParam(P_FANCY_RADIAL_RADIUS));
-            }
-            fancy_data.boxg.enabled = param_bool(getParam(P_FANCY_BOX_ON));
-            if (fancy_data.boxg.enabled) {
-                fancy_data.boxg.ifade   = fancy_param(getParam(P_FANCY_BOX_INNER_FADE));
-                fancy_data.boxg.xshrink = fancy_param(getParam(P_FANCY_BOX_SHRINK_X));
-                fancy_data.boxg.yshrink = fancy_param(getParam(P_FANCY_BOX_SHRINK_Y));
-                fancy_data.boxg.ofade   = fancy_param(getParam(P_FANCY_BOX_OUTER_FADE));
-                fancy_data.boxg.radius  = fancy_param(getParam(P_FANCY_BOX_RADIUS));
-                fancy_data.boxg.feather = fancy_param(getParam(P_FANCY_BOX_FEATHER));
-            }
-        }
+    }
+
+    // amortize parameter updates across frames
+    switch (args.frame % 4) {
+        case 0: process_fill(args); break;
+        case 1: process_linear(args); break;
+        case 2: process_radial(args); break;
+        case 3: process_box(args);  break;
     }
 }
 

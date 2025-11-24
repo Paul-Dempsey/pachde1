@@ -15,6 +15,7 @@ patty-hover = hsl(216, .5, .5)
   entry-text = #000
 entry-prompt = hsl(42, 50, .2)
    entry-sel = hsl(200, .5, .65)
+   btn-hover = none stroke hsl(216,.6,.5) width 1
 
 // knobs
 k-bg      = [ #dfeffc, #bfbfbf ]
@@ -71,6 +72,7 @@ fancy-label = #222
 //close-glyph = #000
 fsep   = none stroke #5c95d6
 coj-bg = hsla(100, .25, .8, 1)
+jack-hover = #4b61a8ff stroke none
 
 // Rui
 fluff-co = #50aeca

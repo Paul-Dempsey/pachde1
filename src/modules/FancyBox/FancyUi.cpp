@@ -60,16 +60,16 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
     addChild(fancy_button = makeTextButton(bounds, "k:fancy-btn", true, "", "Toggle Fancy background", svg_theme,
         [this](bool ctrl, bool shift) { if(!my_module) return; fancy_background(!my_module->fancy); }));
 
-    {
-        const char * jack_key = show_ports() ? "k:jack-btn-ports" : "k:jack-btn-noports";
-        addChild(jack_button = Center(createThemeSvgButton<JackButton>(&my_svgs, svg_theme, bounds[jack_key].getCenter())));
+    { // Jack toggle
+        const char * jack_key = show_ports() ? "k:jack-btn-close-ports" : "k:jack-btn-open-ports";
+        addChild(jack_button = Center(createThemeSvgButton<JackButton>(&my_svgs, bounds[jack_key].getCenter())));
         HOT_POSITION(jack_key, HotPosKind::Center, jack_button);
         jack_button->set_sticky(true);
         jack_button->set_hover(true);
+        jack_button->set_hover_key("jack-hover");
+        jack_button->applyTheme(svg_theme);
         if (my_module) {
-            jack_button->set_handler([=](bool,bool) {
-
-            });
+            jack_button->set_handler([=](bool,bool) { toggle_ports(); });
         }
     }
     add_check(bounds, "k:fill-check", Fancy::P_FANCY_FILL_ON, svg_theme);
@@ -249,7 +249,6 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
 
 void FancyUi::add_ports(::svg_query::BoundsIndex &bounds, std::shared_ptr<svg_theme::SvgTheme> svg_theme)
 {
-
     add_input(bounds, "k:in-fill-H",          Fancy::IN_FANCY_FILL_H, colors::PortRed);
     add_input(bounds, "k:in-fill-S",          Fancy::IN_FANCY_FILL_S, colors::PortMagenta);
     add_input(bounds, "k:in-fill-L",          Fancy::IN_FANCY_FILL_L, colors::PortLightOrange);
@@ -268,14 +267,14 @@ void FancyUi::add_ports(::svg_query::BoundsIndex &bounds, std::shared_ptr<svg_th
     add_input(bounds, "k:in-lg-start-A",      Fancy::IN_FANCY_LINEAR_START_A, colors::PortLightViolet);
     add_input(bounds, "k:in-lg-start-fade",   Fancy::IN_FANCY_LINEAR_START_FADE, colors::PortDefault);
 
-    add_input(bounds, "k:in-lg-end-H",        Fancy::IN_FANCY_LINEAR_X1, colors::PortRed);
-    add_input(bounds, "k:in-lg-end-S",        Fancy::IN_FANCY_LINEAR_Y1, colors::PortMagenta);
-    add_input(bounds, "k:in-lg-end-L",        Fancy::IN_FANCY_LINEAR_END_H, colors::PortLightOrange);
-    add_input(bounds, "k:in-lg-end-A",        Fancy::IN_FANCY_LINEAR_END_S, colors::PortLightViolet);
-    add_input(bounds, "k:in-lg-end-fade",     Fancy::IN_FANCY_LINEAR_END_L, colors::PortDefault);
+    add_input(bounds, "k:in-lg-end-H",        Fancy::IN_FANCY_LINEAR_END_H, colors::PortRed);
+    add_input(bounds, "k:in-lg-end-S",        Fancy::IN_FANCY_LINEAR_END_S, colors::PortMagenta);
+    add_input(bounds, "k:in-lg-end-L",        Fancy::IN_FANCY_LINEAR_END_L, colors::PortLightOrange);
+    add_input(bounds, "k:in-lg-end-A",        Fancy::IN_FANCY_LINEAR_END_A, colors::PortLightViolet);
+    add_input(bounds, "k:in-lg-end-fade",     Fancy::IN_FANCY_LINEAR_END_FADE, colors::PortDefault);
 
-    add_input(bounds, "k:in-lg-x1",           Fancy::IN_FANCY_LINEAR_END_A, colors::PortDefault);
-    add_input(bounds, "k:in-lg-y1",           Fancy::IN_FANCY_LINEAR_END_FADE, colors::PortDefault);
+    add_input(bounds, "k:in-lg-x1",           Fancy::IN_FANCY_LINEAR_X1, colors::PortDefault);
+    add_input(bounds, "k:in-lg-y1",           Fancy::IN_FANCY_LINEAR_Y1, colors::PortDefault);
     add_input(bounds, "k:in-lg-x2",           Fancy::IN_FANCY_LINEAR_X2, colors::PortDefault);
     add_input(bounds, "k:in-lg-y2",           Fancy::IN_FANCY_LINEAR_Y2, colors::PortDefault);
     add_label(bounds, "k:in-lg-x1-label", "X1", label_style, svg_theme, true);
@@ -339,6 +338,40 @@ void FancyUi::remove_ports() {
         child->requestDelete();
     }
     removables.clear();
+}
+
+void FancyUi::toggle_ports()
+{
+    if (!my_module) return;
+    if (show_ports()) {
+        // refuse to collapse if any inputs connected
+        for (Input& input: my_module->inputs) {
+            if (input.isConnected()) {
+                jack_button->latched = true;
+                return;
+            }
+        }
+    }
+
+    auto layout = panelWidgetSvg(getPanel());
+    BoundsIndex bounds;
+    addBounds(layout, "k:", bounds, true);
+    if (show_ports()) {
+        box.size.x = 165;
+        APP->scene->rack->setModulePosForce(this, box.pos);
+        remove_ports();
+        jack_button->setPosition(bounds["k:jack-btn-open-ports"].getCenter());
+        Center(jack_button);
+        my_module->show_ports = false;
+    } else {
+        box.size.x = 315;
+        APP->scene->rack->setModulePosForce(this, box.pos);
+        auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
+        add_ports(bounds, svg_theme);
+        jack_button->setPosition(bounds["k:jack-btn-close-ports"].getCenter());
+        Center(jack_button);
+        my_module->show_ports = true;
+    }
 }
 
 TextButton* FancyUi::makeTextButton (
@@ -490,6 +523,12 @@ void FancyUi::set_bg_outer_color(PackedColor color) {
     if (my_module) {
         my_module->fancy_data.boxg.ocol = color;
     }
+}
+
+void FancyUi::restore_unmodulated_parameters()
+{
+    if (!my_module || !my_cloak) return;
+    my_cloak->data.init(my_module->fancy_data);
 }
 
 void FancyUi::onChangeTheme(ChangedItem item)

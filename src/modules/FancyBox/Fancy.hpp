@@ -110,11 +110,25 @@ struct Fancy : ThemeModule {
     CloakData fancy_data;
     std::string theme_name;
 
+    int fill_process_count{0};
+    int linear_process_count{0};
+    int radial_process_count{0};
+    int box_process_count{0};
+    int connection_count{0};
+
     Fancy();
     FancyUi* ui{nullptr};
 
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;
+
+    PackedColor modulate_color(PackedColor base, int input_id_first);
+    inline float voltage(int id) { return getInput(id).getNormalVoltage(0.f) * .1; }
+    void onPortChange(const PortChangeEvent& e) override;
+    void process_fill(const ProcessArgs& args);
+    void process_linear(const ProcessArgs& args);
+    void process_radial(const ProcessArgs& args);
+    void process_box(const ProcessArgs& args);
     void process(const ProcessArgs& args) override;
 };
 
@@ -165,8 +179,9 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void add_check(::svg_query::BoundsIndex& bounds, const char* key, int param, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
     void add_input(::svg_query::BoundsIndex& bounds, const char* key, int id, PackedColor color);
     void add_ports(::svg_query::BoundsIndex& bounds, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
-    void remove_ports();
     bool show_ports() { return my_module ? my_module->show_ports : true; }
+    void remove_ports();
+    void toggle_ports();
     void set_fill_color(PackedColor color);
     void set_lg_start_color(PackedColor color);
     void set_lg_end_color(PackedColor color);
@@ -174,7 +189,7 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void set_rg_outer_color(PackedColor color);
     void set_bg_inner_color(PackedColor color);
     void set_bg_outer_color(PackedColor color);
-
+    void restore_unmodulated_parameters();
     void onChangeTheme(ChangedItem item) override;
     void onDeleteCloak(CloakBackgroundWidget* cloak) override;
     void sync_latch_state();
