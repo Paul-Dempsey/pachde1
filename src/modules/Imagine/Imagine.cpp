@@ -17,27 +17,6 @@ fs::file_time_type LastWriteTime(std::string path)
 
 namespace pachde {
 
-// Make a fake path if under plugin folder, so that presets are portable
-std::string MakePluginPath(std::string path)
-{
-    path = system::getCanonical(path);
-    auto plug = pluginInstance->path;
-    if (0 == plug.compare(0, plug.size(), path.c_str(), 0, plug.size())) {
-        return path.replace(0, plug.size(), "{plug}");
-    }
-    return path;
-}
-
-// Decode fake path as needed to make a real path
-std::string MakeUnPluginPath(std::string path)
-{
-    std::string plug = "{plug}";
-    if (0 == plug.compare(0, plug.size(), path, 0, plug.size())) {
-        path = path.replace(0, plug.size(), pluginInstance->path);
-    }
-    return system::getCanonical(path);
-}
-
 Imagine::Imagine()
 :   min_retrigger(0.f)
 {
@@ -196,7 +175,7 @@ json_t *Imagine::dataToJson()
 
     auto name = image.name();
     if (!name.empty()) {
-        auto persist_name = MakePluginPath(name);
+        auto persist_name = make_portable_path(name);
         set_json(root, IMAGE_KEY, persist_name);
     }
     if ((reset_pos.x >= 0.f) && (reset_pos.y >= 0.f)) {
@@ -221,7 +200,7 @@ void Imagine::dataFromJson(json_t *root)
 
     json_t* j = json_object_get(root, IMAGE_KEY);
     if (j) {
-        std::string path = MakeUnPluginPath(json_string_value(j));
+        std::string path = path_from_portable_path(json_string_value(j));
         loadImage(path);
     }
 

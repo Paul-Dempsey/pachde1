@@ -25,3 +25,7 @@ void reloadThemeCache();
 inline std::string user_plugin_asset(const std::string& asset) {
     return system::join(asset::user(pluginInstance->slug.c_str()), asset);
 }
+// Make a fake path if under plugin or user folder, so that presets are portable
+std::string make_portable_path(std::string path);
+// Decode fake path as needed to make a real path
+std::string path_from_portable_path(std::string path);

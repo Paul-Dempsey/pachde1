@@ -73,7 +73,7 @@ Pic * ImagineUi::getImage()
 {
     if (!preview_image) {
         preview_image = new(Pic);
-        std::string path = MakeUnPluginPath("{plug}/presets/images/guitar-shirt.jpg");
+        std::string path = path_from_portable_path("{plug}/presets/images/guitar-shirt.jpg");
         preview_image->open(path);
     }
     return preview_image;

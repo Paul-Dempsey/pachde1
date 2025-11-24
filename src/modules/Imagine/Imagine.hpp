@@ -20,8 +20,6 @@ namespace pachde {
 using namespace ::rack;
 using namespace ::traversal;
 
-std::string MakeUnPluginPath(std::string path);
-
 struct IProvideImage {
      virtual Pic* getImage() = 0;
 };

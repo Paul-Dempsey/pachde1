@@ -5,10 +5,10 @@
 ## Info
 
 - dialog for options
+- When persisting, use placeholders for user-relative and plugin-relative paths (for patch portability)
 
 ## Skiff
 
-- Flyout for Fancy options + CV jacks
 - Undo for PackModules?
 
 ## Guide: Panel Design Guides
@@ -25,10 +25,8 @@
   - Save to working folder
   - Generate ModuleWidget code
 
-## Fancy background module
+## FancyBox
 
-- dialog to configure
-- inputs for animation
 - randomize
 - randomize trigger
 

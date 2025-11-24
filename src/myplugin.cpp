@@ -20,6 +20,37 @@ void init(Plugin* p) {
     p->addModel(modelPanelTone);
 }
 
+
+std::string make_portable_path(std::string path) {
+    path = system::getCanonical(path);
+
+    auto prefix = pluginInstance->path;
+    auto size = prefix.size();
+    if (0 == prefix.compare(0, size, path.c_str(), 0, size)) {
+        return path.replace(0, size, "{plug}");
+    }
+    prefix = asset::userDir;
+    size = prefix.size();
+    if (0 == prefix.compare(0, size, path.c_str(), 0, size)) {
+        return path.replace(0, size, "{user}");
+    }
+    return path;
+}
+
+std::string path_from_portable_path(std::string path) {
+    std::string prefix{"{plug}"};
+    auto size = prefix.size();
+    if (0 == prefix.compare(0, size, path, 0, size)) {
+        path = path.replace(0, size, pluginInstance->path);
+    } else {
+        prefix = "{user}";
+        if (0 == prefix.compare(0, size, path, 0, size)) {
+            path = path.replace(0, size, asset::userDir);
+        }
+    }
+    return system::getCanonical(path);
+}
+
 RackSvgCache rack_svg_cache;
 RackSvgCache * getRackSvgs() { return &rack_svg_cache;}
 
