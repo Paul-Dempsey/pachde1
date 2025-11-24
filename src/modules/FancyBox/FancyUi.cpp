@@ -580,9 +580,9 @@ void FancyUi::fancy_background(bool fancy) {
 void FancyUi::onHoverKey(const HoverKeyEvent &e)
 {
     if (!my_module) return;
+#ifdef HOT_SVG
     auto mods = e.mods & RACK_MOD_MASK;
     switch (e.key) {
-#ifdef HOT_SVG
     case GLFW_KEY_F5: {
         if (e.action == GLFW_RELEASE && (0 == mods)) {
             e.consume(this);
@@ -597,8 +597,8 @@ void FancyUi::onHoverKey(const HoverKeyEvent &e)
             sendDirty(this);
         }
     } break;
+}
 #endif
-    }
     Base::onHoverKey(e);
 }
 
