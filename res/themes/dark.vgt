@@ -17,6 +17,14 @@ entry-prompt = hsl(42, .6, .85)
    entry-sel = hsl(216, .75, .4)
    btn-hover = none stroke hsl(30,.8,.9) width 1
 
+// dialogs
+  dlg-title = #000
+  dlg-label = #e6e6e6
+   dlg-info = hsl(216, .5, .5)
+close-hover = hsl(0, .6, .5) stroke none
+close-frame = none stroke #666
+close-glyph = #666
+
 // knobs
 k-bg = [ #737373, #0d0d0d]
 k-inner = none stroke none
@@ -71,9 +79,6 @@ entry-prompt = hsla(0, 0, .55, .75)
 fancy-group = #f9a806
 fancy-label = #e6e6e6
 //fancy-panel = #111
-//close-hover = hsl(0, .6, .5) stroke none
-//close-frame = none stroke #666
-//close-glyph = #e6e6e6
 fsep   = none stroke #395177
 coj-bg = hsla(100, .4, .25, 1)
 jack-left  = #000

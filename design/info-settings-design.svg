@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="260"
+   height="280"
+   viewBox="0 0 260 280"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="info-settings-design.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient41"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#a6a6a6;stop-opacity:1;"
+         offset="0"
+         id="stop41" />
+      <stop
+         style="stop-color:#272727;stop-opacity:1;"
+         offset="1"
+         id="stop42" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient41"
+       id="linearGradient42"
+       x1="30.3"
+       y1="94.5"
+       x2="36.2"
+       y2="121"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient41"
+       id="linearGradient43"
+       gradientUnits="userSpaceOnUse"
+       x1="30.3"
+       y1="94.5"
+       x2="36.2"
+       y2="121" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient41"
+       id="linearGradient56"
+       gradientUnits="userSpaceOnUse"
+       x1="30.3"
+       y1="94.5"
+       x2="36.2"
+       y2="121" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#181818"
+     showgrid="false"
+     inkscape:zoom="3.72"
+     inkscape:cx="77.5"
+     inkscape:cy="153"
+     inkscape:current-layer="svg2"
+     showguides="true" />
+  <rect
+     id="dlg-panel"
+     fill="#222222"
+     width="100%"
+     height="100%"
+     sodipodi:insensitive="true"
+     x="0"
+     y="0" />
+  <rect
+     id="mast"
+     fill="#f9a806"
+     width="100%"
+     height="18"
+     sodipodi:insensitive="true"
+     x="0"
+     y="0" />
+  <rect
+     id="k:close"
+     fill="#ff2222"
+     x="234"
+     y="2"
+     width="14"
+     height="14"
+     transform="translate(10)" />
+  <text
+     xml:space="preserve"
+     style="font-size:14px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start"
+     x="-39.9"
+     y="13.8"
+     id="text2"
+     transform="translate(44.6,-0.237)"
+     inkscape:label="title"><tspan
+       sodipodi:role="line"
+       id="tspan2"
+       x="-39.9"
+       y="13.8"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:14px;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk Semi-Bold';text-align:start;text-anchor:start">Info | text options</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:14px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle"
+     x="16.3"
+     y="96.7"
+     id="text4"><tspan
+       sodipodi:role="line"
+       id="tspan4"
+       x="16.3"
+       y="96.7" /></text>
+  <circle
+     id="k:panel-co"
+     fill="#d65cab"
+     cx="10"
+     cy="10"
+     r="10"
+     transform="translate(227,55)" />
+  <rect
+     id="k:panel-swatch"
+     fill="#d65cab"
+     x="1"
+     y="22"
+     width="18"
+     height="10"
+     transform="translate(227,55)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#a6a6a6;fill-opacity:1"
+     x="-34.8"
+     y="34"
+     id="text5"
+     transform="translate(271,65)"><tspan
+       sodipodi:role="line"
+       id="tspan5"
+       x="-34.8"
+       y="34">PANEL</tspan></text>
+  <circle
+     id="k:text-co"
+     fill="#d65cab"
+     cx="10"
+     cy="10"
+     r="10"
+     transform="translate(227,106)" />
+  <rect
+     id="k:text-swatch"
+     fill="#d65cab"
+     x="1"
+     y="22"
+     width="18"
+     height="10"
+     transform="translate(227,106)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle;fill:#a6a6a6;fill-opacity:1"
+     x="-34.9"
+     y="34"
+     id="text6"
+     transform="translate(272,116)"><tspan
+       sodipodi:role="line"
+       id="tspan6"
+       x="-34.9"
+       y="34">TEXT</tspan></text>
+  <rect
+     style="fill:#bf9940;fill-opacity:0.084;stroke:#808080;stroke-width:0.704461;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="rect2"
+     width="124"
+     height="43.5"
+     x="60.8"
+     y="152"
+     inkscape:label="edit info"
+     transform="matrix(2.01,0,0,1,-117,78)" />
+  <rect
+     style="fill:#a6a6a6;fill-opacity:1;stroke-width:2.5;paint-order:fill markers stroke"
+     id="rect9"
+     width="12"
+     height="12"
+     x="183"
+     y="136"
+     inkscape:label="paste"
+     transform="translate(57.3,79.2)" />
+  <rect
+     style="fill:#a6a6a6;fill-opacity:1;stroke-width:2.5;paint-order:fill markers stroke"
+     id="rect10"
+     width="12"
+     height="12"
+     x="183"
+     y="136"
+     inkscape:label="copy"
+     transform="translate(42.3,79.2)" />
+  <rect
+     style="fill:#a6a6a6;fill-opacity:1;stroke-width:2.5;paint-order:fill markers stroke"
+     id="rect20"
+     width="60"
+     height="76"
+     x="94"
+     y="95.4"
+     transform="translate(4.7,-34)" />
+  <rect
+     style="fill:#68a7e4;fill-opacity:1;stroke-width:2.50555;paint-order:fill markers stroke"
+     id="rect21"
+     width="9.04"
+     height="76.3"
+     x="79.1"
+     y="95.9"
+     transform="matrix(0.996,0,0,1,19.9,-34.6)" />
+  <rect
+     style="fill:#68a7e4;fill-opacity:1;stroke-width:2.50555;paint-order:fill markers stroke"
+     id="rect22"
+     width="9.04"
+     height="76.3"
+     x="79.1"
+     y="95.9"
+     transform="matrix(0.996,0,0,1,70.9,-34.6)" />
+  <text
+     xml:space="preserve"
+     style="font-size:9px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle"
+     x="119"
+     y="132"
+     id="text22"
+     transform="translate(9.8,-30.4)"><tspan
+       sodipodi:role="line"
+       id="tspan22"
+       x="119"
+       y="132">sample</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text23"
+     transform="translate(107,137)"><tspan
+       sodipodi:role="line"
+       id="tspan23"
+       x="-49.1"
+       y="34">LEFT</tspan></text>
+  <circle
+     style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="path28"
+     cx="64.8"
+     cy="205"
+     r="3"
+     transform="translate(-14.1,-37.2)" />
+  <g
+     id="g33"
+     transform="translate(3.03,-34.3)">
+    <text
+       xml:space="preserve"
+       style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+       x="-49.1"
+       y="34"
+       id="text24"
+       transform="translate(154,171)"><tspan
+         sodipodi:role="line"
+         id="tspan24"
+         x="-49.1"
+         y="34">CENTER</tspan></text>
+    <circle
+       style="fill:#68a7e4;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+       id="circle28"
+       cx="64.8"
+       cy="205"
+       r="3"
+       transform="translate(34,-2.9)" />
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text25"
+     transform="translate(225,137)"><tspan
+       sodipodi:role="line"
+       id="tspan25"
+       x="-49.1"
+       y="34">RIGHT</tspan></text>
+  <circle
+     style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="circle29"
+     cx="64.8"
+     cy="205"
+     r="3"
+     transform="translate(105,-37.2)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text26"
+     transform="translate(81.6,54.8)"><tspan
+       sodipodi:role="line"
+       id="tspan26"
+       x="-49.1"
+       y="34">TOP</tspan></text>
+  <circle
+     style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="circle30"
+     cx="64.8"
+     cy="205"
+     r="3"
+     transform="translate(-2,-120)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text27"
+     transform="translate(61.5,71.3)"><tspan
+       sodipodi:role="line"
+       id="tspan27"
+       x="-49.1"
+       y="34">MIDDLE</tspan></text>
+  <circle
+     style="fill:#68a7e4;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="circle31"
+     cx="64.8"
+     cy="205"
+     r="3"
+     transform="translate(-2,-104)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text28"
+     transform="translate(56,88)"><tspan
+       sodipodi:role="line"
+       id="tspan28"
+       x="-49.1"
+       y="34">BOTTOM</tspan></text>
+  <circle
+     style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="circle32"
+     cx="64.8"
+     cy="205"
+     r="3"
+     transform="translate(-2,-86.6)" />
+  <g
+     id="g54"
+     transform="translate(46.6,29.8)">
+    <circle
+       style="fill:url(#linearGradient42);stroke:#68a7e4;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+       id="path38"
+       cx="33.6"
+       cy="108"
+       r="14"
+       transform="translate(-19.6,-94)" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+       id="rect39"
+       width="0.75"
+       height="13.3"
+       x="12.7"
+       y="0.0992"
+       transform="translate(0.694,0.132)" />
+  </g>
+  <circle
+     style="fill:url(#linearGradient43);fill-opacity:1;stroke:#68a7e4;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="circle43"
+     cx="33.6"
+     cy="108"
+     r="14"
+     transform="translate(158,-64.2)" />
+  <rect
+     style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="rect43"
+     width="0.75"
+     height="13.3"
+     x="12.7"
+     y="0.0992"
+     transform="translate(179,29.9)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text17"
+     transform="rotate(-90,55.7,-3.75)"><tspan
+       sodipodi:role="line"
+       id="tspan17"
+       x="-49.1"
+       y="34">UP</tspan></text>
+  <circle
+     style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="circle44"
+     cx="64.8"
+     cy="205"
+     r="3"
+     transform="translate(25.3,-96)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text16"
+     transform="rotate(90,32.2,168)"><tspan
+       sodipodi:role="line"
+       id="tspan16"
+       x="-49.1"
+       y="34">DOWN</tspan></text>
+  <circle
+     style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="circle45"
+     cx="64.8"
+     cy="205"
+     r="3"
+     transform="translate(104,-125)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text18"
+     transform="rotate(180,50.7,40.5)"><tspan
+       sodipodi:role="line"
+       id="tspan18"
+       x="-49.1"
+       y="34">INVERTED</tspan></text>
+  <circle
+     style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="circle46"
+     cx="64.8"
+     cy="205"
+     r="3"
+     transform="translate(93.6,-155)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text15"
+     transform="translate(159,118)"><tspan
+       sodipodi:role="line"
+       id="tspan15"
+       x="-49.1"
+       y="34">NORMAL</tspan></text>
+  <circle
+     style="fill:#68a7e4;fill-opacity:1;stroke:#68a7e4;stroke-width:0.75;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="circle47"
+     cx="64.8"
+     cy="205"
+     r="3"
+     transform="translate(37.6,-55.9)" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text56"
+     transform="translate(85.3,14)"><tspan
+       sodipodi:role="line"
+       id="tspan56"
+       x="-49.1"
+       y="34">L</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text57"
+     transform="translate(258,14)"><tspan
+       sodipodi:role="line"
+       id="tspan57"
+       x="-49.1"
+       y="34">R</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:9px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:center;text-orientation:upright;text-anchor:middle"
+     x="152"
+     y="60.7"
+     id="text51"
+     transform="translate(0.8,145)"><tspan
+       sodipodi:role="line"
+       id="tspan51"
+       x="152"
+       y="60.7"
+       style="fill:#68a7e4;fill-opacity:1;stroke:none;stroke-opacity:1">HankenGrotesk</tspan></text>
+  <g
+     id="g56"
+     transform="translate(24.7,175)">
+    <g
+       id="g55">
+      <circle
+         style="fill:url(#linearGradient56);stroke:#68a7e4;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         id="circle54"
+         cx="33.6"
+         cy="108"
+         r="14"
+         transform="translate(-19.6,-87)" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         id="rect54"
+         width="0.75"
+         height="13.3"
+         x="12.7"
+         y="0.0992"
+         transform="translate(0.694,7.91)" />
+    </g>
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text58"
+     transform="translate(73.9,189)"><tspan
+       sodipodi:role="line"
+       id="tspan58"
+       x="-49.1"
+       y="34">16px</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:12px;line-height:1.25;font-family:'Hanken Grotesk';-inkscape-font-specification:'Hanken Grotesk';font-variant-ligatures:none;text-align:start;text-orientation:upright;text-anchor:start;fill:#a6a6a6;fill-opacity:1"
+     x="-49.1"
+     y="34"
+     id="text60"
+     transform="translate(121,172)"><tspan
+       sodipodi:role="line"
+       id="tspan60"
+       x="-49.1"
+       y="34">FONT...</tspan></text>
+  <rect
+     style="fill:none;fill-opacity:1;stroke:#68a7e4;stroke-width:1.18585;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="rect60"
+     width="64.2"
+     height="18.3"
+     x="153"
+     y="66"
+     transform="matrix(0.712,0,0,1,-40.5,126)" />
+  <rect
+     style="fill:#a6a6a6;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="rect63"
+     width="10"
+     height="1.5"
+     x="208"
+     y="182"
+     transform="translate(24.1,-1.97)" />
+  <rect
+     style="fill:#a6a6a6;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="rect64"
+     width="10"
+     height="1.5"
+     x="208"
+     y="182"
+     transform="translate(24.1,1.03)" />
+  <rect
+     style="fill:#a6a6a6;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="rect65"
+     width="10"
+     height="1.5"
+     x="208"
+     y="182"
+     transform="translate(24.1,4.03)" />
+</svg>

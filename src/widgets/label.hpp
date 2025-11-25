@@ -15,8 +15,8 @@ struct LabelStyle {
     PackedColor color{colors::G50};
     bool bold{false};
     float text_height{12.f};
-    float left_margin{0.f};
-    float right_margin{0.f};
+    // float left_margin{0.f};
+    // float right_margin{0.f};
     float baseline{INFINITY};
     HAlign halign{HAlign::Center};
     VAlign valign{VAlign::Middle};
@@ -44,9 +44,22 @@ struct TextLabel : OpaqueWidget, svg_theme::IThemed
 
     LabelStyle* format{nullptr};
     std::string text;
+    bool own_format{false};
 
     TextLabel() {}
     TextLabel(LabelStyle* s) : format(s) {}
+    ~TextLabel() {
+        if (own_format) {
+            assert(format);
+            delete format;
+        }
+    }
+
+    LabelStyle* create_owned_format() {
+        format = new LabelStyle();
+        own_format = true;
+        return format;
+    }
 
     bool applyTheme(std::shared_ptr<svg_theme::SvgTheme> theme) override {
         if (format) format->applyTheme(theme);
@@ -59,7 +72,7 @@ struct TextLabel : OpaqueWidget, svg_theme::IThemed
 
         if (format) {
             draw_oriented_text_box(
-                args.vg, box.zeroPos(), format->left_margin, format->right_margin,
+                args.vg, box.zeroPos(), 0.f, 0.f, //format->left_margin, format->right_margin,
                 text, font, format->text_height, format->color,
                 format->halign, format->valign, format->orientation,
                 format->baseline

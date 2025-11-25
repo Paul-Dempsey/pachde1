@@ -583,7 +583,10 @@ void FancyUi::fancy_background(bool fancy) {
 
 void FancyUi::onHoverKey(const HoverKeyEvent &e)
 {
-    if (!my_module) return;
+    if (!my_module) {
+        Base::onHoverKey(e);
+        return;
+    }
 #ifdef HOT_SVG
     auto mods = e.mods & RACK_MOD_MASK;
     switch (e.key) {
