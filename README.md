@@ -18,6 +18,10 @@ All screws are removable if you're more relaxed about your Rack and not worried 
   Donations go to helping fund continued development and hardware for testing and development. (I have a wish list :-). Venmo takes the smallest cut out of the payment systems I've found.\
   ![Buy pachde a coffee with VenMo](docs/images/VenMo.png)
 
+## Development builds
+
+To download the latest development build, see the [Nightly Release](https://github.com/Paul-Dempsey/pachde1/releases/tag/Nightly) page.
+
 ## Change log
 
 See [CHANGELOG](CHANGELOG.md)

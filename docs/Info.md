@@ -47,12 +47,8 @@ Copy the full path of file, then paste it into the Font chooser dialog.
 
 ## Expander
 
-[Copper](Copper.md) expands Info to set it's panel, background, and text colors.
+[Copper](Copper.md) expands **Info** to set it's panel and text colors.
 By default Copper sets the panel color.
-In the menu, choose **Interior** for Copper, and now Copper changes the text background when it's on the left, and the text color when it's on the right.
-Two Coppers can work simultaneously in this configuration.
-
-You can have some fun turning on the **Bright text in a dark room**, setting **Copper** to **Interior**, putting a modulated Copper on either side, and turn down the lights.
 
 ---
 

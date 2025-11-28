@@ -60,23 +60,24 @@ info-glyph = hsl(0,0%,25%)
 // Coppers
 copper-title = #000
   medallion = #f9a54b stroke #f9a54b
+     m-logo = #000
   picker-bg = #888
      out-bg = #888 stroke none
 // Copper mini
       i-sep = #cccccc
       o-sep = #cccccc
-     lab-in = #888
-    lab-out = #888
-  minilabel = #bfbfbf
-mini-out-bg = none
+     lab-in = #666
+    lab-out = #000
+  minilabel = #dedede
+mini-out-bg = #af5c03
 
 // Fancy
-//fancy-title = #000
 fancy-group = #222
 fancy-label = #222
-//fancy-panel = #ebebeb
 fsep   = none stroke #5c95d6
 coj-bg = hsla(100, .25, .8, 1)
+jack-left  = #000
+jack-right = #000
 jack-hover = #4b61a8ff stroke none
 
 // Rui
@@ -99,3 +100,7 @@ guide-hover = stroke hsl(216, .5, .5) width 1.5
 guide-sel = hsl(30, .75, .75)
 guide-text = #1a1a1a
 guide-seltext = #000
+
+//Skiff
+q-mark = #024f82
+q-circle = stroke #024f82

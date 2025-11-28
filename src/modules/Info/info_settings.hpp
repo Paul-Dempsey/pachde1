@@ -11,8 +11,8 @@ namespace info_constant {
     constexpr const PackedColor PANEL_DEFAULT{G80};
     constexpr const PackedColor TEXT_DEFAULT{G20};
     constexpr const float DEFAULT_FONT_SIZE{16.f};
-    constexpr const float MIN_FONT_SIZE{5.f};
-    constexpr const float MAX_FONT_SIZE{60.f};
+    constexpr const float MIN_FONT_SIZE{6.f};
+    constexpr const float MAX_FONT_SIZE{90.f};
 }
 
 inline std::string get_plugin_bold_file() {
@@ -76,35 +76,5 @@ struct InfoSettings
     void resetFont() { font_file = get_plugin_bold_file(); }
     bool fontDialog();
 };
-
-struct FontSizeQuantity : Quantity
-{
-    InfoSettings* settings{nullptr};
-    explicit FontSizeQuantity(InfoSettings* settings) : settings(settings) {}
-    void setValue(float value) override { settings->setFontSize(::rack::math::clamp(value, getMinValue(), getMaxValue())); }
-    float getValue() override { return settings->getFontSize(); }
-    float getMinValue() override { return info_constant::MIN_FONT_SIZE; }
-    float getMaxValue() override { return info_constant::MAX_FONT_SIZE; }
-    float getDefaultValue() override { return info_constant::DEFAULT_FONT_SIZE; }
-    int getDisplayPrecision() override { return 3; }
-    std::string getLabel() override { return "Font size"; }
-    std::string getUnit() override { return "px"; }
-};
-
-struct MarginQuantity : Quantity
-{
-    float* data{nullptr};
-    std::string label;
-    explicit MarginQuantity(float* value, const std::string& name) : data(value), label(name) {}
-    void setValue(float value) override { *data = ::rack::math::clamp(value, getMinValue(), getMaxValue()); }
-    float getValue() override { return *data; }
-    float getMinValue() override { return 0.f; }
-    float getMaxValue() override { return 30.f; }
-    float getDefaultValue() override { return 0.f; }
-    int getDisplayPrecision() override { return 3; }
-    std::string getLabel() override { return label; }
-    std::string getUnit() override { return "px"; }
-};
-
 
 }

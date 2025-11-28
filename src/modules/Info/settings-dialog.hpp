@@ -6,6 +6,6 @@ using namespace ::rack;
 
 namespace pachde {
 
-void show_settings_dialog(InfoModuleWidget* info, Vec pos);
+void show_settings_dialog(InfoModuleWidget* info);
 
 }

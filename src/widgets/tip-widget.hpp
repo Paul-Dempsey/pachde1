@@ -52,15 +52,13 @@ struct TipWidget : ::rack::widget::Widget
 
     bool hasText() { return tip_holder && !tip_holder->tip_text.empty(); }
 
-    void ensureTipHolder()
-    {
+    void ensureTipHolder() {
         if (!tip_holder) {
             tip_holder = new TipHolder();
         }
     }
 
-    void describe(std::string text)
-    {
+    void describe(std::string text) {
         ensureTipHolder();
         tip_holder->setText(text);
     }
@@ -94,8 +92,7 @@ struct TipWidget : ::rack::widget::Widget
         destroyTip();
     }
 
-    void onDragEnd(const DragEndEvent& e) override
-    {
+    void onDragEnd(const DragEndEvent& e) override {
         Base::onDragEnd(e);
         destroyTip();
     }

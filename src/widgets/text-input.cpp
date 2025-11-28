@@ -74,7 +74,7 @@ int TextInput::getTextPosition(math::Vec mousePos)
     nvgFontSize(vg, text_height);
 
     float x = 1.5f;
-    glyph_count = nvgTextGlyphPositions(vg, x, 1.f, txt, nullptr, glyphs, 120);
+    glyph_count = nvgTextGlyphPositions(vg, x, 1.f, txt, nullptr, glyphs, 1024);
     NVGglyphPosition* pg = glyphs;
     for (int i = 0; i < glyph_count; ++i, ++pg) {
         if (in_range(mousePos.x, pg->minx, pg->maxx)) {

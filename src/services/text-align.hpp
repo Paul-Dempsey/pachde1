@@ -19,6 +19,6 @@ inline NVGalign NVGalign_from_alignment(HAlign h, VAlign v) { return NVGalign(nv
 enum class Orientation { Normal, Down, Up, Inverted };
 const char* OrientationName(Orientation orientation);
 const char* OrientationJValue(Orientation orientation);
-Orientation ParseOrientation(const char* orient);
+Orientation parseOrientation(std::string orient);
 
 }

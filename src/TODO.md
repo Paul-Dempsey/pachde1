@@ -1,10 +1,12 @@
 # pachde1 TODO
 
-- nicer-looking tiny button
+- nicer-looking tiny button?
 
 ## Info
 
-- dialog for options
+Review Copper interaction - docs describe an "Interior" setting which does panel on the left and text on the right. Today, I'd look at using remote connections rather than extenders. See Copper notes on "sticky" extender for the idea, like CHEM has "kiss" to connect.
+
+Better to do Left-Copper and Right-Copper settings, more flexible than "interior".
 
 ## Skiff
 
@@ -28,6 +30,11 @@
 
 - randomize
 - randomize trigger
+
+## Copper
+
+Idea: "Remote extender"/"Sticky extender"/"Linked extender" - once extended, allowing moving the extender elsewhere in the patch, retaining the connection.
+Message passing doesn't work in this scenario.
 
 ## Alternate module browser
 

@@ -133,13 +133,16 @@ void CopperMiniUI::makeUi(Theme theme)
 
     y += GAP2;
 
+
     addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortBlue, Vec(center,y), module, CopperModule::H_OUT)));
     y += CONTROL_SPACING;
     addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortOrange, Vec(center,y), module, CopperModule::S_OUT)));
     y += CONTROL_SPACING;
+    addChild(createLightCentered<SmallLight<BlueLight>>(Vec(box.size.x - 5, y - 12), module, CopperModule::L_Extending));
     addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortYellow, Vec(center,y), module, CopperModule::L_OUT)));
     y += CONTROL_SPACING;
     addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortPink, Vec(center,y), module, CopperModule::A_OUT)));
+
 
     my_svgs.changeTheme(svg_theme);
 }
@@ -151,6 +154,8 @@ void CopperMiniUI::drawLayer(const DrawArgs& args, int layer)
     auto modcolor = copper_module ? copper_module->getModulatedColor() : setcolor;
     FillRect(args.vg, 3.5f, box.size.y -20.f, 12.5f, 4.f, setcolor);
     FillRect(args.vg, 15.f, box.size.y -20.f, 12.5f, 4.f, modcolor);
+
+    ModuleWidget::drawLayer(args, layer);
 }
 
 void CopperMiniUI::draw(const DrawArgs& args)
@@ -182,7 +187,7 @@ void CopperMiniUI::setTheme(Theme theme)
         makeUi(theme);
     } else {
         my_svgs.changeTheme(getThemeCache().getTheme(ThemeName(theme)));
-        sendChildrenThemeColor(this, theme, GetPreferredColor(theme_holder));
+        //sendChildrenThemeColor(this, theme, GetPreferredColor(theme_holder));
         sendDirty(this);
     }
 }
@@ -245,6 +250,10 @@ void CopperMiniUI::appendContextMenu(rack::ui::Menu* menu)
         });
         menu->addChild(picker);
     }));
+    menu->addChild(createCheckMenuItem("Share color as Extender", "",
+        [=]() { return copper_module->extending; },
+        [=]() { copper_module->extending = !copper_module->extending; }
+    ));
     menu->addChild(createMenuItem("Copy hex color", "", [=]() {
         auto hex = rack::color::toHexString(getColor());
         glfwSetClipboardString(nullptr, hex.c_str());

@@ -126,6 +126,7 @@ void draw_text_box (
     PackedColor text_color,
     HAlign halign,
     VAlign valign,
+    PackedColor margin_color,
     float first_baseline
 ) {
     // DEBUG
@@ -133,6 +134,11 @@ void draw_text_box (
     // BoxRect(vg, x, y, w, h, co_debug);
     // if (left_margin > 0.f) { Line(vg, x + left_margin, y, x + left_margin, y + h, co_debug); }
     // if (right_margin > 0.f) { Line(vg, x + w - right_margin, y, x + w - right_margin, y + h, co_debug); }
+    if (isVisible(margin_color)) {
+        auto co = fromPacked(margin_color);
+        FillRect(vg, x, y, left_margin, h, co);
+        FillRect(vg, x + w - right_margin, y, right_margin, h, co);
+    }
 
     NVGtextRow text_rows[50];
     //nvgSave(vg);
@@ -193,28 +199,36 @@ void draw_oriented_text_box(
     HAlign halign,
     VAlign valign,
     Orientation orientation,
+    PackedColor margin_color,
     float first_baseline
 ) {
+    float x = box.pos.x;
+    float y = box.pos.y;
     float width = box.size.x;
     float height = box.size.y;
     if ((orientation == Orientation::Down) || (orientation == Orientation::Up)) {
         std::swap(width, height);
+        std::swap(x, y);
     }
 
     switch (orientation) {
     case Orientation::Normal:
-        draw_text_box(vg, box.pos.x, box.pos.y, width, height,
+        nvgTranslate(vg, x, y);
+        draw_text_box(vg, 0, 0, width, height,
             left_margin, right_margin,
-            text, font, font_size, text_color, halign, valign, first_baseline);
+            text, font, font_size, text_color, halign, valign,
+            margin_color, first_baseline);
         break;
 
     case Orientation::Down:
         nvgSave(vg);
         nvgRotate(vg, NVG_PI/2.f); //down
         nvgTranslate(vg, 0.f, -height);
-        draw_text_box(vg, box.pos.x, box.pos.y, width, height,
+        nvgTranslate(vg, x, -y);
+        draw_text_box(vg, 0, 0, width, height,
             left_margin, right_margin,
-            text, font, font_size, text_color, halign, valign, first_baseline);
+            text, font, font_size, text_color, halign, valign,
+            margin_color, first_baseline);
         nvgRestore(vg);
         break;
 
@@ -222,9 +236,11 @@ void draw_oriented_text_box(
         nvgSave(vg);
         nvgRotate(vg, -NVG_PI/2.f); //up
         nvgTranslate(vg, -width, 0.f);
-        draw_text_box(vg, box.pos.x, box.pos.y, width, height,
+        nvgTranslate(vg, -x, y);
+        draw_text_box(vg, 0, 0, width, height,
             left_margin, right_margin,
-            text, font, font_size, text_color, halign, valign, first_baseline);
+            text, font, font_size, text_color, halign, valign,
+            margin_color, first_baseline);
         nvgRestore(vg);
         break;
 
@@ -232,9 +248,11 @@ void draw_oriented_text_box(
         nvgSave(vg);
         nvgRotate(vg, NVG_PI);
         nvgTranslate(vg, -width, -height);
-        draw_text_box(vg, box.pos.x, box.pos.y, width, height,
+        nvgTranslate(vg, -x, -y);
+        draw_text_box(vg, 0, 0, width, height,
             left_margin, right_margin,
-            text, font, font_size, text_color, halign, valign, first_baseline);
+            text, font, font_size, text_color, halign, valign,
+            margin_color, first_baseline);
         nvgRestore(vg);
         break;
     }

@@ -2,11 +2,19 @@
 
 ## Version 2.3
 
-- ***New*** [Skiff](docs/Skiff.md#skiff) module.
+- New theming system
+- New color pickers
 
-- ***New*** [Rui](docs/Rui.md#rui) module.
+- ***New Modules*** — [FancyBox](docs/FancyBox#fancybox), [Skiff](docs/Skiff.md#skiff), [Paneltone](docs/Paneltone.md#paneltone), [Rui](docs/Rui.md#rui), [Guide](docs/Guide.md#guide)
+
+- [Info](docs//Info.md#info):
+  - Friendly dialog for text options (click the `i` symbol)
+  - Vertical and inverted text
+  - Bug fixes (sizing on opening presets, and loading from **Strip**)
 
 - Use Svgs to improve the #d brand on lower res screens.
+
+Sadly expanding and improving Imagine remains in the possible future.
 
 ## Version 2.2
 

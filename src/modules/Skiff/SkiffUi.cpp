@@ -5,8 +5,42 @@
 #include "services/svg-theme-load.hpp"
 #include "widgets/components.hpp"
 #include "widgets/screws.hpp"
+#include "widgets/symbol.hpp"
 
 namespace pachde {
+
+struct InfoWidget : OpaqueWidget {
+    using Base = OpaqueWidget;
+
+    QuestionSymbol* question{nullptr};
+    TipWidget* tipper{nullptr};
+
+    InfoWidget() {
+        question = new QuestionSymbol();
+        tipper = new TipWidget();
+        addChild(question);
+        addChild(tipper);
+    }
+
+    void describe(const std::string & tip) { tipper->describe(tip); }
+
+    void loadSvg(ILoadSvg* loader) {
+        question->loadSvg(loader);
+        box.size = question->box.size;
+        tipper->box.size = box.size;
+    }
+
+    void applyTheme(std::shared_ptr<SvgTheme> theme) {
+        question->applyTheme(theme);
+    }
+
+    void update(std::shared_ptr<SvgTheme> theme) {
+        question->update(theme);
+        box.size = question->box.size;
+        tipper->box.size = box.size;
+    }
+
+};
 
 OptionMenuEntry* make_rail_item(SkiffUi *ui, bool other, const std::string& current, const char *item) {
     auto entry = new OptionMenuEntry(createMenuItem(item, "", [ui, item](){ ui->set_alt_rail(item); }));
@@ -99,8 +133,14 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
     addChild(dark_ages_button = makeTextButton(bounds, "k:darkages-btn", true, "", "Toggle visible lights", svg_theme,
         [this](bool ctrl, bool shift) { if(!my_module) return; set_dark_ages(!my_module->dark_ages); }));
 
-    addChild(pack_button = makeTextButton(bounds, "k:pack-btn", false, "", "Pack modules (pack selected: F7)", svg_theme,
+    addChild(pack_button = makeTextButton(bounds, "k:pack-btn", false, "", "Pack modules (F7)", svg_theme,
         [](bool ctrl, bool shift) { pack_modules(); }));
+
+    auto qmark = createWidget<InfoWidget>(bounds["k:q-mark"].getCenter());
+    HOT_POSITION("k:q-mark", HotPosKind::Center, qmark);
+    qmark->loadSvg(&my_svgs);
+    qmark->describe("Tip:\nF6 = Zoom selected modules\nF7 = Pack (selected) modules");
+    addChild(Center(qmark));
 
     auto button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:restore"].getCenter()));
     HOT_POSITION("k:restore", HotPosKind::Center, button);

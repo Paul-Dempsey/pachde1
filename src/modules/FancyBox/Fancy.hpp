@@ -5,11 +5,11 @@ using namespace ::rack;
 #include "services/svg-query.hpp"
 using namespace svg_query;
 #include "widgets/action-button.hpp"
+#include "widgets/fancy-swatch.hpp"
 #include "widgets/label.hpp"
 #include "widgets/text-button.hpp"
 using namespace widgetry;
 #include "cloak.hpp"
-#include "fancy-swatch.hpp"
 
 namespace pachde {
 

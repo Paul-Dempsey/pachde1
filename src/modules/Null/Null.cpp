@@ -1,6 +1,7 @@
 #include "Null.hpp"
 #include "IHaveColor.hpp"
 #include "services/json-help.hpp"
+#include "widgets/anti-panel.hpp"
 #include "widgets/create-theme-widget.hpp"
 #include "widgets/color-picker.hpp"
 #include "widgets/hamburger.hpp"
@@ -69,7 +70,7 @@ bool expanderColor(rack::engine::Module::Expander& expander, NVGcolor& result)
 {
     if (expander.module && (expander.module->model == modelCopper || expander.module->model == modelCopperMini)) {
         auto copper = dynamic_cast<IHaveColor*>(expander.module);
-        if (copper) {
+        if (copper && copper->colorExtenderEnabled()) {
             result = copper->getColor(1);
             return true;
         }
@@ -301,6 +302,7 @@ void BlankModuleWidget::setTheme(Theme theme)
         panel = new ThemePanel(itheme);
         panel->box.size = box.size;
         setPanel(panel);
+        addChildBottom(new AntiPanel()); // fake out Skiff dePanel
         addResizeHandles();
         logo_port = Center(createThemeInput<LogoPort>(theme, Vec(box.size.x/2.f, RACK_GRID_HEIGHT - 7.5f), module, 0));
         addInput(logo_port);
@@ -326,7 +328,7 @@ void BlankModuleWidget::onChangeTheme(ChangedItem item) // override
     case ChangedItem::Theme:
     case ChangedItem::MainColor:
         setTheme(GetPreferredTheme(itheme));
-        
+
         break;
     case ChangedItem::Screws:
         applyScrews(itheme->hasScrews());

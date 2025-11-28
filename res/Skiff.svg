@@ -19,6 +19,7 @@ version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/20
 <rect id="k:screw-btn"  x="1.5" y="96" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
 <rect id="k:nojack-btn" x="1.5" y="113" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
 <rect id="k:darkages-btn" x="1.5" y="130" width="57" height="16" fill="none" stroke="#f22" stroke-width=".35"/>
+<circle id="k:q-mark" fill="#f22" cx="30" cy="220" r="8"/>
 
 <path id="1--sep" stroke="#888" stroke-width=".75" d="M 2.5,151 h 55"/>
 

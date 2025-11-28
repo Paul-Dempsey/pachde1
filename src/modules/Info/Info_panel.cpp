@@ -16,17 +16,39 @@ InfoPanel::InfoPanel(InfoModule* module, InfoSettings* info, ThemeBase* theme, V
 
 void InfoPanel::fetchColors()
 {
-    panel = settings->getDisplayPanelColor();
-    text_color = settings->getDisplayTextColor();
-    if (module && module->getCopperTarget() != CopperTarget::None) {
-        NVGcolor color;
-        if (module->rightExpanderColor(color) || module->leftExpanderColor(color)) {
-            switch (module->getCopperTarget()) {
-            case CopperTarget::Text: settings->setUserTextColor(toPacked(color)); break;
+    if (!module) return;
+
+    panel = settings->getUserPanelColor();
+    text_color = settings->getUserTextColor();
+
+    NVGcolor color;
+    if (module->getLeftCopperTarget() != CopperTarget::None) {
+        if (module->leftExpanderColor(color)) {
+            switch (module->getLeftCopperTarget()) {
             case CopperTarget::Panel:
                 panel = toPacked(color);
                 theme_holder->setMainColor(panel);
                 settings->setUserPanelColor(panel);
+                break;
+            case CopperTarget::Text:
+                text_color = toPacked(color);
+                settings->setUserTextColor(text_color);
+                break;
+            default: break;
+            }
+        }
+    }
+    if (module->getRightCopperTarget() != CopperTarget::None) {
+        if (module->rightExpanderColor(color)) {
+            switch (module->getRightCopperTarget()) {
+            case CopperTarget::Panel:
+                panel = toPacked(color);
+                theme_holder->setMainColor(panel);
+                settings->setUserPanelColor(panel);
+                break;
+            case CopperTarget::Text:
+                text_color = toPacked(color);
+                settings->setUserTextColor(text_color);
                 break;
             default: break;
             }
@@ -36,8 +58,8 @@ void InfoPanel::fetchColors()
 
 void InfoPanel::step()
 {
-    fetchColors();
     Widget::step();
+    fetchColors();
 }
 
 #if DEV_BUILD

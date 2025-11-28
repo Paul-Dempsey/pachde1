@@ -1,6 +1,6 @@
      @theme = High Contrast
 
-      panel = [ #000, #000]
+      panel = [ #101010, #000 ]
       title = #f9a806
        mast = none
        logo = #fafafa
@@ -60,21 +60,20 @@ info-glyph = hsl(0,0%,95%)
 // Coppers
 copper-title = #f9a806
 medallion = none stroke #f9a54b
+   m-logo = #fefefe
 picker-bg = none
    out-bg = #000 stroke #ffffff
 // Copper mini
 minilabel = #bfbfbf
-mini-out-bg = #cc8800
+mini-out-bg = #734d01
     i-sep = #888
     o-sep = none
    lab-in = #bfbfbf
-  lab-out = #202020
+  lab-out = #bfbfbf
 
 // Fancy
-//fancy-title = #fff
 fancy-group = #efefef
 fancy-label = #efefef
-//fancy-panel = #050505
 fsep   = none stroke #395177
 coj-bg = hsla(100, .3, .6, .5)
 jack-left  = #3381fe
@@ -93,7 +92,6 @@ rui-L = #b1da29
 
 
 // Guide
-
 vguide = none stroke #f444a710
 hguide = none stroke #0083ee10
 template-box = #444
@@ -103,3 +101,7 @@ guide-hover = stroke hsl(216, .8, .5) width 1.5
 guide-sel = #000 stroke #000
 guide-text = #000
 guide-seltext = #efefef
+
+//Skiff
+q-mark = #f9a54b
+q-circle = stroke #2d9ae3

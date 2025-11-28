@@ -104,7 +104,7 @@ void InfoSettings::load(json_t* root) {
         right_margin = 0.f;
     }
 
-    orientation = ParseOrientation(get_json_string(root, "text-orient").c_str());
+    orientation = parseOrientation(get_json_string(root, "text-orient"));
     horizontal_alignment = parseHAlign(get_json_string(root, "text-align"));
 
     str = get_json_string(root, "text-v-align");

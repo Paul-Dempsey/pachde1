@@ -1,5 +1,6 @@
 #include "Info.hpp"
 #include "info_symbol.hpp"
+#include "widgets/anti-panel.hpp"
 #include "widgets/create-theme-widget.hpp"
 #include "widgets/draw-logo.hpp"
 #include "widgets/color-picker.hpp"
@@ -11,8 +12,6 @@
 using namespace widgetry;
 
 namespace pachde {
-
-const char * HEXPLACEHOLDER = "#<hexcolor>";
 
 InfoModuleWidget::InfoModuleWidget(InfoModule* module)
 {
@@ -83,13 +82,15 @@ void InfoModuleWidget::applyThemeSetting(ThemeSetting setting)
     if (children.empty()) {
         panel = new InfoPanel(my_module, settings, theme_holder, box.size);
         setPanel(panel);
+        addChildBottom(new AntiPanel()); // fake out Skiff dePanel
         addResizeHandles();
         if (theme_holder->hasScrews()) {
             addScrews();
         }
 
-        title = Center(createThemeWidget<InfoSymbol>(theme_holder->getTheme(), Vec(box.size.x*.5f, 7.5f)));
-        addChild(title);
+        info_symbol = Center(createThemeWidget<InfoSymbol>(theme_holder->getTheme(), Vec(box.size.x*.5f, 7.5f)));
+        info_symbol->set_handler([=](){ show_settings_dialog(this); });
+        addChild(info_symbol);
 
         logo = new LogoWidget(theme_holder->getTheme(), .18f);
         logo->box.pos = Vec(box.size.x*.5f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f);
@@ -116,67 +117,16 @@ void InfoModuleWidget::step()
     bool size_change = (panel->box.size != box.size);
     if (size_change) {
         panel->box.size = box.size;
-        title->box.pos.x = box.size.x*.5f - title->box.size.x*.5f;
+        info_symbol->box.pos.x = box.size.x*.5f - info_symbol->box.size.x*.5f;
         logo->box.pos.x = box.size.x*.5f - logo->box.size.x*.5f;
         APP->scene->rack->setModulePosForce(this, box.pos);
     }
-    title->setVisible(settings->getBranding());
+    info_symbol->setVisible(settings->getBranding());
     logo->setVisible(settings->getBranding());
     ModuleWidget::step();
 }
 
 // ----  Menu  --------------------------------------------------------------
-
-struct FontSizeSlider : ui::Slider
-{
-    explicit FontSizeSlider(InfoSettings* settings) {
-        quantity = new FontSizeQuantity(settings);
-    }
-    ~FontSizeSlider() {
-        delete quantity;
-    }
-};
-
-struct MarginSlider : ui::Slider
-{
-    explicit MarginSlider(float* value, const std::string& name) {
-        quantity = new MarginQuantity(value, name);
-    }
-    ~MarginSlider() {
-        delete quantity;
-    }
-};
-
-void InfoModuleWidget::add_orientation_entry(Menu* menu, Orientation orient) {
-    menu->addChild(new OptionMenuEntry(
-        orient == settings->getOrientation(),
-        createMenuItem(OrientationName(orient), "",
-            [=](){ settings->setOrientation(orient); }, false)));
-}
-
-void InfoModuleWidget::add_halign_entry(Menu *menu, HAlign align)
-{
-    menu->addChild(new OptionMenuEntry(
-        align == settings->getHorizontalAlignment(),
-        createMenuItem(HAlignName(align), "",
-            [=](){ settings->setHorizontalAlignment(align); }, false)));
-}
-
-void InfoModuleWidget::add_valign_entry(Menu *menu, VAlign align)
-{
-    menu->addChild(new OptionMenuEntry(
-        align == settings->getVerticalAlignment(),
-        createMenuItem(VAlignName(align), "",
-            [=](){ settings->setVerticalAlignment(align); }, false)));
-}
-
-void InfoModuleWidget::add_copper_entry(Menu *menu, const char *name, CopperTarget target)
-{
-    menu->addChild(new OptionMenuEntry(
-        target == my_module->getCopperTarget(),
-        createMenuItem(name, "", [=](){ my_module->setCopperTarget(target); }, false)));
-}
-
 
 void InfoModuleWidget::appendContextMenu(Menu *menu)
 {
@@ -185,7 +135,13 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
 
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Info"));
 
-    AddThemeMenu(menu, this, theme_holder, true, true);
+    menu->addChild(createMenuItem("Text options...", "", [=]() {
+        show_settings_dialog(this);
+    }));
+
+    menu->addChild(new MenuSeparator);
+
+    AddThemeMenu(menu, this, theme_holder, false, true);
 
     menu->addChild(createCheckMenuItem("Bright text in a dark room", "",
         [=]() { return settings->getBrilliant(); },
@@ -198,24 +154,6 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
 
     menu->addChild(new MenuSeparator);
 
-    menu->addChild(createMenuItem("Settings...", "", [=]() {
-        show_settings_dialog(this, Vec(box.pos.x + box.size.x, box.pos.y));
-    }));
-
-    menu->addChild(new MenuSeparator);
-
-    menu->addChild(createSubmenuItem("Edit Info", "",
-        [=](Menu *menu)
-        {
-            MenuTextField *editField = new MenuTextField();
-            editField->box.size.x = 200.f;
-            editField->box.size.y = 100.f;
-            editField->setText(my_module->text);
-            editField->commitHandler = [=](std::string text) {
-                my_module->text = text;
-            };
-            menu->addChild(editField);
-            }));
     menu->addChild(createMenuItem("Copy info", "", [=]() {
         if (!my_module->text.empty())
         {
@@ -227,63 +165,6 @@ void InfoModuleWidget::appendContextMenu(Menu *menu)
         auto text = glfwGetClipboardString(APP->window->win);
         if (text) my_module->text = text;
     }));
-
-    menu->addChild(new MenuSeparator);
-
-    auto name = system::getStem(settings->font_file);
-    menu->addChild(construct<MenuLabel>(&MenuLabel::text, name));
-    menu->addChild(createMenuItem("Font...", "", [=]() {
-        settings->fontDialog();
-    }));
-
-    FontSizeSlider* slider = new FontSizeSlider(settings);
-    slider->box.size.x = 250.f;
-    menu->addChild(slider);
-
-    MarginSlider* mslider = new MarginSlider(&settings->left_margin, "Left margin");
-    mslider->box.size.x = 250.f;
-    menu->addChild(mslider);
-
-    mslider = new MarginSlider(&settings->right_margin, "Right margin");
-    mslider->box.size.x = 250.f;
-    menu->addChild(mslider);
-
-    menu->addChild(createSubmenuItem("Orientation", "",
-        [=](Menu* menu) {
-            add_orientation_entry(menu, Orientation::Normal);
-            add_orientation_entry(menu, Orientation::Down);
-            add_orientation_entry(menu, Orientation::Up);
-            add_orientation_entry(menu, Orientation::Inverted);
-        }));
-
-    menu->addChild(createSubmenuItem("Text alignment", "",
-        [=](Menu *menu) {
-            add_halign_entry(menu, HAlign::Left);
-            add_halign_entry(menu, HAlign::Center);
-            add_halign_entry(menu, HAlign::Right);
-
-            menu->addChild(new MenuSeparator);
-
-            add_valign_entry(menu, VAlign::Top);
-            add_valign_entry(menu, VAlign::Middle);
-            add_valign_entry(menu, VAlign::Bottom);
-        }));
-
-    menu->addChild(createSubmenuItem("Text color", "", [=](Menu* menu) {
-        auto picker = new ColorPickerMenu();
-        picker->set_color(settings->getUserTextColor());
-        picker->set_on_new_color([=](PackedColor color) {
-            settings->setUserTextColor(color);
-        });
-        menu->addChild(picker);
-    }));
-    menu->addChild(createSubmenuItem("Copper", "",
-        [=](Menu *menu) {
-            add_copper_entry(menu, "None", CopperTarget::None);
-            add_copper_entry(menu, "Panel", CopperTarget::Panel);
-            add_copper_entry(menu, "Text", CopperTarget::Text);
-        }));
-
 }
 
 }

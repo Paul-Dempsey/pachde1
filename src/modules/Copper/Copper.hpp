@@ -42,16 +42,24 @@ struct CopperModule: ThemeModule, IHaveColor {
         POLY_OUT,
         NUM_OUTPUTS
     };
+    enum LightIds {
+        L_Extending,
+        NUM_LIGHTS
+    };
 
-    float hue = .5f;
-    float saturation = .5f;
-    float lightness = .5f;
-    float alpha = 1.0f;
-    bool h_uni = true, s_uni = true, l_uni = true, a_uni = true;
+    float hue{.5f};
+    float saturation{.5f};
+    float lightness{.5f};
+    float alpha{1.0f};
+    bool extending{true};
+    bool h_unipolar{true};
+    bool s_unipolar{true};
+    bool l_unipolar{true};
+    bool a_unipolar{true};
+    bool is_copper_input[NUM_INPUTS]{false};
+    bool ports_changed{false};
+    bool poly_out_rgbahsl{false};
     RateTrigger control_rate;
-    bool is_copper_input[NUM_INPUTS] = {false};
-    bool ports_changed = false;
-    bool poly_out_rgbahsl = false;
 
     CopperModule();
 
@@ -75,14 +83,14 @@ struct CopperModule: ThemeModule, IHaveColor {
     NVGcolor getModulatedColor();
 
     // IHaveColor
-    NVGcolor getColor(int id) override
-    {
+    NVGcolor getColor(int id) override {
         switch (id) {
         case 0: return getChosenColor();
         case 1: return getModulatedColor();
         }
         return IHaveColor::getColor(id);
     }
+    bool colorExtenderEnabled() override { return extending && !isBypassed(); }
 
     bool inputsConnected();
     bool hslInputsConnected();

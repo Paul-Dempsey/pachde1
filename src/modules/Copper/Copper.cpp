@@ -9,7 +9,7 @@ const PackedColor COPPER_PACKED = toPacked(COPPER);
 
 CopperModule::CopperModule()
 {
-    config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, 0);
+    config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
     configParam(H_PARAM, 0.f, 1.f, hue, "Hue", "\u00B0", 0.f, 360.0f, 0.f);
     configParam(S_PARAM, 0.f, 1.f, saturation, "Saturation", "");
     configParam(L_PARAM, 0.f, 1.f, lightness, "Lightness", "");
@@ -28,6 +28,8 @@ CopperModule::CopperModule()
     configOutput(L_OUT, "Lightness");
     configOutput(A_OUT, "Alpha (transparency)");
     configOutput(POLY_OUT, "Polyphonic color component");
+
+    configLight(L_Extending, "Extending");
 
     configBypass(H_INPUT, H_OUT);
     configBypass(S_INPUT, S_OUT);
@@ -96,6 +98,7 @@ json_t* CopperModule::dataToJson()
     set_json(root, "sat", saturation);
     set_json(root, "light", lightness);
     set_json(root, "alpha", alpha);
+    set_json(root, "extending", extending);
     return root;
 }
 
@@ -106,6 +109,7 @@ void CopperModule::dataFromJson(json_t* root)
     saturation = get_json_float(root, "sat", saturation);
     lightness = get_json_float(root, "light", lightness);
     alpha = get_json_float(root, "alpha", alpha);
+    extending = get_json_bool(root, "extending", extending);
     dirty_settings = true;
 }
 
@@ -138,10 +142,11 @@ bool CopperModule::hslOutputsConnected() {
 
 void CopperModule::updateParams()
 {
-    hue = getParam(H_PARAM).getValue();
+    hue        = getParam(H_PARAM).getValue();
     saturation = getParam(S_PARAM).getValue();
-    lightness = getParam(L_PARAM).getValue();
-    alpha = getParam(A_PARAM).getValue();
+    lightness  = getParam(L_PARAM).getValue();
+    alpha      = getParam(A_PARAM).getValue();
+
 }
 
 static inline bool detectUnipolar(bool state, float v)
@@ -177,6 +182,11 @@ void CopperModule::process(const ProcessArgs& args)
     if (control_rate.process()) {
         updateParams();
     }
+
+    getLight(L_Extending).setBrightness(
+        colorExtenderEnabled()
+        && (getLeftExpander().module || getRightExpander().module));
+
     if (isBypassed()) return;
 
     float v,h,s,l,a;
@@ -185,8 +195,8 @@ void CopperModule::process(const ProcessArgs& args)
         if (is_copper_input[H_INPUT]) {
             h = v * .1f;
         } else {
-            h_uni = detectUnipolar(h_uni, v);
-            if (h_uni) { v -= 5.f; }
+            h_unipolar = detectUnipolar(h_unipolar, v);
+            if (h_unipolar) { v -= 5.f; }
             v = hue + v * .1f;
             // wrap if out of range
             if (v < 0) {
@@ -204,8 +214,8 @@ void CopperModule::process(const ProcessArgs& args)
         if (is_copper_input[S_INPUT]) {
             s = v * .1f;
         } else {
-            s_uni = detectUnipolar(s_uni, v);
-            if (s_uni) { v -= 5.f; }
+            s_unipolar = detectUnipolar(s_unipolar, v);
+            if (s_unipolar) { v -= 5.f; }
             s = rack::math::clamp(saturation + v * .1f);
         }
     } else {
@@ -216,8 +226,8 @@ void CopperModule::process(const ProcessArgs& args)
         if (is_copper_input[L_INPUT]) {
             l = v * .1f;
         } else {
-            l_uni = detectUnipolar(l_uni, v);
-            if (l_uni) { v -= 5.f; }
+            l_unipolar = detectUnipolar(l_unipolar, v);
+            if (l_unipolar) { v -= 5.f; }
             l = rack::math::clamp(lightness + v * .1f);
         }
     } else {
@@ -228,8 +238,8 @@ void CopperModule::process(const ProcessArgs& args)
         if (is_copper_input[A_INPUT]) {
             a = v * .1f;
         } else {
-            a_uni = detectUnipolar(a_uni, v);
-            if (a_uni) { v -= 5.f; }
+            a_unipolar = detectUnipolar(a_unipolar, v);
+            if (a_unipolar) { v -= 5.f; }
             a = rack::math::clamp(alpha + v * .1f);
         }
     } else {

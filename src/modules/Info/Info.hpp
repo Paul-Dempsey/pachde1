@@ -5,7 +5,7 @@
 #include "widgets/logo-widget.hpp"
 #include "resizable.hpp"
 #include "info_settings.hpp"
-
+#include "info_symbol.hpp"
 using namespace ::rack;
 namespace pachde {
 
@@ -14,8 +14,24 @@ enum CopperTarget { Panel, Text, None, First = Panel, Last = None };
 struct InfoModule : ResizableModule
 {
     using Base = ResizableModule;
+    enum Params {
+        P_HAlign,
+        P_VAlign,
+        P_Orientation,
+        P_MarginLeft,
+        P_MarginRight,
+        P_FontSize,
+        P_CopperLeft,
+        P_CopperRight,
+        NUM_PARAMS
+    };
+    enum Inputs { NUM_INPUTS };
+    enum Outputs { NUM_OUTPUTS };
+    enum Lights { NUM_LIGHTS };
+
     std::string text;
-    CopperTarget copper_target{CopperTarget::Panel};
+    CopperTarget left_copper_target{CopperTarget::Panel};
+    CopperTarget right_copper_target{CopperTarget::Panel};
     InfoSettings * settings{nullptr};
 
     virtual ~InfoModule()
@@ -43,8 +59,11 @@ struct InfoModule : ResizableModule
     bool rightExpanderColor(NVGcolor& result) {
         return expanderColor(getRightExpander(), result);
     }
-    CopperTarget getCopperTarget() { return copper_target; }
-    void setCopperTarget(CopperTarget target) { copper_target = target; }
+    CopperTarget getLeftCopperTarget() { return left_copper_target; }
+    void setLeftCopperTarget(CopperTarget target) { left_copper_target = target; }
+    CopperTarget getRightCopperTarget() { return right_copper_target; }
+    void setRightCopperTarget(CopperTarget target) { right_copper_target = target; }
+    void process(const ProcessArgs& args) override;
 };
 
 struct InfoPanel : Widget
@@ -71,7 +90,7 @@ struct InfoPanel : Widget
 struct InfoModuleWidget : ModuleWidget, IThemeChange
 {
     InfoModule* my_module{nullptr};
-    Widget* title{nullptr};
+    InfoSymbol* info_symbol{nullptr};
     InfoPanel* panel{nullptr};
     ThemeBase* theme_holder{nullptr};
     InfoSettings* settings{nullptr};
@@ -91,11 +110,6 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
     void applyThemeSetting(ThemeSetting setting);
     void onChangeTheme(ChangedItem item) override;
     void step() override;
-
-    void add_orientation_entry(Menu* menu, Orientation orient);
-    void add_halign_entry(Menu* menu, HAlign align);
-    void add_valign_entry(Menu* menu, VAlign align);
-    void add_copper_entry(Menu *menu, const char * name, CopperTarget target);
 
     void appendContextMenu(Menu *menu) override;
 };

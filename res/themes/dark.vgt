@@ -1,6 +1,6 @@
      @theme = Dark
 
-      panel = [ #282828, #181818]
+      panel = [ #282828, #181818 ]
       title = #000
        mast = #f9a806
        logo = #f9a806
@@ -60,25 +60,20 @@ info-glyph = hsl(0,0%,50%)
 // Coppers
 copper-title = #000
 medallion = #f9a54b stroke #f9a54b
+   m-logo = #000
 picker-bg = #171717
    out-bg = #1a1a1a stroke #888
 // Copper mini
-minilabel = #a6a6a6
-mini-out-bg = none
+minilabel = #d2d2d2
+mini-out-bg = #af5c03
     i-sep = #cccccc
     o-sep = #cccccc
-   lab-in = #737373
-  lab-out = #737373
-    entry-bg = hsla(42, .2, 1, .05) stroke hsl(42, .5, .4) width .75
-  entry-text = hsl(0, 0, .75)
-entry-prompt = hsla(0, 0, .55, .75)
-   entry-sel = hsl(200, .5, .4)
+   lab-in = #d2d2d2
+  lab-out = #d2d2d2
 
 // Fancy
-//fancy-title = #000
 fancy-group = #f9a806
 fancy-label = #e6e6e6
-//fancy-panel = #111
 fsep   = none stroke #395177
 coj-bg = hsla(100, .4, .25, 1)
 jack-left  = #000
@@ -105,3 +100,7 @@ guide-hover = stroke hsl(216, .5, .5) width 1.5
 guide-sel = hsl(30, .75, .75) stroke hsl(30, .75, .75)
 guide-text = #1a1a1a
 guide-seltext = #000
+
+//Skiff
+q-mark = #f9a54b
+q-circle = stroke #2d9ae3

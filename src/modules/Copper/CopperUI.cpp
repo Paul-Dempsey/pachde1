@@ -211,6 +211,7 @@ void CopperUi::makeUi(Theme theme)
     addOutput(Center(createColorOutput<ColorPort>(theme, colors::G50,        Vec(output_col3,output_row2), module, CopperModule::L_OUT)));
     addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortPink,   Vec(output_col4,output_row2), module, CopperModule::A_OUT)));
 
+    addChild(createLightCentered<SmallLight<BlueLight>>(Vec(output_col4 + (output_col5 - output_col4)*.5, output_row1 + (output_row2 - output_row1)*.5), module, CopperModule::L_Extending));
     addOutput(Center(createColorOutput<ColorPort>(theme, colors::PortMagenta, Vec(output_col5, output_row1), module, CopperModule::POLY_OUT)));
 
     my_svgs.changeTheme(svg_theme);
@@ -378,6 +379,10 @@ void CopperUi::appendContextMenu(rack::ui::Menu* menu)
                 AddColorItem<CopperUi>(this, menu, pco->name, pco->color, current);
             }
         }));
+    menu->addChild(createCheckMenuItem("Share color as Extender", "",
+        [=]() { return copper_module->extending; },
+        [=]() { copper_module->extending = !copper_module->extending; }
+    ));
     menu->addChild(createMenuItem("Copy hex color", "", [=]() {
         auto hex = rack::color::toHexString(getColor());
         glfwSetClipboardString(nullptr, hex.c_str());

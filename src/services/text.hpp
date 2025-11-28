@@ -41,6 +41,7 @@ void draw_text_box (
     PackedColor text_color,
     HAlign halign,
     VAlign valign,
+    PackedColor margin_color = colors::NoColor,
     float first_baseline = INFINITY
 );
 
@@ -56,6 +57,7 @@ void draw_oriented_text_box(
     HAlign halign,
     VAlign valign,
     Orientation orientation,
+    PackedColor margin_color = colors::NoColor,
     float first_baseline = INFINITY
 );
 

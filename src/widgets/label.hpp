@@ -48,6 +48,7 @@ struct TextLabel : OpaqueWidget, svg_theme::IThemed
 
     TextLabel() {}
     TextLabel(LabelStyle* s) : format(s) {}
+
     ~TextLabel() {
         if (own_format) {
             assert(format);
@@ -60,6 +61,8 @@ struct TextLabel : OpaqueWidget, svg_theme::IThemed
         own_format = true;
         return format;
     }
+
+    void set_text(const std::string& name) { text = name; }
 
     bool applyTheme(std::shared_ptr<svg_theme::SvgTheme> theme) override {
         if (format) format->applyTheme(theme);
