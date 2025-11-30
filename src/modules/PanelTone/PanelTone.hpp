@@ -40,6 +40,8 @@ struct PanelTone : ThemeModule
     rack::dsp::SchmittTrigger fade_trigger;
     Fader fader;
     float last_input_config{0.f};
+    bool coppertone{false};
+    NVGcolor copper_color{COLOR_NONE};
 
     PanelToneUi* ui{nullptr};
 
@@ -50,6 +52,7 @@ struct PanelTone : ThemeModule
     InputKind get_input_kind();
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;
+    bool fetch_expander_color(Expander expander);
     void process(const ProcessArgs& args) override;
 };
 

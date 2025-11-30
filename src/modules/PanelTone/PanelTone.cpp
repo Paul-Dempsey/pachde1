@@ -1,4 +1,5 @@
 #include "PanelTone.hpp"
+#include "IHaveColor.hpp"
 #include "services/json-help.hpp"
 namespace pachde {
 
@@ -101,9 +102,27 @@ void PanelTone::dataFromJson(json_t *root)
     apply_to_me = get_json_bool(root, "apply-to-me", apply_to_me);
 }
 
+bool PanelTone::fetch_expander_color(Expander expander)
+{
+    if (expander.module && (expander.module->model == modelCopper || expander.module->model == modelCopperMini)) {
+        auto copper = dynamic_cast<IHaveColor*>(expander.module);
+        if (copper && copper->colorExtenderEnabled()) {
+            copper_color = copper->getColor(1);
+            return true;
+        }
+    }
+    return false;
+}
+
 void PanelTone::process(const ProcessArgs &args)
 {
     Base::process(args);
+
+    if (coppertone && data.on) {
+        if (!fetch_expander_color(getRightExpander())) {
+            fetch_expander_color(getLeftExpander());
+        }
+    }
 
     if (ui && (0 == ((getId() + args.frame) % 90))) {
         OverlayPosition pos = (getParam(P_OVERLAY_POSITION).getValue() > .5f)
@@ -430,16 +449,29 @@ void PanelToneUi::appendContextMenu(Menu *menu)
 {
     if (!module) return;
     menu->addChild(createMenuLabel<HamburgerTitle>("#d PanelTone"));
-    //menu->addChild(createMenuLabel<FancyLabel>("theme"));
+    menu->addChild(createCheckMenuItem("Use Copper color", "",
+        [=](){ return my_module->coppertone; },
+        [=](){ my_module->coppertone = !my_module->coppertone; }
+    ));
+    menu->addChild(createMenuLabel<FancyLabel>("theme"));
     AddThemeMenu(menu, this, theme_holder, false, false, false);
 }
 
 void PanelToneUi::step() {
     Base::step();
+    if (!my_module) return;
     if (data->on != on_button->latched) {
         on_button->latched = data->on;
     }
 
+    if (my_module->coppertone && data->on) {
+        auto co = toPacked(my_module->copper_color);
+        for (auto overlay: overlays) {
+            if (is_my_overlay(overlay)) {
+                overlay->data.color = co;
+            }
+        }
+    }
     fade_overlays();
 
     if (remove_pending) {
