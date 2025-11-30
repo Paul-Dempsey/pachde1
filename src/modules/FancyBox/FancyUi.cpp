@@ -338,6 +338,9 @@ void FancyUi::remove_ports() {
             pos_widgets.erase(it);
         }
 #endif
+        if (child == APP->scene->rack->touchedParam) {
+            APP->scene->rack->touchedParam = NULL;
+        }
         child->requestDelete();
     }
     removables.clear();

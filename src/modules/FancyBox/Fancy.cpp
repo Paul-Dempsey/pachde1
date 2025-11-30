@@ -124,24 +124,6 @@ void Fancy::dataFromJson(json_t* root) {
 inline bool param_bool(rack::engine::Param& param) { return param.getValue() >= .5f; }
 inline float fancy_param(rack::engine::Param& param) { return .01f * param.getValue(); }
 
-PackedColor Fancy::modulate_color(PackedColor base, int input_id_first) {
-    bool modulated{false};
-    for (int id = input_id_first; id < input_id_first + 4; ++id) {
-        if (getInput(id).isConnected()) {
-            modulated = true;
-            break;
-        }
-    }
-    if (!modulated) return base;
-
-    auto co = fromPacked(base);
-    float hue   = clamp(Hue1(co)        + voltage(input_id_first++));
-    float sat   = clamp(Saturation1(co) + voltage(input_id_first++));
-    float lit   = clamp(Lightness(co)   + voltage(input_id_first++));
-    float alpha = clamp(co.a            + voltage(input_id_first));
-    return packHsla(hue, sat, lit, alpha);
-}
-
 void Fancy::onPortChange(const PortChangeEvent &e)
 {
     if (e.connecting) {
@@ -155,6 +137,24 @@ void Fancy::onPortChange(const PortChangeEvent &e)
     assert(in_range(connection_count, 0, (int)Inputs::N_INPUTS));
 }
 
+PackedColor Fancy::modulate_color(PackedColor base, int input_id_first) {
+    bool modulated{false};
+    for (int id = input_id_first; id < input_id_first + 4; ++id) {
+        if (getInput(id).isConnected()) {
+            modulated = true;
+            break;
+        }
+    }
+    if (!modulated) return base;
+
+    auto co = fromPacked(base);
+    float hue   = clamp(Hue1(co)        + scaled_voltage(input_id_first));
+    float sat   = clamp(Saturation1(co) + scaled_voltage(input_id_first));
+    float lit   = clamp(Lightness(co)   + scaled_voltage(input_id_first));
+    float alpha = clamp(co.a            + scaled_voltage(input_id_first));
+    return packHsla(hue, sat, lit, alpha);
+}
+
 void Fancy::process_fill(const ProcessArgs &args)
 {
     fill_process_count = (fill_process_count + 1) % 25;
@@ -165,7 +165,8 @@ void Fancy::process_fill(const ProcessArgs &args)
     if (ui->my_cloak) {
         ui->my_cloak->data.fill.enabled = fancy_data.fill.enabled;
         if (fancy_data.fill.enabled) {
-            ui->my_cloak->data.fill.fade = clamp(fancy_data.fill.fade + getInput(IN_FANCY_FILL_FADE).getVoltage());
+            ui->my_cloak->data.fill.color = modulate_color(fancy_data.fill.color, IN_FANCY_FILL_H);
+            ui->my_cloak->data.fill.fade = clamp(fancy_data.fill.fade + scaled_voltage(IN_FANCY_FILL_FADE));
         }
     }
 }
@@ -186,12 +187,12 @@ void Fancy::process_linear(const ProcessArgs& args) {
         ui->my_cloak->data.linear.enabled = fancy_data.linear.enabled;
         if (fancy_data.linear.enabled) {
             LinearGradientData linear{fancy_data.linear};
-            linear.ifade = clamp(linear.ifade + voltage(IN_FANCY_LINEAR_START_FADE));
-            linear.x1    = clamp(linear.x1    + voltage(IN_FANCY_LINEAR_X1));
-            linear.y1    = clamp(linear.y1    + voltage(IN_FANCY_LINEAR_Y1));
-            linear.ofade = clamp(linear.ofade + voltage(IN_FANCY_LINEAR_END_FADE));
-            linear.x2    = clamp(linear.x2    + voltage(IN_FANCY_LINEAR_X2));
-            linear.y2    = clamp(linear.y2    + voltage(IN_FANCY_LINEAR_Y2));
+            linear.ifade = clamp(linear.ifade + scaled_voltage(IN_FANCY_LINEAR_START_FADE));
+            linear.x1    = clamp(linear.x1    + scaled_voltage(IN_FANCY_LINEAR_X1));
+            linear.y1    = clamp(linear.y1    + scaled_voltage(IN_FANCY_LINEAR_Y1));
+            linear.ofade = clamp(linear.ofade + scaled_voltage(IN_FANCY_LINEAR_END_FADE));
+            linear.x2    = clamp(linear.x2    + scaled_voltage(IN_FANCY_LINEAR_X2));
+            linear.y2    = clamp(linear.y2    + scaled_voltage(IN_FANCY_LINEAR_Y2));
             if (linear.ifade > 0.f) {
                 linear.icol = modulate_color(fancy_data.linear.icol, IN_FANCY_LINEAR_START_H);
             }
@@ -218,11 +219,11 @@ void Fancy::process_radial(const ProcessArgs& args) {
         ui->my_cloak->data.radial.enabled = fancy_data.radial.enabled;
         if (fancy_data.radial.enabled) {
             RadialGradientData radial{fancy_data.radial};
-            radial.ifade  = clamp(radial.ifade  + voltage(IN_FANCY_RADIAL_INNER_FADE));
-            radial.cx     = clamp(radial.cx     + voltage(IN_FANCY_RADIAL_CX));
-            radial.cy     = clamp(radial.cy     + voltage(IN_FANCY_RADIAL_CY));
-            radial.ofade  = clamp(radial.ofade  + voltage(IN_FANCY_RADIAL_OUTER_FADE));
-            radial.radius = clamp(radial.radius + voltage(IN_FANCY_RADIAL_RADIUS));
+            radial.ifade  = clamp(radial.ifade  + scaled_voltage(IN_FANCY_RADIAL_INNER_FADE));
+            radial.cx     = clamp(radial.cx     + scaled_voltage(IN_FANCY_RADIAL_CX));
+            radial.cy     = clamp(radial.cy     + scaled_voltage(IN_FANCY_RADIAL_CY));
+            radial.ofade  = clamp(radial.ofade  + scaled_voltage(IN_FANCY_RADIAL_OUTER_FADE));
+            radial.radius = clamp(radial.radius + scaled_voltage(IN_FANCY_RADIAL_RADIUS));
             if (radial.ifade > 0.f) {
                 radial.icol = modulate_color(fancy_data.radial.icol, IN_FANCY_RADIAL_INNER_H);
             }
@@ -251,12 +252,12 @@ void Fancy::process_box(const ProcessArgs& args) {
         if (fancy_data.boxg.enabled) {
             BoxGradientData boxg;
             boxg.enabled = fancy_data.boxg.enabled;
-            boxg.ifade   = clamp(fancy_data.boxg.ifade   + voltage(IN_FANCY_BOX_INNER_FADE));
-            boxg.xshrink = clamp(fancy_data.boxg.xshrink + voltage(IN_FANCY_BOX_SHRINK_X));
-            boxg.yshrink = clamp(fancy_data.boxg.yshrink + voltage(IN_FANCY_BOX_SHRINK_Y));
-            boxg.ofade   = clamp(fancy_data.boxg.ofade   + voltage(IN_FANCY_BOX_OUTER_FADE));
-            boxg.radius  = clamp(fancy_data.boxg.radius  + voltage(IN_FANCY_BOX_RADIUS));
-            boxg.feather = clamp(fancy_data.boxg.feather + voltage(IN_FANCY_BOX_FEATHER));
+            boxg.ifade   = clamp(fancy_data.boxg.ifade   + scaled_voltage(IN_FANCY_BOX_INNER_FADE));
+            boxg.xshrink = clamp(fancy_data.boxg.xshrink + scaled_voltage(IN_FANCY_BOX_SHRINK_X));
+            boxg.yshrink = clamp(fancy_data.boxg.yshrink + scaled_voltage(IN_FANCY_BOX_SHRINK_Y));
+            boxg.ofade   = clamp(fancy_data.boxg.ofade   + scaled_voltage(IN_FANCY_BOX_OUTER_FADE));
+            boxg.radius  = clamp(fancy_data.boxg.radius  + scaled_voltage(IN_FANCY_BOX_RADIUS));
+            boxg.feather = clamp(fancy_data.boxg.feather + scaled_voltage(IN_FANCY_BOX_FEATHER));
             if (boxg.ifade > 0.f) {
                 boxg.icol = modulate_color(fancy_data.boxg.icol, IN_FANCY_BOX_INNER_H);
             } else {

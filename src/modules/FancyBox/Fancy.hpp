@@ -123,7 +123,8 @@ struct Fancy : ThemeModule {
     void dataFromJson(json_t* root) override;
 
     PackedColor modulate_color(PackedColor base, int input_id_first);
-    inline float voltage(int id) { return getInput(id).getNormalVoltage(0.f) * .1; }
+    inline float voltage(int id, float normal) { return getInput(id).getNormalVoltage(normal) * .1; }
+    inline float scaled_voltage(int id) { return getInput(id).getVoltage() * .1; }
     void onPortChange(const PortChangeEvent& e) override;
     void process_fill(const ProcessArgs& args);
     void process_linear(const ProcessArgs& args);
