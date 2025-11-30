@@ -228,7 +228,7 @@ void ImagineUi::setTheme(Theme theme)
         auto svg_theme = getThemeCache().getTheme(ThemeName(theme));
         my_svgs.changeTheme(svg_theme);
         applyChildrenTheme(this, svg_theme); // any IThemed widgets
-        sendChildrenThemeColor(this, theme, theme_holder->getMainColor());
+        sendChildrenThemeColor(this, theme, colors::NoColor);
         sendDirty(this);
     }
 }

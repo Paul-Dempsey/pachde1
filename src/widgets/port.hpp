@@ -19,7 +19,9 @@ struct ColorPort : PortWidget, ISetTheme, ISetColor
     void setTheme(Theme theme) override;
     // ISetColor
     void setMainColor(PackedColor color) override {
-        ring = packed_color::isVisible(color) ? fromPacked(color) : PORT_DEFAULT;
+        if (packed_color::isVisible(color)) {
+            ring = fromPacked(color);
+        }
     }
     PackedColor getMainColor() override { return toPacked(ring); }
 };
