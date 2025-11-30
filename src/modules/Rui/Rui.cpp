@@ -21,6 +21,7 @@ struct Rui : ThemeModule
     bool running{false};
     bool stopped{false};
     bool fluff{true};
+    bool request_toggle_cable_opacity{false};
 
     std::string theme_name;
 
@@ -59,11 +60,6 @@ struct Rui : ThemeModule
 
     Rui() {
         config(Params::NUM_PARAMS, Inputs::NUM_INPUTS, Outputs::NUM_OUTPUTS, Lights::NUM_LIGHTS);
-
-        initialCableOpacity = ::rack::settings::cableOpacity;
-        initialCableTension = ::rack::settings::cableTension;
-        initialBright = ::rack::settings::rackBrightness;
-        initialBloom = ::rack::settings::haloBrightness;
 
         dp4(configParam(Params::CableOpacity, 0, 100, 50.f, "Cable opacity", "%"))->setValue(initialCableOpacity * 100.f);
         dp4(configParam(Params::CableTension, 0, 100, 50.f, "Cable tension", "%"))->setValue(initialCableTension * 100.f);
@@ -155,8 +151,26 @@ struct Rui : ThemeModule
 
     void process(const ProcessArgs& args) override
     {
+        if (!running) { // first process()
+            initialCableOpacity = ::rack::settings::cableOpacity;
+            initialCableTension = ::rack::settings::cableTension;
+            initialBright = ::rack::settings::rackBrightness;
+            initialBloom = ::rack::settings::haloBrightness;
+        }
         running = true;
         if (!single || stopped) return;
+
+        if (request_toggle_cable_opacity) {
+            request_toggle_cable_opacity = false;
+            float v = 0.f;
+            if (::rack::settings::cableOpacity < 1.f) {
+                v = (initialCableOpacity > 1.f) ? initialCableOpacity : 50.f;
+            }
+            getParam(Params::CableOpacity).setValue(v);
+            ::rack::settings::cableOpacity = v;
+            return;
+        }
+
         if (0 == ((args.frame + getId()) % PARAM_INTERVAL)) {
             processParams();
         }
@@ -215,6 +229,11 @@ struct RuiUi : ModuleWidget, IThemeChange
         onDirty(DirtyEvent{});
     }
 
+    void toggle_cable_opacity() {
+        if (!my_module) return;
+        my_module->request_toggle_cable_opacity = true;
+    }
+
     void makeUi(Theme theme)
     {
         assert(children.empty());
@@ -241,16 +260,7 @@ struct RuiUi : ModuleWidget, IThemeChange
         auto tiny_button = Center(createThemeSvgButton<TinyActionButton>(&my_svgs, bounds["k:zero"].getCenter()));
         HOT_POSITION("k:zero", HotPosKind::Center, tiny_button);
         tiny_button->describe("Invisible cables");
-        tiny_button->set_handler([=](bool,bool){
-            if (!my_module) return;
-            ::rack::settings::cableOpacity = 0.f;
-            auto pq = my_module->getParamQuantity(Rui::Params::CableOpacity);
-            if (pq) {
-                pq->setImmediateValue(0.f);
-            } else {
-                my_module->getParam(Rui::Params::CableOpacity).setValue(0.f);
-            }
-        });
+        tiny_button->set_handler([=](bool,bool){ toggle_cable_opacity(); });
         addChild(tiny_button);
 
         knob = createParamCentered<RoundBlackKnob>(bounds["k:cableop"].getCenter(), my_module, Rui::Params::CableOpacity);
@@ -371,6 +381,12 @@ struct RuiUi : ModuleWidget, IThemeChange
             }
         } break;
 #endif
+        case GLFW_KEY_F6: {
+            if (e.action == GLFW_PRESS && (0 == mods)) {
+                toggle_cable_opacity();
+            }
+        } break;
+
         }
         Base::onHoverKey(e);
     }
