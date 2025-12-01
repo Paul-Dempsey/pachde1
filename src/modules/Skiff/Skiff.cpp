@@ -10,7 +10,7 @@ Skiff::Skiff() {
 }
 
 void Skiff::set_defaults() {
-    unscrewed = nojacks = calm = derailed = depaneled = false;
+    unscrewed = nojacks = calm = derailed = depaneled = dark_ages = false;
     rail = "Rack";
 }
 
@@ -64,7 +64,6 @@ void Skiff::onRandomize(const RandomizeEvent& e) {
     random_settings();
     if (ui) ui->from_module();
 }
-
 
 }
 Model* modelSkiff = createModel<pachde::Skiff, pachde::SkiffUi>("pachde-skiff");

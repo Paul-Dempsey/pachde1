@@ -42,6 +42,7 @@ struct Skiff : ThemeModule
     void onRandomize(const RandomizeEvent& e) override;
 };
 
+
 struct RailMenu : Hamburger
 {
     SkiffUi* ui{nullptr};
@@ -94,7 +95,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
     void derail(bool derail);
     void set_nojacks(bool nojacks);
     void set_dark_ages(bool dark);
-    void calm_rack(bool calm);
+    void set_calm_rack(bool calm);
     void recover_rack_rail();
     std::shared_ptr<window::Svg> set_rail_svg(RailWidget* rail, const std::string& filename);
     void set_alt_rail(const std::string& rail_name);
@@ -106,6 +107,35 @@ struct SkiffUi : ModuleWidget, IThemeChange
     void draw(const DrawArgs& args) override;
     void appendContextMenu(Menu* menu) override;
 
+};
+
+// ---- Undo/Redo -------------------------------
+
+enum BinaryActionId {
+    Derail, Depanel, Calm, Unscrew, Nojack, Darkness, Shouting
+};
+
+struct BinaryAction : ::rack::history::ModuleAction {
+    BinaryActionId id;
+    bool done_state;
+
+    BinaryAction(int64_t module_id, BinaryActionId id, bool done_state);
+
+    void set_desired_state(bool state);
+    void undo() override { set_desired_state(!done_state); }
+    void redo() override { set_desired_state(done_state); }
+};
+
+struct RailAction : ::rack::history::ModuleAction {
+    std::string prev_rail;
+    std::string next_rail;
+    RailAction (int64_t module_id, const std::string& prev, const std::string& next) :
+        prev_rail(prev), next_rail(next)
+    {
+        moduleId = module_id;
+    }
+    void undo() override;
+    void redo() override;
 };
 
 }

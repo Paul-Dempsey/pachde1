@@ -21,6 +21,7 @@ void screw_visibility(::rack::widget::Widget* root_widget, bool visible);
 void port_visibility(::rack::widget::Widget* root_widget, bool visible);
 void light_visibility(::rack::widget::Widget* root_widget, bool visible);
 void panel_visibility(::rack::widget::Widget* exclude, bool visible);
+void calm_rack(bool calm);
 
 bool toggle_rail(); // returns visibility after toggling
 void set_rail_visible(bool visible);

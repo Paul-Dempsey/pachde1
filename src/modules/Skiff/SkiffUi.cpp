@@ -122,7 +122,7 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
         [this](bool ctrl, bool shift){ if(!my_module) return; no_panels(!my_module->depaneled); }));
 
     addChild(calm_button = makeTextButton(bounds, "k:calm-btn", true, "", "Toggle calm knobs and ports", svg_theme,
-        [this](bool ctrl, bool shift) { if(!my_module) return; calm_rack(!my_module->calm); }));
+        [this](bool ctrl, bool shift) { if(!my_module) return; set_calm_rack(!my_module->calm); }));
 
     addChild(unscrew_button = makeTextButton(bounds, "k:screw-btn", true, "", "Toggle visible screws", svg_theme,
         [this](bool ctrl, bool shift) { if(!my_module) return; set_unscrewed(!my_module->unscrewed); }));
@@ -215,6 +215,7 @@ void SkiffUi::sync_latch_state() {
     calm_button->latched    = my_module->calm;
     unscrew_button->latched = my_module->unscrewed;
     nojack_button->latched  = my_module->nojacks;
+    dark_ages_button->latched  = my_module->dark_ages;
 }
 
 void SkiffUi::restore_rack() {
@@ -230,7 +231,7 @@ void SkiffUi::from_module() {
     port_visibility(APP->scene->rack, !my_module->nojacks);
     calm_rack(my_module->calm);
     panel_visibility(nullptr, !my_module->depaneled);
-
+    light_visibility(APP->scene->rack, !my_module->dark_ages);
     set_alt_rail(my_module->rail);
 
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
@@ -244,12 +245,14 @@ void SkiffUi::no_panels(bool depanel) {
 
     my_module->depaneled = depanel;
     panel_visibility(nullptr, !depanel);
+    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Depanel, depanel));
 }
 
 void SkiffUi::set_unscrewed(bool unscrewed) {
     if (!my_module) return;
     my_module->unscrewed = unscrewed;
     screw_visibility(APP->scene->rack, !unscrewed);
+    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Unscrew, unscrewed));
 }
 
 void SkiffUi::derail(bool derail) {
@@ -257,12 +260,14 @@ void SkiffUi::derail(bool derail) {
 
     my_module->derailed = derail;
     set_rail_visible(!derail);
+    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Derail, derail));
 }
 
 void SkiffUi::set_nojacks(bool nojacks) {
     if (!my_module) return;
     my_module->nojacks = nojacks;
     port_visibility(APP->scene->rack, !nojacks);
+    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Nojack, nojacks));
 }
 
 void SkiffUi::set_dark_ages(bool dark)
@@ -270,49 +275,14 @@ void SkiffUi::set_dark_ages(bool dark)
     if (!my_module) return;
     my_module->dark_ages = dark;
     light_visibility(APP->scene->rack, !dark);
+    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Darkness, dark));
 }
 
-void SkiffUi::calm_rack(bool calm) {
+void SkiffUi::set_calm_rack(bool calm) {
     if (!my_module) return;
     my_module->calm = calm;
-    if (calm) {
-        replace_system_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg", "res/calm/alt-RoundBlackKnob_bg.svg");
-        replace_system_svg("res/ComponentLibrary/RoundBlackKnob.svg", "res/calm/alt-RoundBlackKnob.svg");
-        replace_system_svg("res/ComponentLibrary/RoundBigBlackKnob_bg.svg", "res/calm/alt-RoundBigBlackKnob_bg.svg");
-        replace_system_svg("res/ComponentLibrary/RoundBigBlackKnob.svg", "res/calm/alt-RoundBigBlackKnob.svg");
-        replace_system_svg("res/ComponentLibrary/RoundHugeBlackKnob_bg.svg", "res/calm/alt-RoundHugeBlackKnob_bg.svg");
-        replace_system_svg("res/ComponentLibrary/RoundHugeBlackKnob.svg", "res/calm/alt-RoundHugeBlackKnob.svg");
-        replace_system_svg("res/ComponentLibrary/RoundLargeBlackKnob_bg.svg", "res/calm/alt-RoundLargeBlackKnob_bg.svg");
-        replace_system_svg("res/ComponentLibrary/RoundLargeBlackKnob.svg", "res/calm/alt-RoundLargeBlackKnob.svg");
-        replace_system_svg("res/ComponentLibrary/RoundSmallBlackKnob_bg.svg", "res/calm/alt-RoundSmallBlackKnob_bg.svg");
-        replace_system_svg("res/ComponentLibrary/RoundSmallBlackKnob.svg", "res/calm/alt-RoundSmallBlackKnob.svg");
-        replace_system_svg("res/ComponentLibrary/Trimpot_bg.svg", "res/calm/alt-Trimpot_bg.svg");
-        replace_system_svg("res/ComponentLibrary/Trimpot.svg", "res/calm/alt-Trimpot.svg");
-        // ports
-        replace_system_svg("res/ComponentLibrary/CL1362.svg", "res/calm/alt-CL1362.svg");
-        replace_system_svg("res/ComponentLibrary/PJ301M-dark.svg", "res/calm/alt-PJ301M-dark.svg");
-        replace_system_svg("res/ComponentLibrary/PJ301M.svg", "res/calm/alt-PJ301M.svg");
-        replace_system_svg("res/ComponentLibrary/PJ3410.svg", "res/calm/alt-PJ3410.svg");
-    } else {
-        original_system_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg");
-        original_system_svg("res/ComponentLibrary/RoundBlackKnob.svg");
-        original_system_svg("res/ComponentLibrary/RoundBigBlackKnob_bg.svg");
-        original_system_svg("res/ComponentLibrary/RoundBigBlackKnob.svg");
-        original_system_svg("res/ComponentLibrary/RoundHugeBlackKnob_bg.svg");
-        original_system_svg("res/ComponentLibrary/RoundHugeBlackKnob.svg");
-        original_system_svg("res/ComponentLibrary/RoundLargeBlackKnob_bg.svg");
-        original_system_svg("res/ComponentLibrary/RoundLargeBlackKnob.svg");
-        original_system_svg("res/ComponentLibrary/RoundSmallBlackKnob_bg.svg");
-        original_system_svg("res/ComponentLibrary/RoundSmallBlackKnob.svg");
-        original_system_svg("res/ComponentLibrary/Trimpot_bg.svg");
-        original_system_svg("res/ComponentLibrary/Trimpot.svg");
-        // ports
-        original_system_svg("res/ComponentLibrary/CL1362.svg");
-        original_system_svg("res/ComponentLibrary/PJ301M-dark.svg");
-        original_system_svg("res/ComponentLibrary/PJ301M.svg");
-        original_system_svg("res/ComponentLibrary/PJ3410.svg");
-    }
-    APP->scene->onDirty(DirtyEvent{});
+    calm_rack(calm);
+    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Calm, calm));
 }
 
 void SkiffUi::recover_rack_rail() {
@@ -346,6 +316,8 @@ void SkiffUi::set_alt_rail(const std::string& rail_name) {
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
     if (!rail) return;
 
+    APP->history->push(new RailAction(my_module->getId(), my_module->rail, rail_name));
+
     auto ext = system::getExtension(rail_name);
     if (ext.size()) { // custom
         auto railSvg = set_rail_svg(rail, rail_name);
@@ -360,7 +332,7 @@ void SkiffUi::set_alt_rail(const std::string& rail_name) {
             my_module->rail = "Rack";
         }
     } else { // builtin
-        if (0 == rail_name.compare("Rack")) {
+        if (rail_name.empty() || (0 == rail_name.compare("Rack"))) {
             recover_rack_rail();
         } else {
             auto filename = asset::plugin(pluginInstance, format_string("res/rails/%s.svg", rail_name.c_str()));
@@ -487,5 +459,74 @@ void SkiffUi::appendContextMenu(Menu* menu) {
     menu->addChild(createMenuLabel<FancyLabel>("theme"));
     AddThemeMenu(menu, this, theme_holder, false, false, false);
 }
+
+// ---- BinaryAction (undo/redo) ----------------
+
+BinaryAction::BinaryAction(int64_t module_id, BinaryActionId id, bool done_state) :
+    id(id),
+    done_state(done_state)
+{
+    moduleId = module_id;
+    switch (id) {
+    case BinaryActionId::Derail:   name = "deRail"; break;
+    case BinaryActionId::Depanel:  name = "dePanel"; break;
+    case BinaryActionId::Calm:     name = "Calm"; break;
+    case BinaryActionId::Unscrew:  name = "unScrew"; break;
+    case BinaryActionId::Nojack:   name = "noJacks"; break;
+    case BinaryActionId::Darkness: name = "Darkness"; break;
+    case BinaryActionId::Shouting: name = "shouting buttons"; break;
+    }
+}
+
+void BinaryAction::set_desired_state(bool state) {
+    auto skiff_module = dynamic_cast<Skiff*>(APP->engine->getModule(moduleId));
+
+    switch (id) {
+    case BinaryActionId::Derail:
+        if (skiff_module) { skiff_module->derailed = state; }
+        set_rail_visible(!state);
+        break;
+    case BinaryActionId::Depanel:
+        if (skiff_module) { skiff_module->depaneled = state; }
+        panel_visibility(nullptr, !state);
+        break;
+    case BinaryActionId::Calm:
+        if (skiff_module) { skiff_module->calm = state; }
+        calm_rack(state);
+        break;
+    case BinaryActionId::Unscrew:
+        if (skiff_module) { skiff_module->unscrewed = state; }
+        screw_visibility(APP->scene->rack, !state);
+        break;
+    case BinaryActionId::Nojack:
+        if (skiff_module) { skiff_module->nojacks = state; }
+        port_visibility(APP->scene->rack, !state);
+        break;
+    case BinaryActionId::Darkness:
+        if (skiff_module) { skiff_module->dark_ages = state; }
+        light_visibility(APP->scene->rack, !state);
+        break;
+    case BinaryActionId::Shouting:
+        if (skiff_module->ui) {
+            skiff_module->ui->shouting_buttons(state);
+        }
+        break;
+    }
+}
+
+void RailAction::undo() {
+    auto skiff_module = dynamic_cast<Skiff*>(APP->engine->getModule(moduleId));
+    if (skiff_module && skiff_module->ui) {
+        skiff_module->ui->set_alt_rail(prev_rail);
+    }
+}
+
+void RailAction::redo() {
+    auto skiff_module = dynamic_cast<Skiff*>(APP->engine->getModule(moduleId));
+    if (skiff_module && skiff_module->ui) {
+        skiff_module->ui->set_alt_rail(next_rail);
+    }
+}
+
 
 }

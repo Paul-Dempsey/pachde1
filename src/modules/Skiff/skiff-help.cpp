@@ -64,6 +64,48 @@ void panel_visibility(::rack::widget::Widget *exclude, bool visible) {
     }
 }
 
+void calm_rack(bool calm)
+{
+    if (calm) {
+        replace_system_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg", "res/calm/alt-RoundBlackKnob_bg.svg");
+        replace_system_svg("res/ComponentLibrary/RoundBlackKnob.svg", "res/calm/alt-RoundBlackKnob.svg");
+        replace_system_svg("res/ComponentLibrary/RoundBigBlackKnob_bg.svg", "res/calm/alt-RoundBigBlackKnob_bg.svg");
+        replace_system_svg("res/ComponentLibrary/RoundBigBlackKnob.svg", "res/calm/alt-RoundBigBlackKnob.svg");
+        replace_system_svg("res/ComponentLibrary/RoundHugeBlackKnob_bg.svg", "res/calm/alt-RoundHugeBlackKnob_bg.svg");
+        replace_system_svg("res/ComponentLibrary/RoundHugeBlackKnob.svg", "res/calm/alt-RoundHugeBlackKnob.svg");
+        replace_system_svg("res/ComponentLibrary/RoundLargeBlackKnob_bg.svg", "res/calm/alt-RoundLargeBlackKnob_bg.svg");
+        replace_system_svg("res/ComponentLibrary/RoundLargeBlackKnob.svg", "res/calm/alt-RoundLargeBlackKnob.svg");
+        replace_system_svg("res/ComponentLibrary/RoundSmallBlackKnob_bg.svg", "res/calm/alt-RoundSmallBlackKnob_bg.svg");
+        replace_system_svg("res/ComponentLibrary/RoundSmallBlackKnob.svg", "res/calm/alt-RoundSmallBlackKnob.svg");
+        replace_system_svg("res/ComponentLibrary/Trimpot_bg.svg", "res/calm/alt-Trimpot_bg.svg");
+        replace_system_svg("res/ComponentLibrary/Trimpot.svg", "res/calm/alt-Trimpot.svg");
+        // ports
+        replace_system_svg("res/ComponentLibrary/CL1362.svg", "res/calm/alt-CL1362.svg");
+        replace_system_svg("res/ComponentLibrary/PJ301M-dark.svg", "res/calm/alt-PJ301M-dark.svg");
+        replace_system_svg("res/ComponentLibrary/PJ301M.svg", "res/calm/alt-PJ301M.svg");
+        replace_system_svg("res/ComponentLibrary/PJ3410.svg", "res/calm/alt-PJ3410.svg");
+    } else {
+        original_system_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg");
+        original_system_svg("res/ComponentLibrary/RoundBlackKnob.svg");
+        original_system_svg("res/ComponentLibrary/RoundBigBlackKnob_bg.svg");
+        original_system_svg("res/ComponentLibrary/RoundBigBlackKnob.svg");
+        original_system_svg("res/ComponentLibrary/RoundHugeBlackKnob_bg.svg");
+        original_system_svg("res/ComponentLibrary/RoundHugeBlackKnob.svg");
+        original_system_svg("res/ComponentLibrary/RoundLargeBlackKnob_bg.svg");
+        original_system_svg("res/ComponentLibrary/RoundLargeBlackKnob.svg");
+        original_system_svg("res/ComponentLibrary/RoundSmallBlackKnob_bg.svg");
+        original_system_svg("res/ComponentLibrary/RoundSmallBlackKnob.svg");
+        original_system_svg("res/ComponentLibrary/Trimpot_bg.svg");
+        original_system_svg("res/ComponentLibrary/Trimpot.svg");
+        // ports
+        original_system_svg("res/ComponentLibrary/CL1362.svg");
+        original_system_svg("res/ComponentLibrary/PJ301M-dark.svg");
+        original_system_svg("res/ComponentLibrary/PJ301M.svg");
+        original_system_svg("res/ComponentLibrary/PJ3410.svg");
+    }
+    APP->scene->onDirty(rack::widget::Widget::DirtyEvent{});
+}
+
 bool toggle_rail() {
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
     if (rail) {
@@ -86,6 +128,14 @@ void set_rail_visible(bool visible) {
         rail->setVisible(visible);
     }
 }
+
+// ENHANCEMENT: Undo/redo pack
+// struct PackAction : ::rack::history::Action {
+//     struct ModulePosHistory{ int64_t module_id; Vec oldpos; Vec newpos; };
+
+//     std::vector<ModulePosHistory> positions;
+
+// };
 
 void pack_modules() {
     ::rack::app::RackWidget* rack = APP->scene->rack;
