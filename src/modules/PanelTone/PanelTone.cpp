@@ -89,7 +89,26 @@ json_t *PanelTone::dataToJson()
 {
     json_t *root = json_object();
     json_object_set_new(root, "Overlay", data.toJson());
-    set_json(root, "apply-to", appliesToJsonValue(apply_to));
+    if (apply_to == AppliesTo::Selected) {
+        if (module_ids.size() > 0) {
+            auto jar = json_array();
+            if (jar) {
+                for (auto id: module_ids) {
+                    json_t* j = json_integer(id);
+                    if (j) {
+                        json_array_append_new(jar, j);
+                    }
+                }
+                json_object_set_new(root, "selected-modules", jar);
+            }
+            set_json(root, "apply-to", appliesToJsonValue(apply_to));
+        } else {
+            // revert to default;
+            set_json(root, "apply-to", appliesToJsonValue(AppliesTo::All));
+        }
+    } else {
+        set_json(root, "apply-to", appliesToJsonValue(apply_to));
+    }
     set_json(root, "apply-to-me", apply_to_me);
     return root;
 }
@@ -98,8 +117,19 @@ void PanelTone::dataFromJson(json_t *root)
 {
     json_t *j = json_object_get(root, "Overlay");
     if (j) data.fromJson(j);
-    apply_to = parseAppliesTo(get_json_cstring(root, "apply-to", appliesToJsonValue(apply_to)));
     apply_to_me = get_json_bool(root, "apply-to-me", apply_to_me);
+    apply_to = parseAppliesTo(get_json_cstring(root, "apply-to", appliesToJsonValue(apply_to)));
+    if (AppliesTo::Selected == apply_to) {
+        auto jar = json_object_get(root, "selected-modules");
+        if (jar) {
+            json_t* jp;
+            size_t index;
+            json_array_foreach(jar, index, jp) {
+                int64_t id = json_integer_value(jp);
+                module_ids.push_back(id);
+            }
+        }
+    }
 }
 
 bool PanelTone::fetch_expander_color(Expander expander)
@@ -353,7 +383,6 @@ void PanelToneUi::set_overlay_color(PackedColor color)
     }
 }
 
-
 void PanelToneUi::remove_overlays()
 {
     in_destroy = true;
@@ -364,6 +393,30 @@ void PanelToneUi::remove_overlays()
     }
     in_destroy = false;
     overlays.clear();
+}
+
+std::vector<ModuleWidget *> PanelToneUi::get_applicable_module_widgets()
+{
+    std::vector<ModuleWidget*> module_widgets;
+    if ((AppliesTo::Selected == my_module->apply_to) && !my_module->module_ids.empty()) {
+        std::vector<int64_t>& ids{my_module->module_ids};
+        for (auto mw: APP->scene->rack->getModules()) {
+            int64_t id = mw->getModule()->getId();
+            if (ids.cend() != std::find(ids.cbegin(), ids.cend(), id)) {
+                module_widgets.push_back(mw);
+            }
+        }
+    } else {
+        module_widgets = getModuleWidgets(this, my_module->apply_to);
+        if (AppliesTo::Selected == my_module->apply_to) {
+            for (auto mw: module_widgets) {
+                my_module->module_ids.push_back(mw->getModule()->getId());
+            }
+        } else {
+            my_module->module_ids.clear();
+        }
+    }
+    return module_widgets;
 }
 
 void PanelToneUi::add_overlays(const std::vector<ModuleWidget*>& module_widgets)
@@ -395,7 +448,7 @@ void PanelToneUi::toggle_panels()
 
     if (!data->on) {
         data->on = true;
-        add_overlays(getModuleWidgets(this, my_module->apply_to));
+        add_overlays(get_applicable_module_widgets());
         fade_in_overlays();
     } else {
         fade_out_overlays();
@@ -407,9 +460,12 @@ void PanelToneUi::set_applies_to(AppliesTo apply)
     if (!my_module) return;
     my_module->apply_to = apply;
     remove_overlays();
+    my_module->module_ids.clear();
     if (data->on) {
-        add_overlays(getModuleWidgets(this, apply));
+        add_overlays(get_applicable_module_widgets());
         fade_in_overlays();
+    } else {
+        get_applicable_module_widgets();
     }
 }
 
@@ -449,10 +505,6 @@ void PanelToneUi::appendContextMenu(Menu *menu)
 {
     if (!module) return;
     menu->addChild(createMenuLabel<HamburgerTitle>("#d PanelTone"));
-    menu->addChild(createCheckMenuItem("Use Copper color", "",
-        [=](){ return my_module->coppertone; },
-        [=](){ my_module->coppertone = !my_module->coppertone; }
-    ));
     menu->addChild(createMenuLabel<FancyLabel>("theme"));
     AddThemeMenu(menu, this, theme_holder, false, false, false);
 }
@@ -481,7 +533,7 @@ void PanelToneUi::step() {
     if (add_pending) {
         add_pending = false;
         data->on = true;
-        add_overlays(getModuleWidgets(this, my_module->apply_to));
+        add_overlays(get_applicable_module_widgets());
         fade_in_overlays();
     }
 }
@@ -494,20 +546,26 @@ void PanelToneUi::toggle_applies_to_me() {
         if (!is_my_overlay(overlay)) {
             overlay = nullptr;
         }
-        if (overlay && my_module->apply_to_me) {
+        if (overlay && !my_module->apply_to_me) {
+            safeDeparentOverlay(overlay);
+            delete overlay;
+            return;
+        }
+        //  if here, check if applicable
+        if (my_module->apply_to_me) {
             switch (my_module->apply_to) {
                 case AppliesTo::All:
                 case AppliesTo::Row:
+                    if (overlay) return;
                     break;
 
                 case AppliesTo::Selected: {
-                    auto sel = APP->scene->rack->getSelected();
-                    auto it = std::find(sel.begin(), sel.end(), this);
-                    if (it == sel.end()) {
-                        if (overlay) {
-                            safeDeparentOverlay(overlay);
-                            delete overlay;
-                        }
+                    get_applicable_module_widgets();
+                    std::vector<int64_t>& ids{my_module->module_ids};
+                    bool applies_to_me = ids.cend() != std::find(ids.cbegin(), ids.cbegin(), my_module->getId());
+                    if (overlay && !applies_to_me) {
+                        safeDeparentOverlay(overlay);
+                        delete overlay;
                         return;
                     }
                 } break;
@@ -525,17 +583,20 @@ void PanelToneUi::toggle_applies_to_me() {
             auto overlay = new PanelOverlay(this);
             add_layered_child(this, overlay, data->position);
             overlays.push_back(overlay);
-        } else {
-            if (overlay) delete overlay;
         }
     }
 }
 void PanelToneMenu::appendContextMenu(ui::Menu* menu) {
     if (!ui->module) return;
     menu->addChild(createMenuLabel<HamburgerTitle>("PanelTone"));
+    menu->addChild(createCheckMenuItem("Use Copper color", "",
+        [=](){ return ui->my_module->coppertone; },
+        [=](){ ui->my_module->coppertone = !ui->my_module->coppertone; }
+    ));
     menu->addChild(createCheckMenuItem("Tone this PanelTone", "",
         [=](){ return ui->my_module->apply_to_me; },
         [=](){ ui->toggle_applies_to_me(); }));
+
     menu->addChild(createMenuLabel<FancyLabel>("Apply To"));
 
     menu->addChild(createCheckMenuItem("All", "",

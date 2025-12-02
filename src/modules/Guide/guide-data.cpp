@@ -60,12 +60,14 @@ void GuideData::fromJson(json_t *root) {
         co_overlay = parseColor(spec.c_str(), co_overlay);
     }
     auto jar = json_object_get(root, "guides");
-    json_t* jp;
-    size_t index;
-    json_array_foreach(jar, index, jp) {
-        auto guide = std::make_shared<GuideLine>();
-        guide->fromJson(jp);
-        guides.push_back(guide);
+    if (jar) {
+        json_t* jp;
+        size_t index;
+        json_array_foreach(jar, index, jp) {
+            auto guide = std::make_shared<GuideLine>();
+            guide->fromJson(jp);
+            guides.push_back(guide);
+        }
     }
 }
 

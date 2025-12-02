@@ -42,7 +42,7 @@ struct PanelTone : ThemeModule
     float last_input_config{0.f};
     bool coppertone{false};
     NVGcolor copper_color{COLOR_NONE};
-
+    std::vector<int64_t> module_ids;
     PanelToneUi* ui{nullptr};
 
     PanelTone();
@@ -94,6 +94,7 @@ struct PanelToneUi : ModuleWidget, IThemeChange
     void set_overlay_color(PackedColor color);
     void add_overlays(const std::vector<ModuleWidget*>& module_widgets);
     void remove_overlays();
+    std::vector<ModuleWidget*> get_applicable_module_widgets();
     void toggle_panels();
     void toggle_applies_to_me();
     void set_applies_to(AppliesTo apply);

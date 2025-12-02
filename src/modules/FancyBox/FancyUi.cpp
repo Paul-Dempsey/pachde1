@@ -573,9 +573,7 @@ void FancyUi::fancy_background(bool fancy) {
     my_module->fancy = fancy;
     auto cloak = getBackgroundCloak();
     if (fancy) {
-        if (!cloak) {
-            my_cloak = ensureBackgroundCloak(this, &my_module->fancy_data);
-        }
+        my_cloak = cloak ? cloak : ensureBackgroundCloak(this, &my_module->fancy_data);
     } else {
         if (cloak) {
             my_cloak = nullptr;
