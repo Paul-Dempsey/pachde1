@@ -6,7 +6,9 @@ Color picker with modulation and outputs.
 
 Here's a sample of the module in Light, Dark, and High Contrast themes.
 
-![Copper-mini in Light, Dark, and High Contrast themes](Copper-mini.png)
+|Light|Dark|High Contrast|
+|:-:|:-:|:-:|
+||||
 
 Twist the H knob to select the color's hue.
 Twist the S and L buttons to select the corresponding color component (Saturation and Lightness).
@@ -24,16 +26,26 @@ Right click to find a menu option to copy that value for use in another module.
 ## Copper vs Copper-mini
 
 Copper and Copper-mini share the same underlying color module.
-They present a slightly different user itnerface and selection of output ports, but otherwise behave the same, including as expander for Null and Info.
+They present a slightly different user itnerface and selection of output ports, but otherwise behave the same, including as expander for **Null**, **Info**, and **PanelTone**.
 
 ## As expander
 
-Both Copper and Copper-mini work as expanders to [Null](Null.md) for choosing its panel color -- even live-modulating it for some excitement.
-See [Null](Null.md) for more details on the entertainment value of this configuration.
+**New in #d One 2.3** — Using Copper-mini as an expander can now be turned on and off in the module menu, or by pressing **F2** while the mouse is over the module.
+Turning it off means that you can freely move the Copper-mini around the patch without leaving a trail of changed colors in it's wake.
+So, you can now be more intentional about the effects of a Copper-mini in your patch.
 
-Copper is also an expander for [Info](Info.md) for choosing either the panel or the text color (configurable in options).
+When a Copper(mini) is available as an expander, the blue light on the Copper(mini) panel light up.
 
-Null and Info both allow you to turn off using Copper as an expander.
+Copper and Copper-mini work as expanders to other modules in **#d One**:
+
+| Module | Usage |
+| -- | -- |
+| [Null](./Null.md#info) | Set the panel color -- even live modulating it for some excitement. See [Null](Null.md) for more details on the entertainment value of this configuration. |
+| [Info](./Info.md#info) | Set the panel or text color, or both from a Copper(-mini) on either side, configured in the Info Text options dialog. |
+| [PanelTone](./PanelTone.md#paneltone) | Sets and if modulated, animates the color used to tone the panels in your Rack. This can bring your entire patch alive, visually. |
+
+All of these modules have an option whether to use an adjacent Copper(mini) for color.
+Providing/Using the extender color must be enabled in both modules.
 
 ## Inputs
 
@@ -48,7 +60,7 @@ All inputs are relative modulation of the knob setting, except when connected to
 When the outputs of one are connected to the inputs of another, the source module is the absolute source of values for the connected one.
 They are completely synchronized.
 
-This can be useful when animating Null and Info. You can extend Null and Info with a less intrusive Copper-mini driven by a full Copper elsewhere in the patch.
+This can be useful when animating the colors of other modules. You can extend with a less intrusive Copper-mini driven by a full Copper elsewhere in the patch.
 
 ## Outputs
 

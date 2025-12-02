@@ -12,27 +12,34 @@ Here's a sampling of Null in Light, Dark, and High Contrast themes and various c
 
 ## Options
 
+You'll find the following options in the right-clcik menu:
+
 | Option | Description |
 | -- | -- |
 | Screws | Add or remove the screw caps. |
-| Theme | Choose Light, Dark, or High Contrast theme. |
-| Panel color | Enter a standard rack #_hex_ code for a custom color to override the theme. Even the screw caps adopt your color!. You can copy/paste the hex code from Copper. |
-| Palette color | Choose color from a palette of named colors. |
+| Theme | Choose Light, Dark, or High Contrast theme, or to follow Rack settings. |
+| Palette color | Choose the background color from a palette of named colors. |
+| Background | General color picker for the background |
+| Copper sets panel color | Control whether to allow a Copper or Copper-mini to set the panel color. |
+| Show branding | Toggle the visibility of the title symbol and **#d** logo. |
+| Brand logo | Toggle showing the **#d** logo when branding is shown. |
 | Glow in the dark. | The panel stays bright in a darkened room, with a glow that follows VCV Rack's Light bloom setting. |
+| Bright in a dark room | Panel is not dimmed when the lights are down. |
 
 ## Inputs
 
-Null has a secret input port.
+Null has a "secret" input port.
 Plug a signal into the **Flicker** port hidden behind the **#d** logo to add flickering to the panel, like a neon sign going bad or a defective flourescent light.
 
 ## Expander
 
-**[Copper](copper)** extends Null, setting the panel color to the color chosen.
-If you haven't memorized the hex codes for colors you want to use, drop a Copper next to Null and pick a color.
+When the _Copper sets panel color_ option is turned on,
+**[Copper](./Copper.md#copper)** and **[Copper-mini](./Copper-mini.md#copper-mini)** can extend **Null**, setting the panel color to the color chosen.
+In Copper(-mini), you must enable color sharing in the right-click menu, with _Share color as Extender (F2)_.
 Null remembers that color, so you can remove Copper from the patch after you're done.
 Or, leave Copper in the patch, and modulate it to animate the Null color.
 
-The most exciting visual for Null is to turn on **Glow in the dark**, animate the color using Copper, and plug a signal into the **Flicker** port.
+The most exciting visuals for **Null** is when you turn on _Glow in the dark_, animate the color using a Copper, and plug a signal into the **Flicker** port.
 
 ---
 
