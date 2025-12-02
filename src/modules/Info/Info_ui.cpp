@@ -59,6 +59,22 @@ void InfoModuleWidget::onChangeTheme(ChangedItem item) // override
     }
 }
 
+void InfoModuleWidget::onHoverKey(const HoverKeyEvent &e)
+{
+    if (!module) return;
+
+    auto mods = e.mods & RACK_MOD_MASK;
+    switch (e.key) {
+    case GLFW_KEY_F2: {
+        if (e.action == GLFW_PRESS && (0 == mods)) {
+            show_settings_dialog(this);
+        }
+    } break;
+
+    }
+    Base::onHoverKey(e);
+}
+
 void InfoModuleWidget::applyScrews(bool screws)
 {
     //info_theme->setScrews(screws);

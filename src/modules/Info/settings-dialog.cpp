@@ -64,6 +64,7 @@ struct Preview : TransparentWidget {
         draw_oriented_text_box(vg,
             preview_box,
             settings->left_margin *preview_scale, settings->right_margin *preview_scale,
+            settings->top_margin *preview_scale, settings->bottom_margin *preview_scale,
             text,
             settings->getFont(),
             settings->getFontSize() *preview_scale,
@@ -95,7 +96,7 @@ struct SettingsDialog : SvgDialog<SettingsDialogSvg> {
     LabelStyle* inverted_label_style{nullptr};
     LabelStyle* left_label_style{nullptr};
     LabelStyle* info_label_style{nullptr};
-    LabelStyle* info_center_style{nullptr};
+    //LabelStyle* info_center_style{nullptr};
 
     FancySwatch* panel_swatch{nullptr};
     FancySwatch* text_swatch{nullptr};
@@ -128,13 +129,14 @@ struct SettingsDialog : SvgDialog<SettingsDialogSvg> {
 
         info_label_style = new LabelStyle("dlg-info", colors::PortCorn, 12.f);
         info_label_style->halign = HAlign::Left;
-        info_center_style  = new LabelStyle(*info_label_style);
-        info_center_style->halign = HAlign::Center;
+        //info_center_style  = new LabelStyle("dlg-info", colors::PortCorn, 12.f);
+        //info_center_style->halign = HAlign::Center;
 
         title_style->applyTheme(svg_theme);
         left_label_style->applyTheme(svg_theme);
         center_label_style->applyTheme(svg_theme);
         info_label_style->applyTheme(svg_theme);
+        //info_center_style->applyTheme(svg_theme);
     }
 
     TextButton* makeTextButton (
@@ -228,6 +230,16 @@ struct SettingsDialog : SvgDialog<SettingsDialogSvg> {
         addChild(createParamCentered<RoundBlackKnob>(bounds["k:right-margin"].getCenter(), info->my_module, InfoModule::P_MarginRight));
         addChild(TextLabel::createLabel(bounds["k:R-label"], "R", center_label_style));
 
+        // Top margin
+        addChild(createParamCentered<RoundBlackKnob>(bounds["k:top-margin"].getCenter(), info->my_module, InfoModule::P_MarginTop));
+        addChild(TextLabel::createLabel(bounds["k:T-label"], "T", center_label_style));
+
+        // Bottom margin
+        addChild(createParamCentered<RoundBlackKnob>(bounds["k:bottom-margin"].getCenter(), info->my_module, InfoModule::P_MarginBottom));
+        addChild(TextLabel::createLabel(bounds["k:B-label"], "B", center_label_style));
+
+
+        // Preview
         addChild(new Preview(bounds["k:preview"], settings, info->my_module));
 
         // Panel color
@@ -273,7 +285,7 @@ struct SettingsDialog : SvgDialog<SettingsDialogSvg> {
             settings->fontDialog();
         }));
         // font name
-        addChild(TextLabel::createLabel(bounds["k:font-label"], system::getStem(settings->font_file), info_center_style));
+        addChild(TextLabel::createLabel(bounds["k:font-label"], system::getStem(settings->font_file), info_label_style));
 
         // Text input
         auto input = new MultiTextInput();

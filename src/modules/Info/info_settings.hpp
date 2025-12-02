@@ -37,6 +37,8 @@ struct InfoSettings
     float font_size{info_constant::DEFAULT_FONT_SIZE};
     float left_margin{0.f};
     float right_margin{0.f};
+    float top_margin{0.f};
+    float bottom_margin{0.f};
 
     std::string font_file = get_plugin_bold_file();
     std::string font_folder{""};

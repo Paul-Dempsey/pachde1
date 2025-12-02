@@ -111,6 +111,8 @@ struct CopperModule: ThemeModule, IHaveColor {
 
 struct CopperUi : ModuleWidget, IThemeChange
 {
+    using Base = ModuleWidget;
+
     CopperModule* copper_module = nullptr;
     HueWidget* hue_picker = nullptr;
     SLWidget* sl_picker = nullptr;
@@ -142,11 +144,14 @@ struct CopperUi : ModuleWidget, IThemeChange
     void onChangeTheme(ChangedItem item) override;
 
     void draw(const DrawArgs& args) override;
+    void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;
     void appendContextMenu(rack::ui::Menu* menu) override;
 };
 
-struct CopperMiniUI  : ModuleWidget, IThemeChange {
+struct CopperMiniUI : ModuleWidget, IThemeChange {
+    using Base = ModuleWidget;
+
     CopperModule* copper_module = nullptr;
     ThemeBase* theme_holder = nullptr;
     SvgCache my_svgs;
@@ -172,6 +177,7 @@ struct CopperMiniUI  : ModuleWidget, IThemeChange {
     void onChangeTheme(ChangedItem item) override;
     void drawLayer(const DrawArgs& args, int layer) override;
     void draw(const DrawArgs& args) override;
+    void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;
     void appendContextMenu(rack::ui::Menu* menu) override;
 

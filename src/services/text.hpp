@@ -35,6 +35,7 @@ void draw_text_box (
     NVGcontext *vg,
     float x, float y, float w, float h,
     float left_margin, float right_margin,
+    float top_margin, float bottom_margin,
     std::string text,
     std::shared_ptr<rack::window::Font> font,
     float font_size,
@@ -48,8 +49,8 @@ void draw_text_box (
 void draw_oriented_text_box(
     NVGcontext *vg,
     Rect box,
-    float left_margin,
-    float right_margin,
+    float left_margin, float right_margin,
+    float top_margin, float bottom_margin,
     const std::string& text,
     std::shared_ptr<rack::window::Font> font,
     float font_size,

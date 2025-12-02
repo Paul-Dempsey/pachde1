@@ -20,6 +20,8 @@ struct InfoModule : ResizableModule
         P_Orientation,
         P_MarginLeft,
         P_MarginRight,
+        P_MarginTop,
+        P_MarginBottom,
         P_FontSize,
         P_CopperLeft,
         P_CopperRight,
@@ -31,7 +33,7 @@ struct InfoModule : ResizableModule
 
     std::string text;
     CopperTarget left_copper_target{CopperTarget::Panel};
-    CopperTarget right_copper_target{CopperTarget::Panel};
+    CopperTarget right_copper_target{CopperTarget::Text};
     InfoSettings * settings{nullptr};
 
     virtual ~InfoModule()
@@ -89,6 +91,8 @@ struct InfoPanel : Widget
 
 struct InfoModuleWidget : ModuleWidget, IThemeChange
 {
+    using Base = ModuleWidget;
+
     InfoModule* my_module{nullptr};
     InfoSymbol* info_symbol{nullptr};
     InfoPanel* panel{nullptr};
@@ -109,6 +113,7 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
     void addScrews() ;
     void applyThemeSetting(ThemeSetting setting);
     void onChangeTheme(ChangedItem item) override;
+    void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;
 
     void appendContextMenu(Menu *menu) override;

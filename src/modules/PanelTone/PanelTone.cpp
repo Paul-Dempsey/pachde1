@@ -149,8 +149,12 @@ void PanelTone::process(const ProcessArgs &args)
     Base::process(args);
 
     if (coppertone && data.on) {
-        if (!fetch_expander_color(getRightExpander())) {
-            fetch_expander_color(getLeftExpander());
+        if (fetch_expander_color(getRightExpander())) {
+            copper_connected = true;
+        } else if (fetch_expander_color(getLeftExpander())) {
+            copper_connected = true;
+        } else {
+            copper_connected = false;
         }
     }
 
@@ -284,7 +288,7 @@ PanelToneUi::PanelToneUi(PanelTone* module) : my_module(module)
 
     on_button = Center(createThemeSvgButton<SmallActionButton>(&my_svgs, bounds["k:go-btn"].getCenter()));
     HOT_POSITION("k:go-btn", HotPosKind::Center, on_button);
-    on_button->describe("Toggle toned panels");
+    on_button->describe("Toggle toned panels (F2)");
     on_button->set_sticky(true);
     on_button->latched = data->on;
     on_button->set_handler([=](bool,bool){
@@ -377,9 +381,17 @@ void PanelToneUi::set_overlay_position(OverlayPosition pos)
 void PanelToneUi::set_overlay_color(PackedColor color)
 {
     data->color = color;
-    for (auto overlay: overlays) {
-        if (!is_my_overlay(overlay)) continue;
-        overlay->data.color = color;
+    broadcast_overlay_color(color);
+}
+
+void PanelToneUi::broadcast_overlay_color(PackedColor color)
+{
+    if (color != last_broadcast_color) {
+        last_broadcast_color = color;
+        for (auto overlay: overlays) {
+            if (!is_my_overlay(overlay)) continue;
+            overlay->data.color = color;
+        }
     }
 }
 
@@ -479,12 +491,17 @@ void PanelToneUi::onChangeTheme(ChangedItem item)
     sendDirty(this);
 }
 
-#ifdef HOT_SVG
 void PanelToneUi::onHoverKey(const HoverKeyEvent &e)
 {
     if (!my_module) return;
     auto mods = e.mods & RACK_MOD_MASK;
     switch (e.key) {
+        case GLFW_KEY_F2: {
+            if (e.action == GLFW_PRESS && (0 == mods)) {
+                toggle_panels();
+            }
+        } break;
+    #ifdef HOT_SVG
     case GLFW_KEY_F5: {
         if (e.action == GLFW_RELEASE && (0 == mods)) {
             e.consume(this);
@@ -496,10 +513,10 @@ void PanelToneUi::onHoverKey(const HoverKeyEvent &e)
             sendDirty(this);
         }
     } break;
+    #endif
     }
     Base::onHoverKey(e);
 }
-#endif
 
 void PanelToneUi::appendContextMenu(Menu *menu)
 {
@@ -516,13 +533,14 @@ void PanelToneUi::step() {
         on_button->latched = data->on;
     }
 
-    if (my_module->coppertone && data->on) {
+    bool is_copper_toning = (my_module->coppertone && data->on && my_module->copper_connected);
+    if (is_copper_toning) {
         auto co = toPacked(my_module->copper_color);
-        for (auto overlay: overlays) {
-            if (is_my_overlay(overlay)) {
-                overlay->data.color = co;
-            }
-        }
+        broadcast_overlay_color(co);
+        coppertoning = true;
+    } else if (coppertoning) {
+        coppertoning = false;
+        broadcast_overlay_color(data->color);
     }
     fade_overlays();
 

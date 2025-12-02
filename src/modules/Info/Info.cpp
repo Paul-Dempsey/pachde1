@@ -23,6 +23,8 @@ InfoModule::InfoModule()
     });
     dp3(configParam(P_MarginLeft, 0.f, 150.f, 0.f, "Left margin", "px"));
     dp3(configParam(P_MarginRight, 0.f, 150.f, 0.f, "Right margin", "px"));
+    dp3(configParam(P_MarginTop, 0.f, 150.f, 0.f, "Top margin", "px"));
+    dp3(configParam(P_MarginBottom, 0.f, 150.f, 0.f, "Bottom margin", "px"));
     snap(dp3(configParam(P_FontSize,
         info_constant::MIN_FONT_SIZE,
         info_constant::MAX_FONT_SIZE,
@@ -82,6 +84,8 @@ void InfoModule::dataFromJson(json_t *root) //override
     getParam(P_Orientation).setValue((float)settings->getOrientation());
     getParam(P_MarginLeft).setValue(settings->left_margin);
     getParam(P_MarginRight).setValue(settings->right_margin);
+    getParam(P_MarginTop).setValue(settings->top_margin);
+    getParam(P_MarginBottom).setValue(settings->bottom_margin);
     getParam(P_FontSize).setValue(settings->font_size);
     getParam(P_CopperLeft).setValue(left_copper_target);
     getParam(P_CopperRight).setValue(right_copper_target);
@@ -112,6 +116,8 @@ void InfoModule::process(const ProcessArgs &args)
         settings->setOrientation((Orientation)round(getParam(P_Orientation).getValue()));
         settings->left_margin = getParam(P_MarginLeft).getValue();
         settings->right_margin = getParam(P_MarginRight).getValue();
+        settings->top_margin = getParam(P_MarginTop).getValue();
+        settings->bottom_margin = getParam(P_MarginBottom).getValue();
         settings->setFontSize(getParam(P_FontSize).getValue());
         left_copper_target = (CopperTarget)getParam(P_CopperLeft).getValue();
         right_copper_target = (CopperTarget)getParam(P_CopperRight).getValue();

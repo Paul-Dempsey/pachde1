@@ -13,6 +13,7 @@ void InfoSettings::reset()
     user_text_color = colors::NoColor;
     horizontal_alignment = HAlign::Left;
     vertical_alignment = VAlign::Middle;
+    left_margin = right_margin = top_margin = bottom_margin = 0.f;
     brilliant = false;
     branding = true;
     font_size = info_constant::DEFAULT_FONT_SIZE;
@@ -45,8 +46,8 @@ void InfoSettings::setBrilliant(bool brilliance) { brilliant = brilliance; }
 bool InfoSettings::getBrilliant() { return brilliant; }
 void InfoSettings::setBranding(bool branded) { branding = branded; }
 bool InfoSettings::getBranding() { return branding; }
-PackedColor InfoSettings::getDisplayPanelColor() { return user_panel_color ? user_panel_color : theme_panel_color; }
-PackedColor InfoSettings::getDisplayTextColor() { return user_text_color ? user_text_color : theme_text_color; }
+PackedColor InfoSettings::getDisplayPanelColor() { return packed_color::isVisible(user_panel_color) ? user_panel_color : theme_panel_color; }
+PackedColor InfoSettings::getDisplayTextColor() { return packed_color::isVisible(user_text_color) ? user_text_color : theme_text_color; }
 
 json_t* InfoSettings::save(json_t* root)
 {
@@ -64,6 +65,8 @@ json_t* InfoSettings::save(json_t* root)
     }
     set_json(root, "left-margin", left_margin);
     set_json(root, "right-margin", right_margin);
+    set_json(root, "top-margin", top_margin);
+    set_json(root, "bottom-margin", bottom_margin);
     std::string align_string{HAlignLetter(horizontal_alignment)};
     set_json(root, "text-align", align_string);
     align_string = {VAlignLetter(vertical_alignment)};
@@ -102,6 +105,14 @@ void InfoSettings::load(json_t* root) {
     right_margin = clamp(get_json_float(root, "right-margin", right_margin), 0.f, 30.f);
     if (std::isnan(right_margin)) {
         right_margin = 0.f;
+    }
+    top_margin = clamp(get_json_float(root, "top-margin", top_margin), 0.f, 30.f);
+    if (std::isnan(top_margin)) {
+        top_margin = 0.f;
+    }
+    bottom_margin = clamp(get_json_float(root, "bottom-margin", bottom_margin), 0.f, 30.f);
+    if (std::isnan(bottom_margin)) {
+        bottom_margin = 0.f;
     }
 
     orientation = parseOrientation(get_json_string(root, "text-orient"));

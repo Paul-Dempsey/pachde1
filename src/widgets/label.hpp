@@ -17,6 +17,8 @@ struct LabelStyle {
     float text_height{12.f};
     // float left_margin{0.f};
     // float right_margin{0.f};
+    // float top_margin{0.f};
+    // float bottom_margin{0.f};
     float baseline{INFINITY};
     HAlign halign{HAlign::Center};
     VAlign valign{VAlign::Middle};
@@ -75,14 +77,14 @@ struct TextLabel : OpaqueWidget, svg_theme::IThemed
 
         if (format) {
             draw_oriented_text_box(
-                args.vg, box.zeroPos(), 0.f, 0.f, //format->left_margin, format->right_margin,
+                args.vg, box.zeroPos(), 0.f, 0.f, 0.f, 0.f,
                 text, font, format->text_height, format->color,
                 format->halign, format->valign, format->orientation,
                 format->baseline
             );
         } else {
             draw_oriented_text_box(
-                args.vg, box.zeroPos(), 0.f, 0.f, text, font, 12.f, colors::Black,
+                args.vg, box.zeroPos(), 0.f, 0.f, 0.f, 0.f, text, font, 12.f, colors::Black,
                 HAlign::Center, VAlign::Baseline, Orientation::Normal
             );
         }

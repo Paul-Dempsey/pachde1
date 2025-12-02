@@ -20,7 +20,7 @@ entry-prompt = hsl(42, .6, .85)
 // dialogs
   dlg-title = #000
   dlg-label = #e6e6e6
-   dlg-info = hsl(216, .5, .5)
+   dlg-info = hsl(216, .5, .8)
 close-hover = hsl(0, .6, .5) stroke none
 close-frame = none stroke #666
 close-glyph = #666

@@ -18,8 +18,8 @@ void InfoPanel::fetchColors()
 {
     if (!module) return;
 
-    panel = settings->getUserPanelColor();
-    text_color = settings->getUserTextColor();
+    panel = settings->getDisplayPanelColor();
+    text_color = settings->getDisplayTextColor();
 
     NVGcolor color;
     if (module->getLeftCopperTarget() != CopperTarget::None) {
@@ -112,8 +112,14 @@ void InfoPanel::showText(const DrawArgs &args, std::shared_ptr<rack::window::Fon
     Orientation orientation = module ? settings->getOrientation() : Orientation::Up;
     float left_margin = module ? settings->left_margin : 7.5f;
     float right_margin = module ? settings->right_margin : 7.5f;
+    float top_margin = module ? settings->top_margin : 7.5f;
+    float bottom_margin = module ? settings->bottom_margin : 7.5f;
 
-    draw_oriented_text_box(args.vg, box, left_margin, right_margin, text, font, font_size, text_color, halign, valign, orientation);
+    draw_oriented_text_box(
+        args.vg, box,
+        left_margin, right_margin, top_margin, bottom_margin,
+        text, font, font_size, text_color,
+        halign, valign, orientation);
 }
 
 void InfoPanel::drawError(const DrawArgs &args)

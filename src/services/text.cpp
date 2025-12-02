@@ -120,6 +120,7 @@ void draw_text_box (
     NVGcontext *vg,
     float x, float y, float w, float h,
     float left_margin, float right_margin,
+    float top_margin, float bottom_margin,
     std::string text,
     std::shared_ptr<rack::window::Font> font,
     float font_size,
@@ -136,8 +137,11 @@ void draw_text_box (
     // if (right_margin > 0.f) { Line(vg, x + w - right_margin, y, x + w - right_margin, y + h, co_debug); }
     if (isVisible(margin_color)) {
         auto co = fromPacked(margin_color);
-        FillRect(vg, x, y, left_margin, h, co);
-        FillRect(vg, x + w - right_margin, y, right_margin, h, co);
+        if (left_margin > 0.f) FillRect(vg, x, y, left_margin, h, co);
+        if (right_margin > 0.f) FillRect(vg, x + w - right_margin, y, right_margin, h, co);
+        if (top_margin > 0.f) FillRect(vg, x + left_margin, y, w - (left_margin + right_margin), top_margin, co);
+        if (bottom_margin > 0.f) FillRect(vg, x + left_margin, y + h - bottom_margin, w - (left_margin + right_margin), bottom_margin, co);
+
     }
 
     NVGtextRow text_rows[50];
@@ -145,6 +149,7 @@ void draw_text_box (
     SetTextStyle(vg, font, fromPacked(text_color), font_size);
 
     float width = (HAlign::Center == halign) ? w : w - (left_margin + right_margin);
+    float height = (VAlign::Middle == valign) ? h : h - (top_margin + bottom_margin);
     int nrows = nvgTextBreakLines(vg, text.c_str(), nullptr, width, text_rows, 50);
     float tm_ascent;
     float tm_height;
@@ -152,10 +157,10 @@ void draw_text_box (
     float total_height = nrows * tm_height;
     float ty{0};
     switch (valign) {
-        case VAlign::Top: ty = y; break;
-        case VAlign::Middle: ty = y + h*.5 - total_height*.5; break;
-        case VAlign::Bottom: ty = h - total_height; break;
-        case VAlign::Baseline: ty = y - (std::isfinite(first_baseline) ? first_baseline : tm_ascent); break;
+        case VAlign::Top: ty = y + top_margin; break;
+        case VAlign::Middle: ty = y + top_margin + height*.5 - total_height*.5; break;
+        case VAlign::Bottom: ty = h - bottom_margin - total_height; break;
+        case VAlign::Baseline: ty = y + top_margin - (std::isfinite(first_baseline) ? first_baseline : tm_ascent); break;
     }
     nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
     float tx{0};
@@ -192,6 +197,8 @@ void draw_oriented_text_box(
     Rect box,
     float left_margin,
     float right_margin,
+    float top_margin,
+    float bottom_margin,
     const std::string& text,
     std::shared_ptr<rack::window::Font> font,
     float font_size,
@@ -216,6 +223,7 @@ void draw_oriented_text_box(
         nvgTranslate(vg, x, y);
         draw_text_box(vg, 0, 0, width, height,
             left_margin, right_margin,
+            top_margin, bottom_margin,
             text, font, font_size, text_color, halign, valign,
             margin_color, first_baseline);
         break;
@@ -227,6 +235,7 @@ void draw_oriented_text_box(
         nvgTranslate(vg, x, -y);
         draw_text_box(vg, 0, 0, width, height,
             left_margin, right_margin,
+            top_margin, bottom_margin,
             text, font, font_size, text_color, halign, valign,
             margin_color, first_baseline);
         nvgRestore(vg);
@@ -239,6 +248,7 @@ void draw_oriented_text_box(
         nvgTranslate(vg, -x, y);
         draw_text_box(vg, 0, 0, width, height,
             left_margin, right_margin,
+            top_margin, bottom_margin,
             text, font, font_size, text_color, halign, valign,
             margin_color, first_baseline);
         nvgRestore(vg);
@@ -251,6 +261,7 @@ void draw_oriented_text_box(
         nvgTranslate(vg, -x, -y);
         draw_text_box(vg, 0, 0, width, height,
             left_margin, right_margin,
+            top_margin, bottom_margin,
             text, font, font_size, text_color, halign, valign,
             margin_color, first_baseline);
         nvgRestore(vg);

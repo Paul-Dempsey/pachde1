@@ -41,6 +41,7 @@ struct PanelTone : ThemeModule
     Fader fader;
     float last_input_config{0.f};
     bool coppertone{false};
+    bool copper_connected{false};
     NVGcolor copper_color{COLOR_NONE};
     std::vector<int64_t> module_ids;
     PanelToneUi* ui{nullptr};
@@ -80,7 +81,8 @@ struct PanelToneUi : ModuleWidget, IThemeChange
     bool in_destroy{false};
     bool remove_pending{false};
     bool add_pending{false};
-
+    bool coppertoning{false};
+    PackedColor last_broadcast_color{colors::NoColor};
     PanelToneUi(PanelTone* module);
 
     void onDestroyPanelOverlay(PanelOverlay* removed);
@@ -92,6 +94,7 @@ struct PanelToneUi : ModuleWidget, IThemeChange
     void fade_overlays();
     void set_overlay_position(OverlayPosition pos);
     void set_overlay_color(PackedColor color);
+    void broadcast_overlay_color(PackedColor color);
     void add_overlays(const std::vector<ModuleWidget*>& module_widgets);
     void remove_overlays();
     std::vector<ModuleWidget*> get_applicable_module_widgets();
@@ -100,9 +103,7 @@ struct PanelToneUi : ModuleWidget, IThemeChange
     void set_applies_to(AppliesTo apply);
     void onChangeTheme(ChangedItem item) override;
 
-#ifdef HOT_SVG
     void onHoverKey(const HoverKeyEvent& e) override;
-#endif
     void appendContextMenu(Menu* menu) override ;
     void step() override;
 

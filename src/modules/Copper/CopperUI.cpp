@@ -227,7 +227,7 @@ const float sample_y2 = sample_y + sample_half_h;
 
 void CopperUi::draw(const DrawArgs& args)
 {
-    ModuleWidget::draw(args);
+    Base::draw(args);
     auto vg = args.vg;
     auto color = getColor();
     auto opaque_color = nvgTransRGBAf(color, 1.f);
@@ -310,6 +310,22 @@ void CopperUi::onChangeTheme(ChangedItem item)
     }
 }
 
+void CopperUi::onHoverKey(const HoverKeyEvent& e)
+{
+    if (!copper_module) return;
+
+    auto mods = e.mods & RACK_MOD_MASK;
+    switch (e.key) {
+    case GLFW_KEY_F2: {
+        if (e.action == GLFW_PRESS && (0 == mods)) {
+            copper_module->extending = !copper_module->extending;
+        }
+    } break;
+
+    }
+    Base::onHoverKey(e);
+}
+
 void CopperUi::step()
 {
     bool changed = theme_holder->pollRackThemeChanged();
@@ -337,7 +353,7 @@ void CopperUi::step()
             sl_picker->setHue(h);
         }
     }
-    ModuleWidget::step();
+    Base::step();
 }
 
 template <typename Self>
@@ -379,7 +395,7 @@ void CopperUi::appendContextMenu(rack::ui::Menu* menu)
                 AddColorItem<CopperUi>(this, menu, pco->name, pco->color, current);
             }
         }));
-    menu->addChild(createCheckMenuItem("Share color as Extender", "",
+    menu->addChild(createCheckMenuItem("Share color as Extender", "F2",
         [=]() { return copper_module->extending; },
         [=]() { copper_module->extending = !copper_module->extending; }
     ));

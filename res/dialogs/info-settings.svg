@@ -29,27 +29,29 @@
   <rect id="k:copr-r-actual" fill="#4a4b92" x="62" y="98" width="40" height="14" />
 </g>
 
-<g transform="translate(0,2)">
-<circle id="k:font-size" fill="#68a7e4" cx="38" cy="132" r="14" />
-<rect id="k:font-size-label" fill="#aaa" x="20"   y="148" width="36" height="14" />
-<rect id="k:font-btn" fill="none" stroke="#4bad4b" stroke-width=".75" x="66" y="125" width="40" height="14" />
-<rect id="k:font-label" fill="#aaa" x="7.5" y="164" width="200" height="10" />
+<circle id="k:font-size" fill="#68a7e4" cx="38" cy="134" r="14" />
+<rect id="k:font-size-label" fill="#aaa" x="20"   y="150" width="36" height="14" />
+<rect id="k:font-btn" fill="none" stroke="#4bad4b" stroke-width=".75" x="66" y="127" width="40" height="14" />
+<rect id="k:font-label" fill="#aaa" x="7.5" y="165" width="200" height="10" />
 
-<circle id="k:left-margin"  fill="#68a7e4" cx="140" cy="132" r="14" />
-<rect   id="k:L-label"      fill="#a0a0a0d0"  x="133"  y="148"  width="14" height="14" />
+<circle id="k:left-margin"  fill="#68a7e4" cx="140" cy="134" r="14" />
+<rect   id="k:L-label"      fill="#a0a0a0d0"  x="133"  y="150"  width="14" height="14" />
 
-<circle id="k:right-margin" fill="#68a7e4" cx="187" cy="132" r="14" />
-<rect   id="k:R-label"      fill="#a0a0a0d0"  x="180"  y="148"  width="14" height="14" />
-</g>
+<circle id="k:right-margin" fill="#68a7e4" cx="187" cy="134" r="14" />
+<rect   id="k:R-label"      fill="#a0a0a0d0"  x="180"  y="150"  width="14" height="14" />
 
-<xline fill="none" stroke="#fff" stroke-width="1" x1="110" y1="0" x2="110" y2="380" />
+<circle id="k:top-margin"  fill="#68a7e4" cx="140" cy="190" r="14" />
+<rect   id="k:T-label"      fill="#a0a0a0d0"  x="133"  y="206"  width="14" height="14" />
 
-<g transform="translate(70,176)">
+<circle id="k:bottom-margin" fill="#68a7e4" cx="187" cy="190" r="14" />
+<rect   id="k:B-label"      fill="#a0a0a0d0"  x="180"  y="206"  width="14" height="14" />
+
+<g transform="translate(15,176)">
   <circle id="k:panel-co"       fill="#d65cab" cx="17" cy="10" r="10" />
   <rect   id="k:panel-swatch"   fill="#d65cab"  x="8"  y="22" width="18" height="10" />
   <rect   id="k:panel-co-label" fill="#aaa" x="0" y="33" width="34" height="14" />
 </g>
-<g transform="translate(116,176)">
+<g transform="translate(55,176)">
   <circle id="k:text-co"     fill="#d65cab" cx="17" cy="10" r="10" />
   <rect   id="k:text-swatch" fill="#d65cab"  x="8"  y="22" width="18" height="10" />
   <rect   id="k:text-co-label"  fill="#aaa" x="0" y="33" width="34" height="14" />

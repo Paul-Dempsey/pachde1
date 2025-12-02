@@ -203,6 +203,21 @@ void CopperMiniUI::onChangeTheme(ChangedItem item)
         break;
     }
 }
+void CopperMiniUI::onHoverKey(const HoverKeyEvent& e)
+{
+    if (!copper_module) return;
+
+    auto mods = e.mods & RACK_MOD_MASK;
+    switch (e.key) {
+    case GLFW_KEY_F2: {
+        if (e.action == GLFW_PRESS && (0 == mods)) {
+            copper_module->extending = !copper_module->extending;
+        }
+    } break;
+
+    }
+    Base::onHoverKey(e);
+}
 
 void CopperMiniUI::step()
 {
@@ -250,7 +265,7 @@ void CopperMiniUI::appendContextMenu(rack::ui::Menu* menu)
         });
         menu->addChild(picker);
     }));
-    menu->addChild(createCheckMenuItem("Share color as Extender", "",
+    menu->addChild(createCheckMenuItem("Share color as Extender", "F2",
         [=]() { return copper_module->extending; },
         [=]() { copper_module->extending = !copper_module->extending; }
     ));
