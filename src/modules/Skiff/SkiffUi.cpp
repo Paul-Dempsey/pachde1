@@ -208,7 +208,7 @@ void SkiffUi::onChangeTheme(ChangedItem item) {
 }
 
 void SkiffUi::sync_latch_state() {
-    if (!my_module) return;
+    if (!alive()) return;
 
     derail_button->latched  = my_module->derailed;
     nopanel_button->latched = my_module->depaneled;
@@ -219,13 +219,13 @@ void SkiffUi::sync_latch_state() {
 }
 
 void SkiffUi::restore_rack() {
-    if (!my_module) return;
+    if (!alive()) return;
     my_module->set_defaults();
     from_module();
 }
 
 void SkiffUi::from_module() {
-    if (!my_module) return;
+    if (!alive()) return;
 
     screw_visibility(APP->scene->rack, !my_module->unscrewed);
     port_visibility(APP->scene->rack, !my_module->nojacks);
@@ -241,7 +241,7 @@ void SkiffUi::from_module() {
 }
 
 void SkiffUi::no_panels(bool depanel) {
-    if (!my_module) return;
+    if (!alive()) return;
 
     my_module->depaneled = depanel;
     panel_visibility(nullptr, !depanel);
@@ -249,14 +249,14 @@ void SkiffUi::no_panels(bool depanel) {
 }
 
 void SkiffUi::set_unscrewed(bool unscrewed) {
-    if (!my_module) return;
+    if (!alive()) return;
     my_module->unscrewed = unscrewed;
     screw_visibility(APP->scene->rack, !unscrewed);
     APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Unscrew, unscrewed));
 }
 
 void SkiffUi::derail(bool derail) {
-    if (!my_module) return;
+    if (!alive()) return;
 
     my_module->derailed = derail;
     set_rail_visible(!derail);
@@ -264,7 +264,7 @@ void SkiffUi::derail(bool derail) {
 }
 
 void SkiffUi::set_nojacks(bool nojacks) {
-    if (!my_module) return;
+    if (!alive()) return;
     my_module->nojacks = nojacks;
     port_visibility(APP->scene->rack, !nojacks);
     APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Nojack, nojacks));
@@ -272,14 +272,14 @@ void SkiffUi::set_nojacks(bool nojacks) {
 
 void SkiffUi::set_dark_ages(bool dark)
 {
-    if (!my_module) return;
+    if (!alive()) return;
     my_module->dark_ages = dark;
     light_visibility(APP->scene->rack, !dark);
     APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Darkness, dark));
 }
 
 void SkiffUi::set_calm_rack(bool calm) {
-    if (!my_module) return;
+    if (!alive()) return;
     my_module->calm = calm;
     calm_rack(calm);
     APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Calm, calm));
@@ -312,7 +312,7 @@ std::shared_ptr<window::Svg> SkiffUi::set_rail_svg(RailWidget* rail, const std::
 }
 
 void SkiffUi::set_alt_rail(const std::string& rail_name) {
-    if (!my_module || my_module->other_skiff) return;
+    if (!alive()) return;
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
     if (!rail) return;
 
@@ -357,12 +357,12 @@ void SkiffUi::set_alt_rail(const std::string& rail_name) {
 }
 
 void SkiffUi::pend_custom_rail() {
-    if (!my_module) return;
+    if (!alive()) return;
     request_custom_rail = true;
 }
 
 void SkiffUi::custom_rail() {
-    if (!module) return;
+    if (!alive()) return;
 
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
     if (!rail) return;
@@ -380,13 +380,14 @@ void SkiffUi::custom_rail() {
 }
 
 void SkiffUi::set_rail_theme(RailThemeSetting theme) {
+    if (!alive()) return;
     my_module->rail_theme = theme;
     set_alt_rail(my_module->rail);
 }
 
 void SkiffUi::onHoverKey(const HoverKeyEvent &e)
 {
-    if (!my_module) return;
+    if (!alive()) { Base::onHoverKey(e); return; }
     auto mods = e.mods & RACK_MOD_MASK;
     switch (e.key) {
 #ifdef HOT_SVG
@@ -425,7 +426,7 @@ void SkiffUi::onHoverKey(const HoverKeyEvent &e)
 
 void SkiffUi::step() {
     Base::step();
-    if (!my_module) return;
+    if (!alive()) return;
     if (request_custom_rail) {
         request_custom_rail = false;
         custom_rail();
@@ -446,7 +447,7 @@ void SkiffUi::draw(const DrawArgs& args) {
  }
 
 void SkiffUi::appendContextMenu(Menu* menu) {
-    if (!module) return;
+    if (!alive()) return;
 
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Skiff"));
     menu->addChild(createCheckMenuItem("Shouting buttons", "",

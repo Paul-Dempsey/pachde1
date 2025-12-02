@@ -77,6 +77,8 @@ struct SkiffUi : ModuleWidget, IThemeChange
     #endif
     SkiffUi(Skiff* module);
 
+    bool alive() { return my_module && !my_module->other_skiff; }
+
     TextButton* makeTextButton (
         std::map<std::string,::math::Rect>& bounds,
         const char* key,
