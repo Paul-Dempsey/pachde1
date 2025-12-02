@@ -13,6 +13,18 @@ using namespace svg_query;
 
 namespace pachde {
 
+struct ZeroCableAction: ::rack::history::ModuleAction {
+    float prev;
+    float next;
+    ZeroCableAction(int64_t module_id, float prev, float next) :
+        prev(prev), next(next)
+    {
+        moduleId = module_id;
+    }
+    void undo() override;
+    void redo() override;
+};
+
 struct Rui : ThemeModule
 {
     using Base = ThemeModule;
@@ -136,7 +148,7 @@ struct Rui : ThemeModule
         float v = param.getValue() * .01f;
         if (input.isConnected()) {
             float mod = trim.getValue() * .01f;
-            v = clamp(v + (input.getVoltage() * .1f) * mod, 0.f, 1.f);
+            v = clamp(v + ((input.getVoltage() * .1f) * mod));
         }
         setting = v;
     }
@@ -163,11 +175,12 @@ struct Rui : ThemeModule
         if (request_toggle_cable_opacity) {
             request_toggle_cable_opacity = false;
             float v = 0.f;
-            if (::rack::settings::cableOpacity < 1.f) {
-                v = (initialCableOpacity > 1.f) ? initialCableOpacity : 50.f;
+            if (::rack::settings::cableOpacity < .1f) {
+                v = (initialCableOpacity > .1f) ? initialCableOpacity : 50.f;
             }
+            APP->history->push(new ZeroCableAction(getId(), ::rack::settings::cableOpacity, v * .1f));
             getParam(Params::CableOpacity).setValue(v);
-            ::rack::settings::cableOpacity = v;
+            ::rack::settings::cableOpacity = v * .1f;
             return;
         }
 
@@ -176,6 +189,24 @@ struct Rui : ThemeModule
         }
     }
 };
+
+void ZeroCableAction::undo()
+{
+    auto rui_module = dynamic_cast<Rui*>(APP->engine->getModule(moduleId));
+    if (rui_module) {
+        rui_module->getParam(Rui::Params::CableOpacity).setValue(prev * 100.f);
+    }
+    ::rack::settings::cableOpacity = prev;
+}
+
+void ZeroCableAction::redo()
+{
+    auto rui_module = dynamic_cast<Rui*>(APP->engine->getModule(moduleId));
+    if (rui_module) {
+        rui_module->getParam(Rui::Params::CableOpacity).setValue(next * 100.f);
+    }
+    ::rack::settings::cableOpacity = next;
+}
 
 struct RuiSvg
 {
@@ -217,9 +248,11 @@ struct RuiUi : ModuleWidget, IThemeChange
 #define HOT_POSITION(name, kind, widget)
 #endif
 
+    bool alive() { return my_module && my_module->single; }
+
     void show_fluff(bool visible)
     {
-        if (my_module) my_module->fluff = visible;
+        if (alive()) my_module->fluff = visible;
         auto svg = window::Svg::load(RuiSvg::background());
         if (visible) {
             svg_query::showElements(svg, "fluff-");
@@ -230,7 +263,7 @@ struct RuiUi : ModuleWidget, IThemeChange
     }
 
     void toggle_cable_opacity() {
-        if (!my_module) return;
+        if (!alive()) return;
         my_module->request_toggle_cable_opacity = true;
     }
 
@@ -259,7 +292,7 @@ struct RuiUi : ModuleWidget, IThemeChange
 
         auto tiny_button = Center(createThemeSvgButton<TinyActionButton>(&my_svgs, bounds["k:zero"].getCenter()));
         HOT_POSITION("k:zero", HotPosKind::Center, tiny_button);
-        tiny_button->describe("Invisible cables");
+        tiny_button->describe("Invisible cables (F6)");
         tiny_button->set_handler([=](bool,bool){ toggle_cable_opacity(); });
         addChild(tiny_button);
 
@@ -320,7 +353,7 @@ struct RuiUi : ModuleWidget, IThemeChange
     }
 
     void toggle_play_pause() {
-        if (!my_module || !play_button) return;
+        if (!alive() || !play_button) return;
         ActionEvent e;
         e.context = new EventContext;
         play_button->onAction(e);
@@ -353,7 +386,7 @@ struct RuiUi : ModuleWidget, IThemeChange
 
     void onHoverKey(const HoverKeyEvent& e) override
     {
-        if (!my_module) return;
+        if (!alive()) return;
         auto mods = e.mods & RACK_MOD_MASK;
         switch (e.key) {
 
@@ -398,7 +431,7 @@ struct RuiUi : ModuleWidget, IThemeChange
     }
 
     void appendContextMenu(Menu* menu) override {
-        if (!module) return;
+        if (!alive()) return;
 
         menu->addChild(createMenuLabel<HamburgerTitle>("#d Rui"));
         if (my_module) {
@@ -415,6 +448,7 @@ struct RuiUi : ModuleWidget, IThemeChange
     }
 
 };
+
 }
 
 Model *modelRui = createModel<pachde::Rui, pachde::RuiUi>("pachde-rui");
