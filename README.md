@@ -4,19 +4,52 @@ The first VCV Rack plugin for pachde (#d).
 
 [![Build Status](https://github.com/Paul-Dempsey/pachde1/actions/workflows/build-plugin.yml/badge.svg)](https://github.com/Paul-Dempsey/pachde1/actions/workflows/build-plugin.yml)
 
-All pachde-One modules have Light, Dark, and High Contrast themes, and allow you to choose whether to follow the Rack **Use dark panels** option.
-Right click to choose a theme.
-They also come with caps on the screws for an elegant look.
+All pachde-One modules have Light, Dark, and High Contrast themes, and allow you to choose whether to follow the Rack UI theme or the _Use dark panels_ option.
+Right click to choose a theme and tracking option.
+If you want all the #d one modules to use a consistent theme, you can send the theme to all the peers in the patch at the time.
+
+#d One modules also come with caps on the screws for an elegant look.
 All screws are removable if you're more relaxed about your Rack and not worried about the panels falling out.
 
 - [Documentation](docs/index.md#pachde-one-modules-for-vcv-rack)
-
-- [Demo Patches on patchstorage](https://patchstorage.com/platform/vcv-rack/?search_query=pachde-One)
 
 - [Buy me a coffee](https://venmo.com/u/pcdempsey). *Thank you!*
 
   Donations go to helping fund continued development and hardware for testing and development. (I have a wish list :-). Venmo takes the smallest cut out of the payment systems I've found.\
   ![Buy pachde a coffee with VenMo](docs/images/VenMo.png)
+
+## Innovative ? user interface
+
+This update of **#d One** brings a number of possible innovations for a Rack module UIs.
+Most of these certainly depart from a strict hardware metaphor, which some may not prefer.
+Rack and it's modules themselves already depart from a strict hardware metaphor when convenient.
+No Eurorack hardware has a right click menu for the module, or it's knobs or switches.
+
+Here are some notable thigns to see in the **#d One** implementation.
+As soon as I've submitted **#d One 2.3** to the Rack library,
+I'll be updating the **[Rack dev notes (by pachde #d)](https://github.com/Paul-Dempsey/rack-dev-notes/blob/main/doc/index.md#dev-notes-for-vcv-rack)** with documentation, examples, and free-to-use reusable code for all of these (?) innovations:
+
+- Hamburger menus —
+  These provide context-sensitive menus appropriate for specific parts of a module,
+  reducing the size and complexity of the module menu, which can already get large and difficult to use.
+  In the end, not much of a difference from the right click menus for panels, knobs and switches.
+
+- Expanable/collapsible module (**FancyBox**) —
+  Instead of hunting for the right extender in the module browser, just expand the panel to show an extension with more jacks or options.
+  Recently I noticed another brand that provides buttons to insert selected extenders, which I think is a great idea.
+
+- Dialogs (**Info**) — Another tactic for making complex configurable easier than piling things into the module menu.
+  Turns out that making a dialog is really no more complicated or substantially different than creating the UI for a module.
+  **#d One** constructs dialogs much like a module widget, with an SVG base.
+  All the amenities mentioned below for iterating on a (themed) panel apply just the same
+
+- Runtime SVG theming —
+  Instead of creating (and maintaining) multiple versions of a panel or widget SVG, one for each theme, **#d One** applies a style sheet at runtime.
+  You can find examples of my new (_not-JSON_) SVG theming stylesheets in the `res/themes` folder.
+
+- SVG Hot-swap, and dynamic widget positiong — In dev builds, the new modules (and some of the old ones) support hot-swap panel Svgs, with runtime positioning based on placeholders in the SVG.
+  These together make a big difference for iterating on panel designs.
+  Oh, and when hot-swapping the SVGs, not only do you get a new panel graphic, and the widgets move to their new positions, but the themes are reloaded as well, so that one keystroke does it all for iterating on the look and feel of a panel design.
 
 ## Development builds
 

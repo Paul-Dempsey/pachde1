@@ -1,13 +1,7 @@
 # pachde1 TODO
 
 - nicer-looking tiny button?
-
-## Info
-
-Review Copper interaction - docs describe an "Interior" setting which does panel on the left and text on the right. Today, I'd look at using remote connections rather than extenders. See Copper notes on "sticky" extender for the idea, like CHEM has "kiss" to connect.
-
-Better to do Left-Copper and Right-Copper settings, more flexible than "interior".
-
+-
 ## Skiff
 
 - Undo for PackModules?
