@@ -26,6 +26,7 @@ json_t* Skiff::dataToJson() {
     set_json(root, "dark-ages", dark_ages);
     set_json(root, "theme", theme_name);
     set_json(root, "shouting", shouting);
+    set_json(root, "jack-shape", jack_shape_name(jack_shape));
     RailThemeSetting_to_json(root, rail_theme);
 
     return root;
@@ -42,8 +43,8 @@ void Skiff::dataFromJson(json_t* root) {
     depaneled   = get_json_bool(root, "depaneled", depaneled);
     dark_ages   = get_json_bool(root, "dark-ages", dark_ages);
     shouting    = get_json_bool(root, "shouting", shouting);
+    jack_shape  = parse_jack_shape(get_json_cstring(root, "jack-shape"));
     rail_theme  = RailThemeSetting_from_json(root);
-
 };
 
 void Skiff::random_settings() {

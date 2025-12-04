@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="33"
+   height="33"
+   viewBox="0 0 33 33"
+   version="1.0"
+   id="svg1"
+   sodipodi:docname="alt-Plug-Star.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#4f4f4f"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="54.3"
+     inkscape:cx="16.5"
+     inkscape:cy="16.5"
+     inkscape:current-layer="svg1" />
+  <path
+     sodipodi:type="star"
+     style="fill:#ffffff;fill-opacity:1;stroke-width:0.457112;stroke-opacity:0.2;paint-order:fill markers stroke"
+     id="path2"
+     inkscape:flatsided="false"
+     sodipodi:sides="7"
+     sodipodi:cx="9.81"
+     sodipodi:cy="8.78"
+     sodipodi:r1="8.13"
+     sodipodi:r2="10.7"
+     sodipodi:arg1="0.805"
+     sodipodi:arg2="1.25"
+     inkscape:rounded="0"
+     inkscape:randomized="0"
+     d="m 15.4,14.6 -2.2,4.3 -4.46,-2.1 -4.77,0.9 -1.13,-4.7 -3.68,-3.19 3.03,-3.87 0.17,-4.84 4.92,-0 3.92,-2.89 3.1,3.81 4.7,1.25 -1.1,4.8 2,4.47 z"
+     transform="matrix(1.1,-0.72,0.72,1.1,-0.682,14.2)" />
+</svg>

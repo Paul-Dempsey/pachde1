@@ -232,7 +232,7 @@ void SkiffUi::from_module() {
 
     screw_visibility(APP->scene->rack, !my_module->unscrewed);
     port_visibility(APP->scene->rack, !my_module->nojacks);
-    calm_rack(my_module->calm);
+    calm_rack(my_module->calm, my_module->jack_shape);
     panel_visibility(nullptr, !my_module->depaneled);
     light_visibility(APP->scene->rack, !my_module->dark_ages);
     set_alt_rail(my_module->rail);
@@ -294,7 +294,7 @@ void SkiffUi::set_dark_ages(bool dark)
 void SkiffUi::set_calm_rack(bool calm) {
     if (!alive()) return;
     my_module->calm = calm;
-    calm_rack(calm);
+    calm_rack(calm, my_module->jack_shape);
     if (!no_history) {
         APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Calm, calm));
     }
@@ -474,6 +474,24 @@ void SkiffUi::appendContextMenu(Menu* menu) {
             shouting_buttons(my_module->shouting);
         }
     ));
+
+    menu->addChild(createMenuLabel<FancyLabel>("Calm jack shape"));
+
+    auto entry = new OptionMenuEntry(createMenuItem("Plain", "",
+        [=](){ my_module->jack_shape = JackShape::Stub; }));
+    entry->selected = ( JackShape::Stub == my_module->jack_shape);
+    menu->addChild(entry);
+
+    entry = new OptionMenuEntry(createMenuItem("Heart", "",
+        [=](){ my_module->jack_shape = JackShape::Heart; }));
+    entry->selected = ( JackShape::Heart == my_module->jack_shape);
+    menu->addChild(entry);
+
+    entry = new OptionMenuEntry(createMenuItem("Splat", "",
+        [=](){ my_module->jack_shape = JackShape::Splat; }));
+    entry->selected = ( JackShape::Splat == my_module->jack_shape);
+    menu->addChild(entry);
+
     menu->addChild(createMenuLabel<FancyLabel>("theme"));
     AddThemeMenu(menu, this, theme_holder, false, false, false);
 }
@@ -510,7 +528,7 @@ void BinaryAction::set_desired_state(bool state) {
         break;
     case BinaryActionId::Calm:
         if (skiff_module) { skiff_module->calm = state; }
-        calm_rack(state);
+        calm_rack(state, skiff_module ? skiff_module->jack_shape : JackShape::Stub);
         break;
     case BinaryActionId::Unscrew:
         if (skiff_module) { skiff_module->unscrewed = state; }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg x="0" y="0" width="15.8" height="15.8" viewBox="0 0 15.8 15.8" version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+
+<linearGradient id="outer" x1="7.9" y1="0" x2="7.9" y2="15.8" gradientUnits="userSpaceOnUse" >
+	<stop offset="0" stop-color="#0A0A0A" />
+	<stop offset="1" stop-color="#FFFEFE" />
+</linearGradient>
+
+<linearGradient id="inner" x1="7.9" y1="2.31" x2="7.9" y2="11.9" gradientUnits="userSpaceOnUse" >
+	<stop offset="0" stop-color="#706C6C" />
+	<stop offset="1" stop-color="#FFFEFE" />
+</linearGradient>
+
+<xcircle opacity="0.32" fill="url(#outer)" cx="7.9" cy="7.9" r="7.9" />
+<circle fill="#E0E0E0" cx="7.9" cy="7.9" r="6.465" />
+<xcircle fill="url(#inner)" cx="7.9" cy="7.9" r="5.59" />
+<circle cx="7.9" cy="7.9" r="4.8" />
+</svg>

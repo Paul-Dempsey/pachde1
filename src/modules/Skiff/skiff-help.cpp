@@ -64,7 +64,27 @@ void panel_visibility(::rack::widget::Widget *exclude, bool visible) {
     }
 }
 
-void calm_rack(bool calm)
+const char *jack_shape_name(JackShape shape)
+{
+    switch (shape) {
+    default:
+    case JackShape::Stub: return "Plain";
+    case JackShape::Heart: return "Heart";
+    case JackShape::Splat: return "Splat";
+    }
+}
+
+JackShape parse_jack_shape(const char * text) {
+    if (!text || !*text) return JackShape::Stub;
+    switch (*text) {
+    default:
+    case 'P': case 'p': return JackShape::Stub;
+    case 'H': case 'h': return JackShape::Heart;
+    case 'S': case 's': return JackShape::Splat;
+    }
+}
+
+void calm_rack(bool calm, JackShape shape)
 {
     if (calm) {
         replace_system_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg", "res/calm/alt-RoundBlackKnob_bg.svg");
@@ -84,6 +104,20 @@ void calm_rack(bool calm)
         replace_system_svg("res/ComponentLibrary/PJ301M-dark.svg", "res/calm/alt-PJ301M-dark.svg");
         replace_system_svg("res/ComponentLibrary/PJ301M.svg", "res/calm/alt-PJ301M.svg");
         replace_system_svg("res/ComponentLibrary/PJ3410.svg", "res/calm/alt-PJ3410.svg");
+        // jacks
+        switch (shape) {
+        default:
+        case JackShape::Stub:
+            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug.svg");
+            break;
+        case JackShape::Heart:
+            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug-Heart.svg");
+            break;
+        case JackShape::Splat:
+            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug-Star.svg");
+            break;
+        }
+        replace_system_svg("res/ComponentLibrary/PlugPort.svg", "res/calm/alt-PlugPort.svg");
     } else {
         original_system_svg("res/ComponentLibrary/RoundBlackKnob_bg.svg");
         original_system_svg("res/ComponentLibrary/RoundBlackKnob.svg");
@@ -102,6 +136,9 @@ void calm_rack(bool calm)
         original_system_svg("res/ComponentLibrary/PJ301M-dark.svg");
         original_system_svg("res/ComponentLibrary/PJ301M.svg");
         original_system_svg("res/ComponentLibrary/PJ3410.svg");
+        // jacks
+        original_system_svg("res/ComponentLibrary/Plug.svg");
+        original_system_svg("res/ComponentLibrary/PlugPort.svg");
     }
     APP->scene->onDirty(rack::widget::Widget::DirtyEvent{});
 }

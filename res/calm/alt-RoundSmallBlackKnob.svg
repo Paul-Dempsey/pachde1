@@ -3,5 +3,5 @@
   version="1.1" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" >
   <rect fill="#e6e6e6" x="10.465" y="2.5" width="1.75" height="8.86" />
   <circle fill="#e6e6e6" cx="11.34" cy="11.34" r="0.875"/>
-  <circle fill="none" stroke="#000000" stroke-width="2.48" cx="11.34" cy="11.34" r="10.15" />
+  <circle fill="none" stroke="#000000" stroke-width="2.48" stroke-opacity=".35"  cx="11.34" cy="11.34" r="10.15" />
 </svg>

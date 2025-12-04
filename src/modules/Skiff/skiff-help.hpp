@@ -21,7 +21,11 @@ void screw_visibility(::rack::widget::Widget* root_widget, bool visible);
 void port_visibility(::rack::widget::Widget* root_widget, bool visible);
 void light_visibility(::rack::widget::Widget* root_widget, bool visible);
 void panel_visibility(::rack::widget::Widget* exclude, bool visible);
-void calm_rack(bool calm);
+
+enum class JackShape { Stub, Heart, Splat };
+const char * jack_shape_name(JackShape shape);
+JackShape parse_jack_shape(const char * text);
+void calm_rack(bool calm, JackShape shape = JackShape::Stub);
 
 bool toggle_rail(); // returns visibility after toggling
 void set_rail_visible(bool visible);

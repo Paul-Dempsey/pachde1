@@ -3,5 +3,5 @@
 version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
 <rect id="%skiff%marker%" fill="#e6e6e6" x="8.125" y="1.5" width="1.75" height="7.2" />
 <circle fill="#e6e6e6" cx="9" cy="9" r="0.875"/>
-<circle fill="none" stroke="#000000" stroke-width="2" cx="9" cy="9" r="7.5" />
+<circle fill="none" stroke="#000000" stroke-width="2" stroke-opacity=".35"  cx="9" cy="9" r="7.5" />
 </svg>

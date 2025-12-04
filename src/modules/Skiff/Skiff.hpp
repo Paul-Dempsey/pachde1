@@ -9,6 +9,7 @@ using namespace svg_query;
 #include "widgets/text-button.hpp"
 using namespace widgetry;
 #include "rails.hpp"
+#include "skiff-help.hpp"
 
 namespace pachde {
 
@@ -28,6 +29,7 @@ struct Skiff : ThemeModule
     bool nojacks{false};
     bool dark_ages{false};
     bool shouting{true};
+    JackShape jack_shape{JackShape::Stub};
     std::string theme_name;
     RailThemeSetting rail_theme;
 

@@ -4,6 +4,6 @@
 <g>
   <rect fill="#e6e6e6" x="21.625" y="2.5" width="1.75" height="20" />
   <circle fill="#e6e6e6" cx="22.5" cy="22.5" r="0.875"/>
-  <circle fill="none" stroke="#000000" stroke-width="3.375" cx="22.5" cy="22.5" r="20.8125" />
+  <circle fill="none" stroke="#000000" stroke-width="3.375" stroke-opacity=".35" cx="22.5" cy="22.5" r="20.8125" />
 </g>
 </svg>
