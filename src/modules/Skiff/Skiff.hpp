@@ -59,7 +59,7 @@ struct SkiffUi : ModuleWidget, IThemeChange
     SvgCache my_svgs;
 
     bool request_custom_rail{false};
-
+    bool no_history{false}; // suppress undo actions (e.g. during creation)
     RailMenu* ham{nullptr};
     TextButton* derail_button{nullptr};
     TextButton* nopanel_button{nullptr};

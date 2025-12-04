@@ -152,7 +152,10 @@ SkiffUi::SkiffUi(Skiff* module) : my_module(module) {
 
     shouting_buttons(my_module ? my_module->shouting : true);
     my_svgs.changeTheme(svg_theme);
+
+    no_history = true;
     from_module();
+    no_history = false;
 }
 
 TextButton* SkiffUi::makeTextButton (
@@ -245,14 +248,18 @@ void SkiffUi::no_panels(bool depanel) {
 
     my_module->depaneled = depanel;
     panel_visibility(nullptr, !depanel);
-    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Depanel, depanel));
+    if (!no_history) {
+        APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Depanel, depanel));
+    }
 }
 
 void SkiffUi::set_unscrewed(bool unscrewed) {
     if (!alive()) return;
     my_module->unscrewed = unscrewed;
     screw_visibility(APP->scene->rack, !unscrewed);
-    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Unscrew, unscrewed));
+    if (!no_history) {
+        APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Unscrew, unscrewed));
+    }
 }
 
 void SkiffUi::derail(bool derail) {
@@ -260,14 +267,18 @@ void SkiffUi::derail(bool derail) {
 
     my_module->derailed = derail;
     set_rail_visible(!derail);
-    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Derail, derail));
+    if (!no_history) {
+        APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Derail, derail));
+    }
 }
 
 void SkiffUi::set_nojacks(bool nojacks) {
     if (!alive()) return;
     my_module->nojacks = nojacks;
     port_visibility(APP->scene->rack, !nojacks);
-    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Nojack, nojacks));
+    if (!no_history) {
+        APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Nojack, nojacks));
+    }
 }
 
 void SkiffUi::set_dark_ages(bool dark)
@@ -275,14 +286,18 @@ void SkiffUi::set_dark_ages(bool dark)
     if (!alive()) return;
     my_module->dark_ages = dark;
     light_visibility(APP->scene->rack, !dark);
-    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Darkness, dark));
+    if (!no_history) {
+        APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Darkness, dark));
+    }
 }
 
 void SkiffUi::set_calm_rack(bool calm) {
     if (!alive()) return;
     my_module->calm = calm;
     calm_rack(calm);
-    APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Calm, calm));
+    if (!no_history) {
+        APP->history->push(new BinaryAction(my_module->getId(), BinaryActionId::Calm, calm));
+    }
 }
 
 void SkiffUi::recover_rack_rail() {
@@ -316,7 +331,9 @@ void SkiffUi::set_alt_rail(const std::string& rail_name) {
     auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
     if (!rail) return;
 
-    APP->history->push(new RailAction(my_module->getId(), my_module->rail, rail_name));
+    if (!no_history) {
+        APP->history->push(new RailAction(my_module->getId(), my_module->rail, rail_name));
+    }
 
     auto ext = system::getExtension(rail_name);
     if (ext.size()) { // custom
