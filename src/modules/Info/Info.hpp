@@ -6,10 +6,14 @@
 #include "resizable.hpp"
 #include "info_settings.hpp"
 #include "info_symbol.hpp"
+#include "info-edit.hpp"
+
 using namespace ::rack;
 namespace pachde {
 
 enum CopperTarget { Panel, Text, None, First = Panel, Last = None };
+struct InfoModuleWidget;
+struct InfoEdit;
 
 struct InfoModule : ResizableModule
 {
@@ -70,14 +74,17 @@ struct InfoModule : ResizableModule
 
 struct InfoPanel : Widget
 {
-    InfoModule* module{nullptr};;
+    using Base = Widget;
+
+    InfoModule* info_module{nullptr};
+    InfoModuleWidget* ui{nullptr};
     InfoSettings* settings{nullptr};;
     ThemeBase* theme_holder{nullptr};
     bool preview{false};
     PackedColor panel{colors::G80};
     PackedColor text_color{colors::G20};
 
-    InfoPanel(InfoModule* module, InfoSettings* settings, ThemeBase* theme, Vec size);
+    InfoPanel(InfoModuleWidget* info, InfoSettings* settings, ThemeBase* theme, Vec size);
 
     void fetchColors();
     void showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, const std::string& text);
@@ -94,12 +101,15 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
     using Base = ModuleWidget;
 
     InfoModule* my_module{nullptr};
-    InfoSymbol* info_symbol{nullptr};
-    InfoPanel* panel{nullptr};
     ThemeBase* theme_holder{nullptr};
     InfoSettings* settings{nullptr};
+
+    InfoPanel* panel{nullptr};
+    InfoSymbol* info_symbol{nullptr};
+    InfoEdit* simple_edit{nullptr};
     widgetry::LogoWidget* logo{nullptr};
 
+    explicit InfoModuleWidget(InfoModule* module);
     virtual ~InfoModuleWidget() {
         if (!module) {
             delete settings;
@@ -107,7 +117,8 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
         }
     }
 
-    explicit InfoModuleWidget(InfoModule* module);
+    // on-panel editing
+    bool editing();
     void addResizeHandles();
     void applyScrews(bool screws);
     void addScrews() ;

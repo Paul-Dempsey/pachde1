@@ -13,8 +13,7 @@ using namespace widgetry;
 
 namespace pachde {
 
-InfoModuleWidget::InfoModuleWidget(InfoModule* module)
-{
+InfoModuleWidget::InfoModuleWidget(InfoModule* module) {
     my_module = module;
     if (module) {
         box.size = Vec(module->width * RACK_GRID_WIDTH, RACK_GRID_HEIGHT);
@@ -30,6 +29,10 @@ InfoModuleWidget::InfoModuleWidget(InfoModule* module)
     theme_holder->setNotify(this);
 }
 
+bool InfoModuleWidget::editing() {
+    return simple_edit && simple_edit->editing();
+}
+
 void InfoModuleWidget::addResizeHandles()
 {
     if (!my_module) return;
@@ -42,8 +45,7 @@ void InfoModuleWidget::addResizeHandles()
     addChild(handle);
 }
 
-void InfoModuleWidget::onChangeTheme(ChangedItem item) // override
-{
+void InfoModuleWidget::onChangeTheme(ChangedItem item) {
     switch (item) {
     case ChangedItem::Theme:
         settings->setTheme(theme_holder->getTheme());
@@ -59,25 +61,7 @@ void InfoModuleWidget::onChangeTheme(ChangedItem item) // override
     }
 }
 
-void InfoModuleWidget::onHoverKey(const HoverKeyEvent &e)
-{
-    if (!module) return;
-
-    auto mods = e.mods & RACK_MOD_MASK;
-    switch (e.key) {
-    case GLFW_KEY_F2: {
-        if (e.action == GLFW_PRESS && (0 == mods)) {
-            show_settings_dialog(this);
-        }
-    } break;
-
-    }
-    Base::onHoverKey(e);
-}
-
-void InfoModuleWidget::applyScrews(bool screws)
-{
-    //info_theme->setScrews(screws);
+void InfoModuleWidget::applyScrews(bool screws) {
     if (screws) {
         addScrews();
     } else {
@@ -85,18 +69,16 @@ void InfoModuleWidget::applyScrews(bool screws)
     }
 }
 
-void InfoModuleWidget::addScrews()
-{
+void InfoModuleWidget::addScrews() {
     if (HaveScrewChildren(this)) return;
     AddScrewCaps(this, theme_holder->getTheme(), theme_holder->getMainColor(), ScrewAlign::SCREWS_OUTSIDE, WhichScrew::ALL_SCREWS);
 }
 
-void InfoModuleWidget::applyThemeSetting(ThemeSetting setting)
-{
+void InfoModuleWidget::applyThemeSetting(ThemeSetting setting) {
     theme_holder->setThemeSetting(setting);
     settings->setTheme(theme_holder->getTheme());
     if (children.empty()) {
-        panel = new InfoPanel(my_module, settings, theme_holder, box.size);
+        panel = new InfoPanel(this, settings, theme_holder, box.size);
         setPanel(panel);
         addChildBottom(new AntiPanel()); // fake out Skiff dePanel
         addResizeHandles();
@@ -105,8 +87,17 @@ void InfoModuleWidget::applyThemeSetting(ThemeSetting setting)
         }
 
         info_symbol = Center(createThemeWidget<InfoSymbol>(theme_holder->getTheme(), Vec(box.size.x*.5f, 7.5f)));
-        info_symbol->set_handler([=](){ show_settings_dialog(this); });
+        info_symbol->set_handler([=](){
+            if (editing()) {
+                simple_edit->close();
+            }
+            show_settings_dialog(this);
+        });
         addChild(info_symbol);
+
+        if (my_module) {
+            addChild(simple_edit = new InfoEdit(this));
+        }
 
         logo = new LogoWidget(theme_holder->getTheme(), .18f);
         logo->box.pos = Vec(box.size.x*.5f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH + 7.5f);
@@ -116,12 +107,28 @@ void InfoModuleWidget::applyThemeSetting(ThemeSetting setting)
     }
 }
 
-void InfoModuleWidget::step()
-{
+void InfoModuleWidget::onHoverKey(const HoverKeyEvent &e) {
+    if (!module) return;
+
+    auto mods = e.mods & RACK_MOD_MASK;
+    switch (e.key) {
+    case GLFW_KEY_F2: {
+        if (e.action == GLFW_PRESS && (0 == mods)) {
+            if (editing()) {
+                simple_edit->close();
+            }
+            show_settings_dialog(this);
+        }
+    } break;
+
+    }
+    Base::onHoverKey(e);
+}
+
+void InfoModuleWidget::step() {
     bool changed = theme_holder->pollRackThemeChanged();
 
-    if (my_module)
-    {
+    if (my_module) {
         box.size.x = my_module->width * RACK_GRID_WIDTH;
         // sync with module for change from presets
         if (!changed && my_module->isDirty()) {
@@ -144,10 +151,8 @@ void InfoModuleWidget::step()
 
 // ----  Menu  --------------------------------------------------------------
 
-void InfoModuleWidget::appendContextMenu(Menu *menu)
-{
-    if (!my_module)
-        return;
+void InfoModuleWidget::appendContextMenu(Menu *menu) {
+    if (!my_module) return;
 
     menu->addChild(createMenuLabel<HamburgerTitle>("#d Info"));
 

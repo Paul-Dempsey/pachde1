@@ -7,8 +7,7 @@
 
 namespace pachde {
 
-InfoModule::InfoModule()
-{
+InfoModule::InfoModule() {
     settings = new InfoSettings();
     minWidth = 2;
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -39,16 +38,14 @@ InfoModule::InfoModule()
     });
 }
 
-void InfoModule::onReset(const ResetEvent& e) //override
-{
+void InfoModule::onReset(const ResetEvent& e) {
     dirty_settings = true;
     setLeftCopperTarget(CopperTarget::Panel);
     setRightCopperTarget(CopperTarget::Text);
     if (settings) { settings->reset(); }
 }
 
-void InfoModule::onRandomize(const RandomizeEvent& e) //override
-{
+void InfoModule::onRandomize(const RandomizeEvent& e) {
     setLeftCopperTarget(static_cast<CopperTarget>(random::get<uint32_t>() % 3));
     do {
         setRightCopperTarget(static_cast<CopperTarget>(random::get<uint32_t>() % 3));
@@ -57,8 +54,7 @@ void InfoModule::onRandomize(const RandomizeEvent& e) //override
     dirty_settings = true;
 }
 
-json_t* InfoModule::dataToJson() //override
-{
+json_t* InfoModule::dataToJson() {
     json_t* root = Base::dataToJson();
     settings->save(root);
     set_json(root, "text", text);
@@ -67,8 +63,7 @@ json_t* InfoModule::dataToJson() //override
     return root;
 }
 
-void InfoModule::dataFromJson(json_t *root) //override
-{
+void InfoModule::dataFromJson(json_t *root) {
     Base::dataFromJson(root);
     settings->load(root);
     text = get_json_string(root, "text");
@@ -96,8 +91,7 @@ InfoSettings* InfoModule::getSettings() {
     return settings;
 }
 
-bool InfoModule::expanderColor(rack::engine::Module::Expander& expander, NVGcolor& result)
-{
+bool InfoModule::expanderColor(rack::engine::Module::Expander& expander, NVGcolor& result) {
     if (expander.module && (expander.module->model == modelCopper || expander.module->model == modelCopperMini)) {
         auto copper = dynamic_cast<IHaveColor*>(expander.module);
         if (copper && copper->colorExtenderEnabled()) {
@@ -108,8 +102,7 @@ bool InfoModule::expanderColor(rack::engine::Module::Expander& expander, NVGcolo
     return false;
 }
 
-void InfoModule::process(const ProcessArgs &args)
-{
+void InfoModule::process(const ProcessArgs &args) {
     if (settings && (0 == ((args.frame + getId()) % 53))) {
         settings->setHorizontalAlignment((HAlign)round(getParam(P_HAlign).getValue()));
         settings->setVerticalAlignment((VAlign)round(getParam(P_VAlign).getValue()));

@@ -19,7 +19,7 @@ struct InfoSymbol: OpaqueWidget, ISetTheme
 
     InfoSymbol() {
         box.size.x = box.size.y = 15.f;
-        describe("Info - click for Text options");
+        describe("Info: (F2) Click for Text options");
     }
 
     void ensureTipHolder() { if (!tip_holder) { tip_holder = new TipHolder(); } }

@@ -5,26 +5,27 @@ using namespace widgetry;
 
 namespace pachde {
 
-InfoPanel::InfoPanel(InfoModule* module, InfoSettings* info, ThemeBase* theme, Vec size)
+InfoPanel::InfoPanel(InfoModuleWidget* info, InfoSettings* settings, ThemeBase* theme, Vec size) :
+    info_module(info->my_module),
+    ui(info),
+    settings(settings),
+    theme_holder(theme),
+    preview(nullptr == info->my_module)
 {
-    this->module = module;
-    preview = !module;
-    settings = info;
-    theme_holder = theme;
     box.size = size;
 }
 
 void InfoPanel::fetchColors()
 {
-    if (!module) return;
+    if (!info_module) return;
 
     panel = settings->getDisplayPanelColor();
     text_color = settings->getDisplayTextColor();
 
     NVGcolor color;
-    if (module->getLeftCopperTarget() != CopperTarget::None) {
-        if (module->leftExpanderColor(color)) {
-            switch (module->getLeftCopperTarget()) {
+    if (info_module->getLeftCopperTarget() != CopperTarget::None) {
+        if (info_module->leftExpanderColor(color)) {
+            switch (info_module->getLeftCopperTarget()) {
             case CopperTarget::Panel:
                 panel = toPacked(color);
                 theme_holder->setMainColor(panel);
@@ -38,9 +39,9 @@ void InfoPanel::fetchColors()
             }
         }
     }
-    if (module->getRightCopperTarget() != CopperTarget::None) {
-        if (module->rightExpanderColor(color)) {
-            switch (module->getRightCopperTarget()) {
+    if (info_module->getRightCopperTarget() != CopperTarget::None) {
+        if (info_module->rightExpanderColor(color)) {
+            switch (info_module->getRightCopperTarget()) {
             case CopperTarget::Panel:
                 panel = toPacked(color);
                 theme_holder->setMainColor(panel);
@@ -106,14 +107,14 @@ void InfoPanel::showText(const DrawArgs &args, std::shared_ptr<rack::window::Fon
 #if DEV_BUILD
     //draw_margins(args, box, settings);
 #endif
-    auto font_size = module ? settings->getFontSize() : 60;
-    auto halign = module ? settings->getHorizontalAlignment() : HAlign::Center;
-    auto valign = module ? settings->getVerticalAlignment() : VAlign::Middle;
-    Orientation orientation = module ? settings->getOrientation() : Orientation::Up;
-    float left_margin = module ? settings->left_margin : 7.5f;
-    float right_margin = module ? settings->right_margin : 7.5f;
-    float top_margin = module ? settings->top_margin : 7.5f;
-    float bottom_margin = module ? settings->bottom_margin : 7.5f;
+    auto font_size = preview ? 60.f : settings->getFontSize();
+    auto halign = preview ? HAlign::Center : settings->getHorizontalAlignment();
+    auto valign = preview ? VAlign::Middle : settings->getVerticalAlignment();
+    Orientation orientation = preview ? Orientation::Up : settings->getOrientation();
+    float left_margin   = preview ? 7.5f : settings->left_margin;
+    float right_margin  = preview ? 7.5f : settings->right_margin;
+    float top_margin    = preview ? 7.5f : settings->top_margin;
+    float bottom_margin = preview ? 7.5f : settings->bottom_margin;
 
     draw_oriented_text_box(
         args.vg, box,
@@ -137,7 +138,7 @@ void InfoPanel::drawError(const DrawArgs &args)
 
 void InfoPanel::drawText(const DrawArgs &args)
 {
-    std::string text = module ? module->text : "#d Info";
+    std::string text = preview ? "#d Info" : info_module->text;
     if (!text.empty()) {
         auto font = settings->getFont();
         if (!FontOk(font)) {
@@ -154,6 +155,7 @@ void InfoPanel::drawText(const DrawArgs &args)
 
 void InfoPanel::drawLayer(const DrawArgs &args, int layer)
 {
+    if (ui->editing()) Base::drawLayer(args, layer);
     if (layer == 1 && settings->getBrilliant()) {
         drawText(args);
     }
@@ -166,14 +168,14 @@ void InfoPanel::draw(const DrawArgs &args)
     nvgFillColor(args.vg, fromPacked(panel));
     nvgFill(args.vg);
 
-    if (!settings->getBrilliant()) {
+    if (!settings->getBrilliant() && !ui->editing()) {
         drawText(args);
     }
 
     if (preview) {
         DrawLogo(args.vg, box.size.x*.5-30.0f, 35.f, Overlay(COLOR_BRAND), 4.25f);
     }
-    Widget::draw(args);
+    Base::draw(args);
 }
 
 }
