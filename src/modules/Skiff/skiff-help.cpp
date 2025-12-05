@@ -68,9 +68,12 @@ const char *jack_shape_name(JackShape shape)
 {
     switch (shape) {
     default:
-    case JackShape::Stub: return "Plain";
-    case JackShape::Heart: return "Heart";
-    case JackShape::Splat: return "Splat";
+    case JackShape::Stub:     return "Plain";
+    case JackShape::Spades:   return "Spades";
+    case JackShape::Diamonds: return "Diamonds";
+    case JackShape::Hearts:   return "Hearts";
+    case JackShape::Clubs:    return "Clubs";
+    case JackShape::Splat:    return "Splat";
     }
 }
 
@@ -78,9 +81,22 @@ JackShape parse_jack_shape(const char * text) {
     if (!text || !*text) return JackShape::Stub;
     switch (*text) {
     default:
+    case 'C': case 'c': return JackShape::Clubs;
+    case 'D': case 'd': return JackShape::Diamonds;
     case 'P': case 'p': return JackShape::Stub;
-    case 'H': case 'h': return JackShape::Heart;
-    case 'S': case 's': return JackShape::Splat;
+    case 'H': case 'h': return JackShape::Hearts;
+    case 'S': case 's':
+        switch (text[1]) {
+            default: return JackShape::Stub;
+            case 'P': case 'p': {
+                switch (text[2]) {
+                default: return JackShape::Stub;
+                case 'A': case 'a': return JackShape::Spades;
+                case 'L': case 'l': return JackShape::Splat;
+                }
+            } break;
+        }
+        break;
     }
 }
 
@@ -110,11 +126,20 @@ void calm_rack(bool calm, JackShape shape)
         case JackShape::Stub:
             replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug.svg");
             break;
-        case JackShape::Heart:
-            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug-Heart.svg");
+        case JackShape::Spades:
+            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug-Spades.svg");
+            break;
+        case JackShape::Diamonds:
+            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug-Diamonds.svg");
+            break;
+        case JackShape::Hearts:
+            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug-Hearts.svg");
+            break;
+        case JackShape::Clubs:
+            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug-Clubs.svg");
             break;
         case JackShape::Splat:
-            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug-Star.svg");
+            replace_system_svg("res/ComponentLibrary/Plug.svg", "res/calm/alt-Plug-Splat.svg");
             break;
         }
         replace_system_svg("res/ComponentLibrary/PlugPort.svg", "res/calm/alt-PlugPort.svg");

@@ -482,9 +482,24 @@ void SkiffUi::appendContextMenu(Menu* menu) {
     entry->selected = ( JackShape::Stub == my_module->jack_shape);
     menu->addChild(entry);
 
-    entry = new OptionMenuEntry(createMenuItem("Heart", "",
-        [=](){ my_module->jack_shape = JackShape::Heart; }));
-    entry->selected = ( JackShape::Heart == my_module->jack_shape);
+    entry = new OptionMenuEntry(createMenuItem("Spades", "",
+        [=](){ my_module->jack_shape = JackShape::Spades; }));
+    entry->selected = ( JackShape::Spades == my_module->jack_shape);
+    menu->addChild(entry);
+
+    entry = new OptionMenuEntry(createMenuItem("Hearts", "",
+        [=](){ my_module->jack_shape = JackShape::Hearts; }));
+    entry->selected = ( JackShape::Hearts == my_module->jack_shape);
+    menu->addChild(entry);
+
+    entry = new OptionMenuEntry(createMenuItem("Diamonds", "",
+        [=](){ my_module->jack_shape = JackShape::Diamonds; }));
+    entry->selected = ( JackShape::Diamonds == my_module->jack_shape);
+    menu->addChild(entry);
+
+    entry = new OptionMenuEntry(createMenuItem("Clubs", "",
+        [=](){ my_module->jack_shape = JackShape::Clubs; }));
+    entry->selected = ( JackShape::Clubs == my_module->jack_shape);
     menu->addChild(entry);
 
     entry = new OptionMenuEntry(createMenuItem("Splat", "",
