@@ -45,6 +45,9 @@ void Skiff::dataFromJson(json_t* root) {
     shouting    = get_json_bool(root, "shouting", shouting);
     jack_shape  = parse_jack_shape(get_json_cstring(root, "jack-shape"));
     rail_theme  = RailThemeSetting_from_json(root);
+    if (ui) {
+        ui->from_module();
+    }
 };
 
 void Skiff::random_settings() {
