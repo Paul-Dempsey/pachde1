@@ -6,17 +6,23 @@ Here are some samples with Light, Dark and High Contrast themes, and selected op
 
 ![Info panel with themes](./images/Info.png)
 
-Info is resizable — Drag the left and right edges when the overlay appears under the cursor.
+Info is resizable — Drag the left and right edges when the resize overlay appears under the cursor.
+
+To edit the text, just click on the panel interior to enter text editing mode, then click where you want to add text.
+Press **ESC** or click the _Close_ box to stop editing.
+
+For options to change the font, font size, margins, text orientation, panel and text colors, and Copper connections,
+click the **i** icon, or press **F2**. It's also in the right click menu.
 
 ## Options
 
-In 2.3, the available options for displaying taext have been expanded and are now set in the _Text options_ dialog box.
-You can open the dialog from the right click menu, or click the _Info_ symbol in the title bar.
+In 2.3, the available options for displaying text have been expanded and are now set in the _Text options_ dialog box.
+You can open the dialog from the right click menu, press **F2**, or click the _Info_ symbol in the title bar.
 
 ![Info: Text options dialog box](./images/Info-text-options.png)
 
-The dialog is offset from the panel so it doesn't completely obscure the module.
-It shows a 1/4-scale preview of the text formatting on the upper right.
+The dialog is offset from the panel so it doesn't completely obscure the module, and you can see changes as you make them.
+There's a live 1/4-scale preview of the result on the upper right.
 
 Alignment, orientation, and Copper options are set with the switches on the left:
 
