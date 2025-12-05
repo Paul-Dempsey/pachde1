@@ -5,12 +5,12 @@
   "params": [],
   "data": {
     "screws": false,
-    "rail": "Gradient",
+    "rail": "Rack",
     "unscrewed": true,
-    "no-jacks": false,
+    "no-jacks": true,
     "calm": true,
-    "derailed": false,
-    "depaneled": false,
+    "derailed": true,
+    "depaneled": true,
     "dark-ages": false,
     "jack-shape": "Plain",
   }

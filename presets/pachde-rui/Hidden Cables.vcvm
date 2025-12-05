@@ -1,0 +1,46 @@
+{
+  "plugin": "pachde-one",
+  "model": "pachde-rui",
+  "version": "2.3.0",
+  "params": [
+    {
+      "value": 0.0,
+      "id": 0
+    },
+    {
+      "value": 75.0,
+      "id": 1
+    },
+    {
+      "value": 100.0,
+      "id": 2
+    },
+    {
+      "value": 0.0,
+      "id": 3
+    },
+    {
+      "value": 0.0,
+      "id": 4
+    },
+    {
+      "value": 0.0,
+      "id": 5
+    },
+    {
+      "value": 0.0,
+      "id": 6
+    },
+    {
+      "value": 0.0,
+      "id": 7
+    }
+  ],
+  "data": {
+    "theme-choice": "dark",
+    "screws": true,
+    "main-color": "#00000000",
+    "stopped": false,
+    "theme": ""
+  }
+}
