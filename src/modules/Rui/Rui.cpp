@@ -37,10 +37,12 @@ struct Rui : ThemeModule
 
     std::string theme_name;
 
-    float initialCableOpacity;
-    float initialCableTension;
-    float initialBright;
-    float initialBloom;
+    float initialCableOpacity{.5f};
+    float initialCableTension{.5f};
+    float initialBright{1.f};
+    float initialBloom{.25f};
+
+    float last_visible_cable{.25f};
 
     enum Params {
         CableOpacity,
@@ -73,10 +75,10 @@ struct Rui : ThemeModule
     Rui() {
         config(Params::NUM_PARAMS, Inputs::NUM_INPUTS, Outputs::NUM_OUTPUTS, Lights::NUM_LIGHTS);
 
-        dp4(configParam(Params::CableOpacity, 0, 100, 50.f, "Cable opacity", "%"))->setValue(initialCableOpacity * 100.f);
-        dp4(configParam(Params::CableTension, 0, 100, 50.f, "Cable tension", "%"))->setValue(initialCableTension * 100.f);
-        dp4(configParam(Params::Bright, 0, 100, 100, "Room brightness", "%"))->setValue(initialBright * 100.f);
-        dp4(configParam(Params::Bloom, 0, 100, 25, "Light bloom", "%"))->setValue(initialBloom * 100.f);
+        dp4(configParam(Params::CableOpacity, 0, 1, .5f, "Cable opacity", "%", 0.f, 100.f))->smoothEnabled = true;
+        dp4(configParam(Params::CableTension, 0, 1, .5f, "Cable tension", "%", 0.f, 100.f))->smoothEnabled = true;
+        dp4(configParam(Params::Bright, 0, 1, 1, "Room brightness", "%", 0.f, 100.f))->smoothEnabled = true;
+        dp4(configParam(Params::Bloom, 0, 1, .25, "Light bloom", "%", 0.f, 100.f))->smoothEnabled = true;
 
         dp4(configParam(Params::ModCableOpacity, 0, 100, 25, "Cable opacity amount", "%"));
         dp4(configParam(Params::ModCableTension, 0, 100, 25, "Cable tension amount", "%"));
@@ -98,12 +100,6 @@ struct Rui : ThemeModule
         restore_initial_values(false);
     }
 
-    // void paramsFromJson(json_t* root) override {
-    //     if (running) {
-    //         Base::paramsFromJson(root);
-    //     }
-    // }
-
     json_t* dataToJson() override {
         json_t* root = Base::dataToJson();
         set_json(root, "stopped", stopped);
@@ -119,19 +115,26 @@ struct Rui : ThemeModule
 
     const int PARAM_INTERVAL = 64;
 
+    void default_initial_values() {
+        initialCableOpacity = 0.5f;
+        initialCableTension = 0.5f;
+        initialBright = 1.f;
+        initialBloom = .25f;
+    }
+
     void restore_initial_values(bool params = true)
     {
         ::rack::settings::cableOpacity = initialCableOpacity;
-        if (params) getParam(Params::CableOpacity).setValue(::rack::settings::cableOpacity);
+        if (params) getParamQuantity(Params::CableOpacity)->setValue(::rack::settings::cableOpacity);
 
         ::rack::settings::cableTension = initialCableTension;
-        if (params) getParam(Params::CableTension).setValue(::rack::settings::cableTension);
+        if (params) getParamQuantity(Params::CableTension)->setValue(::rack::settings::cableTension);
 
         ::rack::settings::rackBrightness = initialBright;
-        if (params) getParam(Params::Bright).setValue(::rack::settings::rackBrightness);
+        if (params) getParamQuantity(Params::Bright)->setValue(::rack::settings::rackBrightness);
 
         ::rack::settings::haloBrightness = initialBloom;
-        if (params) getParam(Params::Bloom).setValue(::rack::settings::haloBrightness);
+        if (params) getParamQuantity(Params::Bloom)->setValue(::rack::settings::haloBrightness);
         if (params) {
             getParam(Params::ModCableOpacity).setValue(0);
             getParam(Params::ModCableTension).setValue(0);
@@ -143,9 +146,9 @@ struct Rui : ThemeModule
     void process_param(int param_id, int mod_id, int input_id, float &setting)
     {
         auto input = getInput(input_id);
-        auto param = getParam(param_id);
+        auto param = getParamQuantity(param_id);
         auto trim  = getParam(mod_id);
-        float v = param.getValue() * .01f;
+        float v = param->getValue();
         if (input.isConnected()) {
             float mod = trim.getValue() * .01f;
             v = clamp(v + ((input.getVoltage() * .1f) * mod));
@@ -163,24 +166,28 @@ struct Rui : ThemeModule
 
     void process(const ProcessArgs& args) override
     {
+        if (::rack::settings::cableOpacity > .25f) {
+            last_visible_cable = ::rack::settings::cableOpacity;
+        }
         if (!running) { // first process()
             initialCableOpacity = ::rack::settings::cableOpacity;
             initialCableTension = ::rack::settings::cableTension;
             initialBright = ::rack::settings::rackBrightness;
             initialBloom = ::rack::settings::haloBrightness;
+            running = true;
         }
-        running = true;
+
         if (!single || stopped) return;
 
         if (request_toggle_cable_opacity) {
             request_toggle_cable_opacity = false;
             float v = 0.f;
             if (::rack::settings::cableOpacity < .1f) {
-                v = (initialCableOpacity > .1f) ? initialCableOpacity : 50.f;
+                v = last_visible_cable;
             }
-            APP->history->push(new ZeroCableAction(getId(), ::rack::settings::cableOpacity, v * .1f));
-            getParam(Params::CableOpacity).setValue(v);
-            ::rack::settings::cableOpacity = v * .1f;
+            APP->history->push(new ZeroCableAction(getId(), ::rack::settings::cableOpacity, v));
+            getParamQuantity(Params::CableOpacity)->setValue(v);
+            //::rack::settings::cableOpacity = v;
             return;
         }
 
@@ -194,18 +201,20 @@ void ZeroCableAction::undo()
 {
     auto rui_module = dynamic_cast<Rui*>(APP->engine->getModule(moduleId));
     if (rui_module) {
-        rui_module->getParam(Rui::Params::CableOpacity).setValue(prev * 100.f);
+        rui_module->getParamQuantity(Rui::Params::CableOpacity)->setValue(prev);
+    } else {
+        ::settings::cableOpacity = prev;
     }
-    ::rack::settings::cableOpacity = prev;
 }
 
 void ZeroCableAction::redo()
 {
     auto rui_module = dynamic_cast<Rui*>(APP->engine->getModule(moduleId));
     if (rui_module) {
-        rui_module->getParam(Rui::Params::CableOpacity).setValue(next * 100.f);
+        rui_module->getParamQuantity(Rui::Params::CableOpacity)->setValue(next);
+    } else {
+        ::rack::settings::cableOpacity = next;
     }
-    ::rack::settings::cableOpacity = next;
 }
 
 struct RuiSvg
@@ -437,6 +446,8 @@ struct RuiUi : ModuleWidget, IThemeChange
         if (my_module) {
             menu->addChild(createMenuItem("Reset", "", [=](){
                 my_module->reset();
+                my_module->default_initial_values();
+                my_module->restore_initial_values(true);
             }));
             menu->addChild(createCheckMenuItem("Fluff", "",
                 [=](){ return my_module->fluff; },
