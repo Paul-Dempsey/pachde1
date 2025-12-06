@@ -1,0 +1,28 @@
+{
+  "plugin": "pachde-one",
+  "model": "pachde-paneltone",
+  "version": "2.3.0",
+  "params": [
+    {
+      "value": 0.0,
+      "id": 0
+    },
+    {
+      "value": 0.0,
+      "id": 1
+    },
+    {
+      "value": 1.0,
+      "id": 2
+    }
+  ],
+  "data": {
+    "overlay": {
+      "position": "panel",
+      "color": "#550a5049",
+      "on": true
+    },
+    "apply-to": "A",
+    "apply-to-me": false
+  }
+}
