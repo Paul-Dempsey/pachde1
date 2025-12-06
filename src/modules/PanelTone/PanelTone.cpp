@@ -88,7 +88,7 @@ InputKind PanelTone::get_input_kind(){
 json_t *PanelTone::dataToJson()
 {
     json_t *root = json_object();
-    json_object_set_new(root, "Overlay", data.toJson());
+    json_object_set_new(root, "overlay", data.toJson());
     if (apply_to == AppliesTo::Selected) {
         if (module_ids.size() > 0) {
             auto jar = json_array();
@@ -115,7 +115,8 @@ json_t *PanelTone::dataToJson()
 
 void PanelTone::dataFromJson(json_t *root)
 {
-    json_t *j = json_object_get(root, "Overlay");
+    bool was_on = data.on;
+    json_t *j = json_object_get(root, "overlay");
     if (j) data.fromJson(j);
     apply_to_me = get_json_bool(root, "apply-to-me", apply_to_me);
     apply_to = parseAppliesTo(get_json_cstring(root, "apply-to", appliesToJsonValue(apply_to)));
@@ -129,6 +130,25 @@ void PanelTone::dataFromJson(json_t *root)
                 module_ids.push_back(id);
             }
         }
+    }
+    if (was_on && !data.on) {
+        fade_out();
+    } else if (data.on) {
+        if (!was_on) {
+            if (ui) {
+                ui->onStartFadeIn();
+            } else {
+                fade_in();
+            }
+        }
+    }
+}
+
+void PanelTone::onReset(const ResetEvent& e) {
+    Base::onReset(e);
+    data.reset();
+    if (Fading::Zero != fader.fading) {
+        fade_out();
     }
 }
 
@@ -174,6 +194,7 @@ void PanelTone::process(const ProcessArgs &args)
         }
     }
 
+    // note: continuous CV fade is implemented in ui step()
     if (InputKind::Trigger == get_input_kind()) {
         float v = getInput(IN_FADE).getVoltage();
         if (fade_trigger.process(v, 0.1f, 5.f)) {
@@ -309,6 +330,15 @@ PanelToneUi::PanelToneUi(PanelTone* module) : my_module(module)
     addChild(in_config_switch);
 
     my_svgs.changeTheme(svg_theme);
+    gather_orphaned_overlays();
+}
+
+PanelToneUi::~PanelToneUi()
+{
+    if (!module && data) { delete data; data = nullptr; }
+    for (auto overlay: overlays) {
+        overlay->host = nullptr;
+    }
 }
 
 void PanelToneUi::onDestroyPanelOverlay(PanelOverlay *removed)
@@ -454,6 +484,23 @@ void PanelToneUi::add_overlays(const std::vector<ModuleWidget*>& module_widgets)
     }
 }
 
+void PanelToneUi::gather_orphaned_overlays()
+{
+    if (!my_module) return;
+    if (!my_module->module_ids.empty() || !overlays.empty()) return;
+    auto module_widgets = APP->scene->rack->getModules();
+    for (auto mw: module_widgets) {
+        auto overlay = mw->getFirstDescendantOfType<PanelOverlay>();
+        if (overlay && (nullptr == overlay->host)) {
+            my_module->module_ids.push_back(mw->module->getId());
+            overlays.push_back(overlay);
+        }
+    }
+    if (!overlays.empty()) {
+        my_module->apply_to = AppliesTo::Selected;
+    }
+}
+
 void PanelToneUi::toggle_panels()
 {
     if (!my_module) return;
@@ -541,6 +588,10 @@ void PanelToneUi::step() {
     } else if (coppertoning) {
         coppertoning = false;
         broadcast_overlay_color(data->color);
+    } else {
+        if (last_broadcast_color != data->color) {
+            broadcast_overlay_color(data->color);
+        }
     }
     fade_overlays();
 

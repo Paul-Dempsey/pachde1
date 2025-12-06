@@ -11,7 +11,7 @@ json_t *OverlayData::toJson()
     set_json(root, "position", (position == OverlayPosition::OnPanel) ? "panel" : "widget");
     packed_color::hexFormat(color, 10, hex);
     set_json(root, "color", hex);
-    //set_json(root, "on", on);
+    set_json(root, "on", on);
     return root;
 }
 
@@ -30,7 +30,13 @@ void OverlayData::fromJson(json_t *root) {
     if (!spec.empty()) {
         color = parseColor(spec.c_str(), color);
     }
-    //on = get_json_bool(root, "on", on);
+    on = get_json_bool(root, "on", on);
+}
+
+void OverlayData::reset() {
+    position = OverlayPosition::OnPanel;
+    color = 0x4cbf723f;
+    on = false;
 }
 
 // ----  PanelOverlay ---------------------------

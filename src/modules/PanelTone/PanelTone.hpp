@@ -53,6 +53,7 @@ struct PanelTone : ThemeModule
     InputKind get_input_kind();
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;
+    void onReset(const ResetEvent& e) override;
     bool fetch_expander_color(Expander expander);
     void process(const ProcessArgs& args) override;
 };
@@ -83,7 +84,9 @@ struct PanelToneUi : ModuleWidget, IThemeChange
     bool add_pending{false};
     bool coppertoning{false};
     PackedColor last_broadcast_color{colors::NoColor};
+
     PanelToneUi(PanelTone* module);
+    virtual ~PanelToneUi();
 
     void onDestroyPanelOverlay(PanelOverlay* removed);
     void onStartFadeIn();
@@ -96,6 +99,7 @@ struct PanelToneUi : ModuleWidget, IThemeChange
     void set_overlay_color(PackedColor color);
     void broadcast_overlay_color(PackedColor color);
     void add_overlays(const std::vector<ModuleWidget*>& module_widgets);
+    void gather_orphaned_overlays();
     void remove_overlays();
     std::vector<ModuleWidget*> get_applicable_module_widgets();
     void toggle_panels();

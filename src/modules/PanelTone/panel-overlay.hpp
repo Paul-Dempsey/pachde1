@@ -11,7 +11,7 @@ namespace pachde {
 struct OverlayData
 {
     OverlayPosition position{OverlayPosition::OnPanel};
-    PackedColor color{packHsla(38.f, .5f, .5f, .35f)};
+    PackedColor color{0x4cbf723f};
     bool on{false};
 
     void init(const OverlayData* source) {
@@ -21,6 +21,7 @@ struct OverlayData
     }
     json_t * toJson();
     void fromJson(json_t * root);
+    void reset();
 };
 
 struct PanelToneUi;
