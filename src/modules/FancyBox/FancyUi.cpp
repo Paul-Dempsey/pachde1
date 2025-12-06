@@ -640,7 +640,7 @@ void FancyUi::appendContextMenu(Menu* menu) {
     if (!module) return;
 
     menu->addChild(createMenuLabel<HamburgerTitle>("#d FancyBox"));
-    menu->addChild(createCheckMenuItem("Shouting buttons", "",
+    menu->addChild(createCheckMenuItem("Shouting button", "",
         [=](){ return my_module->shouting; },
         [=](){
             my_module->shouting = !my_module->shouting;
