@@ -2,19 +2,26 @@
 
 ## Version 2.3
 
-- New theming system
-- New color pickers
-
 - ***New Modules*** — [FancyBox](docs/FancyBox#fancybox), [Skiff](docs/Skiff.md#skiff), [Paneltone](docs/Paneltone.md#paneltone), [Rui](docs/Rui.md#rui), [Guide](docs/Guide.md#guide)
 
 - [Info](docs//Info.md#info):
-  - Friendly dialog for text options (click the `i` symbol)
-  - Vertical and inverted text
+  - On-panel quick text editing is a click away!
+  - Friendly dialog for all text options (click the `i` symbol, or press F2).
+  - Vertical (Up and Down) and inverted text
   - Bug fixes (sizing on opening presets, and loading from **Strip**)
+
+- For Info, Null, Copper, and Copper-mini, more control over what a Copper affects.
+  Copper-as-extender can be turned off in the right click menu, so that dragging it around a patch doesn't leave a wake of altered modules.
+
+- New theming system and improved options for tracking Rack theme settings.
+
+- Broadcast theme to all pachde One modules in the patch.
+
+- New color pickers with continuous control.
 
 - Use Svgs to improve the #d brand on lower res screens.
 
-Sadly expanding and improving Imagine remains in the possible future.
+Note: expanding and improving Imagine remains in the possible future.
 
 ## Version 2.2
 
