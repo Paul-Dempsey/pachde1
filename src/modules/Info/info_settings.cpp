@@ -75,6 +75,7 @@ json_t* InfoSettings::save(json_t* root)
     set_json(root, "font", make_portable_path(font_file));
     set_json(root, "font-folder", make_portable_path(font_folder));
     set_json(root, "bright", brilliant);
+    set_json(root, "branding", branding);
     return root;
 }
 
@@ -126,6 +127,7 @@ void InfoSettings::load(json_t* root) {
     font_folder = get_json_string(root, "font-folder");
     if (!font_folder.empty()) font_folder = path_from_portable_path(font_folder);
     brilliant = get_json_bool(root, "bright", brilliant);
+    branding =  get_json_bool(root, "branding", branding);
 }
 
 void InfoSettings::setTheme(Theme theme) {
