@@ -40,7 +40,7 @@ struct LabelStyle {
     }
 };
 
-struct TextLabel : OpaqueWidget, svg_theme::IThemed
+struct TextLabel : TransparentWidget, svg_theme::IThemed
 {
     using Base = TransparentWidget;
 
