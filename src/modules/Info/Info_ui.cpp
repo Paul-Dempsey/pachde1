@@ -133,7 +133,11 @@ void InfoModuleWidget::onButton(const ButtonEvent &e) {
         && (e.pos.y > 100.f) && (e.pos.y < box.size.y - 100.f) // allow for dragging module
         && (e.pos.x > 10.f) && (e.pos.x < box.size.x - 10.f) // exclude resize handles
     ) {
-        simple_edit->begin_editing();
+        if (box.size.x > 45.f) {
+            simple_edit->begin_editing();
+        } else {
+            show_settings_dialog(this);
+        }
         e.consume(NULL);
         return;
     }
