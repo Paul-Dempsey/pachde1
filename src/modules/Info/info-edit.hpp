@@ -19,7 +19,6 @@ struct InfoEdit : OpaqueWidget
     void begin_editing();
     void close();
     void size_to_parent();
-    void onButton(const ButtonEvent& e) override;
     void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;
     void draw(const DrawArgs& args) override;

@@ -155,8 +155,8 @@ void InfoPanel::drawText(const DrawArgs &args)
 
 void InfoPanel::drawLayer(const DrawArgs &args, int layer)
 {
-    if (ui->editing()) Base::drawLayer(args, layer);
-    if (layer == 1 && settings->getBrilliant()) {
+    Base::drawLayer(args, layer);
+    if (!ui->editing() && (layer == 1) && settings->getBrilliant()) {
         drawText(args);
     }
 }

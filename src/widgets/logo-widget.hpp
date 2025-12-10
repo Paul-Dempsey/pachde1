@@ -6,9 +6,9 @@ using namespace pachde;
 namespace widgetry {
 
 template<typename TSymbol>
-struct TSymbolWidget: OpaqueWidget, ISetTheme
+struct TSymbolWidget: TransparentWidget, ISetTheme
 {
-    using Base = OpaqueWidget;
+    using Base = TransparentWidget;
 
     bool ignore_theme_changes{false};
     bool bright{false};

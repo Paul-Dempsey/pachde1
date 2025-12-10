@@ -30,7 +30,7 @@ InfoModuleWidget::InfoModuleWidget(InfoModule* module) {
 }
 
 bool InfoModuleWidget::editing() {
-    return simple_edit && simple_edit->editing();
+    return simple_edit && simple_edit->isVisible();
 }
 
 void InfoModuleWidget::addResizeHandles()
@@ -123,6 +123,21 @@ void InfoModuleWidget::onHoverKey(const HoverKeyEvent &e) {
 
     }
     Base::onHoverKey(e);
+}
+
+void InfoModuleWidget::onButton(const ButtonEvent &e) {
+    if (!editing()
+        && (e.action == GLFW_PRESS)
+        && (e.button == GLFW_MOUSE_BUTTON_LEFT)
+        && ((e.mods & RACK_MOD_MASK) == 0)
+        && (e.pos.y > 100.f) && (e.pos.y < box.size.y - 100.f) // allow for dragging module
+        && (e.pos.x > 10.f) && (e.pos.x < box.size.x - 10.f) // exclude resize handles
+    ) {
+        simple_edit->begin_editing();
+        e.consume(NULL);
+        return;
+    }
+    Base::onButton(e);
 }
 
 void InfoModuleWidget::step() {

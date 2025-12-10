@@ -90,7 +90,6 @@ struct InfoPanel : Widget
     void showText(const DrawArgs &args, std::shared_ptr<rack::window::Font> font, const std::string& text);
     void drawError(const DrawArgs &args);
     void drawText(const DrawArgs &args);
-
     void step() override;
     void drawLayer(const DrawArgs &args, int layer) override;
     void draw(const DrawArgs &args) override;
@@ -117,14 +116,14 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
         }
     }
 
-    // on-panel editing
-    bool editing();
+    bool editing(); // on-panel editing
     void addResizeHandles();
     void applyScrews(bool screws);
     void addScrews() ;
     void applyThemeSetting(ThemeSetting setting);
     void onChangeTheme(ChangedItem item) override;
     void onHoverKey(const HoverKeyEvent& e) override;
+    void onButton(const ButtonEvent& e) override;
     void step() override;
 
     void appendContextMenu(Menu *menu) override;
