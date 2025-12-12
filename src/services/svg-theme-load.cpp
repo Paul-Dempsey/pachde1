@@ -37,13 +37,14 @@ std::string format_string(const char *fmt, ...)
 
 std::string ErrorContext::makeErrorReport()
 {
-    return format_string("Style Error %d %s (%d:%d):%s", (int)error, errorName(error), line, offset, text);
+    return format_string("Style Error %d %s in '%s' (%d:%d):%s", (int)error, errorName(error), theme_name, line, offset, text);
 }
 
 void ErrorContext::clear()
 {
     error = NoError;
-    text[0] = 0;
+    memset(theme_name, 0, sizeof(theme_name));
+    memset(text, 0, sizeof(text));
     offset = -1;
     data = nullptr;
 }
@@ -63,6 +64,7 @@ void ErrorContext::setErrorText(ErrorCode code, const char * where)
     auto scan = line_start;
     while (*scan && '\n' != *scan) scan++;
     std::strncpy(text, line_start, scan - line_start);
+    text[scan - line_start] = 0;
     offset = where - line_start;
 }
 
@@ -298,7 +300,7 @@ bool parse_stop(const char *scan, GradientStop& stop, const char **end, ErrorCon
 
             case StyleKey::Hsl:
             case StyleKey::Hsla:
-                if (parseHslaColor(stop.color, colors::G0, token_end, end)) {
+                if (parseHslaColor(stop.color, colors::G0, scan, end)) {
                     scan = *end;
                 } else {
                     if (error_context) {
@@ -336,7 +338,7 @@ bool parse_stop(const char *scan, GradientStop& stop, const char **end, ErrorCon
 
             case StyleKey::Rgb:
             case StyleKey::Rgba:
-                if (parseRgbaColor(stop.color, colors::G0, token_end, end)) {
+                if (parseRgbaColor(stop.color, colors::G0, scan, end)) {
                     scan = *end;
                 } else {
                     if (error_context) {
@@ -690,6 +692,7 @@ std::shared_ptr<SvgTheme> loadSvgThemeFile(std::string path, ErrorContext* error
             error_context->error = ErrorCode::OpenFileError;
             auto file = system::getFilename(path);
             strncpy(error_context->text, file.c_str(), 80);
+            error_context->text[81] = 0;
         }
         return nullptr;
     }
@@ -742,6 +745,9 @@ std::shared_ptr<SvgTheme> loadSvgThemeFile(std::string path, ErrorContext* error
             scan = parse_theme_name(scan, name);
             if (!name.empty()) {
                 theme->name = name;
+                if (error_context) {
+                    strncpy(error_context->theme_name, name.c_str(), sizeof(error_context->theme_name));
+                }
             }
         } else {
             std::shared_ptr<Style> style{nullptr};

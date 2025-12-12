@@ -20,6 +20,7 @@ const char * errorName(ErrorCode code);
 
 struct ErrorContext {
     ErrorCode error{NoError};
+    char theme_name[64]{0};
     char text[82]{0};
     int offset{-1};
     int line{0};
