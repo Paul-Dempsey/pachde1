@@ -91,7 +91,7 @@ struct PanelToneUi : ModuleWidget, IThemeChange
     void onDestroyPanelOverlay(PanelOverlay* removed);
     void onStartFadeIn();
     void onFadeOutComplete();
-    bool is_my_overlay(PanelOverlay* overlay) { return overlay->host == this; }
+    bool is_my_overlay(PanelOverlay* overlay) { return overlay && (overlay->host == this); }
     void fade_in_overlays();
     void fade_out_overlays();
     void fade_overlays();
