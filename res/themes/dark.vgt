@@ -74,6 +74,7 @@ mini-out-bg = #af5c03
 // Fancy
 fancy-group = #f9a806
 fancy-label = #e6e6e6
+fancy-info  = #f9a806
 fsep   = none stroke #395177
 coj-bg = hsla(100, .4, .25, 1)
 jack-left  = #000

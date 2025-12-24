@@ -1,9 +1,10 @@
 # pachde1 TODO
 
 - nicer-looking tiny button?
--
+
 ## Skiff
 
+- Image rail overlay (image formats)
 - Undo for PackModules?
 
 ## Guide: Panel Design Guides

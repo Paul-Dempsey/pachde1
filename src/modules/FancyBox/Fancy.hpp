@@ -1,12 +1,15 @@
 #pragma once
 #include <rack.hpp>
 using namespace ::rack;
+#include <ghc/filesystem.hpp>
 #include "services/theme-module.hpp"
 #include "services/svg-query.hpp"
 using namespace svg_query;
 #include "widgets/action-button.hpp"
 #include "widgets/fancy-swatch.hpp"
 #include "widgets/label.hpp"
+#include "widgets/tip-label.hpp"
+#include "widgets/pic_button.hpp"
 #include "widgets/text-button.hpp"
 using namespace widgetry;
 #include "cloak.hpp"
@@ -44,6 +47,10 @@ struct Fancy : ThemeModule {
         P_FANCY_BOX_OUTER_FADE,
         P_FANCY_BOX_RADIUS,
         P_FANCY_BOX_FEATHER,
+
+        P_FANCY_IMAGE_ON,
+        P_FANCY_IMAGE_FIT,
+        P_FANCY_IMAGE_GRAY,
 
         N_PARAMS
     };
@@ -110,6 +117,9 @@ struct Fancy : ThemeModule {
     CloakData fancy_data;
     std::string theme_name;
 
+    std::string pic_folder;
+
+    int image_process_count{0};
     int fill_process_count{0};
     int linear_process_count{0};
     int radial_process_count{0};
@@ -126,6 +136,7 @@ struct Fancy : ThemeModule {
     inline float voltage(int id, float normal) { return getInput(id).getNormalVoltage(normal) * .1; }
     inline float scaled_voltage(int id) { return getInput(id).getVoltage() * .1; }
     void onPortChange(const PortChangeEvent& e) override;
+    void process_image(const ProcessArgs& args);
     void process_fill(const ProcessArgs& args);
     void process_linear(const ProcessArgs& args);
     void process_radial(const ProcessArgs& args);
@@ -144,6 +155,7 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     LabelStyle* label_style{nullptr};
     LabelStyle* title_style{nullptr};
     LabelStyle* group_style{nullptr};
+    LabelStyle* info_style{nullptr};
     FancySwatch* fill_swatch{nullptr};
     FancySwatch* lg_start_swatch{nullptr};
     FancySwatch* lg_end_swatch{nullptr};
@@ -152,7 +164,10 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     FancySwatch* bg_inner_swatch{nullptr};
     FancySwatch* bg_outer_swatch{nullptr};
     TextButton* fancy_button{nullptr};
+    PicButton* pic_button{nullptr};
     JackButton* jack_button{nullptr};
+    TipLabel* image_name{nullptr};
+
     std::vector<Widget*> removables;
     CloakBackgroundWidget* my_cloak{nullptr};
     bool request_cloak{false};
@@ -176,7 +191,7 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
         std::function<void(bool,bool)> handler
     );
     void add_knob(::svg_query::BoundsIndex& bounds, const char* key, int param);
-    void add_label(::svg_query::BoundsIndex& bounds, const char* key, const char* text, LabelStyle* style, std::shared_ptr<svg_theme::SvgTheme> svg_theme, bool removable = false);
+    TextLabel* add_label(::svg_query::BoundsIndex& bounds, const char* key, const char* text, LabelStyle* style, std::shared_ptr<svg_theme::SvgTheme> svg_theme, bool removable = false);
     void add_check(::svg_query::BoundsIndex& bounds, const char* key, int param, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
     void add_input(::svg_query::BoundsIndex& bounds, const char* key, int id, PackedColor color);
     void add_ports(::svg_query::BoundsIndex& bounds, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
@@ -198,7 +213,7 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void sync_latch_state();
     void shouting_buttons(bool shouting);
     void fancy_background(bool fancy);
-
+    void click_pic(bool ctrl, bool shift);
     void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;
     void draw(const DrawArgs& args) override;

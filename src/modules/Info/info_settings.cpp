@@ -46,8 +46,8 @@ void InfoSettings::setBrilliant(bool brilliance) { brilliant = brilliance; }
 bool InfoSettings::getBrilliant() { return brilliant; }
 void InfoSettings::setBranding(bool branded) { branding = branded; }
 bool InfoSettings::getBranding() { return branding; }
-PackedColor InfoSettings::getDisplayPanelColor() { return packed_color::isVisible(user_panel_color) ? user_panel_color : theme_panel_color; }
-PackedColor InfoSettings::getDisplayTextColor() { return packed_color::isVisible(user_text_color) ? user_text_color : theme_text_color; }
+PackedColor InfoSettings::getDisplayPanelColor() { return user_panel_color ? user_panel_color : theme_panel_color; }
+PackedColor InfoSettings::getDisplayTextColor() { return user_text_color ? user_text_color : theme_text_color; }
 
 json_t* InfoSettings::save(json_t* root)
 {

@@ -5,7 +5,6 @@
 using namespace rack;
 namespace pachde {
 
-
 struct PicWidget : OpaqueWidget {
     Imagine * module = nullptr;
     Vec mousepos;
@@ -23,7 +22,7 @@ struct PicWidget : OpaqueWidget {
         OpaqueWidget::onContextCreate(e);
         cpic.onContextCreate(e);
     }
-    
+
     void onContextDestroy(const ContextDestroyEvent& e) override
     {
         OpaqueWidget::onContextDestroy(e);
@@ -35,7 +34,7 @@ struct PicWidget : OpaqueWidget {
         OpaqueWidget::onEnter(e);
         glfwSetCursor(APP->window->win, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
     }
-    
+
     void onLeave(const LeaveEvent &e) override
     {
         OpaqueWidget::onLeave(e);

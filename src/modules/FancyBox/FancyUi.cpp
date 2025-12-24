@@ -1,4 +1,5 @@
 #include "Fancy.hpp"
+#include "services/open-file.hpp"
 #include "services/rack-help.hpp"
 #include "services/svg-query.hpp"
 #include "services/svg-theme-load.hpp"
@@ -9,6 +10,7 @@
 #include "widgets/label.hpp"
 #include "widgets/port.hpp"
 #include "widgets/screws.hpp"
+#include "widgets/switch.hpp"
 
 using namespace widgetry;
 
@@ -53,7 +55,9 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
     label_style = new LabelStyle("fancy-label");
     label_style->applyTheme(svg_theme);
 
+    info_style = new LabelStyle("fancy-info", "hsl(42, .5, .6)", 10.f, false);
     ::svg_query::BoundsIndex bounds;
+
     svg_query::addBounds(layout, "k:", bounds, true);
 
     auto light = createLightCentered<SmallLight<RedLight>>(bounds["k:fancy-light"].getCenter(), my_module, Fancy::L_FANCY);
@@ -76,6 +80,35 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
             jack_button->set_handler([=](bool,bool) { toggle_ports(); });
         }
     }
+
+    add_check(bounds,"k:pic-check", Fancy::P_FANCY_IMAGE_ON, svg_theme);
+    add_label(bounds, "k:pic-group", "IMAGE", group_style, svg_theme);
+    pic_button = createWidgetCentered<PicButton>(bounds["k:pic-button"].getCenter());
+    pic_button->setTheme(theme_holder->getTheme());
+    addChild(pic_button);
+    {
+        auto option = createParam<widgetry::Switch>(Vec(0,0), my_module, Fancy::P_FANCY_IMAGE_FIT);
+        option->box = bounds["k:pic-fit"];
+        option->applyTheme(svg_theme);
+        addChild(option);
+    }
+    add_check(bounds,"k:pic-gray", Fancy::P_FANCY_IMAGE_GRAY, svg_theme);
+    image_name = new TipLabel();
+    image_name->box = bounds["k:pic-label"];
+    image_name->format = info_style;
+    addChild(image_name);
+    if (module) {
+        pic_button->set_handler([=](bool c, bool s){
+            click_pic(c, s);
+        });
+        if (!my_module->fancy_data.image.path.empty()) {
+            image_name->describe(my_module->fancy_data.image.path);
+            image_name->set_text(system::getStem(my_module->fancy_data.image.path));
+        }
+    } else {
+        image_name->set_text("[background]");
+    }
+
     add_check(bounds, "k:fill-check", Fancy::P_FANCY_FILL_ON, svg_theme);
     add_label(bounds, "k:fill-group", "TONE", group_style, svg_theme);
     auto palette = Center(createThemeSvgButton<Palette20ActionButton>(&my_svgs, bounds["k:fill-co"].getCenter()));
@@ -416,7 +449,7 @@ void FancyUi::add_knob(::svg_query::BoundsIndex &bounds, const char *key, int pa
     addChild(knob);
 }
 
-void FancyUi::add_label(
+TextLabel* FancyUi::add_label(
     ::svg_query::BoundsIndex &bounds,
     const char *key,
     const char *text,
@@ -427,6 +460,7 @@ void FancyUi::add_label(
     auto label = TextLabel::createLabel(bounds[key], text, style, svg_theme);
     HOT_POSITION(key, HotPosKind::Box, label);
     addChild(label);
+    return label;
 }
 
 void FancyUi::add_check(
@@ -551,6 +585,7 @@ void FancyUi::onChangeTheme(ChangedItem item)
         auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
         my_svgs.changeTheme(svg_theme);
         applyChildrenTheme(this, svg_theme);
+        pic_button->setTheme(theme_holder->getTheme());
         sendDirty(this);
     }
 }
@@ -579,6 +614,24 @@ void FancyUi::fancy_background(bool fancy) {
             my_cloak = nullptr;
             cloak->requestDelete();
         }
+    }
+}
+
+void FancyUi::click_pic(bool ctrl, bool shift)
+{
+    if (!my_module) return;
+    std::string path;
+    std::string name{system::getFilename(my_module->fancy_data.image.path)};
+    bool ok = openFileDialog(my_module->pic_folder, "Images (.png .jpg .gif):png,jpg,jpeg,gif;Any (*):*", name, path);
+    if (ok) {
+        my_module->pic_folder = system::getDirectory(path);
+        my_module->fancy_data.image.path = path;
+        name = system::getStem(path);
+        image_name->set_text(name);
+        image_name->describe(path);
+        //loadImage(path);
+    } else {
+        //image.close();
     }
 }
 

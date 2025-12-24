@@ -10,6 +10,12 @@ Fancy::Fancy() {
     std::vector<std::string> off_on{"off", "on"};
     config(Params::N_PARAMS, Inputs::N_INPUTS, Outputs::N_OUTPUTS, Lights::N_LIGHTS);
 
+    configSwitch(P_FANCY_IMAGE_ON, 0.f, 1.f, 0.f, "Enable FancyBox Image", off_on);
+    configSwitch(P_FANCY_IMAGE_FIT, 0.f, 2.f, 0.f, "FancyBox Image fitting", {
+        "Cover", "Fit", "Stretch"
+    });
+    configSwitch(P_FANCY_IMAGE_GRAY, 0.f, 1.f, 0.f, "FancyBox Image grayscale", off_on);
+
     configSwitch(P_FANCY_FILL_ON,  0.f, 1.f, 1.f, "Enable FancyBox Fill", off_on);
     configParam(P_FANCY_FILL_FADE, 0.f, 100.f, 100.f, "FancyBox Fill fade", "%");
 
@@ -89,6 +95,11 @@ json_t* Fancy::dataToJson() {
     set_json(root, "fancy", fancy);
     set_json(root, "shouting", shouting);
     set_json(root, "show-ports", show_ports);
+    set_json(root, "pic-folder", pic_folder);
+    //
+    // Serialize fancy_data not expressed as a Param
+    //
+    set_json(root, "pic-file", fancy_data.image.path);
     char hex[10];
     packed_color::hexFormat(fancy_data.fill.color, 10, hex);  set_json(root, "fill-color", hex);
     packed_color::hexFormat(fancy_data.linear.icol, 10, hex); set_json(root, "linear-icol", hex);
@@ -100,11 +111,13 @@ json_t* Fancy::dataToJson() {
     return root;
 }
 
-void color_from_json(json_t* root, const char * key, PackedColor& color) {
+PackedColor color_from_json(json_t* root, const char * key) {
+    PackedColor color = colors::NoColor;
     const char * spec = get_json_cstring(root, key);
     if (spec && *spec) {
         color = parseColor(spec, color);
     }
+    return color;
 }
 
 void Fancy::dataFromJson(json_t* root) {
@@ -112,13 +125,18 @@ void Fancy::dataFromJson(json_t* root) {
     shouting   = get_json_bool(root, "shouting", shouting);
     fancy      = get_json_bool(root, "fancy", fancy);
     show_ports = get_json_bool(root, "show-ports", show_ports);
-    color_from_json(root, "fill-color", fancy_data.fill.color);
-    color_from_json(root, "linear-icol", fancy_data.linear.icol);
-    color_from_json(root, "linear-ocol", fancy_data.linear.ocol);
-    color_from_json(root, "radial-icol", fancy_data.radial.icol);
-    color_from_json(root, "radial-ocol", fancy_data.radial.ocol);
-    color_from_json(root, "box-icol", fancy_data.boxg.icol);
-    color_from_json(root, "box-ocol", fancy_data.boxg.ocol);
+    pic_folder = get_json_string(root, "pic-folder");
+    //
+    // Serialize fancy_data not expressed as a Param
+    //
+    fancy_data.image.path = get_json_string(root, "pic-file");
+    fancy_data.fill.color = color_from_json(root, "fill-color");
+    fancy_data.linear.icol = color_from_json(root, "linear-icol");
+    fancy_data.linear.ocol = color_from_json(root, "linear-ocol");
+    fancy_data.radial.icol = color_from_json(root, "radial-icol");
+    fancy_data.radial.ocol = color_from_json(root, "radial-ocol");
+    fancy_data.boxg.icol = color_from_json(root, "box-icol");
+    fancy_data.boxg.ocol = color_from_json(root, "box-ocol");
 }
 
 inline bool param_bool(rack::engine::Param& param) { return param.getValue() >= .5f; }
@@ -153,6 +171,28 @@ PackedColor Fancy::modulate_color(PackedColor base, int input_id_first) {
     float lit   = clamp(Lightness(co)   + scaled_voltage(input_id_first));
     float alpha = clamp(co.a            + scaled_voltage(input_id_first));
     return packHsla(hue, sat, lit, alpha);
+}
+
+void Fancy::process_image(const ProcessArgs &args)
+{
+    image_process_count = (image_process_count + 1) % 25;
+    if (image_process_count % 25) return;
+    fancy_data.image.enabled = param_bool(getParam(P_FANCY_IMAGE_ON));
+    fancy_data.image.fit = static_cast<ImageFit>(getParam(P_FANCY_IMAGE_FIT).getValue());
+    fancy_data.image.gray = param_bool(getParam(P_FANCY_IMAGE_GRAY));
+    if (ui->my_cloak) {
+        ui->my_cloak->data.image.enabled = fancy_data.image.path.empty() ? false : fancy_data.image.enabled;
+        ui->my_cloak->data.image.fit = fancy_data.image.fit;
+        ui->my_cloak->data.image.gray = fancy_data.image.gray;
+        if (ui->my_cloak->data.image.enabled) {
+            if (ui->my_cloak->data.image.path != fancy_data.image.path) {
+                if (ui->my_cloak->pic) {
+                    ui->my_cloak->pic->close();
+                }
+                ui->my_cloak->data.image.path = fancy_data.image.path;
+            }
+        }
+    }
 }
 
 void Fancy::process_fill(const ProcessArgs &args)
@@ -281,11 +321,12 @@ void Fancy::process(const ProcessArgs &args)
     }
 
     // amortize parameter updates across frames
-    switch (args.frame % 4) {
-        case 0: process_fill(args); break;
-        case 1: process_linear(args); break;
-        case 2: process_radial(args); break;
-        case 3: process_box(args);  break;
+    switch (args.frame % 5) {
+        case 0: process_image(args); break;
+        case 1: process_fill(args); break;
+        case 2: process_linear(args); break;
+        case 3: process_radial(args); break;
+        case 4: process_box(args);  break;
     }
 }
 

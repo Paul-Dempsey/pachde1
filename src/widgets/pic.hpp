@@ -65,10 +65,10 @@ struct cachePic
     cachePic() { }
     explicit cachePic(Pic * pic) { setPic(pic); }
 
-//#define TRUST_RACK_CONTEXT // depends on a fixed Rack post 2.3
+#define TRUST_RACK_CONTEXT // depends on a fixed Rack post 2.3
 #ifndef TRUST_RACK_CONTEXT
     bool isLaterVersion(int maj, int min) {
-        auto parts = rack::string::split(rack::APP_VERSION, "."); 
+        auto parts = rack::string::split(rack::APP_VERSION, ".");
         auto rack_maj = std::strtol(parts[0].c_str(), nullptr, 10);
         auto rack_min = std::strtol(parts[1].c_str(), nullptr, 10);
         if (rack_maj <= maj) return false;
@@ -77,7 +77,7 @@ struct cachePic
     }
 #endif
 
-    // Widgets using cachePic must forward the 
+    // Widgets using cachePic must forward the
     // onContextCreate and onContextDestroy events.
     void onContextCreate(const rack::widget::Widget::ContextCreateEvent& e)
     {

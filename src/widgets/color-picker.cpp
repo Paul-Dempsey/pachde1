@@ -10,13 +10,13 @@ void ColorPicker::set_text_color()
     case ColorSyntax::Unknown:
         break;
     case ColorSyntax::Hex:
-        text_input->text = hex_string(color);
+        text_input->setText(hex_string(color));
         break;
     case ColorSyntax::RGB:
-        text_input->text = rgba_string(color);
+        text_input->setText(rgba_string(color));
         break;
     case ColorSyntax::HSL:
-        text_input->text = hsla_string(hue, saturation, lightness, nvg_color.a);
+        text_input->setText(hsla_string(hue, saturation, lightness, nvg_color.a));
         break;
     }
 }
@@ -104,7 +104,7 @@ ColorPicker::ColorPicker()
     text_input = createWidget<TextInput>(Vec(3.5f, 244.f));
     text_input->box.size = Vec(142.5f, 14.f);
     text_input->text_height = 14.f;
-    text_input->set_on_change([=](std::string text) {
+    text_input->set_on_enter([=](std::string text) {
         syntax = ColorSyntax::Unknown;
         PackedColor co;
         if (parseColor(co, colors::NoColor, text.c_str(), nullptr)) {

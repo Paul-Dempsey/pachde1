@@ -48,6 +48,7 @@ void PicWidget::onPathDrop(const PathDropEvent& e)
     for (auto path: e.paths) {
         if (isImage(path)) {
             module->loadImage(path);
+            return;
         }
     }
 }

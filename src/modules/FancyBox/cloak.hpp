@@ -6,6 +6,43 @@ using namespace ::rack;
 using namespace packed_color;
 namespace widgetry {
 
+enum class ImageFit { Cover, Fit, Stretch };
+
+struct ImageData {
+    bool enabled{true};
+    std::string path;
+    ImageFit fit{ImageFit::Cover};
+    bool gray{false};
+    void init(const ImageData& source) {
+        path = source.path;
+        fit = source.fit;
+    }
+};
+
+struct Picture : OpaqueWidget {
+    int image_handle{0}; // nvg Image handle
+    int image_width{0};
+    int image_height{0};
+    int image_components{0};
+    ImageData* options{nullptr};
+    unsigned char * image_data{nullptr};
+    intptr_t image_cookie{0};
+    std::string fail_reason;
+
+    Picture(ImageData* data) : options(data) {
+        assert(options);
+    }
+    float width() { return image_width; }
+    float height() { return image_height; }
+    bool open();
+    void close();
+    void black_and_white();
+    void updateImageCache(NVGcontext* vg);
+    void clearImageCache(NVGcontext* vg);
+    void draw(const DrawArgs& args) override;
+};
+
+
 struct FillData {
     bool enabled{true};
     PackedColor color{0x5c2393c4};
@@ -85,12 +122,14 @@ struct BoxGradientData {
 };
 
 struct CloakData {
+    ImageData image;
     FillData fill;
     LinearGradientData linear;
     RadialGradientData radial;
     BoxGradientData boxg;
 
     void init(const CloakData& source) {
+        image.init(source.image);
         fill.init(source.fill);
         linear.init(source.linear);
         radial.init(source.radial);
@@ -107,6 +146,7 @@ struct ICloakBackgroundClient {
 struct CloakBackgroundWidget : Widget
 {
     CloakData data;
+    Picture* pic{nullptr};
     std::vector<ICloakBackgroundClient*> clients;
 
     ~CloakBackgroundWidget();
@@ -121,6 +161,8 @@ struct CloakBackgroundWidget : Widget
     void remove_client(ICloakBackgroundClient* client);
 
     void onButton(const ButtonEvent& e) override { e.unconsume(); } // make clicks transparent
+    void step() override;
+    //void draw_image(const DrawArgs &args);
     void draw_fill(const DrawArgs &args);
     void draw_linear(const DrawArgs &args);
     void draw_radial(const DrawArgs &args);
