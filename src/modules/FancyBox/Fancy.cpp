@@ -95,11 +95,13 @@ Fancy::Fancy() {
 
 json_t* Fancy::dataToJson() {
     if (other_fancy) return Base::dataToJson();
+
     json_t *root = Base::dataToJson();
     set_json(root, "fancy", fancy);
     set_json(root, "shouting", shouting);
     set_json(root, "show-ports", show_ports);
     set_json(root, "pic-folder", pic_folder);
+    set_json(root, "orphan-cloak", orphan_cloak);
     //
     // Serialize fancy_data not expressed as a Param
     //
@@ -131,6 +133,8 @@ void Fancy::dataFromJson(json_t* root) {
     fancy      = get_json_bool(root, "fancy", fancy);
     show_ports = get_json_bool(root, "show-ports", show_ports);
     pic_folder = get_json_string(root, "pic-folder");
+    orphan_cloak = get_json_bool(root, "orphan-cloak", orphan_cloak);
+
     //
     // Serialize fancy_data not expressed as a Param
     //

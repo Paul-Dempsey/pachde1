@@ -34,7 +34,7 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
     auto svg_theme = getThemeCache().getTheme(ThemeName(theme));
     auto panel = createSvgThemePanel<FancySvg>(&my_svgs, nullptr);
     if (my_module && !my_module->show_ports) {
-        panel->box.size.x = 165.f;
+        panel->box.size.x = 180.f;
     }
     auto layout = panel->svg;
     setPanel(panel);
@@ -284,6 +284,14 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
 //         DEBUG("%s %d (%.3f,%.3f:%.3f,%.3f)", pos.first, static_cast<int>(pos.second.kind), RECT_ARGS(pos.second.widget->box));
 //     }
 // #endif
+}
+
+FancyUi::~FancyUi() {
+    if (my_module && my_cloak) {
+        if (!my_module->orphan_cloak) {
+            fancy_background(false);
+        }
+    }
 }
 
 void FancyUi::add_ports(::svg_query::BoundsIndex &bounds, std::shared_ptr<svg_theme::SvgTheme> svg_theme) {
@@ -705,6 +713,10 @@ void FancyUi::appendContextMenu(Menu* menu) {
             my_module->shouting = !my_module->shouting;
             shouting_buttons(my_module->shouting);
         }
+    ));
+    menu->addChild(createCheckMenuItem("Keep effects when removed", "",
+        [=](){ return my_module->orphan_cloak; },
+        [=](){ my_module->orphan_cloak = !my_module->orphan_cloak; }
     ));
     menu->addChild(createMenuLabel<FancyLabel>("theme"));
     AddThemeMenu(menu, this, theme_holder, false, false, false);

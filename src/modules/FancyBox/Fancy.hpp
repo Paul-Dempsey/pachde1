@@ -117,6 +117,7 @@ struct Fancy : ThemeModule {
     bool fancy{false};
     bool show_ports{true};
     bool shouting{true};
+    bool orphan_cloak{false};
     CloakData fancy_data;
     std::string theme_name;
 
@@ -183,6 +184,7 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     #endif
 
     FancyUi(Fancy* module);
+    ~FancyUi();
 
     TextButton* makeTextButton (
         std::map<std::string,::math::Rect>& bounds,
@@ -199,7 +201,7 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void add_input(::svg_query::BoundsIndex& bounds, const char* key, int id, PackedColor color);
     void add_ports(::svg_query::BoundsIndex& bounds, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
     bool show_ports() { return my_module ? my_module->show_ports : true; }
-    bool ui_showing_ports() { return box.size.x > 165.f; }
+    bool ui_showing_ports() { return box.size.x > 180.f; }
     void remove_ports();
     void set_ports(bool ports);
     void toggle_ports();

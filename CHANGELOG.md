@@ -1,5 +1,11 @@
 # Pachde One Change Log
 
+## Version 2.4
+
+- FancyBox gets an image background, with a configuration dialog (and grows by 1hp to make room).
+
+- Various bug fixes and improvements from user's feedback.
+
 ## Version 2.3
 
 - ***New Modules*** — [FancyBox](docs/FancyBox#fancybox), [Skiff](docs/Skiff.md#skiff), [Paneltone](docs/Paneltone.md#paneltone), [Rui](docs/Rui.md#rui), [Guide](docs/Guide.md#guide)

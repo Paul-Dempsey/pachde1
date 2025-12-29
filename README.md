@@ -6,7 +6,7 @@ The first VCV Rack plugin for pachde (#d).
 
 All pachde-One modules have Light, Dark, and High Contrast themes, and allow you to choose whether to follow the Rack UI theme or the _Use dark panels_ option.
 Right click to choose a theme and tracking option.
-If you want all the #d one modules to use a consistent theme, you can send the theme to all the peers in the patch at the time.
+If you want all the #d one modules to use a consistent theme, you can send the theme to all the peer pachde1 modules in the patch.
 
 #d One modules also come with caps on the screws for an elegant look.
 All screws are removable if you're more relaxed about your Rack and not worried about the panels falling out.
@@ -20,14 +20,14 @@ All screws are removable if you're more relaxed about your Rack and not worried 
 
 ## Innovative ? user interface
 
-This update of **#d One** brings a number of possible innovations for a Rack module UIs.
+The 2.3 update of **#d One** brings a number of possible innovations for a Rack module UIs.
 Most of these certainly depart from a strict hardware metaphor, which some may not prefer.
 Rack and it's modules themselves already depart from a strict hardware metaphor when convenient.
-No Eurorack hardware has a right click menu for the module, or it's knobs or switches.
+For example, no Eurorack hardware has a right click menu for the module, or it's knobs or switches.
 
 Here are some notable thigns to see in the **#d One** implementation.
-As soon as I've submitted **#d One 2.3** to the Rack library,
-I'll be updating the **[Rack dev notes (by pachde #d)](https://github.com/Paul-Dempsey/rack-dev-notes/blob/main/doc/index.md#dev-notes-for-vcv-rack)** with documentation, examples, and free-to-use reusable code for all of these (?) innovations:
+
+**[Rack dev notes (by pachde #d)](https://github.com/Paul-Dempsey/rack-dev-notes/blob/main/doc/index.md#dev-notes-for-vcv-rack)** will get udpates with documentation, examples, and free-to-use reusable code for all of these (?) innovations:
 
 - Hamburger menus —
   These provide context-sensitive menus appropriate for specific parts of a module,
@@ -38,8 +38,8 @@ I'll be updating the **[Rack dev notes (by pachde #d)](https://github.com/Paul-D
   Instead of hunting for the right extender in the module browser, just expand the panel to show an extension with more jacks or options.
   Recently I noticed another brand that provides buttons to insert selected extenders, which I think is a great idea.
 
-- Dialogs (**Info**) — Another tactic for making complex configurable easier than piling things into the module menu.
-  Turns out that making a dialog is really no more complicated or substantially different than creating the UI for a module.
+- Dialogs (**Info**, **FancyBox**) — Another tactic for making complex configurable easier than piling things into the module menu.
+  Turns out that making a dialog is really no more complicated or substantially different than creating a menu or the UI for a module.
   **#d One** constructs dialogs much like a module widget, with an SVG base.
   All the amenities mentioned below for iterating on a (themed) panel apply just the same
 
@@ -93,7 +93,10 @@ At this time, pull requests are accepted only from forks. GitHub makes it super 
 
 - Andrew Belt for creating VCV Rack
 - cosinekitty (Don Cross) for showing me how to get Github Actions working in my repo to build all the versions (including Mac ARM aka M1).
+- plus Gotno, and Bloodbat for the essential components that make all those cross-builds possible.
 - baconpaul for sharing improvements in the Github Actions, and other Rack inspiration.
+- Venom (Dave Benham) for great feedback, requests, bug reporting, and all-round good Rack citizen.
+- everyone who's beta-tested, reported issues, and given feedback - those make it all possible.
 
 ## What else?
 
@@ -105,7 +108,9 @@ I have a couple of other repos for VCV Rack-related projects you may be interest
 - **[Rack dev notes (by pachde #d)](https://github.com/Paul-Dempsey/rack-dev-notes/blob/main/doc/index.md#dev-notes-for-vcv-rack)**.
   A growing set of tech notes for creating and maintaining VCV Rack plugins.
 
-- **[#d CHEM](https://github.com/Paul-Dempsey/pachde-CHEM?tab=readme-ov-file#pachde-chem)** Controller for the Haken EaganMatrix. 16 modules for working with EaganMatrix devices, including Haken Continuum, ContinuuMini, EM Micro, and EaganMatrix Eurorack Module, and the Osmose from Expressive E.
+- **[#d CHEM](https://github.com/Paul-Dempsey/pachde-CHEM?tab=readme-ov-file#pachde-chem)**
+  Controller for the Haken EaganMatrix. 16 modules for working with EaganMatrix devices, including Haken Continuum, ContinuuMini, EM Micro, and the EaganMatrix Eurorack Module.
+  Also, the Osmose from Expressive E.
 
 ---
 ![pachde logo](docs/Logo.svg)
