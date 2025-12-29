@@ -10,37 +10,40 @@ Fancy::Fancy() {
     std::vector<std::string> off_on{"off", "on"};
     config(Params::N_PARAMS, Inputs::N_INPUTS, Outputs::N_OUTPUTS, Lights::N_LIGHTS);
 
-    configSwitch(P_FANCY_IMAGE_ON, 0.f, 1.f, 0.f, "Enable FancyBox Image", off_on);
-    configSwitch(P_FANCY_IMAGE_FIT, 0.f, 2.f, 0.f, "FancyBox Image fitting", {
-        "Cover", "Fit", "Stretch"
+    configSwitch(P_FANCY_IMAGE_ON, 0.f, 1.f, 0.f, "Enable Image", off_on);
+    configSwitch(P_FANCY_IMAGE_FIT, 0.f, 3.f, 0.f, "Image fitting", {
+        "Cover", "Fit", "Stretch", "Scale"
     });
-    configSwitch(P_FANCY_IMAGE_GRAY, 0.f, 1.f, 0.f, "FancyBox Image grayscale", off_on);
+    configSwitch(P_FANCY_IMAGE_GRAY, 0.f, 1.f, 0.f, "Image grayscale", off_on);
+    configParam(P_FANCY_IMAGE_X_OFFSET, -100.f, 100.f, 0.f, "", "%");
+    configParam(P_FANCY_IMAGE_Y_OFFSET, -100.f, 100.f, 0.f, "", "%");
+    configParam(P_FANCY_IMAGE_SCALE, 10.f, 1000.f, 100.f, "", "%");
 
-    configSwitch(P_FANCY_FILL_ON,  0.f, 1.f, 1.f, "Enable FancyBox Fill", off_on);
-    configParam(P_FANCY_FILL_FADE, 0.f, 100.f, 100.f, "FancyBox Fill fade", "%");
+    configSwitch(P_FANCY_FILL_ON,  0.f, 1.f, 1.f, "Enable Fill", off_on);
+    configParam(P_FANCY_FILL_FADE, 0.f, 100.f, 100.f, "Fill fade", "%");
 
-    configSwitch(P_FANCY_LINEAR_ON, 0.f, 1.f, 0.f, "Enable FancyBox Linear gradient", off_on);
-    configParam(P_FANCY_LINEAR_START_FADE, 0.f, 100.f, 100.f, "FancyBox Linear start fade", "%");
-    configParam(P_FANCY_LINEAR_X1,         0.f, 100.f, 0.f, "FancyBox Linear x1", "%");
-    configParam(P_FANCY_LINEAR_Y1,         0.f, 100.f, 0.f, "FancyBox Linear y1", "%");
-    configParam(P_FANCY_LINEAR_END_FADE,   0.f, 100.f, 100.f, "FancyBox Linear end fade", "%");
-    configParam(P_FANCY_LINEAR_X2,         0.f, 100.f, 100.f, "FancyBox Linear x2", "%");
-    configParam(P_FANCY_LINEAR_Y2,         0.f, 100.f, 100.f, "FancyBox Linear y2", "%");
+    configSwitch(P_FANCY_LINEAR_ON, 0.f, 1.f, 0.f, "Enable Linear gradient", off_on);
+    configParam(P_FANCY_LINEAR_START_FADE, 0.f, 100.f, 100.f, "Linear start fade", "%");
+    configParam(P_FANCY_LINEAR_X1,         0.f, 100.f, 0.f, "Linear x1", "%");
+    configParam(P_FANCY_LINEAR_Y1,         0.f, 100.f, 0.f, "Linear y1", "%");
+    configParam(P_FANCY_LINEAR_END_FADE,   0.f, 100.f, 100.f, "Linear end fade", "%");
+    configParam(P_FANCY_LINEAR_X2,         0.f, 100.f, 100.f, "Linear x2", "%");
+    configParam(P_FANCY_LINEAR_Y2,         0.f, 100.f, 100.f, "Linear y2", "%");
 
-    configSwitch(P_FANCY_RADIAL_ON, 0.f, 1.f, 0.f, "Enable FancyBox Radial gradient", off_on);
-    configParam(P_FANCY_RADIAL_INNER_FADE, 0.f, 100.f, 8.f,  "FancyBox Radial inner fade", "%");
-    configParam(P_FANCY_RADIAL_CX,         0.f, 100.f, 50.f, "FancyBox Radial cx", "%");
-    configParam(P_FANCY_RADIAL_CY,         0.f, 100.f, 50.f, "FancyBox Radial cy", "%");
-    configParam(P_FANCY_RADIAL_OUTER_FADE, 0.f, 100.f, 100.f,  "FancyBox Radial outer fade", "%");
-    configParam(P_FANCY_RADIAL_RADIUS,     0.f, 100.f, 50.f, "FancyBox Radial radius", "%");
+    configSwitch(P_FANCY_RADIAL_ON, 0.f, 1.f, 0.f, "Enable Radial gradient", off_on);
+    configParam(P_FANCY_RADIAL_INNER_FADE, 0.f, 100.f, 8.f,  "Radial inner fade", "%");
+    configParam(P_FANCY_RADIAL_CX,         0.f, 100.f, 50.f, "Radial cx", "%");
+    configParam(P_FANCY_RADIAL_CY,         0.f, 100.f, 50.f, "Radial cy", "%");
+    configParam(P_FANCY_RADIAL_OUTER_FADE, 0.f, 100.f, 100.f,  "Radial outer fade", "%");
+    configParam(P_FANCY_RADIAL_RADIUS,     0.f, 100.f, 50.f, "Radial radius", "%");
 
-    configSwitch(P_FANCY_BOX_ON, 0.f, 1.f, 0.f, "Enable FancyBox Box gradient (vignette)", off_on);
-    configParam(P_FANCY_BOX_INNER_FADE,    0.f, 100.f, 0.f,  "FancyBox Box inner fade", "%");
-    configParam(P_FANCY_BOX_SHRINK_X,      0.f, 100.f, 0.f,  "FancyBox Box shrink x", "%");
-    configParam(P_FANCY_BOX_SHRINK_Y,      0.f, 100.f, 0.f,  "FancyBox Box shrink y", "%");
-    configParam(P_FANCY_BOX_OUTER_FADE,    0.f, 100.f, 100.f,  "FancyBox Box outer fade", "%");
-    configParam(P_FANCY_BOX_RADIUS,        0.f, 100.f, 16.f, "FancyBox Box radius", "%");
-    configParam(P_FANCY_BOX_FEATHER,       0.f, 100.f, 12.f, "FancyBox Box feather", "%");
+    configSwitch(P_FANCY_BOX_ON, 0.f, 1.f, 0.f, "Enable Box gradient (vignette)", off_on);
+    configParam(P_FANCY_BOX_INNER_FADE,    0.f, 100.f, 0.f,  "Box inner fade", "%");
+    configParam(P_FANCY_BOX_SHRINK_X,      0.f, 100.f, 0.f,  "Box shrink x", "%");
+    configParam(P_FANCY_BOX_SHRINK_Y,      0.f, 100.f, 0.f,  "Box shrink y", "%");
+    configParam(P_FANCY_BOX_OUTER_FADE,    0.f, 100.f, 100.f,  "Box outer fade", "%");
+    configParam(P_FANCY_BOX_RADIUS,        0.f, 100.f, 16.f, "Box radius", "%");
+    configParam(P_FANCY_BOX_FEATHER,       0.f, 100.f, 12.f, "Box feather", "%");
 
     configInput(IN_FANCY_FILL_H,            "fill Hue");
     configInput(IN_FANCY_FILL_S,            "fill Saturation");
@@ -91,6 +94,7 @@ Fancy::Fancy() {
 }
 
 json_t* Fancy::dataToJson() {
+    if (other_fancy) return Base::dataToJson();
     json_t *root = Base::dataToJson();
     set_json(root, "fancy", fancy);
     set_json(root, "shouting", shouting);
@@ -99,7 +103,7 @@ json_t* Fancy::dataToJson() {
     //
     // Serialize fancy_data not expressed as a Param
     //
-    set_json(root, "pic-file", fancy_data.image.path);
+    set_json(root, "pic-file", fancy_data.image.options.path);
     char hex[10];
     packed_color::hexFormat(fancy_data.fill.color, 10, hex);  set_json(root, "fill-color", hex);
     packed_color::hexFormat(fancy_data.linear.icol, 10, hex); set_json(root, "linear-icol", hex);
@@ -121,6 +125,7 @@ PackedColor color_from_json(json_t* root, const char * key) {
 }
 
 void Fancy::dataFromJson(json_t* root) {
+    if (other_fancy) return;
     Base::dataFromJson(root);
     shouting   = get_json_bool(root, "shouting", shouting);
     fancy      = get_json_bool(root, "fancy", fancy);
@@ -129,7 +134,7 @@ void Fancy::dataFromJson(json_t* root) {
     //
     // Serialize fancy_data not expressed as a Param
     //
-    fancy_data.image.path = get_json_string(root, "pic-file");
+    fancy_data.image.options.path = get_json_string(root, "pic-file");
     fancy_data.fill.color = color_from_json(root, "fill-color");
     fancy_data.linear.icol = color_from_json(root, "linear-icol");
     fancy_data.linear.ocol = color_from_json(root, "linear-ocol");
@@ -144,6 +149,7 @@ inline float fancy_param(rack::engine::Param& param) { return .01f * param.getVa
 
 void Fancy::onPortChange(const PortChangeEvent &e)
 {
+    if (other_fancy) return;
     if (e.connecting) {
         connection_count++;
     } else {
@@ -178,20 +184,25 @@ void Fancy::process_image(const ProcessArgs &args)
     image_process_count = (image_process_count + 1) % 25;
     if (image_process_count % 25) return;
     fancy_data.image.enabled = param_bool(getParam(P_FANCY_IMAGE_ON));
-    fancy_data.image.fit = static_cast<ImageFit>(getParam(P_FANCY_IMAGE_FIT).getValue());
-    fancy_data.image.gray = param_bool(getParam(P_FANCY_IMAGE_GRAY));
+    fancy_data.image.options.fit = static_cast<ImageFit>(getParam(P_FANCY_IMAGE_FIT).getValue());
+    fancy_data.image.options.gray = param_bool(getParam(P_FANCY_IMAGE_GRAY));
+    fancy_data.image.options.x_offset = getParam(P_FANCY_IMAGE_X_OFFSET).getValue() * .01f;
+    fancy_data.image.options.y_offset = getParam(P_FANCY_IMAGE_Y_OFFSET).getValue() * .01f;
+    fancy_data.image.options.scale = getParam(P_FANCY_IMAGE_SCALE).getValue() * .01f;
     if (ui->my_cloak) {
-        ui->my_cloak->data.image.enabled = fancy_data.image.path.empty() ? false : fancy_data.image.enabled;
-        ui->my_cloak->data.image.fit = fancy_data.image.fit;
-        ui->my_cloak->data.image.gray = fancy_data.image.gray;
-        if (ui->my_cloak->data.image.enabled) {
-            if (ui->my_cloak->data.image.path != fancy_data.image.path) {
-                if (ui->my_cloak->pic) {
-                    ui->my_cloak->pic->close();
-                }
-                ui->my_cloak->data.image.path = fancy_data.image.path;
+        if ((ui->my_cloak->data.image.options.path != fancy_data.image.options.path)
+            || (ui->my_cloak->data.image.options.gray != fancy_data.image.options.gray)) {
+            if (ui->my_cloak->pic) {
+                ui->my_cloak->pic->close();
             }
+            ui->my_cloak->data.image.options.path = fancy_data.image.options.path;
         }
+        ui->my_cloak->data.image.enabled = fancy_data.image.options.path.empty() ? false : fancy_data.image.enabled;
+        ui->my_cloak->data.image.options.fit = fancy_data.image.options.fit;
+        ui->my_cloak->data.image.options.gray = fancy_data.image.options.gray;
+        ui->my_cloak->data.image.options.x_offset = fancy_data.image.options.x_offset;
+        ui->my_cloak->data.image.options.y_offset = fancy_data.image.options.y_offset;
+        ui->my_cloak->data.image.options.scale = fancy_data.image.options.scale;
     }
 }
 

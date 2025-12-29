@@ -1,4 +1,5 @@
 #include "Fancy.hpp"
+#include "pic-dialog.hpp"
 #include "services/open-file.hpp"
 #include "services/rack-help.hpp"
 #include "services/svg-query.hpp"
@@ -7,6 +8,7 @@
 #include "widgets/color-picker.hpp"
 #include "widgets/components.hpp"
 #include "widgets/hamburger.hpp"
+#include "widgets/dialog.hpp"
 #include "widgets/label.hpp"
 #include "widgets/port.hpp"
 #include "widgets/screws.hpp"
@@ -64,8 +66,10 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
     HOT_POSITION("k:fancy-light", HotPosKind::Center, light);
     addChild(light);
 
-    addChild(fancy_button = makeTextButton(bounds, "k:fancy-btn", true, "", "Toggle Fancy background", svg_theme,
+    addChild(fancy_button = makeTextButton(bounds, "k:fancy-btn", true, "", "Toggle Fancy background", nullptr,
         [this](bool ctrl, bool shift) { if(!my_module) return; fancy_background(!my_module->fancy); }));
+    fancy_button->set_style_keys("f-punch", "f-bevel", "f-face", "f-text", "f-text-dn", "f-hover");
+    fancy_button->applyTheme(svg_theme);
 
     { // Jack toggle
         const char * jack_key = show_ports() ? "k:jack-btn-close-ports" : "k:jack-btn-open-ports";
@@ -87,12 +91,10 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
     pic_button->setTheme(theme_holder->getTheme());
     addChild(pic_button);
     {
-        auto option = createParam<widgetry::Switch>(Vec(0,0), my_module, Fancy::P_FANCY_IMAGE_FIT);
-        option->box = bounds["k:pic-fit"];
-        option->applyTheme(svg_theme);
-        addChild(option);
+        auto ham = createWidgetCentered<Hamburger>(bounds["k:pic-options"].getCenter());
+        ham->set_handler([=](){ pic_options(); });
+        addChild(ham);
     }
-    add_check(bounds,"k:pic-gray", Fancy::P_FANCY_IMAGE_GRAY, svg_theme);
     image_name = new TipLabel();
     image_name->box = bounds["k:pic-label"];
     image_name->format = info_style;
@@ -101,9 +103,9 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
         pic_button->set_handler([=](bool c, bool s){
             click_pic(c, s);
         });
-        if (!my_module->fancy_data.image.path.empty()) {
-            image_name->describe(my_module->fancy_data.image.path);
-            image_name->set_text(system::getStem(my_module->fancy_data.image.path));
+        if (!my_module->fancy_data.image.options.path.empty()) {
+            image_name->describe(my_module->fancy_data.image.options.path);
+            image_name->set_text(system::getStem(my_module->fancy_data.image.options.path));
         }
     } else {
         image_name->set_text("[background]");
@@ -362,6 +364,7 @@ void FancyUi::add_ports(::svg_query::BoundsIndex &bounds, std::shared_ptr<svg_th
 }
 
 void FancyUi::remove_ports() {
+    if (!my_module || my_module->other_fancy) return;
     for (auto child: removables) {
 #ifdef HOT_SVG
         auto it = std::find_if(pos_widgets.begin(), pos_widgets.end(), [child](const std::pair<const char *const, svg_query::HotPos>& p){
@@ -399,7 +402,7 @@ void FancyUi::set_ports(bool ports) {
     addBounds(layout, "k:", bounds, true);
 
     if (ports) {
-        box.size.x = 315;
+        box.size.x = 330;
         APP->scene->rack->setModulePosForce(this, box.pos);
         auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
         add_ports(bounds, svg_theme);
@@ -407,7 +410,7 @@ void FancyUi::set_ports(bool ports) {
         Center(jack_button);
         my_module->show_ports = true;
     } else {
-        box.size.x = 165;
+        box.size.x = 180;
         APP->scene->rack->setModulePosForce(this, box.pos);
         remove_ports();
         jack_button->setPosition(bounds["k:jack-btn-open-ports"].getCenter());
@@ -417,7 +420,7 @@ void FancyUi::set_ports(bool ports) {
 }
 
 void FancyUi::toggle_ports() {
-    if (!my_module) return;
+    if (!my_module || my_module->other_fancy) return;
     set_ports(!show_ports());
 }
 
@@ -439,7 +442,7 @@ TextButton* FancyUi::makeTextButton (
         if (tip) button->describe(tip);
         button->set_handler(handler);
     }
-    button->applyTheme(svg_theme);
+    if (svg_theme) button->applyTheme(svg_theme);
     return button;
 }
 
@@ -500,7 +503,7 @@ void FancyUi::add_input(
 }
 
 void FancyUi::shouting_buttons(bool shouting) {
-    fancy_button->set_text(shouting ? "FANCYBOX" : "FancyBox");
+    fancy_button->set_text(shouting ? "ON•OFF" : "on•off");
 }
 
 void FancyUi::set_fill_color(PackedColor color) {
@@ -585,7 +588,9 @@ void FancyUi::onChangeTheme(ChangedItem item)
         auto svg_theme = getThemeCache().getTheme(ThemeName(theme_holder->getTheme()));
         my_svgs.changeTheme(svg_theme);
         applyChildrenTheme(this, svg_theme);
-        pic_button->setTheme(theme_holder->getTheme());
+        if (pic_button) {
+            pic_button->setTheme(theme_holder->getTheme());
+        }
         sendDirty(this);
     }
 }
@@ -603,7 +608,7 @@ void FancyUi::onDeleteCloak(CloakBackgroundWidget *cloak) {
 }
 
 void FancyUi::fancy_background(bool fancy) {
-    if (!my_module) return;
+    if (!my_module || my_module->other_fancy) return;
 
     my_module->fancy = fancy;
     auto cloak = getBackgroundCloak();
@@ -619,25 +624,26 @@ void FancyUi::fancy_background(bool fancy) {
 
 void FancyUi::click_pic(bool ctrl, bool shift)
 {
-    if (!my_module) return;
+    if (!my_module || my_module->other_fancy) return;
     std::string path;
-    std::string name{system::getFilename(my_module->fancy_data.image.path)};
+    std::string name{system::getFilename(my_module->fancy_data.image.options.path)};
     bool ok = openFileDialog(my_module->pic_folder, "Images (.png .jpg .gif):png,jpg,jpeg,gif;Any (*):*", name, path);
     if (ok) {
         my_module->pic_folder = system::getDirectory(path);
-        my_module->fancy_data.image.path = path;
+        my_module->fancy_data.image.options.path = path;
         name = system::getStem(path);
         image_name->set_text(name);
         image_name->describe(path);
-        //loadImage(path);
-    } else {
-        //image.close();
     }
+}
+
+void FancyUi::pic_options() {
+    show_picture_dialog(this);
 }
 
 void FancyUi::onHoverKey(const HoverKeyEvent &e)
 {
-    if (!my_module) {
+    if (!my_module || my_module->other_fancy) {
         Base::onHoverKey(e);
         return;
     }
@@ -665,7 +671,7 @@ void FancyUi::onHoverKey(const HoverKeyEvent &e)
 
 void FancyUi::step() {
     Base::step();
-    if (!my_module) return;
+    if (!my_module || my_module->other_fancy) return;
 
     if (request_cloak) {
         request_cloak = false;
@@ -690,7 +696,7 @@ void FancyUi::draw(const DrawArgs& args) {
  }
 
 void FancyUi::appendContextMenu(Menu* menu) {
-    if (!module) return;
+    if (!module || my_module->other_fancy) return;
 
     menu->addChild(createMenuLabel<HamburgerTitle>("#d FancyBox"));
     menu->addChild(createCheckMenuItem("Shouting button", "",

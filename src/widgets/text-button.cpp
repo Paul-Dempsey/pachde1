@@ -144,7 +144,9 @@ void TextButton::draw(const DrawArgs& args) {
 
     auto vg = args.vg;
     float stroke_width = punch.width();
-    FittedBoxRect(vg, 0.f, 0.f, box.size.x, box.size.y, punch.nvg_stroke_color(), Fit::Inside, stroke_width);
+    if (packed_color::isVisible(punch.stroke_color)) {
+        FittedBoxRect(vg, 0.f, 0.f, box.size.x, box.size.y, punch.nvg_stroke_color(), Fit::Inside, stroke_width);
+    }
 
     NVGcolor co_start{fromPacked(latched ? co_bevel_lo : co_bevel_hi)};
     NVGcolor co_end{fromPacked(latched ? co_bevel_hi : co_bevel_lo)};

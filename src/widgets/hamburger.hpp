@@ -93,16 +93,19 @@ struct Hamburger : TipWidget, IThemed
 {
     using Base = TipWidget;
     HamData data;
+    std::function<void()> handler{nullptr};
 
     Hamburger() {
         box.size.x = 12.f;
         box.size.y = 12.f;
     }
 
-    void createContextMenu() {
-        ui::Menu* menu = createMenu();
-    	appendContextMenu(menu);
-    }
+    // void createContextMenu() {
+    //     ui::Menu* menu = createMenu();
+    // 	appendContextMenu(menu);
+    // }
+
+    void set_handler(std::function<void()> callback) { handler = callback; }
 
     void onHover(const HoverEvent& e) override {
         e.consume(this);
@@ -123,10 +126,19 @@ struct Hamburger : TipWidget, IThemed
         if ((e.action == GLFW_PRESS) && ((e.mods & RACK_MOD_MASK) == 0)) {
             switch (e.button) {
             case GLFW_MOUSE_BUTTON_LEFT:
-                Base::createContextMenu();
+                destroyTip();
+                if (handler) {
+                    handler();
+                } else {
+                    createContextMenu();
+                }
                 e.consume(this);
                 return;
             case GLFW_MOUSE_BUTTON_RIGHT:
+                if (handler) {
+                    destroyTip();
+                    createContextMenu();
+                }
                 e.consume(this);
                 return;
             }

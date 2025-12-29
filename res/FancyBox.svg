@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="315" height="380" viewBox="0 0 315 380" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<svg width="330" height="380" viewBox="0 0 330 380" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
 <linearGradient id="pg" y2="100%" gradientUnits="userSpaceOnUse">
     <stop offset="0" stop-color="#282828" />
     <stop offset="1" stop-color="#181818" />
@@ -8,112 +8,113 @@
 <rect id="mast" width="100%" height="20" fill="#f9a806"/>
 <path id="title" fill="#000" transform="translate(3.5,3.5)" d="m 0,0 h 5.78 v 2 h -3.58 v 2.1 h 3.58 v 2 h -3.564 v 4.2 h -2.216 z m 12.02,10.3 v -1.1 h -0 q -0.47,0.6 -0.95,0.9 -0.47,0.3 -1.18,0.3 -1.18,0 -2,-1 -0.83,-1 -0.83,-2.5 0,-1.4 0.88,-2.4 0.88,-1.1 2.09,-1.1 0.58,0 1.04,0.3 0.46,0.3 0.98,0.8 v -0.9 h 1.99 v 6.7 z m -1.47,-4.9 q -0.59,0 -0.99,0.5 -0.4,0.5 -0.4,1.2 0,0.7 0.38,1.1 0.38,0.4 1,0.4 0.59,0 1.01,-0.5 0.42,-0.4 0.42,-1.1 0,-0.6 -0.42,-1.1 -0.42,-0.5 -1,-0.5 z m 7.66,-1.8 v 0.8 q 1,-1 2.1,-1 1,0 1.6,0.8 0.6,0.8 0.6,2 v 4.1 h -2 v -3.8 q 0,-0.5 -0.3,-0.9 -0.3,-0.4 -0.8,-0.4 -0.5,0 -0.9,0.5 -0.3,0.5 -0.3,1.3 v 3.3 h -2 v -6.7 z m 11.2,4.4 v 2 q -1.1,0.4 -1.7,0.4 -1.6,0 -2.6,-1 -1,-1 -1,-2.5 0,-1.5 0.9,-2.5 1,-1 2.4,-1 1,0 2,0.5 v 1.9 q -0.9,-0.4 -1.6,-0.4 -0.7,0 -1.1,0.4 -0.4,0.4 -0.4,1.1 0,0.6 0.4,1.1 0.4,0.4 1.1,0.4 0.6,0 1.6,-0.4 z m 1,-4.4 h 2.1 l 2,3.9 1.7,-3.9 h 2 l -4.2,9.7 h -2 l 1.5,-3.5 z m 9.1,-3.6 h 3 q 1.9,0 2.6,0.8 0.6,0.8 0.6,1.9 0,0.6 -0.2,1.1 -0.3,0.4 -0.8,0.9 1.1,0.4 1.5,1.1 0.4,0.7 0.4,1.5 0,1.4 -0.9,2.2 -1,0.8 -2.8,0.8 h -3.4 z m 2.2,1.8 v 2.2 h 0.5 q 0.6,0 1,-0.3 0.3,-0.4 0.3,-0.9 0,-0.4 -0.3,-0.7 -0.4,-0.3 -1,-0.3 z m 0,4 v 2.8 h 0.8 q 1.8,0 1.8,-1.4 0,-0.7 -0.4,-1.1 -0.5,-0.3 -1.3,-0.3 z m 6,1.2 q 0,-1.6 1,-2.6 1,-1 2.6,-1 1.4,0 2.4,1 1,1 1,2.5 0,1.5 -1,2.5 -1,1 -2.5,1 -1.6,0 -2.5,-1 -1,-1.1 -1,-2.4 z m 5,0 q 0,-0.7 -0.4,-1.2 -0.5,-0.5 -1.1,-0.5 -0.6,0 -1,0.4 -0.5,0.5 -0.5,1.2 0,0.7 0.5,1.2 0.4,0.5 1,0.5 0.6,0 1.1,-0.5 0.4,-0.5 0.4,-1.1 z m 2.7,-3.4 h 2.5 l 1.3,1.7 1.4,-1.7 h 2.4 l -2.6,3.2 2.8,3.5 h -2.4 l -1.6,-2 -1.6,2 h -2.4 l 2.8,-3.5 z" />
 
-<rect id="k:jack-btn-open-ports"  fill="#6a6" x="144" y="5" width="18" height="12" />
-<rect id="k:jack-btn-close-ports" fill="#6a6" x="293" y="5" width="18" height="12" />
-<path id="fold" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width=".25" d="M165,0 v380" />
+<rect id="k:jack-btn-open-ports"  fill="#6a6" x="159" y="5" width="18" height="12" />
+<rect id="k:jack-btn-close-ports" fill="#6a6" x="184" y="5" width="18" height="12" />
+<path id="fold" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width=".25" d="M180,0 v380" />
 
-<g transform="translate(134,238)">
+<g transform="translate(146,238)">
     <circle id="logo-circle" fill="#222222" stroke="#f9a806" stroke-width=".75" cx="10" cy="10" r="10" />
     <path id="logo" transform="translate(2.5,2)" fill="#f9a806" d="M 3.023,5.309 3.916,3.543 5.003,3.834 4.104,5.599 5.759,6.042 6.658,4.277 7.74,4.567 6.846,6.334 7.631,6.544 7.34,7.631 6.328,7.36 5.666,8.665 6.969,9.014 6.678,10.1 5.148,9.691 4.255,11.457 3.168,11.166 4.062,9.4 2.407,8.956 1.513,10.723 0.426,10.431 1.32,8.665 0.540,8.456 0.831,7.369 1.843,7.64 2.5,6.334 1.202,5.986 1.493,4.899 Z M 5.242,7.068 3.587,6.625 2.924,7.93 4.58,8.374 Z M 13.387,10.647 l -0.301,1.122 -2.354,-0.631 0.155,-0.579 Q 10.064,11.035 9.304,10.831 8.394,10.587 7.993,9.687 7.593,8.787 7.874,7.736 8.160,6.669 8.969,6.104 9.78,5.534 10.665,5.771 11.516,6 11.892,6.807 L 12.306,5.262 11.547,5.058 11.847,3.937 14.161,4.557 12.587,10.433 Z M 11.402,8.697 Q 11.589,7.998 11.367,7.62 11.15,7.244 10.767,7.141 10.31,7.019 9.962,7.308 9.621,7.595 9.466,8.173 9.32,8.721 9.465,9.165 q 0.147,0.438 0.615,0.564 0.387,0.104 0.76,-0.12 0.379,-0.227 0.562,-0.912 z" />
 </g>
 
-<circle id="k:fancy-light" cx="138" cy="9.5" r="2.95" />
-<rect id="k:fancy-btn" x="74" y="2.5" width="58" height="15" fill="none" stroke="#f22" stroke-width=".35"/>
+<circle id="k:fancy-light" cx="136" cy="9.5" r="2.95" />
+<rect id="k:fancy-btn" x="80" y="2.5" width="48" height="15" fill="none" stroke="#22f" stroke-width=".5"/>
 
 <g transform="translate(0,22)">
     <rect id="k:pic-check" fill="#a6a6a6" x="5" y="0" width="14" height="14" />
     <rect id="k:pic-group" fill="#a6a6a6" x="5" y="15" width="14" height="30" />
-    <rect id="k:pic-button" fill="#a6a6a6" x="24" y="3" width="24" height="24"/>
-    <rect id="k:pic-fit" fill="#f22" x="50" y="4" width="12" height="24" />
-    <rect id="k:pic-gray" fill="#a6a6a6" x="64" y="9" width="14" height="14" />
-    <rect id="k:pic-label" fill="#aaaa" x="20" y="30" width="68" height="14" />
+    <rect id="k:pic-button" fill="#a6a6a6" x="42" y="3" width="24" height="24"/>
+    <rect id="k:pic-options" fill="#a6a6a6" x="72" y="10" width="12" height="12"/>
+    <rect id="k:pic-label" fill="#aaaa" x="20" y="30" width="72" height="14" />
 </g>
 
-<g transform="translate(82,22)">
-    <rect   id="k:fill-check" fill="#a6a6a6" x="5" y="0" width="14" height="14" />
-    <rect   id="k:fill-group" fill="#a6a6a6" x="5" y="15" width="14" height="26" />
-    <circle id="k:fill-co"     fill="#d65cab" cx="36" cy="15" r="10" />
-    <rect   id="k:fill-swatch" fill="#d65cab"  x="27"  y="30" width="18" height="10" />
-    <circle id="k:fill-fade" fill="#5c95d6" cx="64" cy="14" r="14" />
-    <rect   id="k:fill-fade-label" fill="#aaaa" x="49" y="30" width="30" height="14"/>
+<path id="fsep" fill="none" stroke="#395177" stroke-width=".75" d="M96,21 v45" />
+
+<g transform="translate(96,22)">
+    <rect   id="k:fill-check"      fill="#a6a6a6"  x="5"   y="0"  width="14" height="14" />
+    <rect   id="k:fill-group"      fill="#a6a6a6"  x="5"   y="15" width="14" height="26" />
+    <circle id="k:fill-co"         fill="#d65cab" cx="36" cy="15" r="10" />
+    <rect   id="k:fill-swatch"     fill="#d65cab"  x="27"  y="30" width="18" height="10" />
+    <circle id="k:fill-fade"       fill="#5c95d6" cx="64" cy="14" r="14" />
+    <rect   id="k:fill-fade-label" fill="#aaaa"      x="49"  y="30" width="30" height="14"/>
 </g>
 
-<path id="fsep" fill="none" stroke="#395177" stroke-width=".75" d="M24,67.75 h285" />
+<path id="fsep" fill="none" stroke="#395177" stroke-width=".75" d="M24,67.75 h300" />
 
 <g transform="translate(0,69)">
     <rect id="k:lg-check" fill="#a6a6a6" x="5" y="2" width="14" height="14" />
     <rect id="k:lg-group" fill="#a6a6a6" x="5" y="17" width="14" height="82" />
-    <circle id="k:lg-start-co"       fill="#d65cab" cx="36" cy="17" r="10" />
-    <rect   id="k:lg-start-swatch"   fill="#d65cab"  x="27"  y="33" width="18" height="10"/>
-    <circle id="k:lg-start-fade"     fill="#5c95d6" cx="64" cy="16" r="14" />
-    <circle id="k:lg-start-x"        fill="#5c95d6" cx="104" cy="16" r="14" />
-    <circle id="k:lg-start-y"        fill="#5c95d6" cx="144" cy="16" r="14" />
-    <rect id="k:lg-start-fade-label" fill="#aaaa" x="49" y="33" width="30" height="14"/>
-    <rect id="k:lg-x1-label"         fill="#aaaa" x="92" y="33" width="26" height="14"/>
-    <rect id="k:lg-y1-label"         fill="#aaaa" x="132" y="33" width="26" height="14"/>
+    <circle id="k:lg-start-co"       fill="#d65cab" cx="39" cy="17" r="10" />
+    <rect   id="k:lg-start-swatch"   fill="#d65cab"  x="30"  y="33" width="18" height="10"/>
+    <circle id="k:lg-start-fade"     fill="#5c95d6" cx="72" cy="16" r="14" />
+    <circle id="k:lg-start-x"        fill="#5c95d6" cx="118" cy="16" r="14" />
+    <circle id="k:lg-start-y"        fill="#5c95d6" cx="160" cy="16" r="14" />
+    <rect id="k:lg-start-fade-label" fill="#aaaa" x="57" y="33" width="30" height="14"/>
+    <rect id="k:lg-x1-label"         fill="#aaaa" x="105" y="33" width="26" height="14"/>
+    <rect id="k:lg-y1-label"         fill="#aaaa" x="147" y="33" width="26" height="14"/>
     <g transform="translate(0,50)">
-        <circle id="k:lg-end-co"         fill="#d65cab" cx="36" cy="17" r="10" />
-        <rect   id="k:lg-end-swatch"     fill="#d65cab"  x="27" y="33" width="18" height="10" />
-        <circle id="k:lg-end-fade"       fill="#5c95d6" cx="64" cy="16" r="14" />
-        <circle id="k:lg-end-x"          fill="#5c95d6" cx="104" cy="16" r="14" />
-        <circle id="k:lg-end-y"          fill="#5c95d6" cx="144" cy="16" r="14" />
-        <rect   id="k:lg-end-fade-label" fill="#aaaa" x="49" y="33" width="30" height="14"/>
-        <rect   id="k:lg-x2-label"       fill="#aaaa" x="92" y="33" width="26" height="14"/>
-        <rect   id="k:lg-y2-label"       fill="#aaaa" x="132" y="33" width="26" height="14"/>
+        <circle id="k:lg-end-co"         fill="#d65cab" cx="39" cy="17" r="10" />
+        <rect   id="k:lg-end-swatch"     fill="#d65cab"  x="30" y="33" width="18" height="10" />
+        <circle id="k:lg-end-fade"       fill="#5c95d6" cx="72" cy="16" r="14" />
+        <circle id="k:lg-end-x"          fill="#5c95d6" cx="118" cy="16" r="14" />
+        <circle id="k:lg-end-y"          fill="#5c95d6" cx="160" cy="16" r="14" />
+        <rect   id="k:lg-end-fade-label" fill="#aaaa" x="57" y="33" width="30" height="14"/>
+        <rect   id="k:lg-x2-label"       fill="#aaaa" x="105" y="33" width="26" height="14"/>
+        <rect   id="k:lg-y2-label"       fill="#aaaa" x="147" y="33" width="26" height="14"/>
     </g>
 </g>
-<path id="fsep" fill="none" stroke="#395177" stroke-width=".5" opacity="1" d="M24,171.75 h285" />
+
+<path id="fsep" fill="none" stroke="#395177" stroke-width=".5" opacity="1" d="M24,171.75 h300" />
 
 <g transform="translate(0,173)">
     <rect id="k:rg-check" fill="#a6a6a6" x="5" y="2" width="14" height="14" />
     <rect id="k:rg-group" fill="#a6a6a6" x="5" y="17" width="14" height="82" />
-    <circle id="k:rg-inner-co"         fill="#d65cab" cx="36"  cy="17" r="10" />
-    <rect   id="k:rg-inner-swatch"     fill="#d65cab"  x="27"   y="33" width="18" height="10"/>
-    <circle id="k:rg-inner-fade"       fill="#5c95d6" cx="64"  cy="16" r="14" />
-    <circle id="k:rg-cx"               fill="#5c95d6" cx="104" cy="16" r="14" />
-    <circle id="k:rg-cy"               fill="#5c95d6" cx="144" cy="16" r="14" />
-    <rect   id="k:rg-inner-fade-label" fill="#aaaa" x="49"  y="33" width="30" height="14"/>
-    <rect   id="k:rg-cx-label"         fill="#aaaa" x="92"  y="33" width="24" height="14"/>
-    <rect   id="k:rg-cy-label"         fill="#aaaa" x="132" y="33" width="24" height="14"/>
+    <circle id="k:rg-inner-co"         fill="#d65cab" cx="39"  cy="17" r="10" />
+    <rect   id="k:rg-inner-swatch"     fill="#d65cab"  x="30"   y="33" width="18" height="10"/>
+    <circle id="k:rg-inner-fade"       fill="#5c95d6" cx="72"  cy="16" r="14" />
+    <circle id="k:rg-cx"               fill="#5c95d6" cx="118" cy="16" r="14" />
+    <circle id="k:rg-cy"               fill="#5c95d6" cx="160" cy="16" r="14" />
+    <rect   id="k:rg-inner-fade-label" fill="#aaaa" x="57"  y="33" width="30" height="14"/>
+    <rect   id="k:rg-cx-label"         fill="#aaaa" x="105"  y="33" width="24" height="14"/>
+    <rect   id="k:rg-cy-label"         fill="#aaaa" x="147" y="33" width="24" height="14"/>
     <g transform="translate(0,50)">
-        <circle id="k:rg-outer-co"         fill="#d65cab" cx="36"  cy="17" r="10" />
-        <rect   id="k:rg-outer-swatch"     fill="#d65cab"  x="27"   y="33" width="18" height="10" />
-        <circle id="k:rg-outer-fade"       fill="#5c95d6" cx="64"  cy="16" r="14" />
-        <circle id="k:rg-radius"           fill="#5c95d6" cx="104" cy="16" r="14" />
-        <rect   id="k:rg-outer-fade-label" fill="#aaaa" x="49" y="33" width="30" height="14"/>
-        <rect   id="k:rg-radius-label"     fill="#aaaa" x="88" y="33" width="32" height="14"/>
+        <circle id="k:rg-outer-co"         fill="#d65cab" cx="39"  cy="17" r="10" />
+        <rect   id="k:rg-outer-swatch"     fill="#d65cab"  x="30"   y="33" width="18" height="10" />
+        <circle id="k:rg-outer-fade"       fill="#5c95d6" cx="72"  cy="16" r="14" />
+        <circle id="k:rg-radius"           fill="#5c95d6" cx="118" cy="16" r="14" />
+        <rect   id="k:rg-outer-fade-label" fill="#aaaa" x="57" y="33" width="30" height="14"/>
+        <rect   id="k:rg-radius-label"     fill="#aaaa" x="102" y="33" width="32" height="14"/>
     </g>
 </g>
 
-<path id="fsep" fill="none" stroke="#395177" stroke-width=".5" opacity="1" d="M24,275.75 h285" />
+<path id="fsep" fill="none" stroke="#395177" stroke-width=".5" opacity="1" d="M24,275.75 h300" />
 
 <g transform="translate(0,277)">
     <rect id="k:bg-check" fill="#a6a6a6" x="5" y="6" width="14" height="14" />
     <rect id="k:bg-group" fill="#a6a6a6" x="5" y="22" width="14" height="70" />
-    <circle id="k:bg-inner-co"         fill="#d65cab" cx="36"  cy="17" r="10" />
-    <rect   id="k:bg-inner-swatch"     fill="#d65cab" x="27"    y="33" width="18" height="10" />
-    <circle id="k:bg-inner-fade"       fill="#5c95d6" cx="64"  cy="16" r="14" />
-    <circle id="k:bg-shrink-x"         fill="#5c95d6" cx="104" cy="16" r="14" />
-    <circle id="k:bg-shrink-y"         fill="#5c95d6" cx="144" cy="16" r="14" />
-    <rect   id="k:bg-inner-fade-label" fill="#aaaa" x="49"  y="33" width="30" height="14"/>
-    <rect   id="k:bg-shrink-x-label"   fill="#aaaa" x="95"  y="33" width="18" height="14"/>
-    <rect   id="k:bg-shrink-label"     fill="#a8aa" x="109" y="33" width="30" height="14"/>
-    <rect   id="k:bg-shrink-y-label"   fill="#aaaa" x="135" y="33" width="18" height="14"/>
+    <circle id="k:bg-inner-co"         fill="#d65cab" cx="39"  cy="17" r="10" />
+    <rect   id="k:bg-inner-swatch"     fill="#d65cab" x="30"    y="33" width="18" height="10" />
+    <circle id="k:bg-inner-fade"       fill="#5c95d6" cx="72"  cy="16" r="14" />
+    <circle id="k:bg-shrink-x"         fill="#5c95d6" cx="118" cy="16" r="14" />
+    <circle id="k:bg-shrink-y"         fill="#5c95d6" cx="160" cy="16" r="14" />
+    <rect   id="k:bg-inner-fade-label" fill="#aaaa" x="57"  y="33" width="30" height="14"/>
+    <rect   id="k:bg-shrink-x-label"   fill="#aaaa" x="109"  y="33" width="18" height="14"/>
+    <rect   id="k:bg-shrink-label"     fill="#a8aa" x="124" y="33" width="30" height="14"/>
+    <rect   id="k:bg-shrink-y-label"   fill="#aaaa" x="151" y="33" width="18" height="14"/>
     <g transform="translate(0,50)">
-        <circle id="k:bg-outer-co"     fill="#d65cab" cx="36"  cy="17" r="10" />
-        <rect   id="k:bg-outer-swatch" fill="#d65cab"  x="27"   y="33" width="18" height="10" />
-        <circle id="k:bg-outer-fade"   fill="#5c95d6" cx="64"  cy="16" r="14" />
-        <circle id="k:bg-radius"       fill="#5c95d6" cx="104" cy="16" r="14" />
-        <circle id="k:bg-feather"      fill="#5c95d6" cx="144" cy="16" r="14" />
-        <rect   id="k:bg-outer-fade-label" fill="#aaaa" x="49"  y="33" width="30" height="14"/>
-        <rect   id="k:bg-radius-label"     fill="#aaaa" x="88"  y="33" width="32" height="14"/>
-        <rect   id="k:bg-feather-label"    fill="#aaaa" x="123" y="33" width="40" height="14"/>
+        <circle id="k:bg-outer-co"     fill="#d65cab" cx="39"  cy="17" r="10" />
+        <rect   id="k:bg-outer-swatch" fill="#d65cab"  x="30"   y="33" width="18" height="10" />
+        <circle id="k:bg-outer-fade"   fill="#5c95d6" cx="72"  cy="16" r="14" />
+        <circle id="k:bg-radius"       fill="#5c95d6" cx="118" cy="16" r="14" />
+        <circle id="k:bg-feather"      fill="#5c95d6" cx="160" cy="16" r="14" />
+        <rect   id="k:bg-outer-fade-label" fill="#aaaa" x="57"  y="33" width="30" height="14"/>
+        <rect   id="k:bg-radius-label"     fill="#aaaa" x="102"  y="33" width="32" height="14"/>
+        <rect   id="k:bg-feather-label"    fill="#aaaa" x="140" y="33" width="40" height="14"/>
     </g>
 </g>
-<xrect id="tg" fill="#ddaacb" opacity=".5" x="0" y="152" width="100%" height="14"/>
 
 <g id="jacks" transform="translate(165,0)">
-    <g transform="translate(3,24)">
+    <g transform="translate(17,24)">
         <circle id="k:in-fill-H"    fill="#af5fed" cx="15"  cy="16" r="11" />
         <circle id="k:in-fill-S"    fill="#af5fed" cx="44"  cy="16" r="11" />
         <circle id="k:in-fill-L"    fill="#af5fed" cx="73"  cy="16" r="11" />
@@ -125,7 +126,7 @@
         <rect id="k:in-A-label"     fill="#aaaa" x="90" y="28" width="24" height="14"/>
         <rect id="k:in-fade-label"  fill="#aaaa" x="115" y="28" width="32" height="14"/>
     </g>
-    <g transform="translate(3,74)">
+    <g transform="translate(18,74)">
         <rect id="coj-bg" fill="#49643a" opacity=".5" x="0" y="0" rx="6" ry="6" width="144" height="53" />
         <circle id="k:in-lg-start-H"    fill="#af5fed" cx="15"  cy="14" r="11" />
         <circle id="k:in-lg-start-S"    fill="#af5fed" cx="44"  cy="14" r="11" />
@@ -148,7 +149,7 @@
         <rect id="k:in-lg-x2-label"     fill="#aaa" x="75.6"  y="78" width="24" height="14"/>
         <rect id="k:in-lg-y2-label"     fill="#aaa" x="104.5" y="78" width="24" height="14"/>
     </g>
-    <g transform="translate(3,176)">
+    <g transform="translate(18,176)">
         <rect id="coj-bg" fill="#49643a" opacity=".5" x="0" y="0" rx="6" ry="6" width="144" height="53" />
         <circle id="k:in-rg-inner-H"    fill="#af5fed" cx="15"  cy="14" r="11" />
         <circle id="k:in-rg-inner-S"    fill="#af5fed" cx="44"  cy="14" r="11" />
@@ -167,7 +168,7 @@
         <rect id="k:in-rg-cy-label"     fill="#aaa" x="46.5"  y="78" width="24" height="14"/>
         <rect id="k:in-rg-radius-label" fill="#aaa" x="85"    y="78" width="34" height="14"/>
     </g>
-    <g transform="translate(3,278)">
+    <g transform="translate(18,278)">
         <rect id="coj-bg" fill="#49643a" opacity=".5" x="0" y="0" rx="6" ry="6" width="144" height="53" />
         <circle id="k:in-bg-inner-H"    fill="#af5fed" cx="15"  cy="14" r="11" />
         <circle id="k:in-bg-inner-S"    fill="#af5fed" cx="44"  cy="14" r="11" />
@@ -186,8 +187,8 @@
         <rect id="k:in-bg-x-label"       fill="#aaa" x="3"   y="82" width="24" height="14"/>
         <rect id="k:in-bg-y-label"       fill="#aaa" x="32"  y="82" width="24" height="14"/>
         <rect id="k:in-bg-radius-label"  fill="#aaa" x="64"  y="82" width="32" height="14"/>
-        <rect id="k:in-bg-feather-label" fill="#aaa" x="101"  y="82" width="40" height="14"/>
+        <rect id="k:in-bg-feather-label" fill="#aaa" x="101" y="82" width="40" height="14"/>
     </g>
 </g>
-<rect id="cv-line" fill="#f4f455" opacity="0" width="1" height="380" x="165.5" y="0" />
+<xrect id="cv-line" fill="#f4f455" opacity=".5" width=".25" height="360" x="180.5" y="20" />
 </svg>

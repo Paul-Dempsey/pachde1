@@ -1,10 +1,10 @@
 #pragma once
 #include <rack.hpp>
 using namespace ::rack;
-#include "Info.hpp"
+#include "Fancy.hpp"
 
 namespace pachde {
 
-void show_settings_dialog(InfoModuleWidget* info);
+void show_picture_dialog(FancyUi* fancy);
 
 }

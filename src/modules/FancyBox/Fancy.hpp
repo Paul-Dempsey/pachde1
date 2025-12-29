@@ -51,6 +51,9 @@ struct Fancy : ThemeModule {
         P_FANCY_IMAGE_ON,
         P_FANCY_IMAGE_FIT,
         P_FANCY_IMAGE_GRAY,
+        P_FANCY_IMAGE_X_OFFSET,
+        P_FANCY_IMAGE_Y_OFFSET,
+        P_FANCY_IMAGE_SCALE,
 
         N_PARAMS
     };
@@ -214,6 +217,7 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void shouting_buttons(bool shouting);
     void fancy_background(bool fancy);
     void click_pic(bool ctrl, bool shift);
+    void pic_options();
     void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;
     void draw(const DrawArgs& args) override;

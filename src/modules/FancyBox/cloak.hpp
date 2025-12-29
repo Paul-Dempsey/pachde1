@@ -4,44 +4,17 @@
 using namespace ::rack;
 #include "services/packed-color.hpp"
 using namespace packed_color;
-namespace widgetry {
+#include "picture.hpp"
 
-enum class ImageFit { Cover, Fit, Stretch };
+namespace widgetry {
 
 struct ImageData {
     bool enabled{true};
-    std::string path;
-    ImageFit fit{ImageFit::Cover};
-    bool gray{false};
+    PictureOptions options;
     void init(const ImageData& source) {
-        path = source.path;
-        fit = source.fit;
+        options.init(source.options);
     }
 };
-
-struct Picture : OpaqueWidget {
-    int image_handle{0}; // nvg Image handle
-    int image_width{0};
-    int image_height{0};
-    int image_components{0};
-    ImageData* options{nullptr};
-    unsigned char * image_data{nullptr};
-    intptr_t image_cookie{0};
-    std::string fail_reason;
-
-    Picture(ImageData* data) : options(data) {
-        assert(options);
-    }
-    float width() { return image_width; }
-    float height() { return image_height; }
-    bool open();
-    void close();
-    void black_and_white();
-    void updateImageCache(NVGcontext* vg);
-    void clearImageCache(NVGcontext* vg);
-    void draw(const DrawArgs& args) override;
-};
-
 
 struct FillData {
     bool enabled{true};

@@ -34,8 +34,8 @@ struct TextButton : OpaqueWidget, IThemed {
     TipHolder * tip_holder{nullptr};
     std::string text;
 
-    ElementStyle punch{text_button_constants::punch_key, colors::NoColor, colors::G20, .75f};
     ElementStyle hover{text_button_constants::hover_key, colors::NoColor, colors::G10, 1.35f};
+    ElementStyle punch{text_button_constants::punch_key, colors::NoColor, colors::G20, .75f};
     PackedColor co_bevel_hi{colors::G75};
     PackedColor co_bevel_lo{colors::G40};
     PackedColor co_face_hi{colors::G65};

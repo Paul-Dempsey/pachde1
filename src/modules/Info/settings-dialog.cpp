@@ -1,9 +1,10 @@
 #include "settings-dialog.hpp"
-#define DIALOG_THEMED
+#include "info_settings.hpp"
 #include "services/svg-query.hpp"
 #include "widgets/action-button.hpp"
 #include "widgets/close-button.hpp"
 #include "widgets/color-picker.hpp"
+#define DIALOG_THEMED
 #include "widgets/dialog.hpp"
 #include "widgets/fancy-swatch.hpp"
 #include "widgets/hamburger.hpp"

@@ -80,6 +80,8 @@ SOURCES += src/modules/Skiff/rails.cpp
 SOURCES += src/modules/FancyBox/Fancy.cpp
 SOURCES += src/modules/FancyBox/FancyUi.cpp
 SOURCES += src/modules/FancyBox/cloak.cpp
+SOURCES += src/modules/FancyBox/pic-dialog.cpp
+SOURCES += src/modules/FancyBox/picture.cpp
 
 # Rui module
 SOURCES += src/modules/Rui/Rui.cpp

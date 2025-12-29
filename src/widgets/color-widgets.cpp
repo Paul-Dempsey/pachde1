@@ -31,7 +31,7 @@ void AlphaWidget::onButton(const ButtonEvent& e) {
     e.consume(this);
 }
 
-void drawCheckers(const rack::widget::Widget::DrawArgs& args, float x, float y, float width, float height) {
+void drawCheckers(const rack::widget::Widget::DrawArgs& args, float x, float y, float width, float height, const NVGcolor& color) {
     auto vg = args.vg;
 
     float dx = 5.f;
@@ -50,10 +50,15 @@ void drawCheckers(const rack::widget::Widget::DrawArgs& args, float x, float y, 
             g = !g;
         }
     }
-    nvgFillColor(vg, nvgRGBAf(.5,.5f,.5, 1.f));
+    nvgFillColor(vg, color);
     nvgFill(vg);
     nvgResetScissor(vg);
 }
+
+void drawCheckers(const rack::widget::Widget::DrawArgs& args, float x, float y, float width, float height) {
+    drawCheckers(args, x, y, width, height, nvgRGBAf(.5,.5,.5,1));
+}
+
 
 void AlphaWidget::draw(const DrawArgs& args) {
     auto vg = args.vg;
