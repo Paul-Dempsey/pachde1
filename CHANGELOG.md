@@ -3,7 +3,7 @@
 ## Version 2.4
 
 - FancyBox gets an image background, with a configuration dialog (and grows by 1hp to make room).
-
+- Option for whether to retain effects after removing FancyBox from the path.
 - Various bug fixes and improvements from user's feedback.
 
 ## Version 2.3
