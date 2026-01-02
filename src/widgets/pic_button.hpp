@@ -18,12 +18,14 @@ struct PicButton: OpaqueWidget, ISetTheme
     bool shift {false};
     std::function<void(bool,bool)> clickHandler {nullptr};
     Theme theme;
+    std::string tip_text;
 
     virtual ~PicButton() {
         if (tip) delete tip;
     }
 
     PicButton();
+    void describe(const std::string& info) { tip_text = info; }
 
     // ISetTheme
     void setTheme(Theme theme) override;

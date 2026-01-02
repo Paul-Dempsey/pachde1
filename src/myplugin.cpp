@@ -15,6 +15,7 @@ void init(Plugin* p) {
 	p->addModel(modelBlank);
 	p->addModel(modelSkiff);
 	p->addModel(modelFancyBox);
+    p->addModel(modelMiniFancyBox);
 	p->addModel(modelRui);
 	p->addModel(modelGuide);
     p->addModel(modelPanelTone);

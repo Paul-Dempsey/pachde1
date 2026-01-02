@@ -1,5 +1,5 @@
 #include "Fancy.hpp"
-#include "pic-dialog.hpp"
+#include "dialogs/fancy-dialogs.hpp"
 #include "services/open-file.hpp"
 #include "services/rack-help.hpp"
 #include "services/svg-query.hpp"
@@ -11,12 +11,36 @@
 #include "widgets/dialog.hpp"
 #include "widgets/label.hpp"
 #include "widgets/port.hpp"
-#include "widgets/screws.hpp"
 #include "widgets/switch.hpp"
 
-using namespace widgetry;
+using namespace ::widgetry;
 
 namespace pachde {
+
+bool pictureFileDialog(PictureOptions* data, std::string& browse_folder) {
+    std::string path = data->path;
+    bool ok = openFileDialog(browse_folder, "Images (.png .jpg .gif):png,jpg,jpeg,gif;Any (*):*", path, path);
+    if (ok) {
+        data->path = path;
+        browse_folder = system::getDirectory(path);
+    }
+    return ok;
+}
+
+bool is_single_fancy(Module* me)
+{
+    if (!me) return true;
+    auto module_widgets = APP->scene->rack->getModules();
+    for (auto module_widget: module_widgets) {
+        if (module_widget->getModule() != me) {
+            auto other_model = module_widget->getModel();
+            if ((other_model == modelFancyBox) || (other_model == modelMiniFancyBox)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 struct FancySvg {
     static std::string background() { return asset::plugin(pluginInstance, "res/FancyBox.svg"); }
@@ -25,8 +49,7 @@ struct FancySvg {
 FancyUi::FancyUi(Fancy* module) : my_module(module) {
     setModule(module);
     if (my_module) {
-        my_module->ui = this;
-        my_module->other_fancy = !is_singleton(my_module);
+        my_module->other_fancy = !is_single_fancy(my_module);
     }
     theme_holder = my_module ? my_module : new ThemeBase();
     theme_holder->setNotify(this);
@@ -62,7 +85,7 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
 
     svg_query::addBounds(layout, "k:", bounds, true);
 
-    auto light = createLightCentered<SmallLight<RedLight>>(bounds["k:fancy-light"].getCenter(), my_module, Fancy::L_FANCY);
+    auto light = createLightCentered<SmallLight<BlueLight>>(bounds["k:fancy-light"].getCenter(), my_module, Fancy::L_FANCY);
     HOT_POSITION("k:fancy-light", HotPosKind::Center, light);
     addChild(light);
 
@@ -115,7 +138,7 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
     add_label(bounds, "k:fill-group", "TONE", group_style, svg_theme);
     auto palette = Center(createThemeSvgButton<Palette20ActionButton>(&my_svgs, bounds["k:fill-co"].getCenter()));
     HOT_POSITION("k:fill-co", HotPosKind::Center, palette);
-    palette->describe("Fill color");
+    palette->describe("Tone color");
     if (my_module) {
         palette->set_handler([=](bool,bool) {
             auto picker = new ColorPickerMenu();
@@ -271,9 +294,6 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
     shouting_buttons(my_module ? my_module->shouting : true);
     my_svgs.changeTheme(svg_theme);
 
-    if (my_module && my_module->fancy) {
-        request_cloak = true;
-    }
 // #ifdef DEV_BUILD
 //     DEBUG("BOUNDS: %d", (int)bounds.size());
 //     for (auto bound: bounds) {
@@ -287,7 +307,7 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
 }
 
 FancyUi::~FancyUi() {
-    if (my_module && my_cloak) {
+    if (my_module && my_module->my_cloak) {
         if (!my_module->orphan_cloak) {
             fancy_background(false);
         }
@@ -392,7 +412,7 @@ void FancyUi::remove_ports() {
 
 void FancyUi::set_ports(bool ports) {
     if (!my_module) return;
-    if ((ports == show_ports()) && (ports == ui_showing_ports())) {
+    if ((ports == show_ports()) && (ports == is_showing_ports())) {
         return;
     }
     if (!ports && show_ports()) {
@@ -516,78 +536,72 @@ void FancyUi::shouting_buttons(bool shouting) {
 
 void FancyUi::set_fill_color(PackedColor color) {
     fill_swatch->set_color(color);
-    if (my_cloak) {
-        my_cloak->data.fill.color = color;
-    }
     if (my_module) {
+        if (my_module->my_cloak) {
+            my_module->my_cloak->data.fill.color = color;
+        }
         my_module->fancy_data.fill.color = color;
     }
 }
 
 void FancyUi::set_lg_start_color(PackedColor color) {
     lg_start_swatch->set_color(color);
-    if (my_cloak) {
-        my_cloak->data.linear.icol = color;
-    }
     if (my_module) {
+        if (my_module->my_cloak) {
+            my_module->my_cloak->data.linear.icol = color;
+        }
         my_module->fancy_data.linear.icol = color;
     }
 }
 
 void FancyUi::set_lg_end_color(PackedColor color) {
     lg_end_swatch->set_color(color);
-    if (my_cloak) {
-        my_cloak->data.linear.ocol = color;
-    }
     if (my_module) {
+        if (my_module->my_cloak) {
+            my_module->my_cloak->data.linear.ocol = color;
+        }
         my_module->fancy_data.linear.ocol = color;
     }
 }
 
 void FancyUi::set_rg_inner_color(PackedColor color) {
     rg_inner_swatch->set_color(color);
-    if (my_cloak) {
-        my_cloak->data.radial.icol = color;
-    }
     if (my_module) {
+        if (my_module->my_cloak) {
+            my_module->my_cloak->data.radial.icol = color;
+        }
         my_module->fancy_data.radial.icol = color;
     }
 }
 
 void FancyUi::set_rg_outer_color(PackedColor color) {
     rg_outer_swatch->set_color(color);
-    if (my_cloak) {
-        my_cloak->data.radial.ocol = color;
-    }
     if (my_module) {
+        if (my_module->my_cloak) {
+            my_module->my_cloak->data.radial.ocol = color;
+        }
         my_module->fancy_data.radial.ocol = color;
     }
 }
 
 void FancyUi::set_bg_inner_color(PackedColor color) {
     bg_inner_swatch->set_color(color);
-    if (my_cloak) {
-        my_cloak->data.boxg.icol = color;
-    }
     if (my_module) {
+        if (my_module->my_cloak) {
+            my_module->my_cloak->data.boxg.icol = color;
+        }
         my_module->fancy_data.boxg.icol = color;
     }
 }
 
 void FancyUi::set_bg_outer_color(PackedColor color) {
     bg_outer_swatch->set_color(color);
-    if (my_cloak) {
-        my_cloak->data.boxg.ocol = color;
-    }
     if (my_module) {
+        if (my_module->my_cloak) {
+            my_module->my_cloak->data.boxg.ocol = color;
+        }
         my_module->fancy_data.boxg.ocol = color;
     }
-}
-
-void FancyUi::restore_unmodulated_parameters()
-{
-    if (!my_module || !my_cloak) return;
-    my_cloak->data.init(my_module->fancy_data);
 }
 
 void FancyUi::onChangeTheme(ChangedItem item)
@@ -609,44 +623,23 @@ void FancyUi::sync_latch_state() {
     jack_button->latched = show_ports();
 }
 
-void FancyUi::onDeleteCloak(CloakBackgroundWidget *cloak) {
-    assert(my_cloak == cloak);
-    if (my_cloak) my_cloak = nullptr;
-    my_module->fancy = false;
-}
-
 void FancyUi::fancy_background(bool fancy) {
     if (!my_module || my_module->other_fancy) return;
-
-    my_module->fancy = fancy;
-    auto cloak = getBackgroundCloak();
-    if (fancy) {
-        my_cloak = cloak ? cloak : ensureBackgroundCloak(this, &my_module->fancy_data);
-    } else {
-        if (cloak) {
-            my_cloak = nullptr;
-            cloak->requestDelete();
-        }
-    }
+    my_module->make_fancy(fancy);
 }
 
 void FancyUi::click_pic(bool ctrl, bool shift)
 {
     if (!my_module || my_module->other_fancy) return;
-    std::string path;
-    std::string name{system::getFilename(my_module->fancy_data.image.options.path)};
-    bool ok = openFileDialog(my_module->pic_folder, "Images (.png .jpg .gif):png,jpg,jpeg,gif;Any (*):*", name, path);
+    bool ok = pictureFileDialog(&my_module->fancy_data.image.options, my_module->pic_folder);
     if (ok) {
-        my_module->pic_folder = system::getDirectory(path);
-        my_module->fancy_data.image.options.path = path;
-        name = system::getStem(path);
-        image_name->set_text(name);
-        image_name->describe(path);
+        image_name->set_text(system::getStem(my_module->fancy_data.image.options.path));
+        image_name->describe(my_module->fancy_data.image.options.path);
     }
 }
 
 void FancyUi::pic_options() {
-    show_picture_dialog(this);
+    show_picture_dialog(this, my_module, theme_holder->getTheme());
 }
 
 void FancyUi::onHoverKey(const HoverKeyEvent &e)
@@ -681,13 +674,8 @@ void FancyUi::step() {
     Base::step();
     if (!my_module || my_module->other_fancy) return;
 
-    if (request_cloak) {
-        request_cloak = false;
-        fancy_background(my_module->fancy);
-   }
-
    // detect preset load that changes toggle state
-   if (show_ports() != ui_showing_ports()) {
+   if (show_ports() != is_showing_ports()) {
         set_ports(show_ports());
    }
 
@@ -699,7 +687,6 @@ void FancyUi::draw(const DrawArgs& args) {
     Base::draw(args);
     if (my_module && my_module->other_fancy) {
         draw_disabled_panel(this, GetPreferredTheme(theme_holder), args, 20.f, 20.f);
-        return;
     }
  }
 

@@ -24,27 +24,6 @@ struct RefBox
     inline Vec center_bottom() { return Vec(x_pos(.5f), bottom()); }
 };
 
-void CloakBackgroundWidget::add_client(ICloakBackgroundClient *client)
-{
-    auto it = std::find(clients.begin(), clients.end(), client);
-    if (it == clients.end()) {
-        clients.push_back(client);
-    }
-}
-
-void CloakBackgroundWidget::remove_client(ICloakBackgroundClient* client) {
-    auto it = std::find(clients.begin(), clients.end(), client);
-    if (it == clients.end()) {
-        clients.erase(it);
-    }
-}
-
-CloakBackgroundWidget::~CloakBackgroundWidget() {
-    for (auto client: clients) {
-        client->onDeleteCloak(this);
-    }
-}
-
 inline NVGcolor from_packed_alpha(PackedColor color, float multiplier) {
     auto co = fromPacked(color);
     co.a *= multiplier;
@@ -53,15 +32,18 @@ inline NVGcolor from_packed_alpha(PackedColor color, float multiplier) {
 
 void CloakBackgroundWidget::step() {
     if (data.image.enabled) {
-        if (data.image.options.path.empty()) return;
+        if (data.image.options.path.empty()) {
+            if (pic) {
+                pic->close();
+                return;
+            }
+        }
         if (!pic) {
             pic = new Picture(&data.image.options);
             addChild(pic);
         }
         if (!pic->image_data) {
-            if (!pic->open()) {
-                return;
-            }
+            pic->open();
         }
     } else {
         if (pic) {
@@ -182,7 +164,7 @@ void CloakBackgroundWidget::draw(const DrawArgs &args)
     }
 }
 
-CloakBackgroundWidget * ensureBackgroundCloak(Widget*host, CloakData* data) {
+CloakBackgroundWidget * ensureBackgroundCloak(CloakData* data) {
     auto cloak = getBackgroundCloak();
     if (!cloak) {
         auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();

@@ -122,21 +122,18 @@ void PicButton::createTooltip() {
     if (!settings::tooltips)
         return;
     if (tip) return;
+    if (tip_text.empty()) return;
     auto newTip = new Tooltip();
-#if defined ARCH_MAC
-    newTip->text = "Open image\nShift to reload\nCmd+Shift to close";
-#else
-    newTip->text = "Open image\nShift to reload\nCtrl+Shift to close";
-#endif
+    newTip->text = tip_text;
     APP->scene->addChild(newTip);
     tip = newTip;
 }
 
 void PicButton::destroyTooltip() {
-    if (!tip) return;
-    APP->scene->removeChild(tip);
-    delete tip;
-    tip = nullptr;
+    if (tip) {
+        tip->requestDelete();
+        tip = nullptr;
+    }
 }
 
 }

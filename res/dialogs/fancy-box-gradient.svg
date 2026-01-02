@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="220" height="136" viewBox="0 0 220 136" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<linearGradient id="pg" y2="100%" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#282828" />
+    <stop offset="1" stop-color="#101010" />
+</linearGradient>
+<rect id="panel" fill="url(#pg)" width="100%" height="100%" />
+<rect id="mast" fill="#f9a806" width="100%" height="18"/>
+<rect id="k:close" fill="#f22" x="202" y="2" width="14" height="14" />
+<rect id="k:dlg-title" fill="#a0a0a0d0" x="7.5" y="3" width="180" height="14" />
+
+<g transform="translate(18,24)">
+    <rect   id="k:bg-check"            fill="#a6a6a6"  x="0"   y="9"  width="14" height="14" />
+    <circle id="k:bg-inner-co"         fill="#d65cab" cx="39"  cy="17" r="10" />
+    <rect   id="k:bg-inner-swatch"     fill="#d65cab" x="30"    y="33" width="18" height="10" />
+    <circle id="k:bg-inner-fade"       fill="#5c95d6" cx="72"  cy="16" r="14" />
+    <circle id="k:bg-shrink-x"         fill="#5c95d6" cx="118" cy="16" r="14" />
+    <circle id="k:bg-shrink-y"         fill="#5c95d6" cx="160" cy="16" r="14" />
+    <rect   id="k:bg-inner-fade-label" fill="#aaaa" x="57"  y="33" width="30" height="14"/>
+    <rect   id="k:bg-shrink-x-label"   fill="#aaaa" x="109"  y="33" width="18" height="14"/>
+    <rect   id="k:bg-shrink-label"     fill="#a8aa" x="124" y="33" width="30" height="14"/>
+    <rect   id="k:bg-shrink-y-label"   fill="#aaaa" x="151" y="33" width="18" height="14"/>
+    <g transform="translate(0,50)">
+        <circle id="k:bg-outer-co"     fill="#d65cab" cx="39"  cy="17" r="10" />
+        <rect   id="k:bg-outer-swatch" fill="#d65cab"  x="30"   y="33" width="18" height="10" />
+        <circle id="k:bg-outer-fade"   fill="#5c95d6" cx="72"  cy="16" r="14" />
+        <circle id="k:bg-radius"       fill="#5c95d6" cx="118" cy="16" r="14" />
+        <circle id="k:bg-feather"      fill="#5c95d6" cx="160" cy="16" r="14" />
+        <rect   id="k:bg-outer-fade-label" fill="#aaaa" x="57"  y="33" width="30" height="14"/>
+        <rect   id="k:bg-radius-label"     fill="#aaaa" x="102"  y="33" width="32" height="14"/>
+        <rect   id="k:bg-feather-label"    fill="#aaaa" x="140" y="33" width="40" height="14"/>
+    </g>
+</g>
+
+<rect id="dlg-border" fill="none" stroke="#c5c5c5" stroke-width="1.5" x=".75" y=".75" width="218.5" height="134" />
+
+</svg>

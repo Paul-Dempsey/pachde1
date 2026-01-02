@@ -4,17 +4,20 @@ using namespace ::rack;
 #include <ghc/filesystem.hpp>
 #include "services/theme-module.hpp"
 #include "services/svg-query.hpp"
-using namespace svg_query;
+using namespace ::svg_query;
 #include "widgets/action-button.hpp"
 #include "widgets/fancy-swatch.hpp"
 #include "widgets/label.hpp"
 #include "widgets/tip-label.hpp"
 #include "widgets/pic_button.hpp"
 #include "widgets/text-button.hpp"
-using namespace widgetry;
+using namespace ::widgetry;
 #include "cloak.hpp"
 
 namespace pachde {
+
+bool pictureFileDialog(PictureOptions* data, std::string& browse_folder);
+bool is_single_fancy(Module* me);
 
 struct FancyUi;
 
@@ -55,6 +58,7 @@ struct Fancy : ThemeModule {
         P_FANCY_IMAGE_Y_OFFSET,
         P_FANCY_IMAGE_SCALE,
 
+        P_FANCY,
         N_PARAMS
     };
     enum Inputs {
@@ -119,6 +123,7 @@ struct Fancy : ThemeModule {
     bool shouting{true};
     bool orphan_cloak{false};
     CloakData fancy_data;
+    CloakBackgroundWidget* my_cloak{nullptr};
     std::string theme_name;
 
     std::string pic_folder;
@@ -131,10 +136,12 @@ struct Fancy : ThemeModule {
     int connection_count{0};
 
     Fancy();
-    FancyUi* ui{nullptr};
 
     json_t* dataToJson() override;
     void dataFromJson(json_t* root) override;
+
+    void make_fancy(bool fanciness);
+    void forget_cloak(CloakBackgroundWidget *cloak);
 
     PackedColor modulate_color(PackedColor base, int input_id_first);
     inline float voltage(int id, float normal) { return getInput(id).getNormalVoltage(normal) * .1; }
@@ -148,7 +155,7 @@ struct Fancy : ThemeModule {
     void process(const ProcessArgs& args) override;
 };
 
-struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
+struct FancyUi : ModuleWidget, IThemeChange
 {
     using Base = ModuleWidget;
 
@@ -173,8 +180,6 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     TipLabel* image_name{nullptr};
 
     std::vector<Widget*> removables;
-    CloakBackgroundWidget* my_cloak{nullptr};
-    bool request_cloak{false};
 
     #ifdef HOT_SVG
     PositionIndex pos_widgets;
@@ -192,16 +197,16 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
         bool sticky,
         const char* title,
         const char* tip,
-        std::shared_ptr<svg_theme::SvgTheme> svg_theme,
+        std::shared_ptr<SvgTheme> svg_theme,
         std::function<void(bool,bool)> handler
     );
     void add_knob(::svg_query::BoundsIndex& bounds, const char* key, int param);
-    TextLabel* add_label(::svg_query::BoundsIndex& bounds, const char* key, const char* text, LabelStyle* style, std::shared_ptr<svg_theme::SvgTheme> svg_theme, bool removable = false);
-    void add_check(::svg_query::BoundsIndex& bounds, const char* key, int param, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
+    TextLabel* add_label(::svg_query::BoundsIndex& bounds, const char* key, const char* text, LabelStyle* style, std::shared_ptr<SvgTheme> svg_theme, bool removable = false);
+    void add_check(::svg_query::BoundsIndex& bounds, const char* key, int param, std::shared_ptr<SvgTheme> svg_theme);
     void add_input(::svg_query::BoundsIndex& bounds, const char* key, int id, PackedColor color);
-    void add_ports(::svg_query::BoundsIndex& bounds, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
+    void add_ports(::svg_query::BoundsIndex& bounds, std::shared_ptr<SvgTheme> svg_theme);
     bool show_ports() { return my_module ? my_module->show_ports : true; }
-    bool ui_showing_ports() { return box.size.x > 180.f; }
+    bool is_showing_ports() { return box.size.x > 180.f; }
     void remove_ports();
     void set_ports(bool ports);
     void toggle_ports();
@@ -212,30 +217,45 @@ struct FancyUi : ModuleWidget, IThemeChange, ICloakBackgroundClient
     void set_rg_outer_color(PackedColor color);
     void set_bg_inner_color(PackedColor color);
     void set_bg_outer_color(PackedColor color);
-    void restore_unmodulated_parameters();
-    void onChangeTheme(ChangedItem item) override;
-    void onDeleteCloak(CloakBackgroundWidget* cloak) override;
     void sync_latch_state();
     void shouting_buttons(bool shouting);
     void fancy_background(bool fancy);
     void click_pic(bool ctrl, bool shift);
     void pic_options();
+
+    void onChangeTheme(ChangedItem item) override;
     void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;
     void draw(const DrawArgs& args) override;
     void appendContextMenu(Menu* menu) override;
-
 };
 
+struct FancyMini : ModuleWidget, IThemeChange
+{
+    using Base = ModuleWidget;
+    Fancy* my_module{nullptr};
+    ThemeBase* theme_holder{nullptr};
+    SvgCache my_svgs;
 
+    #ifdef HOT_SVG
+    PositionIndex pos_widgets;
+    #endif
 
+    FancyMini(Fancy* module);
+    ~FancyMini();
 
-
-
-
-
-
-
-
+    void add_check(::svg_query::BoundsIndex &bounds, const char *key, int param, std::shared_ptr<svg_theme::SvgTheme> svg_theme);
+    void fancy_background(bool fancy);
+    void pic_options();
+    void fill_options();
+    void linear_options();
+    void radial_options();
+    void box_options();
+    void onChangeTheme(ChangedItem item) override;
+    void onHoverKey(const HoverKeyEvent& e) override;
+    void step() override;
+    void draw(const DrawArgs& args) override;
+    void appendContextMenu(Menu* menu) override;
+};
 
 }

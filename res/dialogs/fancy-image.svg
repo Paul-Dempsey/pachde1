@@ -13,6 +13,7 @@
 <rect id="k:pic-label" fill="#aaa" x="10" y="138" width="200" height="10" />
 
 <g transform="translate(10,2)">
+    <rect id="k:pic-check" fill="#a6a6a6"  x="15"   y="178"  width="14" height="14" />
     <rect id="k:pic-button" fill="#a6a6a6" x="10" y="150" width="24" height="24"/>
     <rect id="k:pic-gray" fill="#a6a6a6" x="38" y="155" width="14" height="14" />
     <rect id="k:pic-fit" fill="#f22" x="56" y="156" width="30" height="12" />

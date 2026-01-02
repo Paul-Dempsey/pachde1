@@ -12,6 +12,7 @@ extern ::rack::Model* modelCopperMini;
 extern ::rack::Model* modelImagine;
 extern ::rack::Model* modelSkiff;
 extern ::rack::Model* modelFancyBox;
+extern ::rack::Model* modelMiniFancyBox;
 extern ::rack::Model* modelRui;
 extern ::rack::Model* modelGuide;
 extern ::rack::Model* modelPanelTone;

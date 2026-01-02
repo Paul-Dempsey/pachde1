@@ -3,9 +3,10 @@
 using namespace ::rack;
 #include "services/colors.hpp"
 #include "pic.hpp"
-using namespace pachde;
+using namespace ::pachde;
 
 namespace widgetry {
+
 void drawCheckers(const rack::widget::Widget::DrawArgs& args, float x, float y, float width, float height);
 void drawCheckers(const rack::widget::Widget::DrawArgs& args, float x, float y, float width, float height, const NVGcolor& color);
 

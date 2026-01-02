@@ -115,6 +115,11 @@ void ImagineUi::makeUi(Theme theme)
         auto picButton = new PicButton();
         picButton->setTheme(theme);
         picButton->center(Vec(PANEL_CENTER - CONTROL_SPACING * .5f, CONTROL_ROW_2));
+#if defined ARCH_MAC
+        picButton->describe("Open image\nShift to reload\nCmd+Shift to close");
+#else
+        picButton->describe("Open image\nShift to reload\nCtrl+Shift to close");
+#endif
         if (imagine) {
             picButton->set_handler([this](bool ctrl, bool shift) {
                 if (shift) {

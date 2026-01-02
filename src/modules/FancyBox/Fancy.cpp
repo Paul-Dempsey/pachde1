@@ -10,6 +10,8 @@ Fancy::Fancy() {
     std::vector<std::string> off_on{"off", "on"};
     config(Params::N_PARAMS, Inputs::N_INPUTS, Outputs::N_OUTPUTS, Lights::N_LIGHTS);
 
+    configSwitch(P_FANCY, 0.f, 1.f, 0.f, "Fancy background", off_on);
+
     configSwitch(P_FANCY_IMAGE_ON, 0.f, 1.f, 0.f, "Enable Image", off_on);
     configSwitch(P_FANCY_IMAGE_FIT, 0.f, 3.f, 0.f, "Image fitting", {
         "Cover", "Fit", "Stretch", "Scale"
@@ -97,7 +99,6 @@ json_t* Fancy::dataToJson() {
     if (other_fancy) return Base::dataToJson();
 
     json_t *root = Base::dataToJson();
-    set_json(root, "fancy", fancy);
     set_json(root, "shouting", shouting);
     set_json(root, "show-ports", show_ports);
     set_json(root, "pic-folder", pic_folder);
@@ -130,7 +131,6 @@ void Fancy::dataFromJson(json_t* root) {
     if (other_fancy) return;
     Base::dataFromJson(root);
     shouting   = get_json_bool(root, "shouting", shouting);
-    fancy      = get_json_bool(root, "fancy", fancy);
     show_ports = get_json_bool(root, "show-ports", show_ports);
     pic_folder = get_json_string(root, "pic-folder");
     orphan_cloak = get_json_bool(root, "orphan-cloak", orphan_cloak);
@@ -148,6 +148,24 @@ void Fancy::dataFromJson(json_t* root) {
     fancy_data.boxg.ocol = color_from_json(root, "box-ocol");
 }
 
+void Fancy::make_fancy(bool fanciness) {
+    getParam(P_FANCY).setValue(fanciness ?  1.f : 0.f);
+    fancy = fanciness;
+    auto cloak = getBackgroundCloak();
+    if (fanciness) {
+        my_cloak = cloak ? cloak : ensureBackgroundCloak(&fancy_data);
+    } else {
+        if (cloak) {
+            my_cloak = nullptr;
+            cloak->requestDelete();
+        }
+    }
+}
+
+void Fancy::forget_cloak(CloakBackgroundWidget *cloak) {
+    my_cloak = nullptr;
+}
+
 inline bool param_bool(rack::engine::Param& param) { return param.getValue() >= .5f; }
 inline float fancy_param(rack::engine::Param& param) { return .01f * param.getValue(); }
 
@@ -158,8 +176,8 @@ void Fancy::onPortChange(const PortChangeEvent &e)
         connection_count++;
     } else {
         connection_count--;
-        if ((0 == connection_count) && ui) {
-            ui->restore_unmodulated_parameters();
+        if ((0 == connection_count) && my_cloak) {
+            my_cloak->data.init(fancy_data);
         }
     }
     assert(in_range(connection_count, 0, (int)Inputs::N_INPUTS));
@@ -193,20 +211,24 @@ void Fancy::process_image(const ProcessArgs &args)
     fancy_data.image.options.x_offset = getParam(P_FANCY_IMAGE_X_OFFSET).getValue() * .01f;
     fancy_data.image.options.y_offset = getParam(P_FANCY_IMAGE_Y_OFFSET).getValue() * .01f;
     fancy_data.image.options.scale = getParam(P_FANCY_IMAGE_SCALE).getValue() * .01f;
-    if (ui->my_cloak) {
-        if ((ui->my_cloak->data.image.options.path != fancy_data.image.options.path)
-            || (ui->my_cloak->data.image.options.gray != fancy_data.image.options.gray)) {
-            if (ui->my_cloak->pic) {
-                ui->my_cloak->pic->close();
+    if (my_cloak) {
+        if (my_cloak->data.image.options.path != fancy_data.image.options.path) {
+            if (my_cloak->pic) {
+                my_cloak->pic->close();
             }
-            ui->my_cloak->data.image.options.path = fancy_data.image.options.path;
+            my_cloak->data.image.options.path = fancy_data.image.options.path;
         }
-        ui->my_cloak->data.image.enabled = fancy_data.image.options.path.empty() ? false : fancy_data.image.enabled;
-        ui->my_cloak->data.image.options.fit = fancy_data.image.options.fit;
-        ui->my_cloak->data.image.options.gray = fancy_data.image.options.gray;
-        ui->my_cloak->data.image.options.x_offset = fancy_data.image.options.x_offset;
-        ui->my_cloak->data.image.options.y_offset = fancy_data.image.options.y_offset;
-        ui->my_cloak->data.image.options.scale = fancy_data.image.options.scale;
+        if (my_cloak->data.image.options.gray != fancy_data.image.options.gray) {
+            if (my_cloak->pic) {
+                my_cloak->pic->close();
+            }
+        }
+        my_cloak->data.image.enabled = fancy_data.image.options.path.empty() ? false : fancy_data.image.enabled;
+        my_cloak->data.image.options.fit = fancy_data.image.options.fit;
+        my_cloak->data.image.options.gray = fancy_data.image.options.gray;
+        my_cloak->data.image.options.x_offset = fancy_data.image.options.x_offset;
+        my_cloak->data.image.options.y_offset = fancy_data.image.options.y_offset;
+        my_cloak->data.image.options.scale = fancy_data.image.options.scale;
     }
 }
 
@@ -217,11 +239,11 @@ void Fancy::process_fill(const ProcessArgs &args)
 
     fancy_data.fill.enabled = param_bool(getParam(P_FANCY_FILL_ON));
     fancy_data.fill.fade    = fancy_param(getParam(P_FANCY_FILL_FADE));
-    if (ui->my_cloak) {
-        ui->my_cloak->data.fill.enabled = fancy_data.fill.enabled;
+    if (my_cloak) {
+        my_cloak->data.fill.enabled = fancy_data.fill.enabled;
         if (fancy_data.fill.enabled) {
-            ui->my_cloak->data.fill.color = modulate_color(fancy_data.fill.color, IN_FANCY_FILL_H);
-            ui->my_cloak->data.fill.fade = clamp(fancy_data.fill.fade + scaled_voltage(IN_FANCY_FILL_FADE));
+            my_cloak->data.fill.color = modulate_color(fancy_data.fill.color, IN_FANCY_FILL_H);
+            my_cloak->data.fill.fade = clamp(fancy_data.fill.fade + scaled_voltage(IN_FANCY_FILL_FADE));
         }
     }
 }
@@ -238,8 +260,8 @@ void Fancy::process_linear(const ProcessArgs& args) {
     fancy_data.linear.x2      = fancy_param(getParam(P_FANCY_LINEAR_X2));
     fancy_data.linear.y2      = fancy_param(getParam(P_FANCY_LINEAR_Y2));
 
-    if (ui->my_cloak) {
-        ui->my_cloak->data.linear.enabled = fancy_data.linear.enabled;
+    if (my_cloak) {
+        my_cloak->data.linear.enabled = fancy_data.linear.enabled;
         if (fancy_data.linear.enabled) {
             LinearGradientData linear{fancy_data.linear};
             linear.ifade = clamp(linear.ifade + scaled_voltage(IN_FANCY_LINEAR_START_FADE));
@@ -254,7 +276,7 @@ void Fancy::process_linear(const ProcessArgs& args) {
             if (linear.ofade > 0.f) {
                 linear.ocol = modulate_color(fancy_data.linear.ocol, IN_FANCY_LINEAR_END_H);
             }
-            ui->my_cloak->data.linear.init(linear);
+            my_cloak->data.linear.init(linear);
         }
     }
 }
@@ -270,8 +292,8 @@ void Fancy::process_radial(const ProcessArgs& args) {
     fancy_data.radial.ofade   = fancy_param(getParam(P_FANCY_RADIAL_OUTER_FADE));
     fancy_data.radial.radius  = fancy_param(getParam(P_FANCY_RADIAL_RADIUS));
 
-    if (ui->my_cloak) {
-        ui->my_cloak->data.radial.enabled = fancy_data.radial.enabled;
+    if (my_cloak) {
+        my_cloak->data.radial.enabled = fancy_data.radial.enabled;
         if (fancy_data.radial.enabled) {
             RadialGradientData radial{fancy_data.radial};
             radial.ifade  = clamp(radial.ifade  + scaled_voltage(IN_FANCY_RADIAL_INNER_FADE));
@@ -285,7 +307,7 @@ void Fancy::process_radial(const ProcessArgs& args) {
             if (radial.ofade > 0.f) {
                 radial.ocol = modulate_color(fancy_data.radial.ocol, IN_FANCY_RADIAL_OUTER_H);
             }
-            ui->my_cloak->data.radial.init(radial);
+            my_cloak->data.radial.init(radial);
         }
     }
 }
@@ -302,8 +324,8 @@ void Fancy::process_box(const ProcessArgs& args) {
     fancy_data.boxg.radius  = fancy_param(getParam(P_FANCY_BOX_RADIUS));
     fancy_data.boxg.feather = fancy_param(getParam(P_FANCY_BOX_FEATHER));
 
-    if (ui->my_cloak) {
-        ui->my_cloak->data.boxg.enabled = fancy_data.boxg.enabled;
+    if (my_cloak) {
+        my_cloak->data.boxg.enabled = fancy_data.boxg.enabled;
         if (fancy_data.boxg.enabled) {
             BoxGradientData boxg;
             boxg.enabled = fancy_data.boxg.enabled;
@@ -323,16 +345,22 @@ void Fancy::process_box(const ProcessArgs& args) {
             } else {
                 boxg.ocol = fancy_data.boxg.ocol;
             }
-            ui->my_cloak->data.boxg.init(boxg);
+            my_cloak->data.boxg.init(boxg);
         }
     }
 }
 
 void Fancy::process(const ProcessArgs &args)
 {
-    if (other_fancy || !ui) return;
+    if (other_fancy) return;
+
+    bool is_fancy = getParam(P_FANCY).getValue() > .5f;
+    if (fancy != is_fancy) {
+        make_fancy(is_fancy);
+    }
+
     if ((0 == ((args.frame + getId()) % PARAM_INTERVAL))) {
-        getLight(L_FANCY).setSmoothBrightness(ui->my_cloak ? 1.0 : 0.f, 86.f);
+        getLight(L_FANCY).setSmoothBrightness(my_cloak ? 1.0 : 0.f, 86.f);
     }
 
     // amortize parameter updates across frames
@@ -348,3 +376,4 @@ void Fancy::process(const ProcessArgs &args)
 }
 
 Model* modelFancyBox = createModel<pachde::Fancy, pachde::FancyUi>("pachde-fancybox");
+Model* modelMiniFancyBox = createModel<pachde::Fancy, pachde::FancyMini>("pachde-mini-fancybox");

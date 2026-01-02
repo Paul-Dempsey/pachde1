@@ -32,6 +32,9 @@ struct Picture : OpaqueWidget {
     unsigned char * image_data{nullptr};
     intptr_t image_cookie{0};
     std::string fail_reason;
+    bool ok{true};
+    std::string last_path;
+    int last_gray{-1};
 
     Picture(PictureOptions* data) : options(data) {
         assert(options);
@@ -43,6 +46,7 @@ struct Picture : OpaqueWidget {
     void black_and_white();
     void updateImageCache(NVGcontext* vg);
     void clearImageCache(NVGcontext* vg);
+    void step() override;
     void draw(const DrawArgs& args) override;
 };
 

@@ -1,7 +1,7 @@
 {
   "slug": "pachde-one",
   "name": "pachde One",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "license": "GPL-3.0-or-later",
   "brand": "pachde",
   "author": "pachde",
@@ -69,6 +69,14 @@
         "description": "Customize your skiff with a fancy background/green-screen",
         "tags": [ "Visual", "Utility" ],
         "keywords" : "animate colors graphic RGB HSL skiff rails purfenator declutter greenscreen screen UI"
+    },
+    {
+        "slug": "pachde-mini-fancybox",
+        "name": "FancyBox Mini",
+        "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/FancyBox.md#fancybox",
+        "description": "Customize your skiff with a fancy background/green-screen (mini version)",
+        "tags": [ "Visual", "Utility" ],
+        "keywords" : "mini animate colors graphic RGB HSL skiff rails purfenator declutter greenscreen screen UI"
     },
     {
         "slug": "pachde-rui",
