@@ -1,9 +1,7 @@
 #pragma once
-#ifndef PACHDE_TEXT_HPP_INCLUDED
-#define PACHDE_TEXT_HPP_INCLUDED
 #include <rack.hpp>
 #include <string>
-#include "./colors.hpp"
+#include "colors.hpp"
 #include "text-align.hpp"
 
 using namespace ::rack;
@@ -63,4 +61,3 @@ void draw_oriented_text_box(
 );
 
 } // namespace pachde
-#endif

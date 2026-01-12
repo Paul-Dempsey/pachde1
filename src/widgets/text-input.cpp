@@ -105,7 +105,7 @@ void TextInput:: draw(const DrawArgs& args)
         FittedBoxRect(vg, 0, 0, box.size.x, box.size.y, bg_stroke, Fit::Inside, bg_style.width());
     }
 
-    bool active = (this == APP->event->selectedWidget);
+    bool active = (this == APP->event->getSelectedWidget());
     if (active || !text.empty()) {
         SetTextStyle(vg, font, text_style.nvg_color(), text_height);
         const char * txt = text.c_str();

@@ -57,7 +57,6 @@ void add_check(TDialog* dlg, ::svg_query::BoundsIndex &bounds, const char *key,
         param,
         svg_theme
     ));
-    //HOT_POSITION(key, HotPosKind::Center, check);
     dlg->addChild(check);
 }
 
@@ -71,7 +70,6 @@ TextLabel* add_label(
     std::shared_ptr<svg_theme::SvgTheme> svg_theme
 ) {
     auto label = TextLabel::createLabel(bounds[key], text, style, svg_theme);
-    //HOT_POSITION(key, HotPosKind::Box, label);
     dlg->addChild(label);
     return label;
 }
