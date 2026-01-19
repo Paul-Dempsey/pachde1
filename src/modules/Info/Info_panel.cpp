@@ -19,8 +19,8 @@ void InfoPanel::fetchColors()
 {
     if (!info_module) return;
 
-    panel = settings->getDisplayPanelColor();
-    text_color = settings->getDisplayTextColor();
+    panel = settings->getPanelColor();
+    text_color = settings->getTextColor();
 
     NVGcolor color;
     if (info_module->getLeftCopperTarget() != CopperTarget::None) {
@@ -28,12 +28,11 @@ void InfoPanel::fetchColors()
             switch (info_module->getLeftCopperTarget()) {
             case CopperTarget::Panel:
                 panel = toPacked(color);
-                theme_holder->setMainColor(panel);
-                settings->setUserPanelColor(panel);
+                settings->setPanelColor(panel);
                 break;
             case CopperTarget::Text:
                 text_color = toPacked(color);
-                settings->setUserTextColor(text_color);
+                settings->setTextColor(text_color);
                 break;
             default: break;
             }
@@ -45,11 +44,11 @@ void InfoPanel::fetchColors()
             case CopperTarget::Panel:
                 panel = toPacked(color);
                 theme_holder->setMainColor(panel);
-                settings->setUserPanelColor(panel);
+                settings->setPanelColor(panel);
                 break;
             case CopperTarget::Text:
                 text_color = toPacked(color);
-                settings->setUserTextColor(text_color);
+                settings->setTextColor(text_color);
                 break;
             default: break;
             }

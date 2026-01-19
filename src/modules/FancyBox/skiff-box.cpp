@@ -1,16 +1,17 @@
 #include "skiff-box.hpp"
 #include "services/rack-help.hpp"
+#include "widgets/widgetry.hpp"
+
 using namespace pachde;
 namespace widgetry {
 
-inline bool adjacent(const Rect& a, const Rect& b, float tolerance) {
-    // assume boxes are lrtb
-    if (b.pos.x <= a.pos.x + a.size.x + tolerance) {
-        return ((b.pos.y == a.pos.y) // same row
-            || (b.pos.y == a.pos.y + a.size.y) // next row
-        );
-    }
-    return false;
+inline bool adjacent(const Rect& a, const Rect& b, float tolerance, bool horizontal) {
+    float tx = horizontal ? tolerance*.5f : 0.f;
+    float ty = horizontal ? 0.f : tolerance*.5f;
+    Vec growby = Vec(tx, ty);
+    Rect a1 = a.grow(growby);
+    Rect b1 = b.grow(growby);
+    return a1.intersects(b1);
 }
 
 void SkiffBox::make_skiff_boxes() {
@@ -19,43 +20,52 @@ void SkiffBox::make_skiff_boxes() {
     float tolerance = options->separation * 15.f;
     std::sort(modules.begin(), modules.end(), widget_order_lrtb);
 
-    auto it = modules.cbegin();
-    if (options->floating_info) {
-        const ModuleWidget* first = *it++;
-        bool info = (0 == first->model->slug.compare("pachde-info"));
-        if (!info) {
-            boxes.push_back(first->box);
-        } else {
-            const ModuleWidget* second = *it;
-            if (adjacent(first->box, second->box, 0)) {
-                boxes.push_back(first->box.expand(second->box));
-                it++;
-            }
-        }
-    }
-    for (; it != modules.cend(); it++) {
-        Rect wbox = (*it)->box;
-        if (boxes.empty()) {
-            boxes.push_back(wbox);
+    std::vector<Rect> row_boxes;
+    for (const ModuleWidget* mw: modules) {
+        auto wbox = mw->box;
+        if (row_boxes.empty()) {
+            row_boxes.push_back(wbox);
         } else {
             bool merged{false};
-            for (Rect& box: boxes) {
-                if (adjacent(box, wbox, tolerance)) {
+            for (Rect& box: row_boxes) {
+                if (adjacent(box, wbox, tolerance, true)) {
                     box = box.expand(wbox);
                     merged = true;
                     break;
                 }
             }
             if (!merged) {
-                if (options->floating_info) {
-                    if (0 != (*it)->model->slug.compare("pachde-info")) {
-                        boxes.push_back(wbox);
-                    }
-                } else {
-                    boxes.push_back(wbox);
-                }
-
+                row_boxes.push_back(wbox);
             }
+        }
+    }
+    for (const Rect& row_box: row_boxes) {
+        if (boxes.empty()) {
+            boxes.push_back(row_box);
+        } else {
+            bool merged{false};
+            for (Rect& box: boxes) {
+                if (adjacent(box, row_box, tolerance, false)) {
+                    box = box.expand(row_box);
+                    merged = true;
+                    break;
+                }
+            }
+            if (!merged) {
+                boxes.push_back(row_box);
+            }
+        }
+    }
+    row_boxes.clear();
+
+    // un-skiff isolated boxes
+    for (const ModuleWidget* mw: modules) {
+        auto it = boxes.begin();
+        for (; it != boxes.end(); it++) {
+            if ((*it).equals(mw->box)) break;
+        }
+        if (it != boxes.end()) {
+            boxes.erase(it);
         }
     }
 }

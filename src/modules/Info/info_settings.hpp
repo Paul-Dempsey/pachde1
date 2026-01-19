@@ -21,12 +21,9 @@ inline std::string get_plugin_bold_file() {
 
 struct InfoSettings
 {
-    // computed from theme
-    PackedColor theme_panel_color{info_constant::PANEL_DEFAULT};
-    PackedColor theme_text_color{info_constant::TEXT_DEFAULT};
     // overrides
-    PackedColor user_panel_color{colors::NoColor};
-    PackedColor user_text_color{colors::NoColor};
+    PackedColor panel_color{colors::NoColor};
+    PackedColor text_color{colors::NoColor};
 
     bool brilliant{false};
     bool branding{true};
@@ -59,16 +56,14 @@ struct InfoSettings
     HAlign getHorizontalAlignment();
     VAlign getVerticalAlignment();
     Orientation getOrientation();
-    PackedColor getDisplayPanelColor();
-    PackedColor getDisplayTextColor();
 
     void setTheme(Theme theme);
 
-    PackedColor getUserPanelColor();
-    void setUserPanelColor(PackedColor color);
+    PackedColor getPanelColor();
+    void setPanelColor(PackedColor color);
 
-    PackedColor getUserTextColor();
-    void setUserTextColor(PackedColor color);
+    PackedColor getTextColor();
+    void setTextColor(PackedColor color);
 
     void setBrilliant(bool brilliance);
     bool getBrilliant();

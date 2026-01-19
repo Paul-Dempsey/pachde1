@@ -52,7 +52,6 @@ void InfoModuleWidget::onChangeTheme(ChangedItem item) {
         sendChildrenThemeColor(this, theme_holder->getTheme(), theme_holder->getMainColor());
         break;
     case ChangedItem::MainColor:
-        settings->setUserPanelColor(theme_holder->getMainColor());
         sendChildrenThemeColor(this, theme_holder->getTheme(), theme_holder->getMainColor());
         break;
     case ChangedItem::Screws:
@@ -173,7 +172,7 @@ void InfoModuleWidget::drawLayer(const DrawArgs &args, int layer) {
         Base::drawLayer(args, layer);
         return;
     }
-    PackedColor co = settings->getUserPanelColor();
+    PackedColor co = settings->getPanelColor();
     if (alpha(co) > .99f) Base::drawLayer(args, layer);
 }
 

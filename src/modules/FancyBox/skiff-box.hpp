@@ -13,7 +13,6 @@ struct SkiffOptions {
     PackedColor inside_color{colors::G40};
     int separation{2}; // module separation in hp to start a new skiff box
     bool shadow{true};
-    bool floating_info{true};
 
     void init(const SkiffOptions& options) {
         edge_width = options.edge_width;
@@ -21,7 +20,6 @@ struct SkiffOptions {
         edge_color = options.edge_color;
         bezel_color = options.bezel_color;
         shadow = options.shadow;
-        floating_info = options.floating_info;
     }
 };
 

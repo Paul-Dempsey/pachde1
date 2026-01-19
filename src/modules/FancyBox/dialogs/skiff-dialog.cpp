@@ -94,8 +94,6 @@ struct SkiffDialog : SvgDialog<SkiffDialogSvg> {
 
         add_check(this, bounds, "k:shadow-check", fancy_module, Fancy::P_FANCY_SKIFF_SHADOW, svg_theme);
         add_label(this, bounds, "k:shadow-check-label", "Shadow", styles.left_label_style, svg_theme);
-        add_check(this, bounds, "k:info-check", fancy_module, Fancy::P_FANCY_SKIFF_FLOATING_INFO, svg_theme);
-        add_label(this, bounds, "k:info-check-label", "Floating #d Info", styles.left_label_style, svg_theme);
     }
 
     void set_edge_color(PackedColor color) {

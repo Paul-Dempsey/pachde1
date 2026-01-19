@@ -51,7 +51,6 @@ Fancy::Fancy() {
     configParam(P_FANCY_SKIFF_BEZEL, 1.f, 50.f, 3.f, "Skiff bezel width", "px");
     configParam(P_FANCY_SKIFF_EDGE, 0.f, 25.f, 1.f, "Skiff edge width", "px");
     configSwitch(P_FANCY_SKIFF_SHADOW, 0.f, 1.f, 1.f, "Skiff shadow", off_on);
-    configSwitch(P_FANCY_SKIFF_FLOATING_INFO, 0.f, 1.f, 1.f, "Floating #d Info", off_on);
 
     configInput(IN_FANCY_FILL_H,            "fill Hue");
     configInput(IN_FANCY_FILL_S,            "fill Saturation");
@@ -376,7 +375,6 @@ void Fancy::process_skiff(const ProcessArgs &args) {
     fancy_data.skiff.options.bezel_width = getParam(P_FANCY_SKIFF_BEZEL).getValue();
     fancy_data.skiff.options.edge_width = getParam(P_FANCY_SKIFF_EDGE).getValue();
     fancy_data.skiff.options.shadow = param_bool(getParam(P_FANCY_SKIFF_SHADOW));
-    fancy_data.skiff.options.floating_info = param_bool(getParam(P_FANCY_SKIFF_FLOATING_INFO));
     if (my_cloak) {
         my_cloak->data.skiff.enabled = fancy_data.skiff.enabled;
         if (fancy_data.skiff.enabled) {

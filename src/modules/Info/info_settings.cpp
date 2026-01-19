@@ -7,10 +7,8 @@ namespace pachde {
 
 void InfoSettings::reset()
 {
-    theme_panel_color = info_constant::PANEL_DEFAULT;
-    theme_text_color = info_constant::TEXT_DEFAULT;
-    user_panel_color = colors::NoColor;
-    user_text_color = colors::NoColor;
+    panel_color = info_constant::PANEL_DEFAULT;
+    text_color = info_constant::TEXT_DEFAULT;
     horizontal_alignment = HAlign::Left;
     vertical_alignment = VAlign::Middle;
     left_margin = right_margin = top_margin = bottom_margin = 0.f;
@@ -22,8 +20,8 @@ void InfoSettings::reset()
 
 void InfoSettings::randomize()
 {
-    user_panel_color = random::u32();
-    user_text_color = packed_color::opaque(random::u32());
+    panel_color = random::u32();
+    text_color = packed_color::opaque(random::u32());
     horizontal_alignment = static_cast<HAlign>(random::get<uint32_t>() % 3);
     vertical_alignment = static_cast<VAlign>(random::get<uint32_t>() % 3);
     brilliant = random::get<bool>();
@@ -38,28 +36,22 @@ VAlign InfoSettings::getVerticalAlignment() { return vertical_alignment; }
 void InfoSettings::setVerticalAlignment(VAlign v) { vertical_alignment = v; }
 Orientation InfoSettings::getOrientation() { return orientation; }
 void InfoSettings::setOrientation(Orientation orient) { orientation = orient; }
-void InfoSettings::setUserPanelColor(PackedColor color) { user_panel_color = color; }
-PackedColor InfoSettings::getUserPanelColor() { return user_panel_color; }
-void InfoSettings::setUserTextColor(PackedColor color) { user_text_color = color; }
-PackedColor InfoSettings::getUserTextColor() {return user_text_color; }
+void InfoSettings::setPanelColor(PackedColor color) { panel_color = color; }
+PackedColor InfoSettings::getPanelColor() { return panel_color; }
+void InfoSettings::setTextColor(PackedColor color) { text_color = color; }
+PackedColor InfoSettings::getTextColor() {return text_color; }
 void InfoSettings::setBrilliant(bool brilliance) { brilliant = brilliance; }
 bool InfoSettings::getBrilliant() { return brilliant; }
 void InfoSettings::setBranding(bool branded) { branding = branded; }
 bool InfoSettings::getBranding() { return branding; }
-PackedColor InfoSettings::getDisplayPanelColor() { return user_panel_color ? user_panel_color : theme_panel_color; }
-PackedColor InfoSettings::getDisplayTextColor() { return user_text_color ? user_text_color : theme_text_color; }
 
 json_t* InfoSettings::save(json_t* root)
 {
     char hex[10];
-    if (visible(user_panel_color)) {
-        hexFormat(user_panel_color, sizeof(hex), hex);
-        set_json(root, "text-background", hex);
-    }
-    if (visible(user_text_color)) {
-        hexFormat(user_text_color, sizeof(hex), hex);
-        set_json(root, "text-color", hex);
-    }
+    hexFormat(panel_color, sizeof(hex), hex);
+    set_json(root, "text-background", hex);
+    hexFormat(text_color, sizeof(hex), hex);
+    set_json(root, "text-color", hex);
     if (info_constant::DEFAULT_FONT_SIZE != font_size) {
         set_json(root, "text-size", font_size);
     }
@@ -84,11 +76,11 @@ void InfoSettings::load(json_t* root) {
     std::string str;
     str = get_json_string(root, "text-background");
     if (!str.empty()) {
-        parseHexColor(user_panel_color, PANEL_DEFAULT, str.c_str(), nullptr);
+        parseHexColor(panel_color, PANEL_DEFAULT, str.c_str(), nullptr);
     }
     str = get_json_string(root, "text-color");
     if (!str.empty()) {
-        parseHexColor(user_text_color, TEXT_DEFAULT, str.c_str(), nullptr);
+        parseHexColor(text_color, TEXT_DEFAULT, str.c_str(), nullptr);
     }
 
     font_size = get_json_float(root, "text-size", DEFAULT_FONT_SIZE);
@@ -131,23 +123,6 @@ void InfoSettings::load(json_t* root) {
 }
 
 void InfoSettings::setTheme(Theme theme) {
-    using namespace colors;
-    switch (theme) {
-        default:
-        case Theme::Unset:
-        case Theme::Light:
-            theme_panel_color = G80;
-            theme_text_color = G20;
-            break;
-        case Theme::Dark:
-            theme_panel_color = G25;
-            theme_text_color = G85;
-            break;
-        case Theme::HighContrast:
-            theme_panel_color = G10;
-            theme_text_color = White;
-            break;
-    };
 }
 
 bool InfoSettings::fontDialog()

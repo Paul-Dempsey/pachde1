@@ -34,9 +34,6 @@
 
     <rect   id="k:shadow-check"       fill="#a6a6a6"  x="0"   y="90" width="14" height="14" />
     <rect   id="k:shadow-check-label" fill="#aaa"     x="17"  y="90" width="40" height="12"/>
-    <rect   id="k:info-check"         fill="#a6a6a6"  x="68"   y="90" width="14" height="14" />
-    <rect   id="k:info-check-label"   fill="#aaa"     x="86"  y="90" width="70" height="12"/>
-
 </g>
 
 <rect id="dlg-border" fill="none" stroke="#c5c5c5" stroke-width="1.5" x=".75" y=".75" width="218.5" height="163" />

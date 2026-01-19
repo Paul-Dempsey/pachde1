@@ -64,7 +64,6 @@ struct Fancy : ThemeModule {
         P_FANCY_SKIFF_BEZEL,
         P_FANCY_SKIFF_EDGE,
         P_FANCY_SKIFF_SHADOW,
-        P_FANCY_SKIFF_FLOATING_INFO,
         N_PARAMS
     };
     enum Inputs {

@@ -41,24 +41,24 @@ struct Preview : TransparentWidget {
             }
         }
 
-        auto co_info_panel = settings->getDisplayPanelColor();
-        if (!packed_color::isOpaque(co_info_panel)) {
-            switch (getActualTheme(ThemeSetting::FollowRackUi)) {
-            case Theme::Light:
-                FillRect(vg, RECT_ARGS(preview_box), rack_light);
-                break;
+        // auto co_info_panel = settings->getPanelColor();
+        // if (!packed_color::isOpaque(co_info_panel)) {
+        //     switch (getActualTheme(ThemeSetting::FollowRackUi)) {
+        //     case Theme::Light:
+        //         FillRect(vg, RECT_ARGS(preview_box), rack_light);
+        //         break;
 
-            default:
-            case Theme::Dark:
-                FillRect(vg, RECT_ARGS(preview_box), rack_dark);
-                break;
+        //     default:
+        //     case Theme::Dark:
+        //         FillRect(vg, RECT_ARGS(preview_box), rack_dark);
+        //         break;
 
-            case Theme::HighContrast:
-                FillRect(vg, RECT_ARGS(preview_box), rack_hc);
-                break;
-            }
-        }
-        FillRect(vg, RECT_ARGS(preview_box), fromPacked(settings->getDisplayPanelColor()));
+        //     case Theme::HighContrast:
+        //         FillRect(vg, RECT_ARGS(preview_box), rack_hc);
+        //         break;
+        //     }
+        // }
+        FillRect(vg, RECT_ARGS(preview_box), fromPacked(settings->getPanelColor()));
 
         std::string text = (info_mod) ? info_mod->text : "";
         if (text.empty()) text = "Info sample text";
@@ -69,7 +69,7 @@ struct Preview : TransparentWidget {
             text,
             settings->getFont(),
             settings->getFontSize() *preview_scale,
-            settings->getDisplayTextColor(),
+            settings->getTextColor(),
             settings->getHorizontalAlignment(),
             settings->getVerticalAlignment(),
             settings->getOrientation(),
@@ -244,14 +244,14 @@ struct SettingsDialog : SvgDialog<SettingsDialogSvg> {
         addChild(new Preview(bounds["k:preview"], settings, info->my_module));
 
         // Panel color
-        addChild(panel_swatch = new FancySwatch(bounds["k:panel-swatch"], settings->getUserPanelColor()));
+        addChild(panel_swatch = new FancySwatch(bounds["k:panel-swatch"], settings->getPanelColor()));
         auto palette = Center(createThemeSvgButton<Palette1ActionButton>(&my_svgs, bounds["k:panel-co"].getCenter()));
         palette->describe("Panel color");
         palette->set_handler([=](bool,bool) {
             auto picker = new ColorPickerMenu();
-            picker->set_color(settings->getUserPanelColor());
+            picker->set_color(settings->getPanelColor());
             picker->set_on_new_color([=](PackedColor color) {
-                settings->setUserPanelColor(color);
+                settings->setPanelColor(color);
                 panel_swatch->set_color(color);
             });
             auto menu = createMenu();
@@ -261,14 +261,14 @@ struct SettingsDialog : SvgDialog<SettingsDialogSvg> {
         addChild(TextLabel::createLabel(bounds["k:panel-co-label"], "PANEL", center_label_style));
 
         // Text color
-        addChild(text_swatch = new FancySwatch(bounds["k:text-swatch"], settings->getUserTextColor()));
+        addChild(text_swatch = new FancySwatch(bounds["k:text-swatch"], settings->getTextColor()));
         palette = Center(createThemeSvgButton<Palette1ActionButton>(&my_svgs, bounds["k:text-co"].getCenter()));
         palette->describe("Text color");
         palette->set_handler([=](bool,bool) {
             auto picker = new ColorPickerMenu();
-            picker->set_color(settings->getUserTextColor());
+            picker->set_color(settings->getTextColor());
             picker->set_on_new_color([=](PackedColor color) {
-                settings->setUserTextColor(color);
+                settings->setTextColor(color);
                 text_swatch->set_color(color);
             });
             auto menu = createMenu();

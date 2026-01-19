@@ -4,20 +4,20 @@
 
 | FancyBox Open (showing ports) | FancyBox Closed |
 | :--: | :--: |
-| ![FancyBox](./images/FancyBox.png) | ![FancyBox](./images/FancyBox-nojacks.png)|
+| ![FancyBox](./images/FancyBox.png) | ![FancyBox](./images/FancyBox-nojacks.png) |
 
 You can think of FancyBox as a twist on the legendary [DanT:Purfenator](https://library.vcvrack.com/DanTModules/Purfenator).
 FancyBox and Purfenator can even be used together, when properly configured and placed in the patch in the right order.
 It's pretty fiddly to get the combination to work, becuase they both do intrusive things that Rack wasn't really designed for, but it's possible.
 
-FancyBox supports up to 5 layers, the top 4 can be animated.
+FancyBox supports up to 6 layers, the top 4 can be animated.
 Each additional layer appears on top of the others.
 
 When first added to Rack, only *TONE* is enabled, and the effect is not visible until you click the *ON•OFF* button.
 Click the check box above the vertical layer label to enable that layer.
-Except for the *Image* layer, all available options are on the panel.
+Except for the *Image* and *Skiff* layers, all available options are on the panel.
 
-In order from bottom to top:
+The layers in order from bottom to top:
 
 - **Image** — A background image displayed below all modules and above the rails.
 
@@ -36,7 +36,9 @@ In order from bottom to top:
 
 - **Box gradient** — A single animatable  box gradient, which provides a nice vignetting effect.
 
-These effects are all simple applications of nanovg operations.
+- **Skiff** — Frames around grouped modules with drop-shadows. (Enable from right click menu).
+
+Most effects are simple applications of nanovg operations. Nanovg is the vector graphics library underlying the VCV Rack UI.
 
 CV inputs can control the Hue, Saturation, Lightness and Alpha (opacity) components of each color, along with an additional fade for taking the color/effect in and out, leaving the color's opacity as the baseline. Each color has a row of HSLA+Fade inputs.
 
@@ -76,7 +78,7 @@ Click the hamburger for more Image options.
 ## Keep the background after removing FancyBox
 
 FancyBox supports leaving static background in place after FancyBox is removed from the patch.
-This is unusual for Rack module, but allows you to set up a specific look for recording or performance, and not have FancyBox cluttering your patch.
+This is unusual for a Rack module, but allows you to set up a specific look for recording or performance, and not have FancyBox cluttering your patch.
 
 To enable retaining background effects after FancyBox is removed, toggle *Keep effects when removed* in the module menu.
 

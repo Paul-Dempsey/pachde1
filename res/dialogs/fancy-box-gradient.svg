@@ -29,8 +29,8 @@
         <circle id="k:bg-radius"       fill="#5c95d6" cx="118" cy="16" r="14" />
         <circle id="k:bg-feather"      fill="#5c95d6" cx="160" cy="16" r="14" />
         <rect   id="k:bg-outer-fade-label" fill="#aaaa" x="57"  y="33" width="30" height="14"/>
-        <rect   id="k:bg-radius-label"     fill="#aaaa" x="102"  y="33" width="32" height="14"/>
-        <rect   id="k:bg-feather-label"    fill="#aaaa" x="140" y="33" width="40" height="14"/>
+        <rect   id="k:bg-radius-label"     fill="#aaaa" x="102" y="33" width="32" height="14"/>
+        <rect   id="k:bg-feather-label"    fill="#aaaa" x="136" y="33" width="46" height="14"/>
     </g>
 </g>
 

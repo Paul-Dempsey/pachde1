@@ -84,6 +84,9 @@ FancyMini::FancyMini(Fancy *module) : my_module(module) {
     HOT_POSITION("k:skiff-options", HotPosKind::Center, ham);
     ham->set_handler([=](){ skiff_options(); });
     addChild(ham);
+
+    my_svgs.changeTheme(svg_theme);
+    applyChildrenTheme(this, svg_theme);
 }
 
 void FancyMini::add_check( ::svg_query::BoundsIndex &bounds, const char *key, int param, std::shared_ptr<svg_theme::SvgTheme> svg_theme) {
