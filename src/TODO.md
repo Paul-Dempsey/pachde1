@@ -21,6 +21,7 @@
 
 ## FancyBox
 
+- Skiff: it would be cool to be able to support dragging a skiff box by bezel/bg
 - Skiff: background rails? (honoring Skiff:Alt rails!)
 - Skiff: ears? (Purfenator parity)
 - randomize?

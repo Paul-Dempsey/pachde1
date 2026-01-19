@@ -20,7 +20,7 @@
       "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Null.md#null",
       "description": "THe ultimate discreet resizable blank panel with themes, colors, and animation",
       "tags": [ "Visual", "Blank", "Utility" ],
-      "keywords": "graphic compositing blue green screen greenscreen bluescreen resizable 1hp skiff"
+      "keywords": "1hp graphic light lightbar compositing blue green screen greenscreen bluescreen resizable skiff"
     },
     {
       "slug": "pachde-info",
@@ -28,7 +28,7 @@
       "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Info.md#info",
       "description": "Resizable text notes or skiff labels with themes, colors, and disoriented text",
       "tags": [ "Visual", "Blank", "Utility" ],
-      "keywords": "text info notes resizable skiff"
+      "keywords": "2hp text info notes labels resizable skiff vertical"
     },
     {
       "slug": "pachde-imagine",
@@ -52,7 +52,7 @@
       "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Copper-mini.md#copper-mini",
       "description": "A mini version of the Copper color picker and expander with modulation and outputs",
       "tags": [ "Visual", "Controller", "Utility", "Expander" ],
-      "keywords" : "animate colors graphic RGB HSL"
+      "keywords" : "2hp animate colors graphic RGB HSL"
     },
     {
         "slug": "pachde-skiff",
@@ -60,7 +60,7 @@
         "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Skiff.md#skiff",
         "description": "Customize your skiff: pack modules, use alternate rails, hide panels, unscrew modules, hide unused jacks, and hide lights",
         "tags": [ "Visual", "Utility" ],
-        "keywords" : "colors graphic RGB HSL skiff rails declutter screws ports jacks UI"
+        "keywords" : "colors graphic UI RGB HSL skiff rails declutter screws ports jacks UI"
     },
     {
         "slug": "pachde-fancybox",
@@ -68,7 +68,7 @@
         "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/FancyBox.md#fancybox",
         "description": "Customize your skiff with a fancy background/green-screen",
         "tags": [ "Visual", "Utility" ],
-        "keywords" : "animate colors graphic RGB HSL skiff rails purfenator declutter greenscreen screen UI"
+        "keywords" : "animate colors graphic RGB HSL UI skiff rails purfenator declutter greenscreen screen UI"
     },
     {
         "slug": "pachde-mini-fancybox",
@@ -76,7 +76,7 @@
         "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/FancyBox.md#fancybox",
         "description": "Customize your skiff with a fancy background/green-screen (mini version)",
         "tags": [ "Visual", "Utility" ],
-        "keywords" : "mini animate colors graphic RGB HSL skiff rails purfenator declutter greenscreen screen UI"
+        "keywords" : "2hp mini animate colors graphic UI RGB HSL skiff rails purfenator declutter greenscreen screen UI"
     },
     {
         "slug": "pachde-rui",
@@ -84,21 +84,21 @@
         "manualUrl": "https://github.com/Paul-Dempsey/pachde1/blob/main/docs/Rui.md#rui",
         "description": "Adjust or animate Rack cables and lighting",
         "tags": [ "Visual", "Utility" ],
-        "keywords" : "animate  UI skiff cables brightness bloom halo"
+        "keywords" : "2hp animate UI skiff cables brightness bloom halo"
     },
     {
         "slug": "pachde-guide",
         "name": "Guide",
         "description": "For developers: Overlay the module to the left with design guides/grid",
         "tags": [ "visual", "utility" ],
-        "keywords" : "dev developer design guides grid"
+        "keywords" : "dev developer UI design guides grid"
     },
     {
         "slug": "pachde-paneltone",
         "name": "PanelTone",
         "description": "A visual utility to tone or blank panels in your skiff",
         "tags": [ "visual", "utility" ],
-        "keywords" : "colors graphic RGB HSL skiff tint panel"
+        "keywords" : "colors graphic UI RGB HSL skiff tint panel"
     }
   ]
 }

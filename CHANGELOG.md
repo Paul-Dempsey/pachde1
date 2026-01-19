@@ -1,5 +1,11 @@
 # Pachde One Change Log
 
+## Version 2.5
+
+- ***New Modules*** — [FancyBox Mini](docs/FancyBox#fancybox-mini) - a 2hp version of FancyBox.
+- FancyBox and FancyBox Mini gain a new *Skiff* layer for Skiff boxes.
+- Various bug fixes and improvements
+
 ## Version 2.4
 
 - FancyBox gets an image background, with a configuration dialog (and grows by 1hp to make room).
