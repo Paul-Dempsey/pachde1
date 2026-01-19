@@ -42,6 +42,8 @@ struct FillDialog : SvgDialog<FillDialogSvg> {
         addChild(TextLabel::createLabel(bounds["k:dlg-title"], "FancyBox | Tone options", styles.title_style));
 
         add_check(this, bounds, "k:fill-check", fancy_module, Fancy::P_FANCY_FILL_ON, svg_theme);
+        add_label(this, bounds, "k:fill-check-label", "Enable Tone", styles.left_label_style, svg_theme);
+
         auto palette = Center(createThemeSvgButton<Palette20ActionButton>(&my_svgs, bounds["k:fill-co"].getCenter()));
         palette->describe("Tone color");
         if (fancy_module) {

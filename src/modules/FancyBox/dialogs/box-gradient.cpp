@@ -41,6 +41,7 @@ struct BoxGradientDialog : SvgDialog<BoxGradientSvg> {
         addChild(TextLabel::createLabel(bounds["k:dlg-title"], "FancyBox | Box gradient options", styles.title_style));
 
         add_check(this, bounds, "k:bg-check", fancy_module, Fancy::P_FANCY_BOX_ON, svg_theme);
+        add_label(this, bounds, "k:bg-check-label", "Enable Box gradient", styles.left_label_style, svg_theme);
         auto palette = Center(createThemeSvgButton<Palette20ActionButton>(&my_svgs, bounds["k:bg-inner-co"].getCenter()));
         palette->describe("Box gradient inner color");
         palette->set_handler([=](bool,bool) {

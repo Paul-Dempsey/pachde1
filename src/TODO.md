@@ -1,7 +1,5 @@
 # pachde1 TODO
 
-- nicer-looking tiny button?
-
 ## Skiff
 
 - Image rail overlay (image formats)
@@ -23,8 +21,10 @@
 
 ## FancyBox
 
-- randomize
-- randomize trigger
+- Skiff: background rails? (honoring Skiff:Alt rails!)
+- Skiff: ears? (Purfenator parity)
+- randomize?
+- randomize trigger?
 
 ## Copper
 

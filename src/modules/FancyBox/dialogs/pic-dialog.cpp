@@ -106,7 +106,7 @@ struct PictureDialog : SvgDialog<PictureDialogSvg> {
         });
         addChild(pic_button);
         add_check(this, bounds, "k:pic-check", fancy_module, Fancy::P_FANCY_IMAGE_ON, svg_theme);
-
+        add_label(this, bounds, "k:pic-check-label", "Enable Image", styles.left_label_style, svg_theme);
         {
             auto option = createParam<widgetry::Switch>(0, fancy_module, Fancy::P_FANCY_IMAGE_FIT);
             option->box = bounds["k:pic-fit"];

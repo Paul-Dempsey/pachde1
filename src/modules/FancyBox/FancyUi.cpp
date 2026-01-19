@@ -66,6 +66,12 @@ FancyUi::FancyUi(Fancy* module) : my_module(module) {
         ::svg_query::hideElements(layout, "k:");
         return;
     }
+    if (my_module && !my_module->my_cloak && !my_module->deserialized) {
+        my_module->my_cloak = getBackgroundCloak();
+        if (my_module->my_cloak) {
+            my_module->fancy_data.init(my_module->my_cloak->data);
+        }
+    }
 
     title_style = new LabelStyle("fancy-title", colors::Black, 14.f, true);
     title_style->valign = VAlign::Top;
@@ -705,6 +711,9 @@ void FancyUi::appendContextMenu(Menu* menu) {
         [=](){ return my_module->orphan_cloak; },
         [=](){ my_module->orphan_cloak = !my_module->orphan_cloak; }
     ));
+    menu->addChild(createMenuItem("Skiff box options...", "", [=](){
+        show_skiff_dialog(this, my_module, theme_holder->getTheme());
+    }));
     menu->addChild(createMenuLabel<FancyLabel>("theme"));
     AddThemeMenu(menu, this, theme_holder, false, false, false);
 }

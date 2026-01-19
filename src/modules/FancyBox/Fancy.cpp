@@ -47,6 +47,12 @@ Fancy::Fancy() {
     configParam(P_FANCY_BOX_RADIUS,        0.f, 100.f, 16.f, "Box radius", "%");
     configParam(P_FANCY_BOX_FEATHER,       0.f, 100.f, 12.f, "Box feather", "%");
 
+    configSwitch(P_FANCY_SKIFF_ON, 0.f, 1.f, 0.f, "Enable Skiff", off_on);
+    configParam(P_FANCY_SKIFF_BEZEL, 1.f, 50.f, 3.f, "Skiff bezel width", "px");
+    configParam(P_FANCY_SKIFF_EDGE, 0.f, 25.f, 1.f, "Skiff edge width", "px");
+    configSwitch(P_FANCY_SKIFF_SHADOW, 0.f, 1.f, 1.f, "Skiff shadow", off_on);
+    configSwitch(P_FANCY_SKIFF_FLOATING_INFO, 0.f, 1.f, 1.f, "Floating #d Info", off_on);
+
     configInput(IN_FANCY_FILL_H,            "fill Hue");
     configInput(IN_FANCY_FILL_S,            "fill Saturation");
     configInput(IN_FANCY_FILL_L,            "fill Lightness");
@@ -115,6 +121,14 @@ json_t* Fancy::dataToJson() {
     packed_color::hexFormat(fancy_data.radial.ocol, 10, hex); set_json(root, "radial-ocol", hex);
     packed_color::hexFormat(fancy_data.boxg.icol, 10, hex);   set_json(root, "box-icol", hex);
     packed_color::hexFormat(fancy_data.boxg.ocol, 10, hex);   set_json(root, "box-ocol", hex);
+    packed_color::hexFormat(fancy_data.skiff.options.bezel_color, 10, hex);
+    set_json(root, "skiff-bezel-color", hex);
+    packed_color::hexFormat(fancy_data.skiff.options.edge_color, 10, hex);
+    set_json(root, "skiff-edge-color", hex);
+    packed_color::hexFormat(fancy_data.skiff.options.inside_color, 10, hex);
+    set_json(root, "skiff-inside-color", hex);
+    set_json_int(root, "skiff-hp-separate", fancy_data.skiff.options.separation);
+
     return root;
 }
 
@@ -129,6 +143,7 @@ PackedColor color_from_json(json_t* root, const char * key) {
 
 void Fancy::dataFromJson(json_t* root) {
     if (other_fancy) return;
+    deserialized = true;
     Base::dataFromJson(root);
     shouting   = get_json_bool(root, "shouting", shouting);
     show_ports = get_json_bool(root, "show-ports", show_ports);
@@ -146,6 +161,10 @@ void Fancy::dataFromJson(json_t* root) {
     fancy_data.radial.ocol = color_from_json(root, "radial-ocol");
     fancy_data.boxg.icol = color_from_json(root, "box-icol");
     fancy_data.boxg.ocol = color_from_json(root, "box-ocol");
+    fancy_data.skiff.options.bezel_color = color_from_json(root, "skiff-bezel-color");
+    fancy_data.skiff.options.edge_color = color_from_json(root, "skiff-edge-color");
+    fancy_data.skiff.options.inside_color = color_from_json(root, "skiff-inside-color");
+    fancy_data.skiff.options.separation = get_json_int(root, "skiff-hp-separate", fancy_data.skiff.options.separation);
 }
 
 void Fancy::make_fancy(bool fanciness) {
@@ -350,6 +369,22 @@ void Fancy::process_box(const ProcessArgs& args) {
     }
 }
 
+void Fancy::process_skiff(const ProcessArgs &args) {
+    skiff_process_count = (skiff_process_count + 1) % 25;
+    if (skiff_process_count % 25) return;
+    fancy_data.skiff.enabled = param_bool(getParam(P_FANCY_SKIFF_ON));
+    fancy_data.skiff.options.bezel_width = getParam(P_FANCY_SKIFF_BEZEL).getValue();
+    fancy_data.skiff.options.edge_width = getParam(P_FANCY_SKIFF_EDGE).getValue();
+    fancy_data.skiff.options.shadow = param_bool(getParam(P_FANCY_SKIFF_SHADOW));
+    fancy_data.skiff.options.floating_info = param_bool(getParam(P_FANCY_SKIFF_FLOATING_INFO));
+    if (my_cloak) {
+        my_cloak->data.skiff.enabled = fancy_data.skiff.enabled;
+        if (fancy_data.skiff.enabled) {
+            my_cloak->data.skiff.init(fancy_data.skiff);
+        }
+    }
+}
+
 void Fancy::process(const ProcessArgs &args)
 {
     if (other_fancy) return;
@@ -364,12 +399,13 @@ void Fancy::process(const ProcessArgs &args)
     }
 
     // amortize parameter updates across frames
-    switch (args.frame % 5) {
+    switch (args.frame % 6) {
         case 0: process_image(args); break;
         case 1: process_fill(args); break;
         case 2: process_linear(args); break;
         case 3: process_radial(args); break;
         case 4: process_box(args);  break;
+        case 5: process_skiff(args); break;
     }
 }
 

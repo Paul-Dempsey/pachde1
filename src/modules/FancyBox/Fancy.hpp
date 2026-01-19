@@ -59,6 +59,12 @@ struct Fancy : ThemeModule {
         P_FANCY_IMAGE_SCALE,
 
         P_FANCY,
+
+        P_FANCY_SKIFF_ON,
+        P_FANCY_SKIFF_BEZEL,
+        P_FANCY_SKIFF_EDGE,
+        P_FANCY_SKIFF_SHADOW,
+        P_FANCY_SKIFF_FLOATING_INFO,
         N_PARAMS
     };
     enum Inputs {
@@ -122,6 +128,7 @@ struct Fancy : ThemeModule {
     bool show_ports{true};
     bool shouting{true};
     bool orphan_cloak{false};
+    bool deserialized{false};
     CloakData fancy_data;
     CloakBackgroundWidget* my_cloak{nullptr};
     std::string theme_name;
@@ -133,6 +140,7 @@ struct Fancy : ThemeModule {
     int linear_process_count{0};
     int radial_process_count{0};
     int box_process_count{0};
+    int skiff_process_count{0};
     int connection_count{0};
 
     Fancy();
@@ -152,6 +160,7 @@ struct Fancy : ThemeModule {
     void process_linear(const ProcessArgs& args);
     void process_radial(const ProcessArgs& args);
     void process_box(const ProcessArgs& args);
+    void process_skiff(const ProcessArgs& args);
     void process(const ProcessArgs& args) override;
 };
 
@@ -251,6 +260,7 @@ struct FancyMini : ModuleWidget, IThemeChange
     void linear_options();
     void radial_options();
     void box_options();
+    void skiff_options();
     void onChangeTheme(ChangedItem item) override;
     void onHoverKey(const HoverKeyEvent& e) override;
     void step() override;

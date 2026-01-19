@@ -28,6 +28,13 @@ FancyMini::FancyMini(Fancy *module) : my_module(module) {
         return;
     }
 
+    if (my_module && !my_module->my_cloak && !my_module->deserialized) {
+        my_module->my_cloak = getBackgroundCloak();
+        if (my_module->my_cloak) {
+            my_module->fancy_data.init(my_module->my_cloak->data);
+        }
+    }
+
     ::svg_query::BoundsIndex bounds;
     svg_query::addBounds(layout, "k:", bounds, true);
 
@@ -46,6 +53,7 @@ FancyMini::FancyMini(Fancy *module) : my_module(module) {
     add_check(bounds, "k:linear-check", Fancy::P_FANCY_LINEAR_ON, svg_theme);
     add_check(bounds, "k:radial-check", Fancy::P_FANCY_RADIAL_ON, svg_theme);
     add_check(bounds, "k:box-check", Fancy::P_FANCY_BOX_ON, svg_theme);
+    add_check(bounds, "k:skiff-check", Fancy::P_FANCY_SKIFF_ON, svg_theme);
 
     auto ham = createWidgetCentered<Hamburger>(bounds["k:pic-options"].getCenter());
     HOT_POSITION("k:pic-options", HotPosKind::Center, ham);
@@ -70,6 +78,11 @@ FancyMini::FancyMini(Fancy *module) : my_module(module) {
     ham = createWidgetCentered<Hamburger>(bounds["k:box-options"].getCenter());
     HOT_POSITION("k:box-options", HotPosKind::Center, ham);
     ham->set_handler([=](){ box_options(); });
+    addChild(ham);
+
+    ham = createWidgetCentered<Hamburger>(bounds["k:skiff-options"].getCenter());
+    HOT_POSITION("k:skiff-options", HotPosKind::Center, ham);
+    ham->set_handler([=](){ skiff_options(); });
     addChild(ham);
 }
 
@@ -116,6 +129,10 @@ void FancyMini::radial_options() {
 
 void FancyMini::box_options() {
     show_box_gradient_dialog(this, my_module, theme_holder->getTheme());
+}
+
+void FancyMini::skiff_options() {
+    show_skiff_dialog(this, my_module, theme_holder->getTheme());
 }
 
 void FancyMini::onChangeTheme(ChangedItem item)

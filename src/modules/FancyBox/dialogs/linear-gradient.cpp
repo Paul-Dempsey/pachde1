@@ -43,6 +43,8 @@ struct LinearGradientDialog : SvgDialog<LinearGradientSvg> {
         addChild(TextLabel::createLabel(bounds["k:dlg-title"], "FancyBox | Linear gradient options", styles.title_style));
 
         add_check(this, bounds, "k:lg-check", fancy_module, Fancy::P_FANCY_LINEAR_ON, svg_theme);
+        add_label(this, bounds, "k:lg-check-label", "Enable Linear gradient", styles.left_label_style, svg_theme);
+
         auto palette = Center(createThemeSvgButton<Palette20ActionButton>(&my_svgs, bounds["k:lg-start-co"].getCenter()));
         palette->describe("Linear gradient start color");
         if (fancy_module) {

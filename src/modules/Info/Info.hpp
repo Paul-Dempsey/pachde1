@@ -125,6 +125,7 @@ struct InfoModuleWidget : ModuleWidget, IThemeChange
     void onHoverKey(const HoverKeyEvent& e) override;
     void onButton(const ButtonEvent& e) override;
     void step() override;
+    void drawLayer(const DrawArgs &args, int layer) override;
 
     void appendContextMenu(Menu *menu) override;
 };

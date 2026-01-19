@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="220" height="90" viewBox="0 0 220 90" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<svg width="220" height="110" viewBox="0 0 220 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
 <linearGradient id="pg" y2="100%" gradientUnits="userSpaceOnUse">
     <stop offset="0" stop-color="#282828" />
     <stop offset="1" stop-color="#101010" />
@@ -9,14 +9,16 @@
 <rect id="k:close" fill="#f22" x="202" y="2" width="14" height="14" />
 <rect id="k:dlg-title" fill="#a0a0a0d0" x="7.5" y="3" width="180" height="14" />
 
-<g transform="translate(70,24)">
-    <rect   id="k:fill-check"      fill="#a6a6a6"  x="0"   y="7"  width="14" height="14" />
+<rect id="k:fill-check" fill="#a6a6a6" x="7.5" y="24"  width="14" height="14" />
+<rect id="k:fill-check-label" fill="#a6a6a6" x="25" y="25" width="65" height="12" />
+
+<g transform="translate(60,45)">
     <circle id="k:fill-co"         fill="#d65cab" cx="32" cy="15" r="10" />
     <rect   id="k:fill-swatch"     fill="#d65cab"  x="23"  y="30" width="18" height="10" />
     <circle id="k:fill-fade"       fill="#5c95d6" cx="64" cy="14" r="14" />
     <rect   id="k:fill-fade-label" fill="#aaaa"      x="49"  y="30" width="30" height="14"/>
 </g>
 
-<rect id="dlg-border" fill="none" stroke="#c5c5c5" stroke-width="1.5" x=".75" y=".75" width="218.5" height="88" />
+<rect id="dlg-border" fill="none" stroke="#c5c5c5" stroke-width="1.5" x=".75" y=".75" width="218.5" height="108" />
 
 </svg>

@@ -43,6 +43,8 @@ struct RadialGradientDialog : SvgDialog<RadialGradientSvg> {
         addChild(TextLabel::createLabel(bounds["k:dlg-title"], "FancyBox | Radial gradient options", styles.title_style));
 
         add_check(this, bounds, "k:rg-check", fancy_module, Fancy::P_FANCY_RADIAL_ON, svg_theme);
+        add_label(this, bounds, "k:rg-check-label", "Enable Radial gradient", styles.left_label_style, svg_theme);
+
         auto palette = Center(createThemeSvgButton<Palette20ActionButton>(&my_svgs, bounds["k:rg-inner-co"].getCenter()));
         palette->describe("Radial gradient inner color");
         if (fancy_module) {

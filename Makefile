@@ -82,11 +82,13 @@ SOURCES += src/modules/FancyBox/FancyMini.cpp
 SOURCES += src/modules/FancyBox/FancyUi.cpp
 SOURCES += src/modules/FancyBox/cloak.cpp
 SOURCES += src/modules/FancyBox/picture.cpp
+SOURCES += src/modules/FancyBox/skiff-box.cpp
 SOURCES += src/modules/FancyBox/dialogs/pic-dialog.cpp
 SOURCES += src/modules/FancyBox/dialogs/fill-dialog.cpp
 SOURCES += src/modules/FancyBox/dialogs/linear-gradient.cpp
 SOURCES += src/modules/FancyBox/dialogs/radial-gradient.cpp
 SOURCES += src/modules/FancyBox/dialogs/box-gradient.cpp
+SOURCES += src/modules/FancyBox/dialogs/skiff-dialog.cpp
 
 # Rui module
 SOURCES += src/modules/Rui/Rui.cpp

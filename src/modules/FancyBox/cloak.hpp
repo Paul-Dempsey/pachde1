@@ -5,6 +5,7 @@ using namespace ::rack;
 #include "services/packed-color.hpp"
 using namespace packed_color;
 #include "picture.hpp"
+#include "skiff-box.hpp"
 
 namespace widgetry {
 
@@ -12,6 +13,7 @@ struct ImageData {
     bool enabled{true};
     PictureOptions options;
     void init(const ImageData& source) {
+        enabled = source.enabled;
         options.init(source.options);
     }
 };
@@ -94,12 +96,22 @@ struct BoxGradientData {
     }
 };
 
+struct SkiffBoxData {
+    bool enabled{false};
+    SkiffOptions options;
+    void init(const SkiffBoxData& source) {
+        enabled = source.enabled;
+        options.init(source.options);
+    }
+};
+
 struct CloakData {
     ImageData image;
     FillData fill;
     LinearGradientData linear;
     RadialGradientData radial;
     BoxGradientData boxg;
+    SkiffBoxData skiff;
 
     void init(const CloakData& source) {
         image.init(source.image);
@@ -107,19 +119,15 @@ struct CloakData {
         linear.init(source.linear);
         radial.init(source.radial);
         boxg.init(source.boxg);
+        skiff.init(source.skiff);
     }
 };
-
-struct CloakBackgroundWidget;
-
-// struct ICloakBackgroundClient {
-//     virtual void onDeleteCloak(CloakBackgroundWidget* cloak) = 0;
-// };
 
 struct CloakBackgroundWidget : Widget
 {
     CloakData data;
     Picture* pic{nullptr};
+    SkiffBox* skiff{nullptr};
 
     CloakBackgroundWidget() {};
     CloakBackgroundWidget(CloakData* cd) {
@@ -130,7 +138,6 @@ struct CloakBackgroundWidget : Widget
 
     void onButton(const ButtonEvent& e) override { e.unconsume(); } // make clicks transparent
     void step() override;
-    //void draw_image(const DrawArgs &args);
     void draw_fill(const DrawArgs &args);
     void draw_linear(const DrawArgs &args);
     void draw_radial(const DrawArgs &args);

@@ -51,6 +51,17 @@ void CloakBackgroundWidget::step() {
             pic = nullptr;
         }
     }
+    if (data.skiff.enabled) {
+        if (!skiff) {
+            skiff = new SkiffBox(&data.skiff.options);
+            addChild(skiff);
+        }
+    } else {
+        if (skiff) {
+            skiff->requestDelete();
+            skiff = nullptr;
+        }
+    }
 }
 
 //
@@ -144,11 +155,9 @@ void CloakBackgroundWidget::draw_box(const DrawArgs &args)
 
 void CloakBackgroundWidget::draw(const DrawArgs &args)
 {
-    if (data.image.enabled) {
-        if (pic) {
-            pic->box = args.clipBox;
-            Widget::drawChild(pic, args, 0);
-        }
+    if (data.image.enabled && pic) {
+        pic->box = args.clipBox;
+        Widget::drawChild(pic, args, 0);
     }
     if (data.fill.enabled) {
         draw_fill(args);
@@ -162,6 +171,9 @@ void CloakBackgroundWidget::draw(const DrawArgs &args)
     if (data.boxg.enabled) {
         draw_box(args);
     }
+    if (data.skiff.enabled && skiff) {
+        Widget::drawChild(skiff, args, 0);
+    }
 }
 
 CloakBackgroundWidget * ensureBackgroundCloak(CloakData* data) {
@@ -169,6 +181,7 @@ CloakBackgroundWidget * ensureBackgroundCloak(CloakData* data) {
     if (!cloak) {
         auto rail = APP->scene->rack->getFirstDescendantOfType<RailWidget>();
         cloak = new CloakBackgroundWidget(data);
+        // cloak becomes child of RackWidget
         rail->getParent()->addChildAbove(cloak, rail);
     }
     return cloak;

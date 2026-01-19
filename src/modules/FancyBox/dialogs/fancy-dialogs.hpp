@@ -11,10 +11,12 @@ void show_fill_dialog(ModuleWidget* source, Fancy* module, Theme theme);
 void show_linear_gradient_dialog(ModuleWidget* source, Fancy* module, Theme theme);
 void show_radial_gradient_dialog(ModuleWidget* source, Fancy* module, Theme theme);
 void show_box_gradient_dialog(ModuleWidget* source, Fancy* module, Theme theme);
+void show_skiff_dialog(ModuleWidget* source, Fancy* module, Theme theme);
 
 struct DialogStyles {
     LabelStyle* title_style{nullptr};
     LabelStyle* center_label_style{nullptr};
+    LabelStyle* left_label_style{nullptr};
     LabelStyle* info_label_style{nullptr};
 
     void createStyles(std::shared_ptr<svg_theme::SvgTheme> svg_theme) {
@@ -24,11 +26,14 @@ struct DialogStyles {
 
         center_label_style = new LabelStyle("dlg-label");
         center_label_style->halign = HAlign::Center;
+        left_label_style = new LabelStyle("dlg-label");
+        left_label_style->halign = HAlign::Left;
 
         info_label_style = new LabelStyle("dlg-info", colors::PortCorn, 12.f);
 
         title_style->applyTheme(svg_theme);
         center_label_style->applyTheme(svg_theme);
+        left_label_style->applyTheme(svg_theme);
         info_label_style->applyTheme(svg_theme);
     }
 };

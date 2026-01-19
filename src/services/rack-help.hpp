@@ -56,4 +56,12 @@ enum class AppliesTo {
 
 std::vector<ModuleWidget*> getModuleWidgets(ModuleWidget* self, AppliesTo which);
 
+inline size_t getModuleWidgetCount() { return APP->scene->rack->getModuleContainer()->children.size(); }
+inline bool is_finite_rect(const Rect& r) {
+    return std::isfinite(r.size.x)
+        && std::isfinite(r.size.y)
+        && std::isfinite(r.pos.x)
+        && std::isfinite(r.pos.y);
+}
+
 }

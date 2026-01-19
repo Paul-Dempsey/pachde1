@@ -168,6 +168,15 @@ void InfoModuleWidget::step() {
     ModuleWidget::step();
 }
 
+void InfoModuleWidget::drawLayer(const DrawArgs &args, int layer) {
+    if (-1 != layer) {
+        Base::drawLayer(args, layer);
+        return;
+    }
+    PackedColor co = settings->getUserPanelColor();
+    if (alpha(co) > .99f) Base::drawLayer(args, layer);
+}
+
 // ----  Menu  --------------------------------------------------------------
 
 void InfoModuleWidget::appendContextMenu(Menu *menu) {
