@@ -10,7 +10,7 @@
 | **[Rui](Rui.md#rui)** | Knobs and control voltage for Rack cable opacity and tension, room brightness, and halo strength. |
 | **[Skiff](Skiff.md#skiff)** | Customize your skiff with alternate rails, simplify knobs and ports, remove screws, hide lights, and hide unused jacks. Neatly pack all modules or a selection. Plus, zoom to selection. |
 | **[PanelTone](PanelTone.md#paneltone)** | Tint the panels in your skiff. Animate the color with Copper. |
-| **[FancyBox](FancyBox.md#fancybox)** | Make the Rack background fancy with tint, linear gradient, radial gradient, and/or vignetted box, with CV-controlled animation. |
+| **[FancyBox and FancyBox Mini](FancyBox.md#fancybox)** | Make the Rack background fancy with an image background, tint, linear gradient, radial gradient, and/or vignetted box, with CV-controlled animation. Now with Skiff boxes (version 2.5). Info, Null, and Skiff make great partners with FancyBoxes for laying out great-looking skiffs for sharing or recording videos. |
 | **[Guide](Guide.md#guide)** | (For plugin developers.) Overlay the module to the left with design guides / grid, for help adjusting module layout. |
 
 All **pachde One** modules have Light, Dark, and High Contrast themes.
@@ -30,7 +30,7 @@ Here's a snip of the Humburger menu on the **Skiff** and **PanelTone** module:
 
 ## For developers
 
-For developers, 2.3 includes demonstrations of hot-panel-reload (all new modules), SVG theming (all modules), a flyout panel (FancyBox), and an options dialog box (Info).
+For developers, 2.3 and above includes demonstrations of hot-panel-reload (all new modules), SVG theming (all modules), a flyout panel (FancyBox), and options dialog boxes (Info, FancyBox, FancyBox Mini).
 
 ---
 

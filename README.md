@@ -4,19 +4,27 @@ The first VCV Rack plugin for pachde (#d).
 
 [![Build Status](https://github.com/Paul-Dempsey/pachde1/actions/workflows/build-plugin.yml/badge.svg)](https://github.com/Paul-Dempsey/pachde1/actions/workflows/build-plugin.yml)
 
+- [Documentation](docs/index.md#pachde-one-modules-for-vcv-rack)
+
+See the Documentation link above for a list of modules and how to use them.
+
+- [Subscribe](https://library.vcvrack.com/plugins?query=pachde-One) to the plugin (always better than individual modules).
+
 All pachde-One modules have Light, Dark, and High Contrast themes, and allow you to choose whether to follow the Rack UI theme or the _Use dark panels_ option.
 Right click to choose a theme and tracking option.
 If you want all the #d one modules to use a consistent theme, you can send the theme to all the peer pachde1 modules in the patch.
 
 #d One modules also come with caps on the screws for an elegant look.
-All screws are removable if you're more relaxed about your Rack and not worried about the panels falling out.
-
-- [Documentation](docs/index.md#pachde-one-modules-for-vcv-rack)
+All screws are removable from the right click menu, if you're more relaxed about your Rack and not worried about the panels falling out.
 
 - [Buy me a coffee](https://venmo.com/u/pcdempsey). *Thank you!*
 
   Donations go to helping fund continued development and hardware for testing and development. (I have a wish list :-). Venmo takes the smallest cut out of the payment systems I've found.\
   ![Buy pachde a coffee with VenMo](docs/images/VenMo.png)
+
+## Development builds
+
+To download the latest development build, see the [Nightly Release](https://github.com/Paul-Dempsey/pachde1/releases/tag/Nightly) page.
 
 ## Innovative ? user interface
 
@@ -38,10 +46,10 @@ Here are some notable thigns to see in the **#d One** implementation.
   Instead of hunting for the right extender in the module browser, just expand the panel to show an extension with more jacks or options.
   Recently I noticed another brand that provides buttons to insert selected extenders, which I think is a great idea.
 
-- Dialogs (**Info**, **FancyBox**) — Another tactic for making complex configurable easier than piling things into the module menu.
+- Dialogs (**Info**, **FancyBox**, **FancyBox Mini**) — Another tactic for making complex configurable easier than piling things into the module menu.
   Turns out that making a dialog is really no more complicated or substantially different than creating a menu or the UI for a module.
   **#d One** constructs dialogs much like a module widget, with an SVG base.
-  All the amenities mentioned below for iterating on a (themed) panel apply just the same
+  All the amenities mentioned below for iterating on a (themed) panel apply just the same for SVG dialogs.
 
 - Runtime SVG theming —
   Instead of creating (and maintaining) multiple versions of a panel or widget SVG, one for each theme, **#d One** applies a style sheet at runtime.
@@ -50,10 +58,6 @@ Here are some notable thigns to see in the **#d One** implementation.
 - SVG Hot-swap, and dynamic widget positiong — In dev builds, the new modules (and some of the old ones) support hot-swap panel Svgs, with runtime positioning based on placeholders in the SVG.
   These together make a big difference for iterating on panel designs.
   Oh, and when hot-swapping the SVGs, not only do you get a new panel graphic, and the widgets move to their new positions, but the themes are reloaded as well, so that one keystroke does it all for iterating on the look and feel of a panel design.
-
-## Development builds
-
-To download the latest development build, see the [Nightly Release](https://github.com/Paul-Dempsey/pachde1/releases/tag/Nightly) page.
 
 ## Change log
 
