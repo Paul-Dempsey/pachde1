@@ -7,8 +7,6 @@ namespace widgetry {
 
 bool Picture::open() {
     close();
-    last_path = options->path;
-    last_gray = options->gray;
     if (last_path.empty()) {
         ok = true;
     } else {
@@ -37,14 +35,7 @@ void Picture::close() {
         image_data = nullptr;
         stbi_image_free(mem);
     }
-
-    auto window = APP->window;
-    if (window && window->vg) {
-        clearImageCache(window->vg);
-    } else {
-        // leak handle
-        image_handle = 0;
-    }
+    clearImageCache();
 }
 
 constexpr const float b2f_factor {1./255.f};
@@ -70,41 +61,51 @@ void Picture::black_and_white()
     }
 }
 
-void Picture::clearImageCache(NVGcontext* vg) {
+void Picture::clearImageCache() {
     if (image_handle) {
-        nvgDeleteImage(vg, image_handle);
+        auto window = APP->window;
+        if (window && window->vg) {
+            nvgDeleteImage(window->vg, image_handle);
+        } else {
+            // leak handle
+        }
         image_handle = 0;
     }
 }
 
-void Picture::updateImageCache(NVGcontext* vg) {
+void Picture::updateImageCache() {
     if (!image_data) {
-        clearImageCache(vg);
+        clearImageCache();
         return;
     }
-    if (!image_cookie && !image_handle) {
-        image_handle = nvgCreateImageRGBA(vg, width(),  height(), 0, image_data);
-        image_cookie = reinterpret_cast<intptr_t>(image_data);
-    } else {
-        auto cookie = reinterpret_cast<intptr_t>(image_data);
-        if (cookie != image_cookie) {
-            if (image_handle) {
-                nvgDeleteImage(vg, image_handle);
-                image_handle = nvgCreateImageRGBA(vg, width(),  height(), 0, image_data);
+    auto window = APP->window;
+    if (window && window->vg) {
+        NVGcontext* vg = window->vg;
+        if (!image_cookie && !image_handle) {
+            image_handle = nvgCreateImageRGBA(vg, width(),  height(), 0, image_data);
+            image_cookie = reinterpret_cast<intptr_t>(image_data);
+        } else {
+            auto cookie = reinterpret_cast<intptr_t>(image_data);
+            if (cookie != image_cookie) {
+                if (image_handle) {
+                    nvgDeleteImage(vg, image_handle);
+                    image_handle = nvgCreateImageRGBA(vg, width(),  height(), 0, image_data);
+                }
+                image_cookie = image_handle ? cookie : 0;
             }
-            image_cookie = image_handle ? cookie : 0;
         }
     }
 }
 
 void Picture::step() {
-    if ((last_gray != options->gray) || (last_path != options->path)) {
+    if ((last_gray != static_cast<int>(options->gray))
+        || (last_path != options->path)) {
         open();
     }
 }
 
 void Picture::draw(const DrawArgs &args) {
-    updateImageCache(args.vg);
+    updateImageCache();
     if (image_handle) {
         auto vg = args.vg;
         float scale;

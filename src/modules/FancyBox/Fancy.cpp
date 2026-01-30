@@ -230,23 +230,8 @@ void Fancy::process_image(const ProcessArgs &args)
     fancy_data.image.options.y_offset = getParam(P_FANCY_IMAGE_Y_OFFSET).getValue() * .01f;
     fancy_data.image.options.scale = getParam(P_FANCY_IMAGE_SCALE).getValue() * .01f;
     if (my_cloak) {
-        if (my_cloak->data.image.options.path != fancy_data.image.options.path) {
-            if (my_cloak->pic) {
-                my_cloak->pic->close();
-            }
-            my_cloak->data.image.options.path = fancy_data.image.options.path;
-        }
-        if (my_cloak->data.image.options.gray != fancy_data.image.options.gray) {
-            if (my_cloak->pic) {
-                my_cloak->pic->close();
-            }
-        }
+        my_cloak->data.image.options.init(fancy_data.image.options);
         my_cloak->data.image.enabled = fancy_data.image.options.path.empty() ? false : fancy_data.image.enabled;
-        my_cloak->data.image.options.fit = fancy_data.image.options.fit;
-        my_cloak->data.image.options.gray = fancy_data.image.options.gray;
-        my_cloak->data.image.options.x_offset = fancy_data.image.options.x_offset;
-        my_cloak->data.image.options.y_offset = fancy_data.image.options.y_offset;
-        my_cloak->data.image.options.scale = fancy_data.image.options.scale;
     }
 }
 

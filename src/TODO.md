@@ -1,5 +1,9 @@
 # pachde1 TODO
 
+## Null
+
+- Selection of looks at edges: rivets, welds, wear and tear.
+
 ## Skiff
 
 - Image rail overlay (image formats)
@@ -41,3 +45,4 @@ Message passing doesn't work in this scenario.
 - Pop out to full screen.
 - Multi-select for adding.
 - Companion detail extender to show full details of selected module.
+s

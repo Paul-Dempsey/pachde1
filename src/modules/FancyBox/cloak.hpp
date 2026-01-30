@@ -125,6 +125,7 @@ struct CloakData {
 
 struct CloakBackgroundWidget : Widget
 {
+    using Base = Widget;
     CloakData data;
     Picture* pic{nullptr};
     SkiffBox* skiff{nullptr};

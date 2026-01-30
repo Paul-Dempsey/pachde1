@@ -44,8 +44,8 @@ struct Picture : OpaqueWidget {
     bool open();
     void close();
     void black_and_white();
-    void updateImageCache(NVGcontext* vg);
-    void clearImageCache(NVGcontext* vg);
+    void updateImageCache();
+    void clearImageCache();
     void step() override;
     void draw(const DrawArgs& args) override;
 };

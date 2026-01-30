@@ -62,6 +62,7 @@ void CloakBackgroundWidget::step() {
             skiff = nullptr;
         }
     }
+    Base::step();
 }
 
 //

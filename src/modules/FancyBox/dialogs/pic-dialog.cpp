@@ -101,7 +101,7 @@ struct PictureDialog : SvgDialog<PictureDialogSvg> {
                 auto name = system::getFilename(fancy_module->fancy_data.image.options.path);
                 image_name->set_text(name);
                 pic_button->describe(fancy_module->fancy_data.image.options.path);
-                preview->open();
+                //preview->open();
             }
         });
         addChild(pic_button);
