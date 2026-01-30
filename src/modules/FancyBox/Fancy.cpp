@@ -21,8 +21,8 @@ Fancy::Fancy() {
     configParam(P_FANCY_IMAGE_Y_OFFSET, -100.f, 100.f, 0.f, "", "%");
     configParam(P_FANCY_IMAGE_SCALE, 10.f, 1000.f, 100.f, "", "%");
 
-    configSwitch(P_FANCY_FILL_ON,  0.f, 1.f, 1.f, "Enable Fill", off_on);
-    configParam(P_FANCY_FILL_FADE, 0.f, 100.f, 100.f, "Fill fade", "%");
+    configSwitch(P_FANCY_FILL_ON,  0.f, 1.f, 1.f, "Enable Tone", off_on);
+    configParam(P_FANCY_FILL_FADE, 0.f, 100.f, 100.f, "Tone fade", "%");
 
     configSwitch(P_FANCY_LINEAR_ON, 0.f, 1.f, 0.f, "Enable Linear gradient", off_on);
     configParam(P_FANCY_LINEAR_START_FADE, 0.f, 100.f, 100.f, "Linear start fade", "%");
