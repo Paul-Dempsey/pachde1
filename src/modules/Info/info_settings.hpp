@@ -8,8 +8,8 @@ using namespace packed_color;
 
 namespace info_constant {
     using namespace colors;
-    constexpr const PackedColor PANEL_DEFAULT{G80};
-    constexpr const PackedColor TEXT_DEFAULT{G20};
+    constexpr const PackedColor PANEL_DEFAULT{G20};
+    constexpr const PackedColor TEXT_DEFAULT{G80};
     constexpr const float DEFAULT_FONT_SIZE{16.f};
     constexpr const float MIN_FONT_SIZE{6.f};
     constexpr const float MAX_FONT_SIZE{90.f};
@@ -21,7 +21,6 @@ inline std::string get_plugin_bold_file() {
 
 struct InfoSettings
 {
-    // overrides
     PackedColor panel_color{colors::NoColor};
     PackedColor text_color{colors::NoColor};
 

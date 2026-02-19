@@ -6,7 +6,7 @@ const char * HEX_CHARS = "0123456789abcdef";
 inline char hex_hi(uint8_t byte) { return HEX_CHARS[(byte >> 4) & 0x0f]; }
 inline char hex_lo(uint8_t byte) { return HEX_CHARS[byte & 0x0f]; }
 
-int hexFormat(PackedColor color, int buffer_size, char * buffer) {
+int hexFormat(PackedColor color, int buffer_size, char * buffer, bool prefer_short) {
     if (buffer_size < 10) {
         return 0;
     }
@@ -28,7 +28,7 @@ int hexFormat(PackedColor color, int buffer_size, char * buffer) {
     *poke++ = hex_lo(byte);
     // a
     byte = color & 0xff;
-    if (byte != 0xff) {
+    if (!prefer_short || (byte != 0xff)) {
         *poke++ = hex_hi(byte);
         *poke++ = hex_lo(byte);
     }
@@ -36,10 +36,10 @@ int hexFormat(PackedColor color, int buffer_size, char * buffer) {
     return poke-buffer;
 }
 
-std::string hex_string(PackedColor color)
+std::string hex_string(PackedColor color, bool prefer_short)
 {
     char hex[10];
-    hexFormat(color, 10, hex);
+    hexFormat(color, 10, hex, prefer_short);
     return hex;
 }
 

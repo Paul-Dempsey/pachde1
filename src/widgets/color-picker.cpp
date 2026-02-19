@@ -10,7 +10,7 @@ void ColorPicker::set_text_color()
     case ColorSyntax::Unknown:
         break;
     case ColorSyntax::Hex:
-        text_input->setText(hex_string(color));
+        text_input->setText(hex_string(color, false));
         break;
     case ColorSyntax::RGB:
         text_input->setText(rgba_string(color));

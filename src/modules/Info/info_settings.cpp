@@ -123,6 +123,23 @@ void InfoSettings::load(json_t* root) {
 }
 
 void InfoSettings::setTheme(Theme theme) {
+    if ((0 == panel_color) && (0 == text_color)) {
+        switch (theme) {
+        case Theme::Unset:
+        case Theme::Dark:
+            panel_color = colors::G18;
+            text_color = colors::G80;
+            break;
+        case Theme::Light:
+            panel_color = colors::G80;
+            text_color = colors::G20;
+            break;
+        case Theme::HighContrast:
+            panel_color = colors::Black;
+            text_color = colors::White;
+            break;
+        }
+    }
 }
 
 bool InfoSettings::fontDialog()
